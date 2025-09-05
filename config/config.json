@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "mayco-safety-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/maycoSafety/MaycoSafetyWebPart.js",
+          "manifest": "./src/webparts/maycoSafety/MaycoSafetyWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "MaycoSafetyWebPartStrings": "lib/webparts/maycoSafety/loc/{locale}.js"
+  }
+}

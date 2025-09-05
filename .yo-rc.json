@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.14.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "mayco-safety",
+    "libraryId": "09b14889-17ca-45bd-a7ce-52c9ac0519f6",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "Mayco-Safety",
+    "solutionShortDescription": "Mayco-Safety description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

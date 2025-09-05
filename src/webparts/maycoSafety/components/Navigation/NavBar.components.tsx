@@ -2,6 +2,7 @@ import { faAddressCard, faBars, faBullhorn, faChevronDown, faChevronUp, faHome }
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { NavLink } from "react-router-dom";
+import "../CSS/left-nav.css";
 
 export interface NavBarProps {
     currentUserGroups: any;
@@ -24,9 +25,6 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
         showSidebar: true,
         isMastersOpen: true
     };
-
-    public componentDidMount() {
-    }
     public onNavItemClick(event: any) {
         let navLinks = document.querySelectorAll('.nav-click');
         if( navLinks.length > 0 ){
@@ -47,6 +45,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
     }
 
     public render() {
+        let MasterTitles=['SEWO','SMAT/EHS','JSRA','Unsafe Act'];
         return(
             <React.Fragment>
                 
@@ -56,7 +55,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                         <FontAwesomeIcon icon={faBars} onClick={this.toggleSidebar}></FontAwesomeIcon>
                     </span>
                 {/* //   <div className="outer-sidebar"> */}
-                    { ( this.state.showSidebar && this.props.isAuthorized) &&
+                    { ( this.state.showSidebar) &&
                      <div className="sidebar">
                         <div>
                             <ul className="list-unstyled ul-leftnav components mb-5">
@@ -65,7 +64,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                         <NavLink to={"/Home"}><span><FontAwesomeIcon icon={faHome}/> Home</span></NavLink>
                                     </div>
                                 </li>
-                                 { (this.props.isSupplierTeam ||  this.props.isProcurementTeam) && 
+                                 {
                                     <li className="liMasters mb-2">
                                         <div className="sidebar-title" onClick={this.toggleMastersMenu}>
                                             Masters 
@@ -73,13 +72,24 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                                 <FontAwesomeIcon icon={ this.state.isMastersOpen ? faChevronUp : faChevronDown }></FontAwesomeIcon>
                                             </span>
                                         </div>
+                                        {MasterTitles.map(title=>
+                                            (
+                                            <div className="master-sidebar-title" onClick={this.toggleMastersMenu}>
+                                            {title }
+                                            <span className="icon-down">
+                                                <FontAwesomeIcon icon={ this.state.isMastersOpen ? faChevronUp : faChevronDown }></FontAwesomeIcon>
+                                            </span>
+                                           </div>
+                                            )
+                                        )}
+                                        
                                         { this.state.isMastersOpen && (<ul className="ul-leftnav">
 
-                                            <li id="liVendorProfile" onClick={(event) => this.onNavItemClick(event)}>
-                                                <NavLink to={"/VendorProfile"}><span><FontAwesomeIcon icon={faAddressCard}/> Vendor Profile</span></NavLink>
+                                            <li id="liActions" onClick={(event) => this.onNavItemClick(event)}>
+                                                <NavLink to={"/Actions"}><span><FontAwesomeIcon icon={faAddressCard}/> Actions</span></NavLink>
                                             </li>
-                                            <li id="liLeadSource" onClick={(event) => this.onNavItemClick(event)}>
-                                                <NavLink to={"/LeadSource"}><span><FontAwesomeIcon icon={faBullhorn}/> Lead Source</span></NavLink>
+                                            <li id="liSecondaryRootCauses" onClick={(event) => this.onNavItemClick(event)}>
+                                                <NavLink to={"/SecondaryRootCauses"}><span><FontAwesomeIcon icon={faBullhorn}/> Secondary Root Causes</span></NavLink>
                                             </li>
                                         </ul>)}
                                     </li>}

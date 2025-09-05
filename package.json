@@ -13,6 +13,10 @@
   },
   "dependencies": {
     "@fluentui/react": "^8.106.4",
+    "@fortawesome/fontawesome-free": "^7.0.1",
+    "@fortawesome/free-solid-svg-icons": "^7.0.1",
+    "@fortawesome/react-fontawesome": "^0.2.6",
+    "@microsoft/generator-sharepoint": "^1.21.1",
     "@microsoft/sp-component-base": "1.21.1",
     "@microsoft/sp-core-library": "1.21.1",
     "@microsoft/sp-http": "^1.21.1",
@@ -20,9 +24,19 @@
     "@microsoft/sp-office-ui-fabric-core": "1.21.1",
     "@microsoft/sp-property-pane": "1.21.1",
     "@microsoft/sp-webpart-base": "1.21.1",
+    "@pnp/sp": "^4.16.0",
+    "bootstrap": "^5.3.8",
+    "date-fns": "^4.1.0",
+    "gulp-cli": "^3.1.0",
     "react": "17.0.1",
+    "react-data-table-component": "^7.7.0",
+    "react-datepicker": "^8.7.0",
     "react-dom": "17.0.1",
-    "tslib": "2.3.1"
+    "react-router-dom": "^6.30.1",
+    "react-select": "^5.10.2",
+    "tslib": "2.3.1",
+    "xlsx": "^0.18.5",
+    "yo": "^5.1.0"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.21.1",

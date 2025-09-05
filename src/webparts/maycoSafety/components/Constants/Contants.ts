@@ -1,0 +1,31 @@
+export enum ControlType {
+    number='Number',
+    string='String',
+    mobileNumber='MobileNumber',
+    email='Email',
+    people='PeoplePicker',
+    date='DatePicker',
+    compareDates='CompareDates',
+    compareNum='CompareNumbers',
+    todayDate='TodayDate',
+    reactSelect='ReactSelect',
+    radio='Radio',
+    array='Array',
+    limitedNumber="LimitedNumber"
+  }
+  export enum ActionStatus{
+    Draft='saved successfully',
+    Submitted='submitted successfully',
+    Updated='updated successfully',
+    Approved='approved successfully',
+    Rejected='rejected successfully',
+    Error='Sorry! something went wrong',
+    Export='exported successfully'
+  }
+  export enum FormStatus{
+    Draft='Saved',
+    Submitted='Submitted',
+    Approved='Approved',
+    Rejected='Rejected',
+    Proceeded='Proceeded',
+  }

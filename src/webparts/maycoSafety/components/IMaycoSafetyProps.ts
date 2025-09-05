@@ -1,7 +1,8 @@
+import { WebPartContext } from "@microsoft/sp-webpart-base";
 export interface IMaycoSafetyProps {
   description: string;
-  isDarkTheme: boolean;
-  environmentMessage: string;
-  hasTeamsContext: boolean;
   userDisplayName: string;
+  spHttpClient:any;
+  spContext:any;
+  context:WebPartContext
 }

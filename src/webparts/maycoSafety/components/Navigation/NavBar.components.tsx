@@ -1,4 +1,5 @@
-import { faAddressCard, faBars, faBullhorn, faChevronDown, faChevronUp, faHome } from "@fortawesome/free-solid-svg-icons";
+// import { faAddressCard, faBars, faBullhorn, faChevronDown, faChevronUp, faHome } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faChevronDown, faChevronUp, faHome,faCogs,faFileAlt,faEye, faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { NavLink } from "react-router-dom";
@@ -15,20 +16,22 @@ export interface NavBarProps {
 export interface NavBarState {
     currentUserLinks: string[];
     showSidebar: boolean;
-    isMastersOpen: boolean;
+    openSideBars: { [key: string]: boolean };
+    openMasters: { [key: string]: boolean };
 }
 
 class NavBar extends React.Component<NavBarProps, NavBarState> {
 
-    public state : NavBarState = { 
-        currentUserLinks : [],
+    public state: NavBarState = {
+        currentUserLinks: [],
         showSidebar: true,
-        isMastersOpen: true
+        openSideBars: {},
+        openMasters: {}
     };
     public onNavItemClick(event: any) {
         let navLinks = document.querySelectorAll('.nav-click');
-        if( navLinks.length > 0 ){
-            navLinks.forEach( item => {
+        if (navLinks.length > 0) {
+            navLinks.forEach(item => {
                 item.className = '';
             });
         }
@@ -37,67 +40,142 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
     private toggleSidebar = () => {
         let prevShowSidebar = this.state.showSidebar;
-        this.setState({ showSidebar: !prevShowSidebar})
+        this.setState({ showSidebar: !prevShowSidebar })
     }
 
-    private toggleMastersMenu = () => {
-        this.setState({ isMastersOpen: !this.state.isMastersOpen });
+    private toggleSideBarItem = (title: string) => {
+        this.setState((prevState: any) => ({
+            openSideBars: {
+                ...prevState.openSideBars,
+                [title]: !prevState.openSideBars[title]
+            }
+        }));
     }
+    private toggleMasterItem = (title: string) => {
+        this.setState((prevState: any) => ({
+            openMasters: {
+                ...prevState.openMasters,
+                [title]: !prevState.openMasters[title]
+            }
+        }));
+    };
 
     public render() {
-        let MasterTitles=['SEWO','SMAT/EHS','JSRA','Unsafe Act'];
-        return(
+        const MasterTitles = ['SEWO', 'SMAT/EHS', 'JSRA', 'Unsafe Act'] as const;
+        type MasterTitle = typeof MasterTitles[number];
+        const MasterTitlesSubs: Record<MasterTitle, string[]> = {
+            'SEWO': ['Actions', 'Secondary Root Causes', 'Micro Root Causes', 'Injury Types', 'Status'],
+            'SMAT/EHS': ['Audit Categories', 'SMAT and EHS Mapping'],
+            'JSRA': ['JSRA Categories', 'JSRA Sub - Categories', 'PPE Types', 'JSRA Details'],
+            'Unsafe Act': ['UA Types', 'UA Sub - Types']
+        };
+        const FormAndViewTitles = ['SEWO', 'UCAN','SMAT','EHS','JSRA','TAG','CHECK - LIST STEP 1', 'CHECK - LIST STEP 2', 'CHECK - LIST STEP 3'];
+        return (
             <React.Fragment>
-                
-                  
-                  <div className="brd-left-nav" id='Left-Nav-Bar'>
+
+
+                <div className="brd-left-nav" id='Left-Nav-Bar'>
                     <span className='click-nav-icon'>
                         <FontAwesomeIcon icon={faBars} onClick={this.toggleSidebar}></FontAwesomeIcon>
                     </span>
-                {/* //   <div className="outer-sidebar"> */}
-                    { ( this.state.showSidebar) &&
-                     <div className="sidebar">
-                        <div>
-                            <ul className="list-unstyled ul-leftnav components mb-5">
-                                <li id="liHome" onClick={(event) => this.onNavItemClick(event)}>
-                                    <div className="sidebar-title a-home"> 
-                                        <NavLink to={"/Home"}><span><FontAwesomeIcon icon={faHome}/> Home</span></NavLink>
-                                    </div>
-                                </li>
-                                 {
+                    {/* //   <div className="outer-sidebar"> */}
+                    {(this.state.showSidebar) &&
+                        <div className="sidebar">
+                            <div>
+                                <ul className="list-unstyled ul-leftnav components mb-5">
+                                    <li id="liHome" onClick={(event) => this.onNavItemClick(event)}>
+                                        <div className="sidebar-title a-home">
+                                            <NavLink to={"/Home"}><span><FontAwesomeIcon icon={faHome} /> Home</span></NavLink>
+                                        </div>
+                                    </li>
+                                    {/* Masters Section */}
                                     <li className="liMasters mb-2">
-                                        <div className="sidebar-title" onClick={this.toggleMastersMenu}>
-                                            Masters 
+                                        <div className="sidebar-title" onClick={() => this.toggleSideBarItem('Masters')}>
+                                            <span><FontAwesomeIcon icon={faCogs}></FontAwesomeIcon>
+                                            Masters
+                                            </span>
                                             <span className="icon-down">
-                                                <FontAwesomeIcon icon={ this.state.isMastersOpen ? faChevronUp : faChevronDown }></FontAwesomeIcon>
+                                                <FontAwesomeIcon icon={this.state.openSideBars['Masters'] ? faChevronUp : faChevronDown} />
                                             </span>
                                         </div>
-                                        {MasterTitles.map(title=>
-                                            (
-                                            <div className="master-sidebar-title" onClick={this.toggleMastersMenu}>
-                                            {title }
-                                            <span className="icon-down">
-                                                <FontAwesomeIcon icon={ this.state.isMastersOpen ? faChevronUp : faChevronDown }></FontAwesomeIcon>
-                                            </span>
-                                           </div>
-                                            )
-                                        )}
-                                        
-                                        { this.state.isMastersOpen && (<ul className="ul-leftnav">
 
-                                            <li id="liActions" onClick={(event) => this.onNavItemClick(event)}>
-                                                <NavLink to={"/Actions"}><span><FontAwesomeIcon icon={faAddressCard}/> Actions</span></NavLink>
-                                            </li>
-                                            <li id="liSecondaryRootCauses" onClick={(event) => this.onNavItemClick(event)}>
-                                                <NavLink to={"/SecondaryRootCauses"}><span><FontAwesomeIcon icon={faBullhorn}/> Secondary Root Causes</span></NavLink>
-                                            </li>
-                                        </ul>)}
-                                    </li>}
-                            </ul>
-                        </div>
-                    </div>}
+                                        {/* Loop Masters if open */}
+                                        {this.state.openSideBars['Masters'] && MasterTitles.map((title: MasterTitle) => (
+                                            <div key={title}>
+                                                {/* Master Title */}
+                                                <div className="master-sidebar-title" onClick={() => this.toggleMasterItem(title)}>
+                                                    {title}
+                                                    <span className="icon-down">
+                                                        <FontAwesomeIcon icon={this.state.openMasters[title] ? faChevronUp : faChevronDown} />
+                                                    </span>
+                                                </div>
+
+                                                {/* Sub-items */}
+                                                {this.state.openMasters[title] && (
+                                                    <ul className="ul-leftnav">
+                                                        {MasterTitlesSubs[title].map((subItem: string) => (
+                                                            <li key={subItem} onClick={(event) => this.onNavItemClick(event)}>
+                                                                <NavLink to={`/${subItem.replace(/\s+/g, '')}`}>
+                                                                    <span><FontAwesomeIcon icon={faCircle} /> {subItem}</span>
+                                                                </NavLink>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </li>
+
+                                    {/* Forms Section */}
+                                    <li className="liForms mb-2">
+                                        <div className="sidebar-title" onClick={() => this.toggleSideBarItem('Forms')}>
+                                            <span><FontAwesomeIcon icon={faFileAlt}></FontAwesomeIcon>
+                                            Forms
+                                            </span>
+                                            <span className="icon-down">
+                                                <FontAwesomeIcon icon={this.state.openSideBars['Forms'] ? faChevronUp : faChevronDown} />
+                                            </span>
+                                        </div>
+                                         {this.state.openSideBars['Forms'] && (
+                                                    <ul className="ul-leftnav">
+                                                        {FormAndViewTitles.map((subItem: string) => (
+                                                            <li key={subItem+'Form'} onClick={(event) => this.onNavItemClick(event)}>
+                                                                <NavLink to={`/${subItem.replace(/\s+/g, '')}Form`}>
+                                                                    <span><FontAwesomeIcon icon={faCircle} /> {subItem}</span>
+                                                                </NavLink>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                    </li>
+                                    {/* Views Section */}
+                                    <li className="liViews mb-2">
+                                        <div className="sidebar-title" onClick={() => this.toggleSideBarItem('Views')}>
+                                            <span><FontAwesomeIcon icon={faEye}></FontAwesomeIcon>
+                                            Views
+                                            </span>
+                                            <span className="icon-down">
+                                                <FontAwesomeIcon icon={this.state.openSideBars['Views'] ? faChevronUp : faChevronDown} />
+                                            </span>
+                                        </div>
+                                         {this.state.openSideBars['Views'] && (
+                                                    <ul className="ul-leftnav">
+                                                        {FormAndViewTitles.map((subItem: string) => (
+                                                            <li key={subItem+'View'} onClick={(event) => this.onNavItemClick(event)}>
+                                                                <NavLink to={`/${subItem.replace(/\s+/g, '')}View`}>
+                                                                    <span><FontAwesomeIcon icon={faCircle} /> {subItem}</span>
+                                                                </NavLink>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>}
                 </div>
-            </React.Fragment>
+            </React.Fragment >
         )
     }
 }

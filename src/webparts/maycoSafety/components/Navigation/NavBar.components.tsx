@@ -1,5 +1,4 @@
-// import { faAddressCard, faBars, faBullhorn, faChevronDown, faChevronUp, faHome } from "@fortawesome/free-solid-svg-icons";
-import { faBars, faChevronDown, faChevronUp, faHome,faCogs,faFileAlt,faEye, faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faChevronDown, faChevronUp, faHome,faCogs,faFileAlt,faEye} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { NavLink } from "react-router-dom";
@@ -114,9 +113,9 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                                 {this.state.openMasters[title] && (
                                                     <ul className="ul-leftnav">
                                                         {MasterTitlesSubs[title].map((subItem: string) => (
-                                                            <li key={subItem} onClick={(event) => this.onNavItemClick(event)}>
+                                                            <li  id={`li${subItem.replace(/\s+/g, '')}`} key={subItem} onClick={(event) => this.onNavItemClick(event)}>
                                                                 <NavLink to={`/${subItem.replace(/\s+/g, '')}`}>
-                                                                    <span><FontAwesomeIcon icon={faCircle} /> {subItem}</span>
+                                                                    <span>{subItem}</span>
                                                                 </NavLink>
                                                             </li>
                                                         ))}
@@ -139,9 +138,9 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                          {this.state.openSideBars['Forms'] && (
                                                     <ul className="ul-leftnav">
                                                         {FormAndViewTitles.map((subItem: string) => (
-                                                            <li key={subItem+'Form'} onClick={(event) => this.onNavItemClick(event)}>
+                                                            <li id={`li${subItem.replace(/\s+/g, '')}Form`} key={subItem+'Form'} onClick={(event) => this.onNavItemClick(event)}>
                                                                 <NavLink to={`/${subItem.replace(/\s+/g, '')}Form`}>
-                                                                    <span><FontAwesomeIcon icon={faCircle} /> {subItem}</span>
+                                                                    <span>{subItem}</span>
                                                                 </NavLink>
                                                             </li>
                                                         ))}
@@ -161,9 +160,9 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                          {this.state.openSideBars['Views'] && (
                                                     <ul className="ul-leftnav">
                                                         {FormAndViewTitles.map((subItem: string) => (
-                                                            <li key={subItem+'View'} onClick={(event) => this.onNavItemClick(event)}>
+                                                            <li id={`li${subItem.replace(/\s+/g, '')}View`} key={subItem+'View'} onClick={(event) => this.onNavItemClick(event)}>
                                                                 <NavLink to={`/${subItem.replace(/\s+/g, '')}View`}>
-                                                                    <span><FontAwesomeIcon icon={faCircle} /> {subItem}</span>
+                                                                    <span>{subItem}</span>
                                                                 </NavLink>
                                                             </li>
                                                         ))}

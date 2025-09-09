@@ -7,7 +7,7 @@ import { hideLoader, showLoader } from './Shared/Loader';
 import { ActionStatus } from './Constants/Contants';
 import { showToast } from './Shared/Toaster';
 import { ToastContainer } from 'react-toastify';
-// import { forEach } from 'lodash';
+import { forEach } from 'lodash';
 import NavBar from './Navigation/NavBar.components';
 
 export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
@@ -26,7 +26,7 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
 
   public componentDidMount() {
     this.getUserRoles();
-    //this.removeExtraClasses();
+    this.removeExtraClasses();
   }
 
   private getUserRoles = async () => {
@@ -72,47 +72,47 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
     }
   }
 
-//     private removeExtraClasses(){
-//   var workbenchElement = document.getElementById("workbenchPageContent");
-//   let wbClass = workbenchElement?.classList.value;
-//   workbenchElement?.classList.remove(wbClass? wbClass : "");
-//   // this.removeAll();
-//   workbenchElement?.addEventListener("click", this.removeAll);
+    private removeExtraClasses(){
+  var workbenchElement = document.getElementById("workbenchPageContent");
+  let wbClass = workbenchElement?.classList.value;
+  workbenchElement?.classList.remove(wbClass? wbClass : "");
+  // this.removeAll();
+  workbenchElement?.addEventListener("click", this.removeAll);
 
-// }
+}
 
-// private removeAll = () => {
-//   var workbenchElement = document.getElementById("workbenchPageContent");
-//   workbenchElement?.removeEventListener("click",this.removeAll);
+private removeAll = () => {
+  var workbenchElement = document.getElementById("workbenchPageContent");
+  workbenchElement?.removeEventListener("click",this.removeAll);
 
-//   var canvasComponent1 = document.getElementsByClassName("CanvasZoneContainer");
-//   forEach( canvasComponent1, element => {
-//     let eleClass = element.classList.value;
-//     let eleClassArr = eleClass.split(" ");
+  var canvasComponent1 = document.getElementsByClassName("CanvasZoneContainer");
+  forEach( canvasComponent1, element => {
+    let eleClass = element.classList.value;
+    let eleClassArr = eleClass.split(" ");
 
-//     eleClassArr.forEach((elem: string) => {
-//       element.classList.remove(elem.trim());
-//     });
-//   })
-//   var canvasComponent1 = document.getElementsByClassName("CanvasZone");
-//   forEach( canvasComponent1, element => {
-//     let eleClass = element.classList.value;
-//    let eleClassArr = eleClass.split(" ");
+    eleClassArr.forEach((elem: string) => {
+      element.classList.remove(elem.trim());
+    });
+  })
+  var canvasComponent1 = document.getElementsByClassName("CanvasZone");
+  forEach( canvasComponent1, element => {
+    let eleClass = element.classList.value;
+   let eleClassArr = eleClass.split(" ");
 
-//     eleClassArr.forEach((elem: string) => {
-//       element.classList.remove(elem.trim());
-//     });
-//   })
-//   var canvasComponent1 = document.getElementsByClassName("CanvasSection");
-//   forEach( canvasComponent1, element => {
-//     let eleClass = element.classList.value;
-//    let eleClassArr = eleClass.split(" ");
+    eleClassArr.forEach((elem: string) => {
+      element.classList.remove(elem.trim());
+    });
+  })
+  var canvasComponent1 = document.getElementsByClassName("CanvasSection");
+  forEach( canvasComponent1, element => {
+    let eleClass = element.classList.value;
+   let eleClassArr = eleClass.split(" ");
 
-//     eleClassArr.forEach((elem: string) => {
-//       element.classList.remove(elem.trim());
-//     });
-//   })
-// }
+    eleClassArr.forEach((elem: string) => {
+      element.classList.remove(elem.trim());
+    });
+  })
+}
 
   private onError = () => {
     showToast("error", ActionStatus.Error );

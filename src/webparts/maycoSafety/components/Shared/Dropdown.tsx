@@ -23,11 +23,11 @@ interface DropdownProps {
 
 const SearchableDropdown = ({ label, Title, name, id, placeholderText, className, selectedValue, optionLabel, optionValue, selectedLabel, OptionsList, OnChange, isRequired, disabled = false, refElement, noOptionsMessage = "No options", isMultiple= false }: DropdownProps) =>{
 
-    const options = OptionsList.map((item: any) => ({
-        label: typeof(item) == "string" ? item: optionLabel.includes('.') ? item[optionLabel.split('.')[0]][optionLabel.split('.')[1]]:item[optionLabel],
-        value: typeof(item) == "string" ? item: optionValue.includes('.') ? item[optionValue.split('.')[0]][optionValue.split('.')[1]]:item[optionValue],
-        EMail: typeof(item) == "string" ? item: item["EMail"]
-    }));
+    // const options = OptionsList.map((item: any) => ({
+    //     label: typeof(item) == "string" ? item: optionLabel.includes('.') ? item[optionLabel.split('.')[0]][optionLabel.split('.')[1]]:item[optionLabel],
+    //     value: typeof(item) == "string" ? item: optionValue.includes('.') ? item[optionValue.split('.')[0]][optionValue.split('.')[1]]:item[optionValue],
+    //     EMail: typeof(item) == "string" ? item: item["EMail"]
+    // }));
     const onBlur = () => {
         document.getElementById(id)?.classList.remove('searchMandatory');
     }
@@ -43,8 +43,8 @@ const SearchableDropdown = ({ label, Title, name, id, placeholderText, className
                 title={Title}
                 placeholder={placeholderText}
                 className={className}
-                value={ isMultiple? selectedValue:( options.find( (option:any) => option.value === selectedValue )|| '')}
-                options={options}
+                value={ isMultiple? selectedValue:( OptionsList.find( (option:any) => option.value === selectedValue )|| '')}
+                options={OptionsList}
                 onChange={(selectedOption: any, actionMeta: any) => { OnChange(selectedOption, actionMeta)}}
                 onBlur={onBlur()}
                 isDisabled = {disabled}

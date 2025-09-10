@@ -1,0 +1,21 @@
+.titlebg {
+    background-color: #1d637e !important;
+    color: white;
+}
+.greybg {
+    background-color: #daeff7;
+    color: #333;
+    /* border-right: 1px solid #99daf3; */
+    line-height: 23px;
+    padding: 3px !important;
+}
+.pull-left {
+    float: left !important;
+}
+.borderlft {
+    border-left: 1px solid #99daf3;
+}
+.form-horizontal .control-label {
+    text-align: left !important;
+    padding: 0 0 0 5px !important;
+}

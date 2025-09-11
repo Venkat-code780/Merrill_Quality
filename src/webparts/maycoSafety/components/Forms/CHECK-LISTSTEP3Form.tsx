@@ -25,9 +25,6 @@ export interface CHECKLISTSTEP3FormProps{
     spHttpClient: SPHttpClient;
     context: any;
     history: any;
-    isSupplierTeam: boolean;
-    isDTETeam: boolean;
-    isProcurementTeam: boolean;
 }
 
 export interface CHECKLISTSTEP3FormState{

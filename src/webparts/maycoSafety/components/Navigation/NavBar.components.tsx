@@ -7,9 +7,6 @@ import "../CSS/left-nav.css";
 export interface NavBarProps {
     currentUserGroups: any;
     isAuthorized: boolean;
-    isSupplierTeam: boolean,
-    isDTETeam: boolean,
-    isProcurementTeam: boolean,
 }
 
 export interface NavBarState {

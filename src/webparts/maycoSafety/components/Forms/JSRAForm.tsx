@@ -27,9 +27,6 @@ export interface JSRAFormProps {
     spHttpClient: SPHttpClient;
     context: any;
     history: any;
-    isSupplierTeam: boolean;
-    isDTETeam: boolean;
-    isProcurementTeam: boolean;
 }
 
 export interface JSRAFormState {

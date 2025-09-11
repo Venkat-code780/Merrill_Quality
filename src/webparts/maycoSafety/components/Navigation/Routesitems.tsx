@@ -28,9 +28,6 @@ import CHECKLISTSTEP3Form from "../Forms/CHECK-LISTSTEP3Form";
 
 
 export interface RoutesProps {
-    isSupplierTeam: boolean,
-    isDTETeam: boolean,
-    isProcurementTeam: boolean,
     isAuthorized: boolean,
     spContext: any;
 }

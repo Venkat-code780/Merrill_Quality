@@ -15,13 +15,10 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
   public state = {
     isAuthorized: false,
     currentUserGroups: [],
-    isSupplierTeam: false,
-    isDTETeam: false,
-    isProcurementTeam: false,
+    siteURL: '',
+    webAbsoluteURL: '',
+    currPlantTitle:''
   }
-  private supplierGrp = "Supplier Team";
-  private dteGrp = "DTE Members";
-  private procurementGrp = "Procurement Team";
   private siteURL = this.props.spContext.siteAbsoluteUrl;
 
   public componentDidMount() {
@@ -32,33 +29,24 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
   private getUserRoles = async () => {
     try {
       showLoader();
-      let isSupplierTeam= false;
-      let isDTETeam= false;
-      let isProcurementTeam= false;
       let isAuthorized= false;
       let currentUserGroupsList: any[] = [];
+      let siteURL = this.props.spContext.siteAbsoluteUrl;
+      let webAbsoluteURL = this.props.spContext.webAbsoluteUrl;
+
+      var webUrlSplit = webAbsoluteURL.split("/");
+      let currPlantTitle = webUrlSplit[webUrlSplit.length-2];
 
       const spGroupsQuery = this.siteURL + "/_api/web/currentuser/groups";
       await this.props.spHttpClient.get( spGroupsQuery, SPHttpClient.configurations.v1 ).then( (res: SPHttpClientResponse) => {
         if(res.ok){
           res.json().then((resp)=>{
-            let items = resp.value;
-            for( let group of items ){
-              if( group.Title == this.supplierGrp ){ isSupplierTeam = true; }
-              if( group.Title == this.dteGrp ){ isDTETeam = true; }
-              if( group.Title == this.procurementGrp ){ isProcurementTeam = true; }
-
-              currentUserGroupsList.push(group.Title);
-            }
-            if( !isSupplierTeam && !isDTETeam && !isProcurementTeam ){ isAuthorized = false }
-            else{ isAuthorized = true; }
+            // let items = resp.value;
 
             this.setState({
-              isSupplierTeam: isSupplierTeam,
-              isDTETeam: isDTETeam,
-              isProcurementTeam: isProcurementTeam,
               isAuthorized: isAuthorized,
-              currentUserGroups: currentUserGroupsList
+              currentUserGroups: currentUserGroupsList,
+              siteURL, webAbsoluteURL, currPlantTitle
             });
           });  
         }

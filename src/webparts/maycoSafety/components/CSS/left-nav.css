@@ -74,8 +74,8 @@ color: black;
   }
   
   .sidebar {
-    max-width: 245px;
-    min-width: 245px;
+    max-width: 200px;
+    min-width: 200px;
     padding: 8px 5px;
     position: relative;
     transition: all .3s;

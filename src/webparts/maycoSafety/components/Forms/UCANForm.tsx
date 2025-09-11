@@ -313,8 +313,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.UCAN_x0020_Type}
-                                                optionLabel={""}
-                                                optionValue={""}
                                                 OptionsList={[{label:"Near Miss", value:"Near Miss"}, {label:"Unsafe Act", value:"Unsafe Act"}, {label:"Unsafe Condition", value:"Unsafe Condition"}]}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divUCANType" ) }}
                                                 isRequired={true}
@@ -334,8 +332,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.Plant}
-                                                optionLabel={""}
-                                                optionValue={""}
                                                 OptionsList={this.state.plantsData}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPlant" ) }}
                                                 isRequired={true}
@@ -355,8 +351,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.Department}
-                                                optionLabel={""}
-                                                optionValue={""}
                                                 OptionsList={this.state.departmentOptions}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment" ) }}
                                                 isRequired={true}
@@ -376,8 +370,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.Zone}
-                                                optionLabel={""}
-                                                optionValue={""}
                                                 OptionsList={this.state.zoneOptions}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone" ) }}
                                                 isRequired={true}
@@ -397,8 +389,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.Machine}
-                                                optionLabel={""}
-                                                optionValue={""}
                                                 OptionsList={this.state.machineOptions}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine" ) }}
                                                 isRequired={ this.state.formData.UCAN_x0020_Type != "Unsafe Act"}
@@ -418,8 +408,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.UAType}
-                                                optionLabel={""}
-                                                optionValue={""}
                                                 OptionsList={this.state.uaTypeData}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divType" ) }}
                                                 isRequired={true}
@@ -439,8 +427,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.Sub_x002d_Type}
-                                                optionLabel={""}
-                                                optionValue={""}
                                                 OptionsList={this.state.subTypeOptions}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSubType" ) }}
                                                 isRequired={true}
@@ -493,8 +479,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                         placeholderText={""}
                                                         className={""}
                                                         selectedValue={this.state.formData.Shift}
-                                                        optionLabel={""}
-                                                        optionValue={""}
                                                         OptionsList={this.state.shiftData}
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift" ) }}
                                                         isRequired={true}

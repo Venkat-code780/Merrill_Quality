@@ -136,8 +136,6 @@ class RoutesItems extends React.Component<RoutesProps,RoutesState> {
         return(
             <Suspense fallback={<div></div>}>
                 <Routes>
-                    {/* <Route path="/" element={ this.props.isAuthorized ? <WrapperHome /> : <UnAuthorized {...this.props} /> }/>
-                    <Route path="/Home" element={ this.props.isAuthorized ? <WrapperHome /> : <UnAuthorized {...this.props} /> }/> */}
                     <Route path="/" element={  <WrapperHome /> }/>
                     <Route path="/Home" element={ <WrapperHome />}/>
                     {/* Masters */}

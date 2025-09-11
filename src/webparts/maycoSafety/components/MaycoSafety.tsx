@@ -29,7 +29,6 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
   private getUserRoles = async () => {
     try {
       showLoader();
-      let isAuthorized= false;
       let currentUserGroupsList: any[] = [];
       let siteURL = this.props.spContext.siteAbsoluteUrl;
       let webAbsoluteURL = this.props.spContext.webAbsoluteUrl;
@@ -44,7 +43,7 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
             // let items = resp.value;
 
             this.setState({
-              isAuthorized: isAuthorized,
+              isAuthorized: true,
               currentUserGroups: currentUserGroupsList,
               siteURL, webAbsoluteURL, currPlantTitle
             });
@@ -113,10 +112,8 @@ private removeAll = () => {
         <ToastContainer />
         <HashRouter>
           <div className='menu-hide wrapper d-flex align-items-stretch' id="sideMenuNav">
-            {/* {this.state.isAuthorized ? <NavBar {...this.props} {...this.state} />: null}
-            {this.state.isAuthorized ? <RoutesItems {...this.props} {...this.state} /> : null} */}
-            { <NavBar {...this.props} {...this.state} />}
-            { <RoutesItems {...this.props} {...this.state} />}
+            { this.state.isAuthorized ? <NavBar {...this.props} {...this.state} />: null}
+            { this.state.isAuthorized ? <RoutesItems {...this.props} {...this.state} />: null}
           </div>
         </HashRouter>
       </React.Fragment>

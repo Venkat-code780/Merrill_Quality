@@ -9,7 +9,7 @@ import "@pnp/sp/items";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
 import "../CSS/UCANForm.css";
-import { ActionStatus } from "../Constants/Contants";
+import { ActionStatus, ControlType } from "../Constants/Contants";
 import { showToast } from "../Shared/Toaster";
 import { highlightCurrentNav } from "../Utilities/HighlightCurrentComponent";
 import SearchableDropdown from "../Shared/Dropdown";
@@ -17,6 +17,7 @@ import DatePickercontrol from "../Shared/DatePickerField";
 import { format } from "date-fns";
 import DateUtilities from "../Utilities/DateUtilities";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
+import formValidation from "../Utilities/FormValidator";
 // import FileUpload from "../Shared/FileUpload";
 // import InputCheckBox from "../Shared/InputCheckBox";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -39,16 +40,8 @@ export interface UCANFormState {
 export default class UCANForm extends React.Component<UCANFormProps, UCANFormState> {
 
     private currPlantObj:any;
-    private ddlUCANType:any;
-    private ddlPlant:any;
-    private ddlDepartment:any;
-    private ddlZone:any;
-    private ddlMachine:any;
-    private ddlUAType:any;
-    private ddlSubType:any;
     private txtReportedBy:any;
     private txtLocationPersons:any;
-    private ddlShift:any;
     private txtOriginialTagNo:any;
     private txtDate:any;
     private rdSafetyTag:any;
@@ -109,16 +102,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
         super(props);
         this.MaycoURL=`${this.props.siteURL}/mayco`;
 
-        this.ddlUCANType = React.createRef();
-        this.ddlPlant = React.createRef();
-        this.ddlDepartment = React.createRef();
-        this.ddlZone = React.createRef();
-        this.ddlMachine = React.createRef();
-        this.ddlUAType = React.createRef();
-        this.ddlSubType = React.createRef();
         this.txtReportedBy = React.createRef();
         this.txtLocationPersons = React.createRef();
-        this.ddlShift = React.createRef();
         this.txtOriginialTagNo = React.createRef();
         this.txtDate = React.createRef();
         this.rdSafetyTag = React.createRef();
@@ -175,7 +160,21 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
         }
     }
 
-    private handleChange= (event: any, actionMeta?: any, id?:any) => {
+    private handleChange= (event: any) => {
+        const formData:any = {...this.state.formData};
+
+        const name = event.target.name;
+        let inputValue = (event.target.type == "text" || event.target.type == "textarea") ? event.target.value : event.target.checked ? event.target.value : '';
+        let classArr: any = event.target.className;
+
+        if (classArr.includes("onlyNum")) {
+            inputValue = inputValue.replace(/[^0-9]/g, '');
+        }
+        formData[name] = inputValue;
+        this.setState({formData });
+    }
+
+    private handleDropdownChange = ( event: any, actionMeta: any, id:any ) => {
         const formData:any = {...this.state.formData};
         let departmentData = [...this.state.departmentData];
         let departmentOptions:any = [...this.state.departmentOptions];
@@ -185,64 +184,47 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
         let machineOptions:any = [...this.state.machineOptions];
         let subTypeData = [...this.state.subTypeData];
         let subTypeOptions:any = [...this.state.subTypeOptions];
+        const name = actionMeta.name;
+        const value = actionMeta.action == "clear" ? '' : event.value;
+        formData[name] = value;
 
-        if (actionMeta == undefined) {
-            const name = event.target.name;
-            let inputValue = (event.target.type == "text" || event.target.type == "textarea") ? event.target.value : event.target.checked ? event.target.value : '';
-            let classArr: any = event.target.className;
+        if( name == "Department" ){
+            formData.Zone = "";
+            formData.Machine = "";
 
-            if (classArr.includes("onlyNum")) {
-                inputValue = inputValue.replace(/[^0-9]/g, '');
+            if( actionMeta.action != "clear"){
+                zoneOptions = zoneData.filter( (option:any) => option.Department.Id == event.id ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
             }
-            formData[name] = inputValue;
-
-            
+            else{ zoneOptions = [];}
+            machineOptions = [];
         }
-        else{
-            const name = actionMeta.name;
-            const value = actionMeta.action == "clear" ? '' : event.value;
-            formData[name] = value;
+        else if( name == "Zone" ){
+            formData.Machine = "";
 
-            if( name == "Department" ){
-                formData.Zone = "";
-                formData.Machine = "";
-
-                if( actionMeta.action != "clear"){
-                    zoneOptions = zoneData.filter( (option:any) => option.Department.Id == event.id ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-                }
-                else{ zoneOptions = [];}
-                machineOptions = [];
+            if( actionMeta.action != "clear"){
+                machineOptions = machineData.filter( (option:any) => option.Zone.Id == event.id ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
             }
-            else if( name == "Zone" ){
-                formData.Machine = "";
-
-                if( actionMeta.action != "clear"){
-                    machineOptions = machineData.filter( (option:any) => option.Zone.Id == event.id ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-                }
-                else{ machineOptions = [];}
-            }
-            else if( name == "UAType" ){
-                formData.Sub_x002d_Type = "";
-
-                if( actionMeta.action != "clear"){
-                    subTypeOptions = subTypeData.filter( (option:any) => option.UAType.Id == event.id ).map((item: any) => ({ label: item.Title, value: item.Id, }));
-                }
-                else{ subTypeOptions = [];}
-            }
-
-            if( !([null, undefined, ''].includes(id)) ){
-                var ddlElement = document.getElementById(id);
-                if( !([null, undefined, ''].includes(value)) ){
-                    ddlElement?.classList.add("active");
-                }
-                else{
-                    ddlElement?.classList.remove("active");
-                }
-            }
-
-            console.log(actionMeta);
-            console.log(event);
+            else{ machineOptions = [];}
         }
+        else if( name == "UAType" ){
+            formData.Sub_x002d_Type = "";
+
+            if( actionMeta.action != "clear"){
+                subTypeOptions = subTypeData.filter( (option:any) => option.UAType.Id == event.id ).map((item: any) => ({ label: item.Title, value: item.Id, }));
+            }
+            else{ subTypeOptions = [];}
+        }
+
+        if( !([null, undefined, ''].includes(id)) ){
+            var ddlElement = document.getElementById(id);
+            if( !([null, undefined, ''].includes(value)) ){
+                ddlElement?.classList.add("active");
+            }
+            else{
+                ddlElement?.classList.remove("active");
+            }
+        }
+
         this.setState({formData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, subTypeData, subTypeOptions });
     }
     private handleDateChange = (dateValue: any, name:any, divId:any) => {
@@ -271,7 +253,32 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
     }
 
     public handleSubmit = () => {
+        var formData = {...this.state.formData};
+        var data = {
+            ucanType: {val: this.state.formData.UCAN_x0020_Type, required: true, Name: "Near miss, Unsafe act, Unsafe condition", Type: ControlType.reactSelect, Focusid: "ddlUCANType"},
+            plant: {val: this.state.formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant"},
+            department: {val: this.state.formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment"},
+            zone: {val: this.state.formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone"},
+            machine: {val: this.state.formData.Machine, required: (formData.UCAN_x0020_Type != "Unsafe Act"), Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine"},
+            uaType: {val: this.state.formData.UAType, required: true, Name: "UA Type", Type: ControlType.reactSelect, Focusid: "ddlUAType"},
+            subType: {val: this.state.formData.Sub_x002d_Type, required: true, Name: "Sub Type", Type: ControlType.reactSelect, Focusid: "ddlSubType"},
+            shift: {val: this.state.formData.Shift, required: true, Name: "Shift", Type: ControlType.reactSelect, Focusid: "ddlShift"},
+            date: {val: this.state.formData.Date, required: true, Name: "Date", Type: ControlType.date, Focusid: "divDate"},
+            dateToday: {val: this.state.formData.Date, required: true, Name: "Date", Type: ControlType.todayDate, Focusid: "divDate"},
+            dateCompletedToday: {val: this.state.formData.Date_x0020_Completed, required: true, Name: "Date", Type: ControlType.todayDate, Focusid: "divDateCompleted"},
+            dateComparision: {startDate: this.state.formData.Date_x0020_Completed, endDate: this.state.formData.Date_x0020_Completed, required: true, startDateName: "Date", endDateName:"Date Completed", Type: ControlType.todayDate, Focusid: "divDateCompleted"},
+            actionCompleted: {val: this.state.formData.Action_x0020_Completed, required: (formData.Date_x0020_Completed != ''), Name: "Action Completed", Type: ControlType.string, Focusid: this.txtActionCompleted}
+        }
 
+        let isValid = formValidation.FormValidation(data);
+        
+        if( isValid.status ){
+            console.log("Valid Data");
+        }
+        else{
+            showToast("error", isValid.message);
+            hideLoader();
+        }
     }
 
     private handlefullClose = () => {
@@ -309,11 +316,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 optionLabel={""}
                                                 optionValue={""}
                                                 OptionsList={[{label:"Near Miss", value:"Near Miss"}, {label:"Unsafe Act", value:"Unsafe Act"}, {label:"Unsafe Condition", value:"Unsafe Condition"}]}
-                                                // OptionsList={["Near Miss", "Unsafe Act","Unsafe Condition"]}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divUCANType" ) }}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divUCANType" ) }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                refElement={this.ddlUCANType}
                                                 noOptionsMessage="No UCAN Types"
                                             />
                                         </div>
@@ -332,10 +337,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 optionLabel={""}
                                                 optionValue={""}
                                                 OptionsList={this.state.plantsData}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divPlant" ) }}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPlant" ) }}
                                                 isRequired={true}
                                                 disabled={true}
-                                                refElement={this.ddlPlant}
                                                 noOptionsMessage="No Plants available"
                                             />
                                         </div>
@@ -354,10 +358,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 optionLabel={""}
                                                 optionValue={""}
                                                 OptionsList={this.state.departmentOptions}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divDepartment" ) }}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment" ) }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                refElement={this.ddlDepartment}
                                                 noOptionsMessage="No Departments"
                                             />
                                         </div>
@@ -376,10 +379,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 optionLabel={""}
                                                 optionValue={""}
                                                 OptionsList={this.state.zoneOptions}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divZone" ) }}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone" ) }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                refElement={this.ddlZone}
                                                 noOptionsMessage="No Zones"
                                             />
                                         </div>
@@ -398,10 +400,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 optionLabel={""}
                                                 optionValue={""}
                                                 OptionsList={this.state.machineOptions}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divMachine" ) }}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine" ) }}
                                                 isRequired={ this.state.formData.UCAN_x0020_Type != "Unsafe Act"}
                                                 disabled={this.state.isInputDisabled}
-                                                refElement={this.ddlMachine}
                                                 noOptionsMessage="No Machines"
                                             />
                                         </div>
@@ -420,10 +421,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 optionLabel={""}
                                                 optionValue={""}
                                                 OptionsList={this.state.uaTypeData}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divType" ) }}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divType" ) }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                refElement={this.ddlUAType}
                                                 noOptionsMessage="No Types"
                                             />
                                         </div>
@@ -442,10 +442,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 optionLabel={""}
                                                 optionValue={""}
                                                 OptionsList={this.state.subTypeOptions}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divSubType" ) }}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSubType" ) }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                refElement={this.ddlSubType}
                                                 noOptionsMessage="No SubTypes"
                                             />
                                         </div>
@@ -497,10 +496,9 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                         optionLabel={""}
                                                         optionValue={""}
                                                         OptionsList={this.state.shiftData}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleChange(selectedOption, actionMeta, "divShift" ) }}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift" ) }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        refElement={this.ddlShift}
                                                         noOptionsMessage="No Shifts"
                                                     />
                                                 </div>

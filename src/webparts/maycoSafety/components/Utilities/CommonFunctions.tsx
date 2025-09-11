@@ -64,7 +64,7 @@ import { ActionStatus } from "../Constants/Contants";
 
 // Initialize SPFI instance for mayco site
 export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
-    const getListItems= async (ListName:string,selectQuery:string,filterQuery:string,expand:string,URL:string) : Promise<any[]> => 
+    const getListItems= async (ListName:string,URL:string,selectQuery:string='',expand:string='',filterQuery:string='') : Promise<any[]> => 
         {
         const SiteURL: SPFI = spfi(URL).using(SPFx(context)); 
             try{
@@ -73,8 +73,7 @@ export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
                 .items.top(5000)
                 .select(selectQuery)
                 .filter(filterQuery)
-                .expand(expand)
-                .orderBy("Title", true)()
+                .expand(expand)()
                  return items;
         } catch (error) {
             console.error("Error fetching List:", error);

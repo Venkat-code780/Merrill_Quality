@@ -1,126 +1,125 @@
 /* Sharepoint default classes */
 /* Hiding sharepoint navigation */
 #sideNavBox{ 
-    display: none !important;
+  display: none !important;
 }
 .ms-webpart-titleText {
-    display: none;
+  display: none;
 }
 .ms-core-pageTitle {
-    display: none;
+  display: none;
 }
 #contentRow{
-    padding: 0 !important;
+  padding: 0 !important;
 }
 .FormContent {
-    position: relative;
-    margin-bottom: 10px;
-    margin: auto;
-    width: 100%;
-    background-color: rgb(255 255 255);
-    border: 1px solid #e0e0e0;
-    border-radius: 0;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 8px/7px;
-    box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 12px;
-    -webkit-box-shadow: rgb(0 0 0 / 23%) 0px 2px 24px;
-    -ms-box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 12px;
-    -moz-box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 12px;
-    transition: all .4s ease 0s;
-    -webkit-transition: all .4s ease 0s;
+  position: relative;
+  margin-bottom: 10px;
+  margin: auto;
+  width: 100%;
+  background-color: rgb(255 255 255);
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 8px/7px;
+  box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 12px;
+  -webkit-box-shadow: rgb(0 0 0 / 23%) 0px 2px 24px;
+  -ms-box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 12px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 12px;
+  transition: all .4s ease 0s;
+  -webkit-transition: all .4s ease 0s;
 }
 .title {
-    background-color: #0b3e50;
-    /* background-color: #572ba7; */
-    color: white;
-    font-size: 1.5rem;
-    padding: 6px 9px;
-    position: absolute;
-    width: 100%;
-    left: -10px;
-    top: 10px;
+  background-color: #0b3e50;
+  /* background-color: #572ba7; */
+  color: white;
+  font-size: 1.5rem;
+  padding: 6px 9px;
+  position: absolute;
+  width: 100%;
+  left: -10px;
+  top: 10px;
 }
 .light-box {
-    border: 1px solid #eaeaea;
-    background-color: white;
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(239, 239, 239);
-    border-image: initial;
-    border-radius: 3px;
-    transition: all 0.4s ease 0s;
-    position: relative;
+  border: 1px solid #eaeaea;
+  background-color: white;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(239, 239, 239);
+  border-image: initial;
+  border-radius: 3px;
+  transition: all 0.4s ease 0s;
+  position: relative;
 }
 .border-box-shadow {
-    box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
-    -webkit-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
-    -ms-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
-    -moz-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
-    transition: all .4s ease 0s;
-    -webkit-transition: all .4s ease 0s;
+  box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+  -webkit-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+  -ms-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+  -moz-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+  transition: all .4s ease 0s;
+  -webkit-transition: all .4s ease 0s;
 }
 .mandatoryhastrick{
-    color: red;
-    font-size: 1rem;
+  color: red;
+  font-size: 1rem;
 }
 .bs-field{
-    margin: 15px 0px ;
+  margin: 15px 0px ;
 }
 
 /* Searchable dropdown CSS */
 .custom-dropdown{
-    position: relative;
-    /* margin-top: 10px; */
-  }
-  .active.custom-dropdown label {
-      left: 0;
-      position: absolute;
-      top: 3px;
-      transform: scale(.85);
-      z-index: 1;
-      pointer-events: none;
-    }
-
-  .custom-dropdown:has(.css-t3ipsp-control),
-  .custom-dropdown:has(.css-1nmdiq5-menu) {
-    label {
-      left: 0;
-      position: absolute;
-      top: 3px;
-      transform: scale(.85);
-      z-index: 1;
-      pointer-events: none;
-    }
-  }
-   .custom-dropdown label {
-      color: #212529a6;
-      left: .6rem;
-      position: absolute;
-      top: 9px;
-      z-index: 1;
-      pointer-events: none;
-    }
- 
-  /* .searchMandatory .css-13cymwt-control { */
-  .searchMandatory .css-t3ipsp-control, .searchMandatory .css-13cymwt-control {
-    box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75) !important;
-    border-color: transparent !important;
-  }
-  .custom-dropdown .css-hlgwow{
-    padding: 16px 8px 8px 8px;
+  position: relative;
 }
-  .css-1nmdiq5-menu{
-    z-index: 100 !important;
+.active.custom-dropdown label {
+  left: 5px;
+  position: absolute;
+  top: 3px;
+  transform: scale(.85);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.custom-dropdown:has(.css-t3ipsp-control),
+.custom-dropdown:has(.css-1nmdiq5-menu) {
+  label {
+    left: 0;
+    position: absolute;
+    top: 3px;
+    transform: scale(.85);
+    z-index: 1;
+    pointer-events: none;
   }
-  
-  /* separator */
-  .css-1u9des2-indicatorSeparator{
-    display: none;
-  }
-  .css-894a34-indicatorSeparator{
-    display: none;
-  }
-  .react-datepicker-wrapper{
+}
+.custom-dropdown label {
+  color: #212529a6;
+  left: .6rem;
+  position: absolute;
+  top: 9px;
+  z-index: 1;
+  pointer-events: none;
+}
+ 
+/* .searchMandatory .css-13cymwt-control { */
+.searchMandatory .css-t3ipsp-control, .searchMandatory .css-13cymwt-control {
+  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75) !important;
+  border-color: transparent !important;
+}
+.custom-dropdown .css-hlgwow{
+  padding: 16px 8px 8px 8px;
+}
+.css-1nmdiq5-menu{
+  z-index: 100 !important;
+}
+
+/* separator */
+.css-1u9des2-indicatorSeparator{
+  display: none;
+}
+.css-894a34-indicatorSeparator{
+  display: none;
+}
+.react-datepicker-wrapper{
   width: 100%;
 }
 .react-datepicker-popper{
@@ -137,14 +136,6 @@
 .react-datepicker__view-calendar-icon input {
   padding: 6px 31px 5px 11px !important;
 }
-/* .form-floating label {
-    padding: .6rem !important;
-} */
-/* .form-floating .form-control {
-    padding: 1.5rem .6rem .5rem .6rem!important;
-    min-height: auto;
-    height: auto;
-} */
 
 .borderLine {
     border: 1px solid #99daf3;
@@ -159,33 +150,58 @@
     margin: 0px !important;
     padding: 0px !important;
 }
-    .c-date-picker{
-      position: relative;
-    }
-    .c-date-picker .react-datepicker__calendar-icon{
-      top: 11px;
-    }
-    .active.c-date-picker label {
-      left: 10px;
-      position: absolute;
-      top: 0px;
-      transform: scale(.85);
-      z-index: 1;
-      pointer-events: none;
-    }
-    
-    .c-date-picker label {
-    color: #212529a6;
-    left: 10px;
-    pointer-events: none;
-    position: absolute;
-    top: 9px;
-    z-index: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 170px;
-    }
-    .c-date-picker .form-control.DatePicker{
-      padding: 1.4rem .6rem .5rem !important;
-    }
+.c-date-picker{
+  position: relative;
+}
+.c-date-picker .react-datepicker__calendar-icon{
+  top: 11px;
+}
+.active.c-date-picker label {
+  left: 10px;
+  position: absolute;
+  top: 0px;
+  transform: scale(.85);
+  z-index: 1;
+  pointer-events: none;
+}
+.c-date-picker label {
+  color: #212529a6;
+  left: 10px;
+  pointer-events: none;
+  position: absolute;
+  top: 9px;
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 170px;
+}
+.c-date-picker .form-control.DatePicker{
+  padding: 1.4rem .6rem .5rem !important;
+}
+/* validation */
+.mandatory-FormContent-focus + .select2-container .select2-selection:focus{
+  border-color: transparent!important;
+  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important; 
+  outline: none!important;
+}
+.mandatory-FormContent-focus:focus{
+  border-color: transparent!important;
+  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;    
+  outline: none!important;    
+}
+.mandatory-FormContent-focus .custom-control-input:focus~.custom-control-label::before{
+  border-color: transparent;
+  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
+  outline: none!important;
+}
+.focus-Div{
+  border: red solid 3px !important;
+}
+.mandatoryhastrick{
+  color: red;
+  font-size: 1rem;
+}

@@ -15,7 +15,7 @@ function ValidateForm(data:any){
     }
     let status = true;
     let message ="";
-    let propertieTypes={Number:ControlType.number,String:ControlType.string,MobileNumber:ControlType.mobileNumber,Email:ControlType.email,People:ControlType.people,Date:ControlType.date,compareDates:ControlType.compareDates, reactSelect: ControlType.reactSelect, radio: ControlType.radio, todayDate: ControlType.todayDate, compareNumbers: ControlType.compareNum, ArrayField: ControlType.array, limitedNumber: ControlType.limitedNumber};
+    let propertieTypes={Number:ControlType.number,String:ControlType.string,MobileNumber:ControlType.mobileNumber,Email:ControlType.email,People:ControlType.people,Date:ControlType.date,compareDates:ControlType.compareDates, reactSelect: ControlType.reactSelect, radio: ControlType.radio, lessthanTodayDate: ControlType.lessthanTodayDate, greaterthanTodayDate: ControlType.greaterthanTodayDate, compareNumbers: ControlType.compareNum, ArrayField: ControlType.array, limitedNumber: ControlType.limitedNumber};
     for (let key in data) {
         let value = data[key].val;
         let type =data[key].Type;
@@ -117,7 +117,7 @@ function ValidateForm(data:any){
             let startDate = data[key].startDate;
             let EndDate = data[key].endDate;
             if( !([null, undefined, ''].includes(startDate)) && !([null, undefined, '']).includes(EndDate)){
-                if(EndDate.getTime() < startDate.getTime()){
+                if(new Date(EndDate).getTime() < new Date(startDate).getTime()){
                     message ="'"+data[key].endDateName+"' must be greater than '"+data[key].startDateName+"'.";
                     let prpData =data[key].Focusid;
                     
@@ -125,14 +125,31 @@ function ValidateForm(data:any){
                     
                     if( element ){
                         element.focus();
-                        element.classList.add('mandatory-FormContent-focus');
+                        setTimeout(() =>{element?.classList.add('mandatory-FormContent-focus');},100);
                     }
                     status = false;
                     break;
                 }
             }
         }
-        else if( propertieTypes.todayDate == type && ![null, undefined, ''].includes(value) ){
+        else if( propertieTypes.lessthanTodayDate == type && ![null, undefined, ''].includes(value) ){
+            let dateVal = new Date(value).setHours(0,0,0,0);
+            let todayDate = new Date().setHours(0,0,0,0);
+            if( dateVal > todayDate ){
+                message ="'"+data[key].Name+"' should be less than or equals to Today.";
+                let prpData =data[key].Focusid;
+
+                let element = document.getElementById(prpData);
+
+                if( element ){
+                    element.focus();
+                    element.classList.add('mandatory-FormContent-focus');
+                }
+                status = false;
+                break;
+            }
+        }
+        else if( propertieTypes.greaterthanTodayDate == type && ![null, undefined, ''].includes(value) ){
             let dateVal = new Date(value).setHours(0,0,0,0);
             let todayDate = new Date().setHours(0,0,0,0);
             if( dateVal < todayDate ){

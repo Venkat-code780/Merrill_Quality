@@ -1,0 +1,79 @@
+.imageUploader {
+  margin: 10px 0;
+}
+
+.label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.uploadContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ccc;
+  padding: 8px;
+  width: 100%;
+  /* max-width: 400px; */
+}
+
+.uploadIcon {
+  width: 30px;
+  height: 30px;
+}
+
+.previewContainer {
+  margin-top: 10px;
+}
+
+.previewImage {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border: 1px solid #999;
+  transition: transform 0.2s;
+}
+.previewImage:hover {
+  transform: scale(1.03);
+}
+.removeButton {
+  background-color: #dc3545; /* Bootstrap danger */
+  color: white;
+  border: none;
+  padding: 2px;
+  font-size: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  margin-left: 5px;
+}
+
+.removeButton:hover {
+  background-color: #c82333;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modalContent {
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.fullImage {
+  max-width: 90vh;
+  max-height: 90vh;
+  /* max-width: 100%;
+  max-height: 100%; */
+}

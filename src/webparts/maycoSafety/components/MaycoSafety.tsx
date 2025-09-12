@@ -17,7 +17,8 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
     currentUserGroups: [],
     siteURL: '',
     webAbsoluteURL: '',
-    currPlantTitle:''
+    currPlantTitle:'',
+    isSuperAdmin:false
   }
   private siteURL = this.props.spContext.siteAbsoluteUrl;
 
@@ -30,6 +31,8 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
     try {
       showLoader();
       let currentUserGroupsList: any[] = [];
+      let superAdminGrp = "WCM Super Admin";
+      let isSuperAdmin = false;
       let siteURL = this.props.spContext.siteAbsoluteUrl;
       let webAbsoluteURL = this.props.spContext.webAbsoluteUrl;
 
@@ -40,12 +43,17 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
       await this.props.spHttpClient.get( spGroupsQuery, SPHttpClient.configurations.v1 ).then( (res: SPHttpClientResponse) => {
         if(res.ok){
           res.json().then((resp)=>{
-            // let items = resp.value;
+            let items = resp.value;
+             for( let group of items ){
+              if( group.Title == superAdminGrp ){ isSuperAdmin = true; }
+
+              currentUserGroupsList.push(group.Title);
+            }
 
             this.setState({
               isAuthorized: true,
               currentUserGroups: currentUserGroupsList,
-              siteURL, webAbsoluteURL, currPlantTitle
+              siteURL, webAbsoluteURL, currPlantTitle, isSuperAdmin
             });
           });  
         }

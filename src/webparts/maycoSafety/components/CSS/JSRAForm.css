@@ -1,0 +1,39 @@
+
+/* Required CSS */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+.divSection{
+   background-color: #daeff7;
+   margin-bottom: 20px;
+}
+.SectionHeader {
+  background-color: #e0e0e0;
+  padding: 10px;
+  font-weight: bold;
+  color: #333;
+  font-size: 20px;
+}
+.bluebg {
+  background-color: #56c5f0;
+  font-weight: bold;
+}
+
+.RiskLevel-0
+{
+background-color:#FFFFFF ;
+}
+.RiskLevel-1
+{
+background-color:#009900 ;
+}
+.RiskLevel-2
+{
+background-color:#FFFF00 ;
+}
+.RiskLevel-3
+{
+background-color:#CC0000 ;
+}

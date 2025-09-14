@@ -118,7 +118,7 @@ function ValidateForm(data:any){
             let EndDate = data[key].endDate;
             if( !([null, undefined, ''].includes(startDate)) && !([null, undefined, '']).includes(EndDate)){
                 if(new Date(EndDate).getTime() < new Date(startDate).getTime()){
-                    message ="'"+data[key].endDateName+"' must be greater than '"+data[key].startDateName+"'.";
+                    message ="'"+data[key].endDateName+"' must be greater than or equal to '"+data[key].startDateName+"'.";
                     let prpData =data[key].Focusid;
                     
                     let element = document.getElementById(prpData);

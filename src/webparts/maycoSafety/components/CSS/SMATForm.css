@@ -1,0 +1,13 @@
+.darkgreybg {
+    background-color: #3eafdb;
+    color: #fff;
+    height: 25px;
+    overflow: hidden;
+    padding: 6px 5px 0px;
+}
+.lightgreybg {
+    background-color: #6cbad8;
+    color: #fff;
+    overflow: hidden;
+    padding: 0 0 0 5px;
+}

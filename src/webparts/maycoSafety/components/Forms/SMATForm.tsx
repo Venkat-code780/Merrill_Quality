@@ -9,7 +9,7 @@ import "@pnp/sp/items";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
 import "../CSS/SMATForm.css";
-import { ActionStatus } from "../Constants/Contants";
+import { ActionStatus, ControlType } from "../Constants/Contants";
 import { showToast } from "../Shared/Toaster";
 import { highlightCurrentNav } from "../Utilities/HighlightCurrentComponent";
 import DatePickercontrol from "../Shared/DatePickerField";
@@ -17,91 +17,104 @@ import DateUtilities from "../Utilities/DateUtilities";
 import { format } from "date-fns";
 import SearchableDropdown from "../Shared/Dropdown";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
+import MultipleImageUploader from "../Shared/MutipleImageUploader";
+import formValidation from "../Utilities/FormValidator";
 
-export interface SMATFormProps{
+export interface SMATFormProps {
     match: any;
     spContext: any;
     spHttpClient: SPHttpClient;
     context: any;
     history: any;
-    userDisplayName:string;
-    siteURL:string;
-    webAbsoluteURL:string;
-    currPlantTitle:string;
+    userDisplayName: string;
+    siteURL: string;
+    webAbsoluteURL: string;
+    currPlantTitle: string;
 }
 
-export interface SMATFormState{
+export interface SMATFormState {
 }
 
- export default class SMATForm extends React.Component<SMATFormProps,SMATFormState>{
+export default class SMATForm extends React.Component<SMATFormProps, SMATFormState> {
 
     private sp = spfi().using(SPFx(this.props.context));
-    private MaycoURL:string;
-    private currPlantObj:any;
+    private MaycoURL: string;
+    private currPlantObj: any;
     private SMATList = "";
 
-    private txtComments:any;
-    private txtActionCompleted:any;
+    private txtComments: any;
+    private txtActionCompleted: any;
     public state = {
-        formData:{
-            Plant:'',
-            Department:'',
-            Zone:'',
-            Machine:'',
-            Shifts:'',
-            ToolNumber:'',
-            Comments:'',
-            AuditorName:'',
-            Supervisor:'',
-            WorkCell:'',
-            ShiftType:'',
-            unsafeactCount:'',
-            unsafeconditionCount:'',
-            ActionCompleted:'',
-            WCCDate:'',
-            CompletedDate:'',
-            Year:'',
-            YearMonth:''
+        formData: {
+            Plant: '',
+            Department: '',
+            Zone: '',
+            Machine: '',
+            Shifts: '',
+            ToolNumber: '',
+            Comments: '',
+            AuditorName: '',
+            Supervisor: '',
+            WorkCell: '',
+            ShiftType: '',
+            unsafeactCount: '',
+            unsafeconditionCount: '',
+            ActionCompleted: '',
+            WCCDate: '',
+            CompletedDate: '',
+            Year: '',
+            YearMonth: '',
+            Attachment: ''
         },
-        childFormData:{
-            wccId:0,
-            WccCategory:'',
-            WccSubCategory:'',
-            Attachment:'',
-            SubCategoryStatus:'',
-            SubCategoryComments:''
+        childFormData: {
+            wccId: 0,
+            WccCategory: '',
+            WccSubCategory: '',
+            Attachment: '',
+            SubCategoryStatus: '',
+            SubCategoryComments: ''
         },
-        plantsData:[],
-        departmentData:[],
-        departmentOptions:[],
-        zoneData:[],
-        zoneOptions:[],
-        machineData:[],
-        machineOptions:[],
-        shiftData:[],
-        auditorNameData:[],
-        workCellData:[],
-        workCellOptions:[],
-        toolNumbersData:[],
-        toolNumbersOptions:[],
-        supervisorsData:[],
-        allCategoriesData:[],
-        activeAuditCategoriesData:[],
-        Homeredirect:false,
-        isEditForm:false,
-        ItemId:0,
+        plantsData: [],
+        departmentData: [],
+        departmentOptions: [],
+        zoneData: [],
+        zoneOptions: [],
+        machineData: [],
+        machineOptions: [],
+        shiftData: [],
+        auditorNameData: [],
+        workCellData: [],
+        workCellOptions: [],
+        toolNumbersData: [],
+        toolNumbersOptions: [],
+        supervisorsData: [],
+        allMappingData: [
+            {
+                WCCID: '',
+                WccCategory: '',
+                WccSubCategory: '',
+                Attachment: '',
+                SubCategoryStatus: '',
+                SubCategoryComments: '',
+            }
+        ],
+        activeAuditCategoriesData: [],
+        auditCategoryStatusData: [],
+        Homeredirect: false,
+        isEditForm: false,
+        ItemId: 0,
         isInputDisabled: false,
         showSubmit: true
     }
 
-    constructor(props: SMATFormProps){
+    constructor(props: SMATFormProps) {
         super(props);
-        this.MaycoURL=`${this.props.siteURL}/mayco`;
+        this.MaycoURL = `${this.props.siteURL}/mayco`;
 
         this.txtComments = React.createRef();
         this.txtActionCompleted = React.createRef();
     }
-    
+
     public componentDidMount(): void {
         highlightCurrentNav("liSMATForm");
         document.title = "Mayco - Safety | SMAT";
@@ -111,34 +124,36 @@ export interface SMATFormState{
     private getOnLoadData = async () => {
         try {
             showLoader();
-            var formData = {...this.state.formData};
+            var formData = { ...this.state.formData };
             let itemId = this.props.match.params.id;
             let showSubmit = false;
 
-            let  { getListItems } = initCommonFunctions(this.props.context,this.props.siteURL);
-            let PlantList='Plant', PlantSelQuery='Title,*',plantFiltQuery='',PlantExpFields='';
-            let DepartmentList='Department', DepartmentSelQuery='Title,Plant/Title,Plant/Id,*',DepartmentFiltQuery='',DepartmentExpFields='Plant';
-            let ZoneList='Zones', ZoneSelQuery='Title,Plant/Title,Plant/Id,Department/Title,Department/Id,*',ZoneFiltQuery='',ZoneExpFields='Plant,Department';
-            let MachineList='Machines', MachineSelQuery='Title,Plant/Title,Plant/Id,Department/Title,Department/Id,Zone/Title,Zone/Id,*',MachineFiltQuery='',MachineExpFields='Plant,Department,Zone';
-            let ShiftsList='Shifts', ShiftsSelQuery='Title,*',ShiftsFiltQuery='',ShiftsExpFields='';
-            let toolNumberList='Tool Numbers', toolNumberSelQuery='Title,Plant/Title,Plant/Id,Department/Title,Department/Id,Zone/Title,Zone/Id,*',toolNumberFiltQuery='',toolNumberExpFields='Plant,Department,Zone';
-            let supervisorList='Supervisor', supervisorSelQuery='Title,Plant/Title,Plant/Id,*',supervisorFiltQuery='Is_x0020_Active eq 1',supervisorExpFields='Plant';
-            let auditorsList='Auditors', auditorsSelQuery='Title,Plant/Title,Plant/Id,*',auditorsFiltQuery='Is_x0020_Active eq 1',auditorsExpFields='Plant';
-            let workCellList='WorkCells', workCellSelQuery='Title,*',workCellFiltQuery='',workCellExpFields='';
-            let mappingList='WCC/EHS mapping screen', mappingSelQuery='Audit_categories/Id,Audit_categories/Title,*',mappingFiltQuery="Form_x0020_Type eq 'WCC' and Is_x0020_Active eq 1",mappingExpFields='Audit_categories';
-            let auditCategoriesList='Audit_Categories', auditCategoriesSelQuery='Title,*',auditCategoriesFiltQuery='Is_x0020_Active eq 1',auditCategoriesExpFields='';
-            let [Plants,departmentData,zoneData,machineData, shifts, toolNumbersData, supervisorsData, auditorNameData, workCellData, mappingData, activeAuditCategoriesData ] = await Promise.all([
-                getListItems(PlantList, this.MaycoURL, PlantSelQuery, PlantExpFields, plantFiltQuery ),
-                getListItems(DepartmentList, this.MaycoURL, DepartmentSelQuery, DepartmentExpFields, DepartmentFiltQuery ),
-                getListItems(ZoneList, this.MaycoURL, ZoneSelQuery, ZoneExpFields, ZoneFiltQuery ),
-                getListItems(MachineList, this.MaycoURL, MachineSelQuery, MachineExpFields, MachineFiltQuery ),
-                getListItems(ShiftsList, this.MaycoURL, ShiftsSelQuery, ShiftsExpFields, ShiftsFiltQuery ),
-                getListItems(toolNumberList, this.MaycoURL, toolNumberSelQuery, toolNumberExpFields, toolNumberFiltQuery ),
-                getListItems(supervisorList, this.MaycoURL, supervisorSelQuery, supervisorExpFields, supervisorFiltQuery ),
-                getListItems(auditorsList, this.MaycoURL, auditorsSelQuery, auditorsExpFields, auditorsFiltQuery ),
-                getListItems(workCellList, this.MaycoURL, workCellSelQuery, workCellExpFields, workCellFiltQuery ),
-                getListItems(mappingList, this.props.webAbsoluteURL, mappingSelQuery, mappingExpFields, mappingFiltQuery ),
-                getListItems(auditCategoriesList, this.props.webAbsoluteURL, auditCategoriesSelQuery, auditCategoriesExpFields, auditCategoriesFiltQuery )
+            let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+            let PlantList = 'Plant', PlantSelQuery = 'Title,*', plantFiltQuery = '', PlantExpFields = '';
+            let DepartmentList = 'Department', DepartmentSelQuery = 'Title,Plant/Title,Plant/Id,*', DepartmentFiltQuery = '', DepartmentExpFields = 'Plant';
+            let ZoneList = 'Zones', ZoneSelQuery = 'Title,Plant/Title,Plant/Id,Department/Title,Department/Id,*', ZoneFiltQuery = '', ZoneExpFields = 'Plant,Department';
+            let MachineList = 'Machines', MachineSelQuery = 'Title,Plant/Title,Plant/Id,Department/Title,Department/Id,Zone/Title,Zone/Id,*', MachineFiltQuery = '', MachineExpFields = 'Plant,Department,Zone';
+            let ShiftsList = 'Shifts', ShiftsSelQuery = 'Title,*', ShiftsFiltQuery = '', ShiftsExpFields = '';
+            let toolNumberList = 'Tool Numbers', toolNumberSelQuery = 'Title,Plant/Title,Plant/Id,Department/Title,Department/Id,Zone/Title,Zone/Id,*', toolNumberFiltQuery = '', toolNumberExpFields = 'Plant,Department,Zone';
+            let supervisorList = 'Supervisor', supervisorSelQuery = 'Title,Plant/Title,Plant/Id,*', supervisorFiltQuery = 'Is_x0020_Active eq 1', supervisorExpFields = 'Plant';
+            let auditorsList = 'Auditors', auditorsSelQuery = 'Title,Plant/Title,Plant/Id,*', auditorsFiltQuery = 'Is_x0020_Active eq 1', auditorsExpFields = 'Plant';
+            let workCellList = 'WorkCells', workCellSelQuery = 'Title,*', workCellFiltQuery = '', workCellExpFields = '';
+            let mappingList = 'WCC/EHS mapping screen', mappingSelQuery = 'Audit_categories/Id,Audit_categories/Title,*', mappingFiltQuery = "Form_x0020_Type eq 'WCC' and Is_x0020_Active eq 1", mappingExpFields = 'Audit_categories';
+            let auditCategoriesList = 'Audit_Categories', auditCategoriesSelQuery = 'Title,*', auditCategoriesFiltQuery = 'Is_x0020_Active eq 1', auditCategoriesExpFields = '';
+            let requirementsList = 'RequirementSelection', requirementsSelQuery = 'Title,*', requirementsFiltQuery = '', requirementsExpFields = '';
+            let [Plants, departmentData, zoneData, machineData, shifts, toolNumbersData, supervisorsData, auditorNameData, workCellData, mappingData, activeAuditCategoriesData, auditCategoryStatusData] = await Promise.all([
+                getListItems(PlantList, this.MaycoURL, PlantSelQuery, PlantExpFields, plantFiltQuery),
+                getListItems(DepartmentList, this.MaycoURL, DepartmentSelQuery, DepartmentExpFields, DepartmentFiltQuery),
+                getListItems(ZoneList, this.MaycoURL, ZoneSelQuery, ZoneExpFields, ZoneFiltQuery),
+                getListItems(MachineList, this.MaycoURL, MachineSelQuery, MachineExpFields, MachineFiltQuery),
+                getListItems(ShiftsList, this.MaycoURL, ShiftsSelQuery, ShiftsExpFields, ShiftsFiltQuery),
+                getListItems(toolNumberList, this.MaycoURL, toolNumberSelQuery, toolNumberExpFields, toolNumberFiltQuery),
+                getListItems(supervisorList, this.MaycoURL, supervisorSelQuery, supervisorExpFields, supervisorFiltQuery),
+                getListItems(auditorsList, this.MaycoURL, auditorsSelQuery, auditorsExpFields, auditorsFiltQuery),
+                getListItems(workCellList, this.MaycoURL, workCellSelQuery, workCellExpFields, workCellFiltQuery),
+                getListItems(mappingList, this.props.webAbsoluteURL, mappingSelQuery, mappingExpFields, mappingFiltQuery),
+                getListItems(auditCategoriesList, this.props.webAbsoluteURL, auditCategoriesSelQuery, auditCategoriesExpFields, auditCategoriesFiltQuery),
+                getListItems(requirementsList, this.props.webAbsoluteURL, requirementsSelQuery, requirementsExpFields, requirementsFiltQuery)
             ]);
 
             Plants.sort((a, b) => a.Title.localeCompare(b.Title));
@@ -150,58 +165,72 @@ export interface SMATFormState{
             auditorNameData.sort((a, b) => a.Title.localeCompare(b.Title));
             workCellData.sort((a, b) => a.Title.localeCompare(b.Title));
             mappingData.sort((a, b) => a.Audit_categories.Title.localeCompare(b.Audit_categories.Title));
+            auditCategoryStatusData.sort((a, b) => a.Title.localeCompare(b.Title));
 
             let plantsData = Plants.map((item: any) => ({ label: item.Title, value: item.Title }));
-            this.currPlantObj = plantsData.find( (plant:any) => plant.label.toLowerCase() == this.props.currPlantTitle);
+            this.currPlantObj = plantsData.find((plant: any) => plant.label.toLowerCase() == this.props.currPlantTitle);
             formData.Plant = this.currPlantObj.label;
-            
-            let departmentOptions = departmentData.filter( (option:any) => option.Plant.Title == formData.Plant ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-            supervisorsData = supervisorsData.filter( (option:any) => option.Plant?.Title == formData.Plant ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-            auditorNameData = auditorNameData.filter( (option:any) => option.Plant.Title == formData.Plant ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-            let zoneOptions:any = [];
-            let machineOptions:any = [];
-            let toolNumbersOptions:any = [];
-            let workCellOptions:any = [];
-            let shiftData = shifts.map((item: any) => ({ label: item.Title, value: item.Title })); 
 
-            let allCategoriesData = mappingData.map((item:any) => { 
-                item.Audit_categories && item.Audit_SubCategory && this.checkAuditCaterory(item.Audit_categories.Title) ? { category: item.Audit_categories.Title, subCategory: item.Audit_SubCategory } : null
-            }).filter( item => item!= null );
+            let departmentOptions = departmentData.filter((option: any) => option.Plant.Title == formData.Plant).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+            supervisorsData = supervisorsData.filter((option: any) => option.Plant?.Title == formData.Plant).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+            auditorNameData = auditorNameData.filter((option: any) => option.Plant.Title == formData.Plant).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+            let zoneOptions: any = [];
+            let machineOptions: any = [];
+            let toolNumbersOptions: any = [];
+            let workCellOptions: any = [];
+            let shiftData = shifts.map((item: any) => ({ label: item.Title, value: item.Title }));
 
-            if( itemId != undefined ){
-                await this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")().then( (editSMATItem:any) => {
-                    if( editSMATItem != Error ){
-                        formData.Plant = [null,undefined,""].includes(editSMATItem.Plant) ? "" : editSMATItem.Plant;
-                        formData.Department = [null,undefined,""].includes(editSMATItem.Department) ? "" : editSMATItem.Department;
-                        formData.Zone = [null,undefined,""].includes(editSMATItem.Zone) ? "" : editSMATItem.Zone;
-                        formData.Machine = [null,undefined,""].includes(editSMATItem.Machine) ? "" : editSMATItem.Machine;
-                        formData.Shifts = [null,undefined,""].includes(editSMATItem.Shifts) ? "" : editSMATItem.Shifts;
-                        formData.ToolNumber = [null,undefined,""].includes(editSMATItem.ToolNumber) ? "" : editSMATItem.ToolNumber;
-                        formData.Comments = [null,undefined,""].includes(editSMATItem.Comments) ? "" : editSMATItem.Comments;
-                        formData.AuditorName = [null,undefined,""].includes(editSMATItem.AuditorName) ? "" : editSMATItem.AuditorName;
-                        formData.Supervisor = [null,undefined,""].includes(editSMATItem.Supervisor) ? "" : editSMATItem.Supervisor;
-                        formData.WorkCell = [null,undefined,""].includes(editSMATItem.WorkCell) ? "" : editSMATItem.WorkCell;
-                        formData.ShiftType = [null,undefined,""].includes(editSMATItem.ShiftType) ? "" : editSMATItem.ShiftType;
-                        formData.unsafeactCount = [null,undefined,""].includes(editSMATItem.unsafeactCount) ? "" : editSMATItem.unsafeactCount;
-                        formData.unsafeconditionCount = [null,undefined,""].includes(editSMATItem.unsafeconditionCount) ? "" : editSMATItem.unsafeconditionCount;
-                        formData.ActionCompleted = [null,undefined,""].includes(editSMATItem.ActionCompleted) ? "" : editSMATItem.ActionCompleted;
-                        formData.WCCDate = [null,undefined,""].includes(editSMATItem.WCCDate) ? "" : editSMATItem.WCCDate;
-                        formData.CompletedDate = [null,undefined,""].includes(editSMATItem.CompletedDate) ? "" : editSMATItem.CompletedDate;
-                        formData.Year = [null,undefined,""].includes(editSMATItem.Year) ? "" : editSMATItem.Year;
-                        formData.YearMonth = [null,undefined,""].includes(editSMATItem.YearMonth) ? "" : editSMATItem.YearMonth;
+            let allMappingData = mappingData.map((item: any) => {
+                if (item.Audit_categories && item.Audit_SubCategory && this.checkAuditCategory(activeAuditCategoriesData, item.Audit_categories.Title)) {
+                    return (
+                        {
+                            WCCID: '',
+                            WccCategory: item.Audit_categories.Title,
+                            WccSubCategory: item.Audit_SubCategory,
+                            Attachment: '',
+                            SubCategoryStatus: 'Satisfactory',
+                            SubCategoryComments: ''
+                        })
+                }
+                else {
+                    return null;
+                }
+            }).filter(mapItem => mapItem != null);
 
-                        zoneOptions = zoneData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == editSMATItem.Department ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-                        machineOptions = machineData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Title == editSMATItem.Zone ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-                        toolNumbersOptions = toolNumbersData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Title == editSMATItem.Zone ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
+            if (itemId != undefined) {
+                await this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")().then((editSMATItem: any) => {
+                    if (editSMATItem != Error) {
+                        formData.Plant = [null, undefined, ""].includes(editSMATItem.Plant) ? "" : editSMATItem.Plant;
+                        formData.Department = [null, undefined, ""].includes(editSMATItem.Department) ? "" : editSMATItem.Department;
+                        formData.Zone = [null, undefined, ""].includes(editSMATItem.Zone) ? "" : editSMATItem.Zone;
+                        formData.Machine = [null, undefined, ""].includes(editSMATItem.Machine) ? "" : editSMATItem.Machine;
+                        formData.Shifts = [null, undefined, ""].includes(editSMATItem.Shifts) ? "" : editSMATItem.Shifts;
+                        formData.ToolNumber = [null, undefined, ""].includes(editSMATItem.ToolNumber) ? "" : editSMATItem.ToolNumber;
+                        formData.Comments = [null, undefined, ""].includes(editSMATItem.Comments) ? "" : editSMATItem.Comments;
+                        formData.AuditorName = [null, undefined, ""].includes(editSMATItem.AuditorName) ? "" : editSMATItem.AuditorName;
+                        formData.Supervisor = [null, undefined, ""].includes(editSMATItem.Supervisor) ? "" : editSMATItem.Supervisor;
+                        formData.WorkCell = [null, undefined, ""].includes(editSMATItem.WorkCell) ? "" : editSMATItem.WorkCell;
+                        formData.ShiftType = [null, undefined, ""].includes(editSMATItem.ShiftType) ? "" : editSMATItem.ShiftType;
+                        formData.unsafeactCount = [null, undefined, ""].includes(editSMATItem.unsafeactCount) ? "" : editSMATItem.unsafeactCount;
+                        formData.unsafeconditionCount = [null, undefined, ""].includes(editSMATItem.unsafeconditionCount) ? "" : editSMATItem.unsafeconditionCount;
+                        formData.ActionCompleted = [null, undefined, ""].includes(editSMATItem.ActionCompleted) ? "" : editSMATItem.ActionCompleted;
+                        formData.WCCDate = [null, undefined, ""].includes(editSMATItem.WCCDate) ? "" : editSMATItem.WCCDate;
+                        formData.CompletedDate = [null, undefined, ""].includes(editSMATItem.CompletedDate) ? "" : editSMATItem.CompletedDate;
+                        formData.Year = [null, undefined, ""].includes(editSMATItem.Year) ? "" : editSMATItem.Year;
+                        formData.YearMonth = [null, undefined, ""].includes(editSMATItem.YearMonth) ? "" : editSMATItem.YearMonth;
+
+                        zoneOptions = zoneData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == editSMATItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        machineOptions = machineData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        toolNumbersOptions = toolNumbersData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
                     }
                 })
             }
-            else{
+            else {
                 showSubmit = true;
             }
 
-            this.setState({formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData,workCellData, workCellOptions, showSubmit, allCategoriesData, activeAuditCategoriesData});
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, showSubmit, allMappingData, activeAuditCategoriesData, auditCategoryStatusData });
 
             hideLoader();
         } catch (e) {
@@ -210,11 +239,11 @@ export interface SMATFormState{
         }
     }
 
-    private checkAuditCaterory(category:any){
+    private checkAuditCategory(activeAuditCategoriesData: any, category: any) {
         var isExist = false;
-        const activeAuditCategoriesData = [...this.state.activeAuditCategoriesData];
+        // const activeAuditCategoriesData = [...this.state.activeAuditCategoriesData];
         for (var ac in activeAuditCategoriesData) {
-            const categoryRecord:any = activeAuditCategoriesData[ac];
+            const categoryRecord: any = activeAuditCategoriesData[ac];
             var title = categoryRecord.Title;
             if (title == category) {
                 isExist = true;
@@ -224,94 +253,104 @@ export interface SMATFormState{
         return isExist;
     }
 
-    private handleChange= (event: any) => {
-        const formData:any = {...this.state.formData};
+    private handleChange = (event: any) => {
+        const formData: any = { ...this.state.formData };
 
         const name = event.target.name;
-        let inputValue = (event.target.type == "text" || event.target.type == "textarea") ? event.target.value : (event.target.type == "checkbox" ? event.target.checked : event.target.value ? event.target.value : '' );
+        let inputValue = (event.target.type == "text" || event.target.type == "textarea") ? event.target.value : (event.target.type == "checkbox" ? event.target.checked : event.target.value ? event.target.value : '');
         let classArr: any = event.target.className;
 
         if (classArr.includes("onlyNum")) {
             inputValue = inputValue.replace(/[^0-9]/g, '');
         }
         formData[name] = inputValue;
-        this.setState({formData });
+        this.setState({ formData });
     }
 
-    private handleDropdownChange = ( event: any, actionMeta: any, id:any ) => {
-        const formData:any = {...this.state.formData};
+    private handleDropdownChange = (event: any, actionMeta: any, id: any) => {
+        const formData: any = { ...this.state.formData };
         // let departmentData = [...this.state.departmentData];
-        let departmentOptions:any = [...this.state.departmentOptions];
+        let departmentOptions: any = [...this.state.departmentOptions];
         let zoneData = [...this.state.zoneData];
-        let zoneOptions:any = [...this.state.zoneOptions];
+        let zoneOptions: any = [...this.state.zoneOptions];
         let machineData = [...this.state.machineData];
-        let machineOptions:any = [...this.state.machineOptions];
+        let machineOptions: any = [...this.state.machineOptions];
         let toolNumbersData = [...this.state.toolNumbersData];
-        let toolNumbersOptions:any = [...this.state.toolNumbersOptions];
+        let toolNumbersOptions: any = [...this.state.toolNumbersOptions];
         let workCellData = [...this.state.workCellData];
-        let workCellOptions:any = [...this.state.workCellOptions];
+        let workCellOptions: any = [...this.state.workCellOptions];
         const name = actionMeta.name;
         const value = actionMeta.action == "clear" ? '' : event.value;
         formData[name] = value;
 
-        if( name == "Department" ){
+        if (name == "Department") {
             formData.Zone = "";
-            formData.Machine = "";
-
-            if( actionMeta.action != "clear"){
-                zoneOptions=[];
-                zoneOptions = zoneData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Id == event.id ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-            }
-            else{ zoneOptions = [];}
-            machineOptions = [];
-        }
-        else if( name == "Zone" ){
             formData.Machine = "";
             formData.ToolNumber = "";
             formData.WorkCell = "";
 
-            if( actionMeta.action != "clear"){
-                machineOptions=[];
-                toolNumbersOptions=[];
-
-                machineOptions = machineData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Id == event.id) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-                toolNumbersOptions = toolNumbersData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Id == event.id) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-                workCellOptions = workCellData.filter( (option:any) => ( option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == event.value) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
+            if (actionMeta.action != "clear") {
+                zoneOptions = [];
+                zoneOptions = zoneData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
-            else{ machineOptions = [];}
+            else { zoneOptions = []; }
+            machineOptions = [];
+            toolNumbersOptions = [];
+            workCellOptions = [];
+        }
+        else if (name == "Zone") {
+            formData.Machine = "";
+            formData.ToolNumber = "";
+            formData.WorkCell = "";
+
+            if (actionMeta.action != "clear") {
+                machineOptions = [];
+                toolNumbersOptions = [];
+
+                machineOptions = machineData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+
+                toolNumbersOptions = toolNumbersData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+
+                workCellOptions = workCellData.filter((option: any) => (option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == event.value)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+            }
+            else { 
+                machineOptions = []; 
+                toolNumbersOptions = [];
+                workCellOptions = [];
+            }
         }
 
-        if( !([null, undefined, ''].includes(id)) ){
+        if (!([null, undefined, ''].includes(id))) {
             var ddlElement = document.getElementById(id);
-            if( !([null, undefined, ''].includes(value)) ){
+            if (!([null, undefined, ''].includes(value))) {
                 ddlElement?.classList.add("active");
             }
-            else{
+            else {
                 ddlElement?.classList.remove("active");
             }
         }
 
-        this.setState({formData, departmentOptions, zoneOptions, machineOptions, toolNumbersOptions, workCellOptions });
+        this.setState({ formData, departmentOptions, zoneOptions, machineOptions, toolNumbersOptions, workCellOptions });
     }
 
-    private handleDateChange = (dateValue: any, name:any, divId:any, dateProps:any) => {
+    private handleDateChange = (dateValue: any, name: any, divId: any, dateProps: any) => {
         const formData: any = { ...this.state.formData };
         console.log(dateProps);
 
-        if( !([null, undefined, ''].includes(divId)) ){
+        if (!([null, undefined, ''].includes(divId))) {
             var ddlElement = document.getElementById(divId);
-            if( !([null, undefined, ''].includes(dateValue)) ){
+            if (!([null, undefined, ''].includes(dateValue))) {
                 ddlElement?.classList.add("active");
             }
-            else{
+            else {
                 ddlElement?.classList.remove("active");
             }
         }
 
-        if( dateValue != null ){
-            dateValue = format( DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(dateValue)), this.props.spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy");
+        if (dateValue != null) {
+            dateValue = format(DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(dateValue)), this.props.spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy");
         }
-        else{
+        else {
             dateValue = "";
         }
 
@@ -321,11 +360,64 @@ export interface SMATFormState{
     }
 
     private handleSubmit = () => {
+        try {
+            showLoader();
+            var formData: any = { ...this.state.formData };
+            // let itemId = this.props.match.params.id;
+            let data = {
+                date: {val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtWCCDate"},
+                dateToday: {val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtWCCDate"},
+                shift: {val: formData.Shifts, required: true, Name: "Shifts", Type: ControlType.reactSelect, Focusid: "ddlShift"},
+                auditorsName: {val: formData.AuditorName, required: true, Name: "Auditor's Name", Type: ControlType.reactSelect, Focusid: "ddlAuditorName"},
+                plant: {val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant"},
+                department: {val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment"},
+                zone: {val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone"},
+                machine: {val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine"},
+                workCell: {val: formData.WorkCell, required: true, Name: "Work Cell", Type: ControlType.reactSelect, Focusid: "ddlWorkCell"},
+                toolNumber: {val: formData.ToolNumber, required: (formData.Department == "Molding"), Name: "Tool Number", Type: ControlType.reactSelect, Focusid: "ddlToolNumber"},
+                supervisor: {val: formData.Supervisor, required: true, Name: "Supervisor", Type: ControlType.reactSelect, Focusid: "ddlSupervisor"},
+                completedDate: {startDate: formData.WCCDate, endDate: formData.CompletedDate, required: (formData.CompletedDate != ''), startDateName: "Date", endDateName:"Date Completed", Type: ControlType.compareDates, Focusid: "dtCompletedDate"}
+            }
 
+            let isValid = formValidation.FormValidation(data);
+            
+            if( isValid.status ){
+                // console.log("Valid Data");
+                let isValidDynamicComments = this.validateDynamicSubCategoryComments();
+                if( isValidDynamicComments ){
+                    console.log("Valid Dynamic Comments");
+                    showToast("success", "Form Validated Successfully");
+                }
+            }
+            else{
+                showToast("error", isValid.message);
+            }
+            hideLoader();
+        } catch (e) {
+           console.log(e);
+           this.onError(); 
+        }
+    }
+
+    private validateDynamicSubCategoryComments = () => {
+        let allMappingData: any = [...this.state.allMappingData];
+        let isValid = true;
+        for (var i = 0; i < allMappingData.length; i++) {
+            if (allMappingData[i].SubCategoryStatus != "Satisfactory" && ([null, undefined, ''].includes(allMappingData[i].SubCategoryComments))) {
+                isValid = false;
+                let txtAreaId = "txtSubCategory"+ i;
+                let element = document.getElementById(txtAreaId);
+                element?.classList.add("mandatory-FormContent-focus");
+                element?.focus();
+                showToast("error", "Comments cannot be blank for status - "+ allMappingData[i].SubCategoryStatus );
+                break;
+            }
+        }
+        return isValid;
     }
 
     private onError = () => {
-        showToast("error", ActionStatus.Error );
+        showToast("error", ActionStatus.Error);
         hideLoader();
     }
 
@@ -333,32 +425,143 @@ export interface SMATFormState{
         this.setState({ Homeredirect: true, ItemID: 0 });
     }
 
-    // private bindDynamicTable = () => {
-    //     let tbody;
+    private bindDynamicTable = () => {
+        const { allMappingData, auditCategoryStatusData, isInputDisabled } = this.state;
 
-    //     return tbody;
-    // }
+        // Ensure unique categories by creating a Set of WccCategory
+        const uniqueCategories = Array.from(new Set(allMappingData.map(item => item.WccCategory)));
+
+        // Initialize globalCategoryIndex for numbering
+        let globalCategoryIndex = 1;
+
+        const tBody = uniqueCategories.map((category, categoryIndex) => {
+            // Filter subcategories that match the current category
+            const categoryRows = allMappingData.filter(subCategory => subCategory.WccCategory === category);
+
+            return (
+                <React.Fragment key={categoryIndex}>
+                    {/* Category Row */}
+                    <tr className="lightgreybg">
+                        <td colSpan={3}><b>{category}</b></td>
+                    </tr>
+
+                    {/* Subcategory Rows */}
+                    {categoryRows.map((subCategory, subIndex) => {
+                        const isSatisfactory = subCategory.SubCategoryStatus === 'Satisfactory';
+
+                        return (
+                            <tr key={`${categoryIndex}-${subIndex}`}>
+                                <td>
+                                    <div className="pull-left">{globalCategoryIndex++}.{subCategory.WccSubCategory}</div>
+                                    <div className="pull-right">
+                                        <MultipleImageUploader
+                                            onImageUpload={this.onImageChange}
+                                            onRemoveImage={this.onRemoveImage}
+                                            initialImageSrc={subCategory.Attachment}
+                                            index={categoryIndex}
+                                        />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className="form-floating">
+                                        <select
+                                            className="form-select"
+                                            id={"SubCategory" + categoryIndex + "Select"}
+                                            onChange={(event) => this.handleStatusChange(event, categoryIndex)}
+                                            value={subCategory.SubCategoryStatus} // controlled input
+                                        >
+                                            {auditCategoryStatusData.map((status: any) => (
+                                                <option key={status.Title} value={status.Title}>
+                                                    {status.Title}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <label htmlFor="floatingSelect"> Select </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={`form-floating ${isSatisfactory ? 'd-none' : ''}`} id={`divSubCategory${categoryIndex}`}>
+                                        <textarea
+                                            className="form-control bs-textarea"
+                                            rows={3}
+                                            id={`txtSubCategory${categoryIndex}`}
+                                            value={subCategory.SubCategoryComments}
+                                            name="Comments"
+                                            placeholder="Comments"
+                                            disabled={isInputDisabled}
+                                            onChange={(event) => this.handleSubCategoryCommentsChange(event, categoryIndex)}
+                                            title="Comments"
+                                            style={{ height: "80px" }}
+                                        />
+                                        <span className="span-floating-textarea"></span>
+                                        <label className="col-form-label" htmlFor="txtComments">Comments </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </React.Fragment>
+            );
+        });
+
+        return tBody;
+    };
+
+    private handleStatusChange = (event: any, CategoryIndex: number) => {
+        const allMappingData: any = [...this.state.allMappingData];
+        const value = event.target.value;
+        allMappingData[CategoryIndex].SubCategoryStatus = value;
+        console.log(allMappingData);
+        this.setState({ allMappingData });
+    };
+
+    private handleSubCategoryCommentsChange = (event: any, CategoryIndex: number) => {
+        var element = document.getElementsByClassName("mandatory-FormContent-focus");
+        if( element.length > 0 ){
+            for( let i=0;i<element.length;i++){
+                element[i].classList.remove("mandatory-FormContent-focus");
+            }
+        }
+        const allMappingData: any = [...this.state.allMappingData];
+        allMappingData[CategoryIndex].SubCategoryComments = event.target.value;
+        console.log(allMappingData);
+        this.setState({ allMappingData });
+    };
+
+    private onImageChange = (base64: string, lineIndex: number) => {
+        const allMappingData: any = [...this.state.allMappingData];
+        allMappingData[lineIndex].Attachment = base64;
+
+        this.setState({ allMappingData });
+    };
+
+    private onRemoveImage = (lineIndex: number) => {
+        const allMappingData: any = [...this.state.allMappingData];
+        allMappingData[lineIndex].Attachment = '';
+
+        this.setState({ allMappingData });
+    };
 
     public render() {
         if (this.state.Homeredirect) {
             let url = "/Home";
             return (<Navigate to={url} />)
         }
-        else{
-            return(
+        else {
+            return (
                 <React.Fragment>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" SMAT "+ (this.state.isEditForm ? (" - "+ this.state.ItemId): "")} </h4>
-                                <label className="text-end px-1" style={{width:"100%"}}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <h4 className="mb-0 pt-2 text-center">{" SMAT " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="mainContent row col-lg-12 col-md-12 col-sm-12 col-xs-12 borderLine">
                                 {/* Date */}
                                 <div className="col-md-3 greybg c-date-picker" id="divWCCDate">
                                     <label className="label-datePicker" htmlFor="dtWCCDate"> Date <span className="text-danger">*</span></label>
-                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WCCDate" onDatechange={(dateProps:any) => this.handleDateChange( dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
+                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WCCDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
                                 </div>
                                 {/* Shift */}
                                 <div className="col-md-3 greybg form-floating">
@@ -372,7 +575,7 @@ export interface SMATFormState{
                                             className={""}
                                             selectedValue={this.state.formData.Shifts}
                                             OptionsList={this.state.shiftData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift" ) }}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift") }}
                                             isRequired={true}
                                             disabled={this.state.isInputDisabled}
                                             noOptionsMessage="No Shifts"
@@ -391,7 +594,7 @@ export interface SMATFormState{
                                             className={""}
                                             selectedValue={this.state.formData.AuditorName}
                                             OptionsList={this.state.auditorNameData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAuditorName" ) }}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAuditorName") }}
                                             isRequired={true}
                                             disabled={this.state.isInputDisabled}
                                             noOptionsMessage="No Auditor's Names"
@@ -410,7 +613,7 @@ export interface SMATFormState{
                                             className={""}
                                             selectedValue={this.state.formData.Plant}
                                             OptionsList={this.state.plantsData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPlant" ) }}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPlant") }}
                                             isRequired={true}
                                             disabled={true}
                                             noOptionsMessage="No Plants available"
@@ -429,7 +632,7 @@ export interface SMATFormState{
                                             className={""}
                                             selectedValue={this.state.formData.Department}
                                             OptionsList={this.state.departmentOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment" ) }}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment") }}
                                             isRequired={true}
                                             disabled={this.state.isInputDisabled}
                                             noOptionsMessage="No Departments"
@@ -448,7 +651,7 @@ export interface SMATFormState{
                                             className={""}
                                             selectedValue={this.state.formData.Zone}
                                             OptionsList={this.state.zoneOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone" ) }}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone") }}
                                             isRequired={true}
                                             disabled={this.state.isInputDisabled}
                                             noOptionsMessage="No Zones"
@@ -457,23 +660,23 @@ export interface SMATFormState{
                                 </div>
                                 {/* Machine */}
                                 <div className="col-md-3 greybg form-floating">
-                                        <div className="custom-dropdown" id="divMachine">
-                                            <SearchableDropdown
-                                                label={"Machine"}
-                                                Title={"Machine"}
-                                                name={"Machine"}
-                                                id="ddlMachine"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.Machine}
-                                                OptionsList={this.state.machineOptions}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine" ) }}
-                                                isRequired={ true }
-                                                disabled={this.state.isInputDisabled}
-                                                noOptionsMessage="No Machines"
-                                            />
-                                        </div>
+                                    <div className="custom-dropdown" id="divMachine">
+                                        <SearchableDropdown
+                                            label={"Machine"}
+                                            Title={"Machine"}
+                                            name={"Machine"}
+                                            id="ddlMachine"
+                                            placeholderText={""}
+                                            className={""}
+                                            selectedValue={this.state.formData.Machine}
+                                            OptionsList={this.state.machineOptions}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine") }}
+                                            isRequired={true}
+                                            disabled={this.state.isInputDisabled}
+                                            noOptionsMessage="No Machines"
+                                        />
                                     </div>
+                                </div>
                                 {/* Work Cell */}
                                 <div className="col-md-3 greybg form-floating">
                                     <div className="custom-dropdown" id="divWorkCell" title={this.state.formData.WorkCell}>
@@ -485,8 +688,8 @@ export interface SMATFormState{
                                             placeholderText={""}
                                             className={""}
                                             selectedValue={this.state.formData.WorkCell}
-                                            OptionsList={this.state.workCellData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divWorkCell" ) }}
+                                            OptionsList={this.state.workCellOptions}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divWorkCell") }}
                                             isRequired={true}
                                             disabled={this.state.isInputDisabled}
                                             noOptionsMessage="No WorkCell"
@@ -505,8 +708,8 @@ export interface SMATFormState{
                                             className={""}
                                             selectedValue={this.state.formData.ToolNumber}
                                             OptionsList={this.state.toolNumbersOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divToolNumber" ) }}
-                                            isRequired={true}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divToolNumber") }}
+                                            isRequired={this.state.formData.Department == "Molding"}
                                             disabled={this.state.isInputDisabled}
                                             noOptionsMessage="No ToolNumber's"
                                         />
@@ -524,7 +727,7 @@ export interface SMATFormState{
                                             className={""}
                                             selectedValue={this.state.formData.Supervisor}
                                             OptionsList={this.state.supervisorsData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSupervisor" ) }}
+                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSupervisor") }}
                                             isRequired={true}
                                             disabled={this.state.isInputDisabled}
                                             noOptionsMessage="No Supervisor's"
@@ -533,7 +736,7 @@ export interface SMATFormState{
                                 </div>
 
                                 <table>
-                                    <thead>
+                                    <thead className="darkgreybg">
                                         <tr>
                                             <th>Requirement</th>
                                             <th>Select</th>
@@ -541,24 +744,24 @@ export interface SMATFormState{
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* {this.bindDynamicTable} */}
+                                        {this.bindDynamicTable()}
                                     </tbody>
                                 </table>
                                 {/* Comments */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{padding:"0px"}}>
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
                                     <div className="col-md-12 greybg">
-                                        <div className={this.state.isInputDisabled? "textarea-disabled form-floating":"form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" style={{height:"80px"}}></textarea>
+                                        <div className={this.state.isInputDisabled ? "textarea-disabled form-floating" : "form-floating"} >
+                                            <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" style={{ height: "80px" }}></textarea>
                                             <span className="span-floating-textarea"></span>
                                             <label className=" col-form-label" htmlFor="txtComments">Comments </label>
                                         </div>
                                     </div>
                                 </div>
                                 {/* Supervisor Action Completed */}
-                                <div className="col-lg-9 col-md-9 col-sm-9 col-xs-9" style={{padding:"0px"}}>
+                                <div className="col-lg-9 col-md-9 col-sm-9 col-xs-9" style={{ padding: "0px" }}>
                                     <div className="col-md-12 greybg">
-                                        <div className={this.state.isInputDisabled? "textarea-disabled form-floating":"form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtActionCompleted" name="ActionCompleted" ref={this.txtActionCompleted} placeholder="ActionCompleted" value={this.state.formData.ActionCompleted} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Completed" style={{height:"80px"}}></textarea>
+                                        <div className={this.state.isInputDisabled ? "textarea-disabled form-floating" : "form-floating"} >
+                                            <textarea className="form-control bs-textarea" rows={3} id="txtActionCompleted" name="ActionCompleted" ref={this.txtActionCompleted} placeholder="ActionCompleted" value={this.state.formData.ActionCompleted} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Completed" style={{ height: "80px" }}></textarea>
                                             <span className="span-floating-textarea"></span>
                                             <label className=" col-form-label" htmlFor="txtActionCompleted">Action Completed </label>
                                         </div>
@@ -566,8 +769,8 @@ export interface SMATFormState{
                                 </div>
                                 {/* Completed Date */}
                                 <div className="col-md-3 greybg c-date-picker" id="divCompletedDate">
-                                    <label className="label-datePicker" htmlFor="dtCompletedDate"> Completed Date <span className="text-danger">*</span></label>
-                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.CompletedDate} id='dtCompletedDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="CompletedDate" onDatechange={(dateProps:any) => this.handleDateChange( dateProps[0], dateProps[2], "divCompletedDate", dateProps)} highlightDate={new Date()} showIcon />
+                                    <label className="label-datePicker" htmlFor="dtCompletedDate"> Completed Date </label>
+                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.CompletedDate} id='dtCompletedDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate", dateProps)} highlightDate={new Date()} showIcon />
                                 </div>
 
                                 <div className="col-sm-12 text-center py-3 greybg" id="">

@@ -25,6 +25,7 @@
     "@microsoft/sp-property-pane": "1.21.1",
     "@microsoft/sp-webpart-base": "1.21.1",
     "@pnp/sp": "^4.16.0",
+    "@pnp/spfx-controls-react": "^3.22.0",
     "bootstrap": "^5.3.8",
     "date-fns": "^4.1.0",
     "gulp-cli": "^3.1.0",

@@ -193,8 +193,10 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                         formData.YearMonth = [null,undefined,""].includes(editUCANItem.YearMonth) ? "" : editUCANItem.YearMonth;
                         formData.Attachment = [null,undefined,""].includes(editUCANItem.Attachment) ? "" : editUCANItem.Attachment;
 
-                        zoneOptions = zoneData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == editUCANItem.Department ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
-                        machineOptions = machineData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Title == editUCANItem.Zone ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
+                        zoneOptions = zoneData.filter( (option:any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editUCANItem.Department ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
+
+                        machineOptions = machineData.filter( (option:any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone.Title == editUCANItem.Zone ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
+
                         subTypeOptions = subTypeData.filter( (option:any) => option.UAType0.Id == editUCANItem.UATypeId ).map((item: any) => ({ label: item.Title, value: item.Id, }));
 
                         //Super Admin
@@ -208,7 +210,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 showSubmit = true;
             }
 
-            this.setState({formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, uaTypeData, subTypeData, subTypeOptions, shiftData, showSubmit});
+            this.setState({formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, uaTypeData, subTypeData, subTypeOptions, shiftData, showSubmit, ItemId: itemId });
 
             hideLoader();
         } catch (e) {
@@ -245,13 +247,25 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
         const value = actionMeta.action == "clear" ? '' : event.value;
         formData[name] = value;
 
-        if( name == "Department" ){
+        if( name == "Plant" ){
+            formData.Department = "";
+            formData.Zone = "";
+            formData.Machine = "";
+            departmentOptions = [];
+            machineOptions = [];
+            zoneOptions = [];
+
+            if (actionMeta.action != "clear") {
+                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+            }
+        }
+        else if( name == "Department" ){
             formData.Zone = "";
             formData.Machine = "";
 
             if( actionMeta.action != "clear"){
                 zoneOptions=[];
-                zoneOptions = zoneData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Id == event.id ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
+                zoneOptions = zoneData.filter( (option:any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Id == event.id ) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
             }
             else{ zoneOptions = [];}
             machineOptions = [];
@@ -261,7 +275,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
 
             if( actionMeta.action != "clear"){
                 machineOptions=[];
-                machineOptions = machineData.filter( (option:any) => ( option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Id == event.id) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
+                machineOptions = machineData.filter( (option:any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Id == event.id) ).map((item: any) => ({ label: item.Title, value: item.Title, id:item.Id }));
             }
             else{ machineOptions = [];}
         }
@@ -285,7 +299,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             }
         }
 
-        this.setState({formData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, subTypeData, subTypeOptions });
+        this.setState({formData, departmentOptions, zoneOptions, machineOptions, subTypeOptions });
     }
 
     private handleDateChange = (dateValue: any, name:any, divId:any, dateProps:any) => {
@@ -313,6 +327,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
 
         this.setState({ formData });
     }
+    
     private onSuccess = () => {
         hideLoader();
         this.setState({ Homeredirect: true, ItemID: 0  });
@@ -374,26 +389,33 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
     }
 
     private InsertOrUpdateData = async (formData: any) => {
-        let itemId = this.props.match.params.id;
-        if( itemId > 0 ){
-             await this.sp.web.lists.getByTitle(this.ucanList).items.getById(itemId).update(formData).then((res:any) =>{
-                let msg = "UCAN updated successfully";
-                this.setState({ displayMessage: msg});
-                this.onSuccess();
-             }, (error) => {
-                console.log(error);
-                this.onError();
-            })
+        try{
+            
+            let itemId = this.props.match.params.id;
+            if( itemId > 0 ){
+                await this.sp.web.lists.getByTitle(this.ucanList).items.getById(itemId).update(formData).then((res:any) =>{
+                    let msg = "UCAN updated successfully";
+                    this.setState({ displayMessage: msg});
+                    this.onSuccess();
+                }, (error) => {
+                    console.log(error);
+                    this.onError();
+                })
+            }
+            else{
+                await this.sp.web.lists.getByTitle(this.ucanList).items.add(formData).then( (res:any) => {
+                    let msg = "UCAN submitted successfully";
+                    this.setState({ displayMessage: msg});
+                    this.onSuccess();
+                }, (error) => {
+                    console.log(error);
+                    this.onError();
+                })
+            }
         }
-        else{
-            await this.sp.web.lists.getByTitle(this.ucanList).items.add(formData).then( (res:any) => {
-                let msg = "UCAN submitted successfully";
-                this.setState({ displayMessage: msg});
-                this.onSuccess();
-            }, (error) => {
-                console.log(error);
-                this.onError();
-            })
+        catch(e){
+            console.log(e);
+            this.onError();
         }
     }
 

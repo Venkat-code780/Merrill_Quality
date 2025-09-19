@@ -42,7 +42,7 @@ const DatePickercontrol = (props : any) => {
     return (
       <DatePicker 
         selected={selectedDay } 
-        dateFormat={'MM/dd/yyyy'} 
+        dateFormat={props.showTime ? "MM/dd/yyyy HH:mm" : 'MM/dd/yyyy'} 
         showBorder ={true}       
         onChange={handlechangeevent}
         highlightDates={[props.highlightDate]}
@@ -52,9 +52,12 @@ const DatePickercontrol = (props : any) => {
         readOnly={props.readOnly || false}
         disabled={props.isDisabled || false}
         showIcon
+        showMonthDropdown
+        showYearDropdown
         toggleCalendarOnIconClick
         minDate={[ null, undefined, '' ].includes(startDate)? undefined: startDate} 
         maxDate={[ null, undefined, '' ].includes(endDate)? undefined: endDate}
+        showTimeInput={props.showTime ?? false}
         // ref={endDate.ref || endDate
       />
      );

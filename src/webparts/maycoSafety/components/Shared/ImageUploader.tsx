@@ -53,7 +53,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({ onImageUpload, onRemoveI
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        const dataUrl = canvas.toDataURL('image/png');
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.5).replace(/ /g, "+");
         setPreviewSrc(dataUrl);
         onImageUpload(dataUrl); // callback to store base64
       };

@@ -22,7 +22,7 @@ import { format } from "date-fns";
 // import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import formValidation from "../Utilities/FormValidator";
+import Formvalidator from "../Utilities/FormValidator";
 
 export interface JSRAFormProps {
     match: any;
@@ -30,10 +30,10 @@ export interface JSRAFormProps {
     spHttpClient: SPHttpClient;
     context: any;
     history: any;
-    userDisplayName:string;
-    siteURL:string;
-    webAbsoluteURL:string;
-    currPlantTitle:string;
+    userDisplayName: string;
+    siteURL: string;
+    webAbsoluteURL: string;
+    currPlantTitle: string;
     isSuperAdmin: boolean;
 }
 
@@ -126,7 +126,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         showLoader();
         let ItemId = this.props.match.params.id;
         let showSubmit = true;
-        let { getListItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { getListItems, getListItemById } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let PlantList = 'Plant';
         let DepartmentList = 'Department', DepartmentSelQuery = 'Title,Plant/Title,Plant/Id,*', DepartmentExpFields = 'Plant';
         let ZoneList = 'Zones', ZoneSelQuery = 'Title,Plant/Title,Plant/Id,Department/Title,Department/Id,*', ZoneExpFields = 'Plant,Department';
@@ -183,45 +183,48 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             SeverityOpt.sort((a, b) => (a.value) - (b.value));
             PPETypesOpt.sort((a, b) => a.label.localeCompare(b.label));
 
-            this.setState({ Plants, PlantsOpt, ShiftsOpt, RiskFamilyOpt, GroupedRiskFamilyandRiskObj, ProbabilityOpt, ControlsOpt, SeverityOpt, PPETypesOpt, Departments, Zones, WorkCells, Machines, Supervisors, ToolNumbers,showSubmit });
-            //Edit mode starts here
-            let stateDate: any = { ...this.state };
             let formData: any = { ...this.state.formData };
+            let currPlantTitle = PlantsOpt.find((plant: any) => plant.label.toLowerCase() == this.props.currPlantTitle);
+            formData.Plant = currPlantTitle ? currPlantTitle.label : '';
+            this.setState({ formData, Plants, PlantsOpt, ShiftsOpt, RiskFamilyOpt, GroupedRiskFamilyandRiskObj, ProbabilityOpt, ControlsOpt, SeverityOpt, PPETypesOpt, Departments, Zones, WorkCells, Machines, Supervisors, ToolNumbers, showSubmit });
+            this.onPlantChange(this.state, formData.Plant, true); // to get current plant departments,zones,workcells,machines,supervisors,toolnumbers
+            //Edit mode starts here
+            let stateData: any = { ...this.state };
             if (ItemId > 0) {
-                let [JSRAData,JSRALineData] = await Promise.all([
-                    getListItems('JSRA', this.currentSiteURL, '', '', `Id eq ${ItemId}`),
+                let [jsraData, JSRALineData] = await Promise.all([
+                    getListItemById('JSRA', this.currentSiteURL, ItemId, 'Author/Title,Author/Id,*', 'Author'),
                     getListItems('JSRA Line', this.currentSiteURL, '', '', `JSRA_x0020_ID eq '${ItemId}'`),
                 ]);
-                    if (JSRAData.length > 0) {
-                        let jsraData = JSRAData[0];
-                        formData.Date = [null, undefined, ''].includes(jsraData.Date)? '':jsraData.Date;
-                        formData.Plant = [null, undefined, ''].includes(jsraData.Plant)? '':jsraData.Plant;
-                        formData.Department = [null, undefined, ''].includes(jsraData.Department)? '':jsraData.Department;
-                        formData.Zone = [null, undefined, ''].includes(jsraData.Zone)? '':jsraData.Zone;
-                        formData.WorkCell = [null, undefined, ''].includes(jsraData.Work_x0020_Cell)? '':jsraData.Work_x0020_Cell;
-                        formData.Machine = [null, undefined, ''].includes(jsraData.Machine)? '':jsraData.Machine;
-                        formData.Shift = [null, undefined, ''].includes(jsraData.Shift)? '':jsraData.Shift;
-                        formData.Supervisor = [null, undefined, ''].includes(jsraData.Supervisor)? '':jsraData.Supervisor;
-                        formData.ToolNumber = [null, undefined, ''].includes(jsraData.Tool_x0020_Number)? '':jsraData.Tool_x0020_Number;
-                        formData.SupervisorName = [null, undefined, ''].includes(jsraData.Supervisor_x0020_Name)? '':jsraData.Supervisor_x0020_Name;
-                        formData.SupervisorDate = [null, undefined, ''].includes(jsraData.Supervisor_x0020_Date)? '':jsraData.Supervisor_x0020_Date;
+                if (!jsraData.isHttpRequestError) {
+                    if (jsraData) {
+                        formData.Date = [null, undefined, '', 'None'].includes(jsraData.Date) ? '' : jsraData.Date;
+                        formData.Plant = [null, undefined, '', 'None'].includes(jsraData.Plant) ? '' : jsraData.Plant;
+                        formData.Department = [null, undefined, '', 'None'].includes(jsraData.Department) ? '' : jsraData.Department;
+                        formData.Zone = [null, undefined, '', 'None'].includes(jsraData.Zone) ? '' : jsraData.Zone;
+                        formData.WorkCell = [null, undefined, '', 'None'].includes(jsraData.Work_x0020_Cell) ? '' : jsraData.Work_x0020_Cell;
+                        formData.Machine = [null, undefined, '', 'None'].includes(jsraData.Machine) ? '' : jsraData.Machine;
+                        formData.Shift = [null, undefined, '', 'None'].includes(jsraData.Shift) ? '' : jsraData.Shift;
+                        formData.Supervisor = [null, undefined, '', 'None'].includes(jsraData.Supervisor) ? '' : jsraData.Supervisor;
+                        formData.ToolNumber = [null, undefined, '', 'None'].includes(jsraData.Tool_x0020_Number) ? '' : jsraData.Tool_x0020_Number;
+                        formData.SupervisorName = [null, undefined, '', 'None'].includes(jsraData.Supervisor_x0020_Name) ? '' : jsraData.Supervisor_x0020_Name;
+                        formData.SupervisorDate = [null, undefined, '', 'None'].includes(jsraData.Supervisor_x0020_Date) ? '' : jsraData.Supervisor_x0020_Date;
                         let Permits = [...this.state.Permits];
-                        Permits[0].Required = [null, undefined, ''].includes(jsraData.Hot_x0020_Work_x0020_Permit_x002)? false : jsraData.Hot_x0020_Work_x0020_Permit_x002;
-                        Permits[0].Acquired = [null, undefined, ''].includes(jsraData.Hot_x0020_Work_x0020_Permit_x0020)? false : jsraData.Hot_x0020_Work_x0020_Permit_x0020;
-                        Permits[1].Required = [null, undefined, ''].includes(jsraData.Electrical_x0020_Permit_x0020_Re)? false : jsraData.Electrical_x0020_Permit_x0020_Re;
-                        Permits[1].Acquired = [null, undefined, ''].includes(jsraData.Electrical_x0020_Permit_x0020_Ac)? false : jsraData.Electrical_x0020_Permit_x0020_Ac;
-                        Permits[2].Required = [null, undefined, ''].includes(jsraData.Confined_x0020_Space_x0020_Permi)? false : jsraData.Confined_x0020_Space_x0020_Permi;
-                        Permits[2].Acquired = [null, undefined, ''].includes(jsraData.Confined_x0020_Space_x0020_Permi0)? false : jsraData.Confined_x0020_Space_x0020_Permi0;
+                        Permits[0].Required = [null, undefined].includes(jsraData.Hot_x0020_Work_x0020_Permit_x002) ? false : jsraData.Hot_x0020_Work_x0020_Permit_x002;
+                        Permits[0].Acquired = [null, undefined].includes(jsraData.Hot_x0020_Work_x0020_Permit_x0020) ? false : jsraData.Hot_x0020_Work_x0020_Permit_x0020;
+                        Permits[1].Required = [null, undefined].includes(jsraData.Electrical_x0020_Permit_x0020_Re) ? false : jsraData.Electrical_x0020_Permit_x0020_Re;
+                        Permits[1].Acquired = [null, undefined].includes(jsraData.Electrical_x0020_Permit_x0020_Ac) ? false : jsraData.Electrical_x0020_Permit_x0020_Ac;
+                        Permits[2].Required = [null, undefined].includes(jsraData.Confined_x0020_Space_x0020_Permi) ? false : jsraData.Confined_x0020_Space_x0020_Permi;
+                        Permits[2].Acquired = [null, undefined].includes(jsraData.Confined_x0020_Space_x0020_Permi0) ? false : jsraData.Confined_x0020_Space_x0020_Permi0;
                         let PPETypes = [...this.state.PPETypes];
-                        if (![null, undefined, ''].includes(jsraData.PPE)) {
+                        if (![null, undefined, '', 'None'].includes(jsraData.PPE)) {
                             let ppeArr = jsraData.PPE.split(',').map((item: string) => item.trim());
                             PPETypes = ppeArr.map((item: string, index: number) => ({
                                 id: index + 1,
                                 PPEType: item,
                             }))
                         }
-                        let Persons = [...this.state.Persons];  
-                        if (![null, undefined, ''].includes(jsraData.Personnel)) {
+                        let Persons = [...this.state.Persons];
+                        if (![null, undefined, '', 'None'].includes(jsraData.Personnel)) {
                             let personArr = jsraData.Personnel.split(',').map((item: string) => item.trim());
                             Persons = personArr.map((item: string, index: number) => ({
                                 id: index + 1,
@@ -234,38 +237,43 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             jobSteps = JSRALineData.map((item: any, index: number) => ({
                                 JSRALineitmeId: item.Id,
                                 id: index + 1,
-                                Step: [null, undefined, ''].includes(item.Details)? '':item.Details,
-                                Required: [null, undefined, ''].includes(item.Required)? true : item.Required,
-                                RiskFamily: [null, undefined, ''].includes(item.Category)? '':item.Category,
-                                Risk: [null, undefined, ''].includes(item.Sub_x0020_Category)? '':item.Sub_x0020_Category,
-                                Probability: [null, undefined, ''].includes(item.Probability_x0020_Value)? 0 :Number(item.Probability_x0020_Value),
-                                Controls: [null, undefined, ''].includes(item.Controls_x0020_Value)? 0 :Number(item.Controls_x0020_Value),
-                                Severity: [null, undefined, ''].includes(item.Severity_x0020_Value)? 0 :Number(item.Severity_x0020_Value),
-                                RiskLevel: { Probability: item.Probability_x0020_Value, Controls: item.Controls_x0020_Value, Severity:item.Severity_x0020_Value},
-                                RiskLevelColorClasses: { Probability: `RiskLevel-${item.Probability_x0020_Value}`, Controls: `RiskLevel-${item.Controls_x0020_Value}`, Severity: `RiskLevel-${item.Severity_x0020_Value}`, Total: `RiskLevel-${item.Total_x0020_Score == 0 ? 0 : item.Total_x0020_Score <= 4 ? 1 : item.Total_x0020_Score <= 6 ? 2 : item.Total_x0020_Score >= 7 ? 3 : 0}`},
-                                TotalScore: [null, undefined, ''].includes(item.Total_x0020_Score)? '0' : item.Total_x0020_Score,
+                                Step: [null, undefined, '', 'None'].includes(item.Details) ? '' : item.Details,
+                                Required: [null, undefined, ''].includes(item.Required) ? true : item.Required,
+                                RiskFamily: [null, undefined, '', 'None'].includes(item.Category) ? '' : item.Category,
+                                Risk: [null, undefined, '', 'None'].includes(item.Sub_x0020_Category) ? '' : item.Sub_x0020_Category,
+                                Probability: [null, undefined, '', 'None'].includes(item.Probability_x0020_Value) ? 0 : Number(item.Probability_x0020_Value),
+                                Controls: [null, undefined, '', 'None'].includes(item.Controls_x0020_Value) ? 0 : Number(item.Controls_x0020_Value),
+                                Severity: [null, undefined, '', 'None'].includes(item.Severity_x0020_Value) ? 0 : Number(item.Severity_x0020_Value),
+                                RiskLevel: {
+                                    Probability: [null, undefined, '', 'None'].includes(item.Probability_x0020_Value) ? 0 : item.Probability_x0020_Value,
+                                    Controls: [null, undefined, '', 'None'].includes(item.Controls_x0020_Value) ? 0 : item.Controls_x0020_Value,
+                                    Severity: [null, undefined, '', 'None'].includes(item.Severity_x0020_Value) ? 0 : item.Severity_x0020_Value
+                                },
+                                RiskLevelColorClasses: { Probability: `RiskLevel-${item.Probability_x0020_Value}`, Controls: `RiskLevel-${item.Controls_x0020_Value}`, Severity: `RiskLevel-${item.Severity_x0020_Value}`, Total: `RiskLevel-${item.Total_x0020_Score == 0 ? 0 : item.Total_x0020_Score <= 4 ? 1 : item.Total_x0020_Score <= 6 ? 2 : item.Total_x0020_Score >= 7 ? 3 : 0}` },
+                                TotalScore: [null, undefined, '', 'None'].includes(item.Total_x0020_Score) ? '0' : item.Total_x0020_Score,
                                 RiskOpt: item.RiskOpt,
                             }))
-                            jobSteps.forEach((js,index )=> {
-                        let ItemRiskOpts = js.RiskFamily == '' ? [] : GroupedRiskFamilyandRiskObj[js.RiskFamily];
-                        let RiskOpt = this.getMapedOptions(ItemRiskOpts, 'Title', 'Title');
-                                jobSteps[index].RiskOpt  = RiskOpt as any;
-                                js.RiskOpt.sort((a:any, b:any) => a.label.localeCompare(b.label));
-                            } 
-                        );
+                            jobSteps.forEach((js, index) => {
+                                let ItemRiskOpts = [null, undefined, '', 'None'].includes(js.RiskFamily) ? [] : GroupedRiskFamilyandRiskObj[js.RiskFamily];
+                                let RiskOpt = this.getMapedOptions(ItemRiskOpts, 'Title', 'Title');
+                                jobSteps[index].RiskOpt = RiskOpt as any;
+                                js.RiskOpt.sort((a: any, b: any) => a.label.localeCompare(b.label));
+                            }
+                            );
                         }
-                        let isEditForm=true;
-                           stateDate= this.onPlantChange(stateDate, formData.Plant,false); 
-                           stateDate= this.onDepartmentChange(stateDate,formData.Plant, formData.Department,false);
-                           stateDate= this.onZoneChange(stateDate,formData.Plant, formData.Department, formData.Zone,false);
-                            showSubmit = this.props.isSuperAdmin || (jsraData.Author == this.props.userDisplayName) ? true : false;
+                        let isEditForm = true;
+                        stateData = this.onPlantChange(stateData, formData.Plant, false);
+                        stateData = this.onDepartmentChange(stateData, formData.Plant, formData.Department, false);
+                        stateData = this.onZoneChange(stateData, formData.Plant, formData.Department, formData.Zone, false);
+                        showSubmit = this.props.isSuperAdmin || (jsraData.Author.Title == this.props.userDisplayName) ? true : false;
 
-                        this.setState({formData, isEditForm, ItemId, Permits, PPETypes, Persons, jobSteps ,showSubmit,DepartmentsOpt:stateDate.DepartmentsOpt,ZonesOpt:stateDate.ZonesOpt,WorkCellsOpt:stateDate.WorkCellsOpt,MachinesOpt:stateDate.MachinesOpt,SupervisorsOpt:stateDate.SupervisorsOpt,ToolNumbersOpt:stateDate.ToolNumbersOpt});
+                        this.setState({ formData, isEditForm, ItemId, Permits, PPETypes, Persons, jobSteps, showSubmit, DepartmentsOpt: stateData.DepartmentsOpt, ZonesOpt: stateData.ZonesOpt, WorkCellsOpt: stateData.WorkCellsOpt, MachinesOpt: stateData.MachinesOpt, SupervisorsOpt: stateData.SupervisorsOpt, ToolNumbersOpt: stateData.ToolNumbersOpt });
                     }
-                    else{
+                    else {
                         showToast("error", "No JSRA found");
                         this.setState({ Homeredirect: true });
-                    }           
+                    }
+                }
             }
             hideLoader();
         } catch (e) {
@@ -287,6 +295,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             var formData: any = { ...this.state.formData };
             var data = {
                 Date: { val: formData.Date, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtDate" },
+                dateToday: { val: formData.Date, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtDate" },
                 Plant: { val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant" },
                 Department: { val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment" },
                 Zone: { val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone" },
@@ -298,10 +307,10 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 delete (data as any).ToolNumber;
             }
 
-            let isValid = formValidation.FormValidation(data);
+            let isValid = Formvalidator.FormValidation(data);
             isValid = isValid.status ? this.validateJobSteps() : isValid;
-            isValid = isValid.status ? this.validatePPEType() : isValid;
-            isValid = isValid.status ? this.validatePerson() : isValid;
+            isValid = isValid.status && this.state.PPETypes.length > 1 ? this.validatePPEType() : isValid;
+            isValid = isValid.status && this.state.Persons.length > 1 ? this.validatePerson() : isValid;
 
             if (isValid.status) {
                 let postObjectJSRA: any = this.getJSRApostObject();
@@ -318,36 +327,36 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         }
     }
     private InsertOrUpdateData = async (postObjectJSRA: any) => {
-        let { addListItem, updateListItem,batchAddItems ,batchUpdateItems} = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { addListItem, updateListItem, batchAddItems, batchUpdateItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let ItemId = this.props.match.params.id;
         if (ItemId > 0) {
-            await updateListItem('JSRA', this.currentSiteURL, postObjectJSRA, ItemId).then( async (res: any) => {
-                let postEditObjectJSRALineItems:any [] = this.getJSRALinepostObject(ItemId,this.state.jobSteps,this.state.isEditForm);
-               await batchUpdateItems('JSRA Line', this.currentSiteURL, postEditObjectJSRALineItems).then((res: any) => {
-                  let msg = "JSRA updated successfully";
-                this.onSuccess(msg);
+            await updateListItem('JSRA', this.currentSiteURL, postObjectJSRA, ItemId).then(async (res: any) => {
+                let postEditObjectJSRALineItems: any[] = this.getJSRALinepostObject(ItemId, this.state.jobSteps, this.state.isEditForm);
+                await batchUpdateItems('JSRA Line', this.currentSiteURL, postEditObjectJSRALineItems).then((res: any) => {
+                    let msg = "JSRA updated successfully";
+                    this.onSuccess(msg);
                 }, (error: any) => {
                     console.log(error);
                     this.onError();
-                }) 
-               
+                })
+
             }, (error: any) => {
                 console.log(error);
                 this.onError();
             })
         }
         else {
-            await addListItem('JSRA', this.currentSiteURL, postObjectJSRA).then( async (res: any) => {
+            await addListItem('JSRA', this.currentSiteURL, postObjectJSRA).then(async (res: any) => {
                 let adedItemId = res.Id;
                 // JSRA Line Items insertion
-                let postObjectJSRALineItems:any [] = this.getJSRALinepostObject(adedItemId,this.state.jobSteps,this.state.isEditForm);
-               await batchAddItems('JSRA Line', this.currentSiteURL, postObjectJSRALineItems).then((res: any) => {
-                  let msg = "JSRA submitted successfully";
+                let postObjectJSRALineItems: any[] = this.getJSRALinepostObject(adedItemId, this.state.jobSteps, this.state.isEditForm);
+                await batchAddItems('JSRA Line', this.currentSiteURL, postObjectJSRALineItems).then((res: any) => {
+                    let msg = "JSRA submitted successfully";
                     this.onSuccess(msg);
                 }, (error: any) => {
                     console.log(error);
                     this.onError();
-                }) 
+                })
             }, (error: any) => {
                 console.log(error);
                 this.onError();
@@ -362,7 +371,9 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
     private getJSRApostObject = () => {
         let stateData: any = { ...this.state };
         let JSRADate: any = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(stateData.formData.Date)), this.props.spContext.webTimeZoneData).toISOString();
-        let SupervisorDt: any = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(stateData.formData.SupervisorDate)), this.props.spContext.webTimeZoneData).toISOString();
+        let SupervisorDt: any = '';
+        if (![null, undefined, ''].includes(stateData.formData.SupervisorDate))
+            SupervisorDt = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(stateData.formData.SupervisorDate)), this.props.spContext.webTimeZoneData).toISOString();
         let mmddyyyyJSRADate = format(JSRADate, "MM/dd/yyyy");
         //PPE Items getting
         let PPEItems = '';
@@ -377,7 +388,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         //Personnel Items getting
         let PersonnelItems = '';
         stateData.Persons.forEach((item: any, index: number) => {
-            let PersonDate: any = DateUtilities.getDateMMDDYYYY(item.PersonDate)
+            let PersonDate: any = [null, undefined, ''].includes(item.PersonDate) ? '' : DateUtilities.getDateMMDDYYYY(item.PersonDate);
             if (item.PersonName != '') {
                 if (index == 0)
                     PersonnelItems = item.PersonName + ';#' + PersonDate;
@@ -391,7 +402,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         let postObjectJSRA = {
             Date: JSRADate,
             Year: mmddyyyyJSRADate.split("/")[2],
-            YearMonth: mmddyyyyJSRADate.split("/")[1],
+            YearMonth: mmddyyyyJSRADate.split("/")[0],
             Plant: stateData.formData.Plant,
             Department: stateData.formData.Department,
             Zone: stateData.formData.Zone,
@@ -413,23 +424,23 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         }
         return postObjectJSRA;
     }
-    private getJSRALinepostObject = (JSRAItemId:any,jobSteps:any,isEditForm:boolean) => {
+    private getJSRALinepostObject = (JSRAItemId: any, jobSteps: any, isEditForm: boolean) => {
         let stateData: any = { ...this.state };
         let JSRADate: any = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(stateData.formData.Date)), this.props.spContext.webTimeZoneData).toISOString();
-        let postObjectJSRALineItems: any[] = [];    
-        let postEditObjectJSRALineItems: any[] = [];    
-        let postObjectJSRALine:any = {};
-       
-         postObjectJSRALine = {
-            Date: JSRADate,
-            Plant: stateData.formData.Plant,
-            Department: stateData.formData.Department,
-            Zone: stateData.formData.Zone,
-            Machine: stateData.formData.Machine,
-            Shift: stateData.formData.Shift,
-            Tool_x0020_Number: stateData.formData.ToolNumber,
-        }
+        let postObjectJSRALineItems: any[] = [];
+        let postEditObjectJSRALineItems: any[] = [];
+
         jobSteps.forEach((item: any, index: number) => {
+            let postObjectJSRALine: any = {};
+            postObjectJSRALine = {
+                Date: JSRADate,
+                Plant: stateData.formData.Plant,
+                Department: stateData.formData.Department,
+                Zone: stateData.formData.Zone,
+                Machine: stateData.formData.Machine,
+                Shift: stateData.formData.Shift,
+                Tool_x0020_Number: stateData.formData.ToolNumber,
+            }
             // labels and values are diffrent in Probability,Controls,Severity dropdowns, so below code is to get label text
             let Probability = document.getElementById(`Probability_${item.id}`) as HTMLSelectElement;
             let ProbabilityText: any = (Probability?.getElementsByClassName('css-1dimb5e-singleValue')[0] as HTMLElement)?.innerText;
@@ -437,9 +448,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             let ControlsText: any = (Controls?.getElementsByClassName('css-1dimb5e-singleValue')[0] as HTMLElement)?.innerText;
             let Severity = document.getElementById(`Severity_${item.id}`) as HTMLSelectElement;
             let SeverityText: any = (Severity?.getElementsByClassName('css-1dimb5e-singleValue')[0] as HTMLElement)?.innerText;
-            if(!isEditForm)
-            {
-                postObjectJSRALine['JSRA_x0020_ID'] =String(JSRAItemId);
+            if (!isEditForm) {
+                postObjectJSRALine['JSRA_x0020_ID'] = String(JSRAItemId);
                 postObjectJSRALine['Details'] = item.Step;
                 postObjectJSRALine['Required'] = item.Required;
                 postObjectJSRALine['Category'] = item.RiskFamily;
@@ -452,15 +462,14 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             postObjectJSRALine['Controls_x0020_Value'] = String(item.Controls);
             postObjectJSRALine['Severity_x0020_Value'] = String(item.Severity);
             postObjectJSRALine['Total_x0020_Score'] = Number(item.TotalScore);
-            if(isEditForm)
-            {
-              postEditObjectJSRALineItems.push({Id:item.JSRALineitmeId,data:{...postObjectJSRALine}});
+            if (isEditForm) {
+                postEditObjectJSRALineItems.push({ Id: item.JSRALineitmeId, data: { ...postObjectJSRALine } });
             }
-            else{
+            else {
                 postObjectJSRALineItems.push(postObjectJSRALine);
             }
         });
-        return isEditForm?postEditObjectJSRALineItems:postObjectJSRALineItems;
+        return isEditForm ? postEditObjectJSRALineItems : postObjectJSRALineItems;
     }
 
 
@@ -471,7 +480,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         const formData: any = { ...this.state.formData };
 
         const name = event.target.name;
-        let inputValue = (event.target.type == "text" || event.target.type == "textarea") ? event.target.value : (event.target.type == "checkbox" || event.target.type == "radio")? event.target.checked : event.target.value;
+        let inputValue = (event.target.type == "text" || event.target.type == "textarea") ? event.target.value : (event.target.type == "checkbox" || event.target.type == "radio") ? event.target.checked : event.target.value;
         let classArr: any = event.target.className;
 
         if (classArr.includes("onlyNum")) {
@@ -501,7 +510,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         }
         formData = { ...formData, [name]: value };// setting form control value
         if (name == 'Plant') {
-            this.onPlantChange(this.state, value,true);
+            this.onPlantChange(this.state, value, true);
             // let filteredDepts = this.state.Departments.filter((dept: any) => dept.Plant.Title == value && dept.IsActiveMRO);// Note:in ventureglobal IsActive column exists , in WCM  IsActiveMRO column exists
             // let DepartmentsOpt = filteredDepts.map((item: any) => ({
             //     label: item.Title,
@@ -524,7 +533,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             // this.setState({ formData, DepartmentsOpt, SupervisorsOpt, ToolNumbersOpt, ZonesOpt: [], WorkCellsOpt: [], MachinesOpt: [], Department: '', Zone: '', WorkCell: '', Machine: '' });
         }
         else if (name == 'Department') {
-            this.onDepartmentChange(this.state,formData.Plant, value,true);
+            this.onDepartmentChange(this.state, formData.Plant, value, true);
             // let filteredZones = this.state.Zones.filter((dept: any) => dept.Plant.Title == formData.Plant && dept.Department.Title == value);
             // let ZonesOpt = filteredZones.map((item: any) => ({
             //     label: item.Title,
@@ -540,7 +549,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             //this.setState({ formData, ZonesOpt, WorkCellsOpt: [], MachinesOpt: [], Zone: '', WorkCell: '', Machine: '', isToolNumberMandatory });
         }
         else if (name == 'Zone') {
-            this.onZoneChange(this.state,formData.Plant,formData.Department, value,true);
+            this.onZoneChange(this.state, formData.Plant, formData.Department, value, true);
             // let filteredMachines = this.state.Machines.filter((dept: any) => dept.Plant.Title == formData.Plant && dept.Department.Title == formData.Department && dept.Zone.Title == value);
             // let MachinesOpt = filteredMachines.map((item: any) => ({
             //     label: item.Title,
@@ -570,8 +579,10 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 ddlElement?.classList.remove("active");
             }
         }
-
-        dateValue = format(DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(dateValue)), this.props.spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy");
+        if (![null, undefined, ''].includes(dateValue))
+            dateValue = format(DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(dateValue)), this.props.spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy");
+        else
+            dateValue = '';
         if (divId.includes('divPersonDate')) {
             let updatedPersons = [...this.state.Persons];
             let index = name.split('_')[1];
@@ -585,95 +596,92 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
 
         this.setState({ formData });
     }
-    private onPlantChange=(state:any,PlantVal:any,isOnchange:boolean)=>
-    {
+    private onPlantChange = (state: any, PlantVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-         let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant.Title == PlantVal && dept.IsActiveMRO);// Note:in ventureglobal IsActive column exists , in WCM  IsActiveMRO column exists
-            let DepartmentsOpt = filteredDepts.map((item: any) => ({
-                label: item.Title,
-                value: item.Title,
-            }));
-            let filteredSupervisors = stateData.Supervisors.filter((sup: any) => sup.Plant?.Title == PlantVal);
-            let SupervisorsOpt = filteredSupervisors.map((item: any) => ({
-                label: item.Title,
-                value: item.Title,
-            }));
-            let filteredToolNumbers = stateData.ToolNumbers.filter((TN: any) => TN.Plant?.Title == PlantVal);
-            let ToolNumbersOpt = filteredToolNumbers.map((item: any) => ({
-                label: item.Title,
-                value: item.Title,
-            }));
-            // update dependents
-            DepartmentsOpt.sort((a:any, b:any) => a.label.localeCompare(b.label));
-            SupervisorsOpt.sort((a:any, b:any) => a.label.localeCompare(b.label));
-            ToolNumbersOpt.sort((a:any, b:any) => a.label.localeCompare(b.label));
-            stateData.DepartmentsOpt=DepartmentsOpt;
-            stateData.SupervisorsOpt=SupervisorsOpt;
-            stateData.ToolNumbersOpt=ToolNumbersOpt;
-            if(isOnchange){
-            stateData.ZonesOpt=[];
-            stateData.WorkCellsOpt=[];
-            stateData.MachinesOpt=[];
-            stateData.formData.Department='';
-            stateData.formData.Zone='';
-            stateData.formData.WorkCell='';
-            stateData.formData.Machine='';
+        let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant.Title == PlantVal && dept.IsActiveMRO);// Note:in ventureglobal IsActive column exists , in WCM  IsActiveMRO column exists
+        let DepartmentsOpt = filteredDepts.map((item: any) => ({
+            label: item.Title,
+            value: item.Title,
+        }));
+        let filteredSupervisors = stateData.Supervisors.filter((sup: any) => sup.Plant?.Title == PlantVal);
+        let SupervisorsOpt = filteredSupervisors.map((item: any) => ({
+            label: item.Title,
+            value: item.Title,
+        }));
+        let filteredToolNumbers = stateData.ToolNumbers.filter((TN: any) => TN.Plant?.Title == PlantVal);
+        let ToolNumbersOpt = filteredToolNumbers.map((item: any) => ({
+            label: item.Title,
+            value: item.Title,
+        }));
+        // update dependents
+        DepartmentsOpt.sort((a: any, b: any) => a.label.localeCompare(b.label));
+        SupervisorsOpt.sort((a: any, b: any) => a.label.localeCompare(b.label));
+        ToolNumbersOpt.sort((a: any, b: any) => a.label.localeCompare(b.label));
+        stateData.DepartmentsOpt = DepartmentsOpt;
+        stateData.SupervisorsOpt = SupervisorsOpt;
+        stateData.ToolNumbersOpt = ToolNumbersOpt;
+        if (isOnchange) {
+            stateData.ZonesOpt = [];
+            stateData.WorkCellsOpt = [];
+            stateData.MachinesOpt = [];
+            stateData.formData.Department = '';
+            stateData.formData.Zone = '';
+            stateData.formData.WorkCell = '';
+            stateData.formData.Machine = '';
             this.setState(stateData);
-            }
-            return stateData;
+        }
+        return stateData;
 
     }
-    private onDepartmentChange=(state:any,PlantVal:any,DepartmentVal:any,isOnchange:boolean)=>
-    {
+    private onDepartmentChange = (state: any, PlantVal: any, DepartmentVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-         let filteredZones = stateData.Zones.filter((dept: any) => dept.Plant.Title == PlantVal && dept.Department.Title == DepartmentVal);
-            let ZonesOpt = filteredZones.map((item: any) => ({
-                label: item.Title,
-                value: item.Title,
-            }));
-            //dynamic ToolNumber Mandatory
-            let isToolNumberMandatory = false;
-            if (DepartmentVal.toLowerCase() == 'molding') {
-                isToolNumberMandatory = true;
-            }
-            // update dependents
-            ZonesOpt.sort((a:any, b:any) => a.label.localeCompare(b.label));
-            stateData.ZonesOpt=ZonesOpt;
-            stateData.isToolNumberMandatory=isToolNumberMandatory;
-            if(isOnchange){
-            stateData.WorkCellsOpt=[];
-            stateData.MachinesOpt=[];
-            stateData.formData.Zone='';
-            stateData.formData.WorkCell='';
-            stateData.formData.Machine='';
+        let filteredZones = stateData.Zones.filter((dept: any) => dept.Plant.Title == PlantVal && dept.Department.Title == DepartmentVal);
+        let ZonesOpt = filteredZones.map((item: any) => ({
+            label: item.Title,
+            value: item.Title,
+        }));
+        //dynamic ToolNumber Mandatory
+        let isToolNumberMandatory = false;
+        if (DepartmentVal.toLowerCase() == 'molding') {
+            isToolNumberMandatory = true;
+        }
+        // update dependents
+        ZonesOpt.sort((a: any, b: any) => a.label.localeCompare(b.label));
+        stateData.ZonesOpt = ZonesOpt;
+        stateData.isToolNumberMandatory = isToolNumberMandatory;
+        if (isOnchange) {
+            stateData.WorkCellsOpt = [];
+            stateData.MachinesOpt = [];
+            stateData.formData.Zone = '';
+            stateData.formData.WorkCell = '';
+            stateData.formData.Machine = '';
             this.setState(stateData);
-            }
-            return stateData;
+        }
+        return stateData;
     }
-    private onZoneChange=(state:any,PlantVal:any,DepartmentVal:any,ZoneVal:any,isOnchange:boolean)=>
-    {
+    private onZoneChange = (state: any, PlantVal: any, DepartmentVal: any, ZoneVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-            let filteredMachines = stateData.Machines.filter((dept: any) => dept.Plant.Title == PlantVal && dept.Department.Title == DepartmentVal && dept.Zone.Title == ZoneVal);
-            let MachinesOpt = filteredMachines.map((item: any) => ({
-                label: item.Title,
-                value: item.Title,
-            }));
-            let filteredWorkCells = stateData.WorkCells.filter((dept: any) => dept.h7kc == PlantVal && dept.Department == DepartmentVal && dept.Zone == ZoneVal);
-            let WorkCellsOpt = filteredWorkCells.map((item: any) => ({
-                label: item.Title,
-                value: item.Title,
-            }));
-            // update dependents
-            MachinesOpt.sort((a:any, b:any) => a.label.localeCompare(b.label));
-            WorkCellsOpt.sort((a:any, b:any) => a.label.localeCompare(b.label));
-            stateData.MachinesOpt=MachinesOpt;
-            stateData.WorkCellsOpt=WorkCellsOpt;
-            if(isOnchange){
-            stateData.formData.WorkCell='';
-            stateData.formData.Machine='';
+        let filteredMachines = stateData.Machines.filter((dept: any) => dept.Plant.Title == PlantVal && dept.Department.Title == DepartmentVal && dept.Zone.Title == ZoneVal);
+        let MachinesOpt = filteredMachines.map((item: any) => ({
+            label: item.Title,
+            value: item.Title,
+        }));
+        let filteredWorkCells = stateData.WorkCells.filter((dept: any) => dept.h7kc == PlantVal && dept.Department == DepartmentVal && dept.Zone == ZoneVal);
+        let WorkCellsOpt = filteredWorkCells.map((item: any) => ({
+            label: item.Title,
+            value: item.Title,
+        }));
+        // update dependents
+        MachinesOpt.sort((a: any, b: any) => a.label.localeCompare(b.label));
+        WorkCellsOpt.sort((a: any, b: any) => a.label.localeCompare(b.label));
+        stateData.MachinesOpt = MachinesOpt;
+        stateData.WorkCellsOpt = WorkCellsOpt;
+        if (isOnchange) {
+            stateData.formData.WorkCell = '';
+            stateData.formData.Machine = '';
             this.setState(stateData);
-            }
-            return stateData;
+        }
+        return stateData;
     }
 
     // Job Steps Section
@@ -685,20 +693,20 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             <tr key={jobStep.id}>
                 <td>{jobStep.id}</td>
                 <td>
-                    <input className="form-control" placeholder={``} name={`JobStep_${jobStep.id}`} type="text" id={`JobStep_${jobStep.id}`} value={jobStep.Step} onChange={(e) => this.handleJobStepChange(index, 'Step', e.target.value)} disabled={false} title={jobStep.Step} />
+                    <input className="form-control" placeholder={``} name={`JobStep_${jobStep.id}`} type="text" id={`JobStep_${jobStep.id}`} value={jobStep.Step} title={jobStep.Step} onChange={(e) => this.handleJobStepChange(index, 'Step', e.target.value)} disabled={this.state.isEditForm} />
 
                 </td>
                 <td>
                     <input
                         type="checkbox"
                         checked={jobStep.Required}
-                        onChange={(e) => this.handleJobStepChange(index, 'Required', e.target.checked)} />
+                        onChange={(e) => this.handleJobStepChange(index, 'Required', e.target.checked)} disabled={this.state.isEditForm} />
                 </td>
                 <td>
-                    <div className="custom-dropdown" id={`divRiskFamily_${jobStep.id}`}>
+                    <div className="custom-dropdown" id={`divRiskFamily_${jobStep.id}`} title={jobStep.RiskFamily}>
                         <SearchableDropdown
                             label={""}
-                            Title={""}
+                            Title={jobStep.RiskFamily}
                             name={""}
                             id={`RiskFamily_${jobStep.id}`}
                             placeholderText={""}
@@ -707,16 +715,16 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             OptionsList={this.state.RiskFamilyOpt}
                             OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'RiskFamily', selectedOption ? selectedOption.value : '')}
                             isRequired={false}
-                            disabled={!jobStep.Required}
+                            disabled={(!jobStep.Required) || this.state.isEditForm}
                             noOptionsMessage="No Risk Family"
                         />
                     </div>
                 </td>
                 <td>
-                    <div className="custom-dropdown" id={`divRisk_${jobStep.id}`}>
+                    <div className="custom-dropdown" id={`divRisk_${jobStep.id}`} title={jobStep.Risk}>
                         <SearchableDropdown
                             label={""}
-                            Title={""}
+                            Title={jobStep.Risk}
                             name={""}
                             id={`Risk_${jobStep.id}`}
                             placeholderText={""}
@@ -725,17 +733,17 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             OptionsList={jobStep.RiskOpt}
                             OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Risk', selectedOption ? selectedOption.value : '')}
                             isRequired={false}
-                            disabled={!jobStep.Required}
+                            disabled={(!jobStep.Required) || this.state.isEditForm}
                             noOptionsMessage="No Risk"
                         />
                     </div>
                 </td>
                 <td>
-                    <div className="bs-field form-floating" title={'Probability'}>
+                    <div className="bs-field form-floating" title={String(jobStep.Probability)}>
                         <div className="custom-dropdown" id={`divProbability_${jobStep.id}`}>
                             <SearchableDropdown
                                 label={"Probability"}
-                                Title={"Probability"}
+                                Title={String(jobStep.Probability)}
                                 name={"Probability"}
                                 id={`Probability_${jobStep.id}`}
                                 placeholderText={""}
@@ -749,11 +757,11 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             />
                         </div>
                     </div>
-                    <div className="bs-field form-floating" title={'Controls'}>
+                    <div className="bs-field form-floating" title={String(jobStep.Controls)}>
                         <div className="custom-dropdown" id={`divControls_${jobStep.id}`}>
                             <SearchableDropdown
                                 label={"Controls"}
-                                Title={"Controls"}
+                                Title={String(jobStep.Controls)}
                                 name={"Controls"}
                                 id={`Controls_${jobStep.id}`}
                                 placeholderText={""}
@@ -767,11 +775,11 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             />
                         </div>
                     </div>
-                    <div className="bs-field form-floating" title={'Severity'}>
+                    <div className="bs-field form-floating" title={String(jobStep.Severity)}>
                         <div className="custom-dropdown" id={`divSeverity_${jobStep.id}`}>
                             <SearchableDropdown
                                 label={"Severity"}
-                                Title={"Severity"}
+                                Title={String(jobStep.Severity)}
                                 name={"Severity"}
                                 id={`Severity_${jobStep.id}`}
                                 placeholderText={""}
@@ -788,12 +796,12 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 </td>
 
                 <td>
-                    <div className={`${jobStep.RiskLevelColorClasses.Probability}`}>{jobStep.RiskLevel.Probability}</div>
-                    <div className={`${jobStep.RiskLevelColorClasses.Controls}`}>{jobStep.RiskLevel.Controls}</div>
-                    <div className={`${jobStep.RiskLevelColorClasses.Severity}`}>{jobStep.RiskLevel.Severity}</div>
+                    <div className={`${jobStep.RiskLevelColorClasses.Probability}`} title="Probability Risk Level">{jobStep.RiskLevel.Probability}</div>
+                    <div className={`${jobStep.RiskLevelColorClasses.Controls}`} title="Controls Risk Level">{jobStep.RiskLevel.Controls}</div>
+                    <div className={`${jobStep.RiskLevelColorClasses.Severity}`} title="Severity Risk Level">{jobStep.RiskLevel.Severity}</div>
                 </td>
                 <td>
-                    <div className={`${jobStep.RiskLevelColorClasses.Total}`}>{jobStep.TotalScore}</div>
+                    <div className={`${jobStep.RiskLevelColorClasses.Total}`} title="Total Score">{jobStep.TotalScore}</div>
                 </td>
             </tr>
         ))
@@ -823,7 +831,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 RiskLevel: { ...updatedJobSteps[index].RiskLevel, [field]: `${value}` },
                 RiskLevelColorClasses: { ...updatedJobSteps[index].RiskLevelColorClasses, [field]: `RiskLevel-${value}` }
             };
-            let TotalScore = Number(updatedJobSteps[index].Probability) + Number(updatedJobSteps[index].Controls )+Number(updatedJobSteps[index].Severity);
+            let TotalScore = Number(updatedJobSteps[index].Probability) + Number(updatedJobSteps[index].Controls) + Number(updatedJobSteps[index].Severity);
             let TotalScoreClass = TotalScore == 0 ? 0 : TotalScore <= 4 ? 1 : TotalScore <= 6 ? 2 : TotalScore >= 7 ? 3 : 0;
             updatedJobSteps[index] =
             {
@@ -917,10 +925,10 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
 
             <tr key={PPE.id}>
                 <td>
-                    <div className="custom-dropdown" id={`divPPE_${PPE.id}`}>
+                    <div className="custom-dropdown" id={`divPPE_${PPE.id}`} title={PPE.PPEType}>
                         <SearchableDropdown
                             label={""}
-                            Title={""}
+                            Title={PPE.PPEType}
                             name={""}
                             id={`PPEType_${PPE.id}`}
                             placeholderText={""}
@@ -1001,12 +1009,12 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         DynamicHTML = Persons.map((Person, index) => (
             <tr key={Person.id}>
                 <td>
-                    <input className="form-control" placeholder={``} name={`PersonName_${Person.id}`} type="text" id={`PersonName_${Person.id}`} value={Person.PersonName} onChange={(e) => this.handlePersonsChange(index, 'PersonName', e.target.value)} disabled={false} title={Person.PersonName} />
+                    <input className="form-control" placeholder={``} name={`PersonName_${Person.id}`} type="text" id={`PersonName_${Person.id}`} value={Person.PersonName} title={Person.PersonName} onChange={(e) => this.handlePersonsChange(index, 'PersonName', e.target.value)} disabled={false} />
 
                 </td>
                 <td>
                     <div className="c-date-picker">
-                        <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
+                        <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
                     </div>
                 </td>
                 <td>{Persons.length > 1 ? <button type='button' className="btn text-danger" onClick={() => this.deletePerson(index)} title="Delete Person"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
@@ -1095,14 +1103,14 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
                                 <h4 className="mb-0 pt-2 text-center">{" JSRA " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
-                                <label className="text-end px-1" style={{width:"100%"}}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="mainContent row px-4 borderLine">
                                 <div className="row py-3">
                                     <div className="col-md-3 c-date-picker form-floating" id="divDate">
                                         <label className="label-datePicker"> Date <span className="text-danger">*</span></label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={undefined} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
+                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
                                     </div>
                                     <div className="col-md-3  form-floating" title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">
@@ -1274,7 +1282,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {this.bindJobSteps()}
                                         </tbody>
                                     </table>
-                                    <input type="button" value="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" />
+                                    {!this.state.isEditForm && <input type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" />}
                                 </div>
 
                                 {/* Permits Section */}
@@ -1313,7 +1321,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {this.bindPPETypes()}
                                         </tbody>
                                     </table>
-                                    <input type="button" value="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" />
+                                    <input type="button" value="Add PPE" title="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" />
                                 </div>
 
                                 {/* Persons Involved */}
@@ -1331,27 +1339,27 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {this.bindPersons()}
                                         </tbody>
                                     </table>
-                                    <input type="button" value="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson" />
+                                    <input type="button" value="Add Person" title="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson" />
                                 </div>
                                 {/* Supervisor Info */}
                                 <div className={'row divSection'}>
                                     <div className="SectionHeader">Supervisor</div>
                                     <div className="col-md-3">
                                         <div className="form-floating">
-                                            <input className="form-control" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} title={this.state.formData.SupervisorName} />
+                                            <input className="form-control" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
                                             <label className=" col-form-label">Supervisor Name </label>
                                         </div>
                                     </div>
                                     <div className="col-md-3 c-date-picker" id="divDate">
                                         <label className="label-datePicker" > Date</label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
+                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
                                     </div>
 
                                 </div>
                                 {/* Buttons */}
                                 <div className="col-sm-12 text-center py-3" id="divButtons" >
-                                        <button type="button" id="btnSubmit" className="btn btn-primary" title="Submit" onClick={this.handleSubmit} >Submit</button>
-                                        <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
+                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit} >Submit</button>}
+                                    <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                 </div>
                             </div>
                         </div>

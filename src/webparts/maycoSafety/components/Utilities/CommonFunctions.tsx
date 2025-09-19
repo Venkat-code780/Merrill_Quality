@@ -81,9 +81,26 @@ export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
             console.error("Error fetching List:", error);
             showToast("error", ActionStatus.Error);
             hideLoader();
-            return [];
+            return error;
         }
     }
+    // Get List Item by Id
+    const getListItemById = async (ListName: string, URL: string, ItemId: number, selectQuery: string = '', expand: string = ''): Promise<any> => {
+        const SiteURL: SPFI = spfi(URL).using(SPFx(context));
+        try {
+            const item = await SiteURL.web.lists
+                .getByTitle(ListName)
+                .items.getById(ItemId)
+                .select(selectQuery)
+                .expand(expand)();
+            return item;
+        } catch (error) {
+            console.error("Error fetching item by Id:", error);
+            showToast("error", ActionStatus.Error);
+            hideLoader();
+            return error;
+        }
+    };
 
     //  Add List Item
     const addListItem = async (ListName: string, URL: string, postObject: any): Promise<any> => {
@@ -98,7 +115,7 @@ export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
             console.error("Error adding item:", error);
             showToast("error", ActionStatus.Error);
             hideLoader();
-            return null;
+            return error;
         }
     };
 
@@ -116,7 +133,7 @@ export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
             console.error("Error updating item:", error);
             showToast("error", ActionStatus.Error);
             hideLoader();
-            return null;
+            return error;
         }
     };
     // 🔹 Batch Add Multiple Items
@@ -134,6 +151,7 @@ export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
             console.error("Error in batch add:", error);
             showToast("error", ActionStatus.Error);
             hideLoader();
+            return error;
         }
     };
 
@@ -159,11 +177,13 @@ export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
             console.error("Error in batch update:", error);
             showToast("error", ActionStatus.Error);
             hideLoader();
+            return error;
         }
     };
 
    return {
         getListItems,
+        getListItemById,
         addListItem,
         updateListItem,
         batchAddItems,

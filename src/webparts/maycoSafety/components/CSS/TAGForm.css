@@ -1,0 +1,110 @@
+/* General container for tabs */
+.tab-container {
+  width :600px !important;
+  background-color: #f4f9fd;  /* Background color */
+  padding: 15px;
+  margin:auto;
+}
+
+/* Tab navigation styles */
+.tab-navigation {
+  background-color: #7575752e; /* Tab header background */
+  padding: 10px;
+}
+
+.nav-tabs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-item {
+  margin: 0 10px;
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 20px;
+  background-color: #e0efff; /* Tab background */
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 18px !important;
+  font-weight: bold !important;
+}
+.nav-link.Safety{
+  color: #0d9459;  
+}
+.nav-link.AMWO{
+  color: #1249a7;  
+}
+.nav-link.PM{
+  color: #ee3d48;  
+}
+.nav-link:hover {
+  background-color: #cce8ff; /* Hover effect for tabs */
+}
+/* Tab content section */
+.tab-content {
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #d1d1d1;
+  margin-top: 5px;
+  border-radius: 4px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+
+.nav-link.active {
+  color: white;  
+  font-weight: bold;
+}
+.SafetyTab
+{
+    background-color: #0d9459 !important;
+    border: #0d9459;
+    color: white !important;  
+}
+.AMWOTab
+{
+    background-color: #1249a7 !important;
+    border: #1249a7;
+    color: white !important;  
+
+}
+.PMTab
+{
+    background-color: #ee3d48 !important;
+    border: #ee3d48;
+    color: white !important;  
+
+}
+.divTagsSection{
+    padding-left: 30%;
+}
+.SafetyTabSection
+{
+    border: 5px solid #0d9459;
+}
+.AMWOTabSection
+{
+    border: 5px solid #1249a7;
+
+}
+.PMTabSection
+{
+    border: 5px solid #ee3d48;
+
+}
+
+

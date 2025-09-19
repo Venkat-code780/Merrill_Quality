@@ -1,0 +1,47 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    border: 1px solid #0fbafe;
+}
+
+table td,
+table th {
+    border-collapse: collapse;
+    border: 1px solid #0fbafe;
+}
+
+.Heading1 {
+    color: #fff;
+    background-color: #3498db;
+}
+
+.Heading2 {
+    color: #025d81 !important;
+    background-color: #a4e2fa;
+}
+.Low
+{
+ background-color: #d7e5eb;
+}
+.Medium
+{
+ background-color: #b5c4ca;
+}
+.High
+{
+ background-color: #8f9da3;
+}
+.TopicCell
+{
+    background-color: #71d6fd;
+    font-size: 16px;
+    font-weight: bold !important;
+    color: #345260;
+}
+.ScoreCell
+{
+    background-color: #71d6fd;
+    font-weight: bold !important;
+    color: #345260;
+}

@@ -117,6 +117,8 @@ function ValidateForm(data:any){
             let startDate = data[key].startDate;
             let EndDate = data[key].endDate;
             if( !([null, undefined, ''].includes(startDate)) && !([null, undefined, '']).includes(EndDate)){
+                startDate=new Date(startDate).setHours(0,0,0,0);
+                EndDate=new Date(EndDate).setHours(0,0,0,0);
                 if(new Date(EndDate).getTime() < new Date(startDate).getTime()){
                     message ="'"+data[key].endDateName+"' must be greater than or equal to '"+data[key].startDateName+"'.";
                     let prpData =data[key].Focusid;
@@ -229,6 +231,34 @@ function IsEmail(email:any) {
         return true;
     }
 }
+function peoplePickerValidation(data:any){
+    let status = true;
+    let message ="";
+    let propertieTypes={Number:ControlType.number,String:ControlType.string,MobileNumber:ControlType.mobileNumber,Email:ControlType.email,People:ControlType.people,Date:ControlType.date,compareDates:ControlType.compareDates};
+    for (let key in data) {
+        let value = data[key].val.results.length
+        value = value>0?value:null
+        let type =data[key].Type;
+        let isrequired =data[key].required;
+
+     if((propertieTypes.People==type && isrequired) && [undefined,null,''].includes(value))
+    {
+        message =data[key].Name+" cannot be blank.";
+        let prpIsreq =data[key].Focusid;
+        const peoplePickerElem = document.getElementById(prpIsreq);
+        const inputElem = peoplePickerElem?.getElementsByTagName('input')[0];
+        if (inputElem) {
+            inputElem.focus();
+            inputElem.classList.add('mandatory-FormContent-focus');
+        }
+        status = false;
+        break;
+    }
+}
+let retunobject ={message,status};
+return retunobject;
+}
+
 
 class formValidation {
     public static FormValidation=(formData: any)=>{
@@ -240,6 +270,10 @@ class formValidation {
         let status = ValidateInputFiles(filesArray, isRequired);
         return status;
     }
+    public static multiplePeoplePickerValidation=(formData:any)=>{
+        let status= peoplePickerValidation(formData); 
+        return status;
+      }
  }
  export default formValidation;
 

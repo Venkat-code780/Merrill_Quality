@@ -1,0 +1,25 @@
+.greenborder {
+    border: 1px solid #6CB56C;
+}
+.greenbg {
+    background-color: #6CB56C;
+    color: #fff !important;
+}
+.bluebg {
+    background-color: #1975a3;
+    color: #fff !important;
+}
+.redbg {
+    background-color: #da1818;
+    color: #fff !important;
+}
+.yellowbg {
+    background-color: #e3de00;
+    color: #333 !important;
+}
+div .padding0{
+    padding: 0 !important;
+}
+h6{
+    margin-bottom: 0px !important;
+}

@@ -19,6 +19,7 @@ import SearchableDropdown from "../Shared/Dropdown";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import MultipleImageUploader from "../Shared/MutipleImageUploader";
 import formValidation from "../Utilities/FormValidator";
+import { createBatch } from "@pnp/sp/batching";
 
 export interface SMATFormProps {
     match: any;
@@ -30,6 +31,7 @@ export interface SMATFormProps {
     siteURL: string;
     webAbsoluteURL: string;
     currPlantTitle: string;
+    isSuperAdmin: boolean;
 }
 
 export interface SMATFormState {
@@ -40,7 +42,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
     private sp = spfi().using(SPFx(this.props.context));
     private MaycoURL: string;
     private currPlantObj: any;
-    private SMATList = "";
+    private SMATList = "WCC";
+    private SMATChildList = "WccLine";
 
     private txtComments: any;
     private txtActionCompleted: any;
@@ -50,21 +53,19 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             Department: '',
             Zone: '',
             Machine: '',
-            Shifts: '',
+            ShiftType: '',
             ToolNumber: '',
             Comments: '',
             AuditorName: '',
             Supervisor: '',
             WorkCell: '',
-            ShiftType: '',
             unsafeactCount: '',
             unsafeconditionCount: '',
             ActionCompleted: '',
             WCCDate: '',
             CompletedDate: '',
             Year: '',
-            YearMonth: '',
-            Attachment: ''
+            YearMonth: ''
         },
         childFormData: {
             wccId: 0,
@@ -104,7 +105,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         isEditForm: false,
         ItemId: 0,
         isInputDisabled: false,
-        showSubmit: true
+        displayMessage:'',
+        showSubmit: false
     }
 
     constructor(props: SMATFormProps) {
@@ -126,7 +128,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             showLoader();
             var formData = { ...this.state.formData };
             let itemId = this.props.match.params.id;
-            let showSubmit = false;
+            let showSubmit = false
 
             let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
             let PlantList = 'Plant', PlantSelQuery = 'Title,*', plantFiltQuery = '', PlantExpFields = '';
@@ -180,57 +182,81 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             let workCellOptions: any = [];
             let shiftData = shifts.map((item: any) => ({ label: item.Title, value: item.Title }));
 
-            let allMappingData = mappingData.map((item: any) => {
-                if (item.Audit_categories && item.Audit_SubCategory && this.checkAuditCategory(activeAuditCategoriesData, item.Audit_categories.Title)) {
-                    return (
-                        {
-                            WCCID: '',
-                            WccCategory: item.Audit_categories.Title,
-                            WccSubCategory: item.Audit_SubCategory,
-                            Attachment: '',
-                            SubCategoryStatus: 'Satisfactory',
-                            SubCategoryComments: ''
-                        })
-                }
-                else {
-                    return null;
-                }
-            }).filter(mapItem => mapItem != null);
+            let allMappingData;
 
             if (itemId != undefined) {
-                await this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")().then((editSMATItem: any) => {
-                    if (editSMATItem != Error) {
-                        formData.Plant = [null, undefined, ""].includes(editSMATItem.Plant) ? "" : editSMATItem.Plant;
-                        formData.Department = [null, undefined, ""].includes(editSMATItem.Department) ? "" : editSMATItem.Department;
-                        formData.Zone = [null, undefined, ""].includes(editSMATItem.Zone) ? "" : editSMATItem.Zone;
-                        formData.Machine = [null, undefined, ""].includes(editSMATItem.Machine) ? "" : editSMATItem.Machine;
-                        formData.Shifts = [null, undefined, ""].includes(editSMATItem.Shifts) ? "" : editSMATItem.Shifts;
-                        formData.ToolNumber = [null, undefined, ""].includes(editSMATItem.ToolNumber) ? "" : editSMATItem.ToolNumber;
-                        formData.Comments = [null, undefined, ""].includes(editSMATItem.Comments) ? "" : editSMATItem.Comments;
-                        formData.AuditorName = [null, undefined, ""].includes(editSMATItem.AuditorName) ? "" : editSMATItem.AuditorName;
-                        formData.Supervisor = [null, undefined, ""].includes(editSMATItem.Supervisor) ? "" : editSMATItem.Supervisor;
-                        formData.WorkCell = [null, undefined, ""].includes(editSMATItem.WorkCell) ? "" : editSMATItem.WorkCell;
-                        formData.ShiftType = [null, undefined, ""].includes(editSMATItem.ShiftType) ? "" : editSMATItem.ShiftType;
-                        formData.unsafeactCount = [null, undefined, ""].includes(editSMATItem.unsafeactCount) ? "" : editSMATItem.unsafeactCount;
-                        formData.unsafeconditionCount = [null, undefined, ""].includes(editSMATItem.unsafeconditionCount) ? "" : editSMATItem.unsafeconditionCount;
-                        formData.ActionCompleted = [null, undefined, ""].includes(editSMATItem.ActionCompleted) ? "" : editSMATItem.ActionCompleted;
-                        formData.WCCDate = [null, undefined, ""].includes(editSMATItem.WCCDate) ? "" : editSMATItem.WCCDate;
-                        formData.CompletedDate = [null, undefined, ""].includes(editSMATItem.CompletedDate) ? "" : editSMATItem.CompletedDate;
-                        formData.Year = [null, undefined, ""].includes(editSMATItem.Year) ? "" : editSMATItem.Year;
-                        formData.YearMonth = [null, undefined, ""].includes(editSMATItem.YearMonth) ? "" : editSMATItem.YearMonth;
+                let [editSMATItem, editSMATChildItems] = await Promise.all([this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")(), this.sp.web.lists.getByTitle(this.SMATChildList).items.top(2000).filter("WCCID eq "+itemId+"")() ]);
+                if (editSMATItem != Error) {
+                    formData.Plant = editSMATItem.Plant ?? '',
+                    formData.Department = editSMATItem.Department ?? '',
+                    formData.Zone = editSMATItem.Zone ?? '',
+                    formData.Machine = editSMATItem.Machine ?? '',
+                    formData.ShiftType = editSMATItem.ShiftType ?? '',
+                    formData.ToolNumber = editSMATItem.ToolNumber ?? '',
+                    formData.Comments = editSMATItem.Comments ?? '',
+                    formData.AuditorName = editSMATItem.AuditorName ?? '',
+                    formData.Supervisor = editSMATItem.Supervisor ?? '',
+                    formData.WorkCell = editSMATItem.WorkCell ?? '',
+                    formData.unsafeactCount = editSMATItem.unsafeactCount ?? '',
+                    formData.unsafeconditionCount = editSMATItem.unsafeconditionCount ?? '',
+                    formData.ActionCompleted = editSMATItem.ActionCompleted ?? '',
+                    formData.WCCDate = editSMATItem.WCCDate ?? '',
+                    formData.CompletedDate = editSMATItem.CompletedDate ?? '',
+                    formData.Year = editSMATItem.Year ?? '',
+                    formData.YearMonth = editSMATItem.YearMonth ?? ''
 
-                        zoneOptions = zoneData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == editSMATItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
-                        machineOptions = machineData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
-                        toolNumbersOptions = toolNumbersData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                    zoneOptions = zoneData.filter((option: any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editSMATItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
+                    machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+
+                    toolNumbersOptions = toolNumbersData.filter((option: any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+
+                    workCellOptions = workCellData.filter((option: any) => ( option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+
+                    if( editSMATChildItems.length > 0){
+                        allMappingData = editSMATChildItems.map((item: any) => {
+                            return (
+                            {
+                                Id: item.Id,
+                                WCCID: item.WCCID  ?? '',
+                                WccCategory: item.WccCategory ?? '',
+                                WccSubCategory: item.WccSubCategory ?? '',
+                                Attachment: item.Attachment ?? '',
+                                SubCategoryStatus: item.SubCategoryStatus ?? '',
+                                SubCategoryComments: item.SubCategoryComments ?? ''
+                            })
+                        })
                     }
-                })
+
+                    
+
+                    if( editSMATItem.Author == this.props.userDisplayName || this.props.isSuperAdmin ){
+                        showSubmit = true;
+                    }
+                }
             }
             else {
+                allMappingData = mappingData.map((item: any) => {
+                    if (item.Audit_categories && item.Audit_SubCategory && this.checkAuditCategory(activeAuditCategoriesData, item.Audit_categories.Title)) {
+                        return (
+                            {
+                                WCCID: '',
+                                WccCategory: item.Audit_categories.Title,
+                                WccSubCategory: item.Audit_SubCategory,
+                                Attachment: '',
+                                SubCategoryStatus: 'Satisfactory',
+                                SubCategoryComments: ''
+                            })
+                    }
+                    else {
+                        return null;
+                    }
+                }).filter(mapItem => mapItem != null);
+
                 showSubmit = true;
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, showSubmit, allMappingData, activeAuditCategoriesData, auditCategoryStatusData });
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId });
 
             hideLoader();
         } catch (e) {
@@ -269,7 +295,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
     private handleDropdownChange = (event: any, actionMeta: any, id: any) => {
         const formData: any = { ...this.state.formData };
-        // let departmentData = [...this.state.departmentData];
+        let departmentData = [...this.state.departmentData];
         let departmentOptions: any = [...this.state.departmentOptions];
         let zoneData = [...this.state.zoneData];
         let zoneOptions: any = [...this.state.zoneOptions];
@@ -283,7 +309,19 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         const value = actionMeta.action == "clear" ? '' : event.value;
         formData[name] = value;
 
-        if (name == "Department") {
+        if( name == "Plant" ){
+            formData.Department = "";
+            formData.Zone = "";
+            formData.Machine = "";
+            departmentOptions = [];
+            machineOptions = [];
+            zoneOptions = [];
+
+            if (actionMeta.action != "clear") {
+                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+            }
+        }
+        else if (name == "Department") {
             formData.Zone = "";
             formData.Machine = "";
             formData.ToolNumber = "";
@@ -291,7 +329,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
             if (actionMeta.action != "clear") {
                 zoneOptions = [];
-                zoneOptions = zoneData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
             else { zoneOptions = []; }
             machineOptions = [];
@@ -307,9 +345,9 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 machineOptions = [];
                 toolNumbersOptions = [];
 
-                machineOptions = machineData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                toolNumbersOptions = toolNumbersData.filter((option: any) => (option.Plant.Title == formData.Plant && option.Department.Title == formData.Department && option.Zone.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                toolNumbersOptions = toolNumbersData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone.Title == event.value)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
                 workCellOptions = workCellData.filter((option: any) => (option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == event.value)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
@@ -359,7 +397,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         this.setState({ formData });
     }
 
-    private handleSubmit = () => {
+    private handleSubmit = async () => {
         try {
             showLoader();
             var formData: any = { ...this.state.formData };
@@ -367,7 +405,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             let data = {
                 date: {val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtWCCDate"},
                 dateToday: {val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtWCCDate"},
-                shift: {val: formData.Shifts, required: true, Name: "Shifts", Type: ControlType.reactSelect, Focusid: "ddlShift"},
+                shift: {val: formData.ShiftType, required: true, Name: "ShiftType", Type: ControlType.reactSelect, Focusid: "ddlShift"},
                 auditorsName: {val: formData.AuditorName, required: true, Name: "Auditor's Name", Type: ControlType.reactSelect, Focusid: "ddlAuditorName"},
                 plant: {val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant"},
                 department: {val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment"},
@@ -385,8 +423,48 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 // console.log("Valid Data");
                 let isValidDynamicComments = this.validateDynamicSubCategoryComments();
                 if( isValidDynamicComments ){
-                    console.log("Valid Dynamic Comments");
-                    showToast("success", "Form Validated Successfully");
+
+                    //Date formatting, Year and YearMonth
+                    formData.WCCDate = DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData.WCCDate)), this.props.spContext.webTimeZoneData ).toISOString();
+                    let mmddyyyyDate = format(formData.WCCDate, "MM/dd/yyyy");
+                    // console.log(mmddyyyyDate);
+                    formData.Year = mmddyyyyDate.split("/")[2];
+                    formData.YearMonth = mmddyyyyDate.split("/")[1];
+                    if( formData.CompletedDate != "" ){
+                        formData.CompletedDate = DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData.CompletedDate)), this.props.spContext.webTimeZoneData ).toISOString();
+                    }
+                    else{
+                        delete formData.CompletedDate;
+                    }
+
+                    //Get Status Count
+                    let allMappingData = {...this.state.allMappingData}
+                    let unsafeact = 0;
+                    let unsafeConddition = 0;
+                    for (let  i=0; i< Object.keys(allMappingData).length; i++) {
+                        var subCategory = allMappingData[i];
+                        var status = subCategory.SubCategoryStatus;
+
+                        if( status.toLowerCase() == "unsafe act" ){
+                            unsafeact += 1;
+                        }
+                        if( status.toLowerCase() == "unsafe condition" ){
+                            unsafeConddition += 1;
+                        }
+                        if( status.toLowerCase() == "both" ){
+                            unsafeact += 1;
+                            unsafeConddition += 1;
+                        }
+                    }
+
+                    formData.unsafeactCount = unsafeact.toString();
+                    formData.unsafeconditionCount = unsafeConddition.toString();
+
+                    console.clear();
+                    console.log(formData);
+                    console.log(this.state.allMappingData);
+
+                    await this.InsertOrUpdateData(formData);
                 }
             }
             else{
@@ -399,6 +477,109 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         }
     }
 
+    private InsertOrUpdateData = async (formData: any) => {
+        try {
+            let itemId = this.props.match.params.id;
+            if( itemId > 0 ){
+                await this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).update(formData).then((res:any) =>{
+                    this.UpdateLineItems();
+                }, (error) => {
+                    console.log(error);
+                    this.onError();
+                })
+            }
+            else{
+                await this.sp.web.lists.getByTitle(this.SMATList).items.add(formData).then( (res:any) => {
+                    let childObjects = this.updateWCCId(res.Id.toString());
+                    this.InsertLineItems( childObjects );
+                }, (error) => {
+                    console.log(error);
+                    this.onError();
+                })
+            }
+        } catch (e) {
+            console.log(e);
+            this.onError();
+        }
+    }
+
+    private InsertLineItems = async ( childPostObjects :any) => {
+        try {
+            const[batchedPipe, execute] = createBatch(this.sp.web);
+            for (const item of childPostObjects) {
+                this.sp.web.lists.getByTitle(this.SMATChildList).items.using(batchedPipe).add(item);
+            }
+            await execute().then( async () =>{
+                let msg = "SMAT Submitted Successfully";
+                this.setState({displayMessage: msg});
+                this.onSuccess();
+                
+            }, (error: any) => {
+                console.log(error);
+                this.onError();
+            })
+        } catch (e) {
+            console.log(e);
+            this.onError();
+        }
+    }
+
+    private UpdateLineItems = async () => {
+        try {
+            let childPostObjects = this.createUpdateObjects();
+            const[batchedPipe, execute] = createBatch(this.sp.web);
+            for (const item of childPostObjects) {
+                this.sp.web.lists.getByTitle(this.SMATChildList).items.getById(item.id).using(batchedPipe).update(item.Obj);
+            }
+            await execute().then( async () =>{
+                let msg = "SMAT Updated Successfully";
+                this.setState({displayMessage: msg});
+                this.onSuccess();
+                
+            }, (error: any) => {
+                console.log(error);
+                this.onError();
+            })
+        } catch (e) {
+            console.log(e);
+            this.onError();
+        }
+    }
+
+    private createUpdateObjects(){
+        const allMappingData:any = [...this.state.allMappingData];
+        let postObjects = [];
+
+        for( let i=0; i< allMappingData.length; i++){
+            let mappingItem = allMappingData[i];
+
+            let postObj = {
+                id: Number(mappingItem.Id),
+                Obj: {
+                    WCCID: mappingItem.WCCID,
+                    WccCategory: mappingItem.WccCategory,
+                    WccSubCategory: mappingItem.WccSubCategory,
+                    Attachment: mappingItem.Attachment,
+                    SubCategoryStatus: mappingItem.SubCategoryStatus,
+                    SubCategoryComments: mappingItem.SubCategoryStatus == "Satisfactory"? '' : mappingItem.SubCategoryComments
+                }
+            }
+            postObjects.push(postObj);
+        }
+        return postObjects;
+    }
+
+    private updateWCCId = (ParentId:string) => {
+        let allMappingData = [...this.state.allMappingData];
+
+        let updatedMappingData = allMappingData.map( item => ({
+            ...item,
+            WCCID: ParentId
+        }));
+
+        return updatedMappingData;
+    }
+
     private validateDynamicSubCategoryComments = () => {
         let allMappingData: any = [...this.state.allMappingData];
         let isValid = true;
@@ -409,12 +590,18 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 let element = document.getElementById(txtAreaId);
                 element?.classList.add("mandatory-FormContent-focus");
                 element?.focus();
-                showToast("error", "Comments cannot be blank for status - "+ allMappingData[i].SubCategoryStatus );
+                showToast("error", "Comments cannot be blank for Status-"+ allMappingData[i].SubCategoryStatus );
                 break;
             }
         }
         return isValid;
     }
+
+    private onSuccess = () => {
+            hideLoader();
+            this.setState({ Homeredirect: true, ItemID: 0  });
+            showToast("success", this.state.displayMessage );
+        }
 
     private onError = () => {
         showToast("error", ActionStatus.Error);
@@ -436,7 +623,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
         const tBody = uniqueCategories.map((category, categoryIndex) => {
             // Filter subcategories that match the current category
-            const categoryRows = allMappingData.filter(subCategory => subCategory.WccCategory === category);
+            const categoryRows = allMappingData.filter(subCategory => subCategory.WccCategory === category).sort( (a:any, b:any) => a.WccSubCategory.localeCompare(b.WccSubCategory));
 
             return (
                 <React.Fragment key={categoryIndex}>
@@ -447,10 +634,13 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
                     {/* Subcategory Rows */}
                     {categoryRows.map((subCategory, subIndex) => {
+
+                        // const rowIndex = allMappingData.findIndex( item =>  item.WccCategory == category && item.WccSubCategory == subCategory.WccSubCategory);
+                        const rowIndex = allMappingData.indexOf(subCategory);
                         const isSatisfactory = subCategory.SubCategoryStatus === 'Satisfactory';
 
                         return (
-                            <tr key={`${categoryIndex}-${subIndex}`}>
+                            <tr key={rowIndex}>
                                 <td>
                                     <div className="pull-left">{globalCategoryIndex++}.{subCategory.WccSubCategory}</div>
                                     <div className="pull-right">
@@ -458,7 +648,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                             onImageUpload={this.onImageChange}
                                             onRemoveImage={this.onRemoveImage}
                                             initialImageSrc={subCategory.Attachment}
-                                            index={categoryIndex}
+                                            index={rowIndex}
                                         />
                                     </div>
                                 </td>
@@ -466,8 +656,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     <div className="form-floating">
                                         <select
                                             className="form-select"
-                                            id={"SubCategory" + categoryIndex + "Select"}
-                                            onChange={(event) => this.handleStatusChange(event, categoryIndex)}
+                                            id={"SubCategory" + rowIndex + "Select"}
+                                            onChange={(event) => this.handleStatusChange(event, rowIndex)}
                                             value={subCategory.SubCategoryStatus} // controlled input
                                         >
                                             {auditCategoryStatusData.map((status: any) => (
@@ -476,20 +666,20 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                 </option>
                                             ))}
                                         </select>
-                                        <label htmlFor="floatingSelect"> Select </label>
+                                        <label htmlFor="floatingSelect"> Status </label>
                                     </div>
                                 </td>
                                 <td>
-                                    <div className={`form-floating ${isSatisfactory ? 'd-none' : ''}`} id={`divSubCategory${categoryIndex}`}>
+                                    <div className={`form-floating ${isSatisfactory ? 'd-none' : ''}`} id={`divSubCategory${rowIndex}`}>
                                         <textarea
                                             className="form-control bs-textarea"
                                             rows={3}
-                                            id={`txtSubCategory${categoryIndex}`}
+                                            id={`txtSubCategory${rowIndex}`}
                                             value={subCategory.SubCategoryComments}
                                             name="Comments"
                                             placeholder="Comments"
                                             disabled={isInputDisabled}
-                                            onChange={(event) => this.handleSubCategoryCommentsChange(event, categoryIndex)}
+                                            onChange={(event) => this.handleSubCategoryCommentsChange(event, rowIndex)}
                                             title="Comments"
                                             style={{ height: "80px" }}
                                         />
@@ -569,16 +759,16 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         <SearchableDropdown
                                             label={"Shift"}
                                             Title={"Shift"}
-                                            name={"Shifts"}
+                                            name={"ShiftType"}
                                             id="ddlShift"
                                             placeholderText={""}
                                             className={""}
-                                            selectedValue={this.state.formData.Shifts}
+                                            selectedValue={this.state.formData.ShiftType}
                                             OptionsList={this.state.shiftData}
                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift") }}
                                             isRequired={true}
                                             disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No Shifts"
+                                            noOptionsMessage="No ShiftType"
                                         />
                                     </div>
                                 </div>
@@ -774,7 +964,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                 </div>
 
                                 <div className="col-sm-12 text-center py-3 greybg" id="">
-                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} >Submit</button>}
+                                    {this.state.showSubmit &&<button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} >Submit</button>}
                                     <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlefullClose} >Cancel</button>
                                 </div>
                             </div>

@@ -24,6 +24,15 @@ import TAGForm from "../Forms/TAGForm";
 import CHECKLISTSTEP1Form from "../Forms/CHECK-LISTSTEP1Form";
 import CHECKLISTSTEP2Form from "../Forms/CHECK-LISTSTEP2Form";
 import CHECKLISTSTEP3Form from "../Forms/CHECK-LISTSTEP3Form";
+import CHECKLISTSTEP1View from "../Views/CHECK-LISTSTEP1View";
+import CHECKLISTSTEP2View from "../Views/CHECK-LISTSTEP2View";
+import CHECKLISTSTEP3View from "../Views/CHECK-LISTSTEP3View"
+import SEWOView from "../Views/SEWOView";
+import UCANView from "../Views/UCANView";
+import SMATView from "../Views/SMATView";
+import EHSView from "../Views/EHSView";
+import JSRAView from "../Views/JSRAView";
+import TAGView from "../Views/TAGView";
 // import UnAuthorized from "../Unauthorized/Unauthorized.component";
 
 
@@ -132,7 +141,43 @@ class RoutesItems extends React.Component<RoutesProps,RoutesState> {
             let params = useParams();
             return <CHECKLISTSTEP3Form {...this.context} {...this.props} {...{...props, match:{params}}}  />
         }
-       
+        //Views
+         const WrapperCHECKLISTSTEP1View = (props:any) => {
+            let params = useParams();
+            return <CHECKLISTSTEP1View {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+         const WrapperCHECKLISTSTEP2View = (props:any) => {
+            let params = useParams();
+            return <CHECKLISTSTEP2View {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+         const WrapperCHECKLISTSTEP3View = (props:any) => {
+            let params = useParams();
+            return <CHECKLISTSTEP3View {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+          const WrapperSEWOView = (props:any) => {
+            let params = useParams();
+            return <SEWOView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+        const WrapperUCANView= (props:any) => {
+            let params = useParams();
+            return <UCANView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+        const WrapperSMATView= (props:any) => {
+            let params = useParams();
+            return <SMATView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+        const WrapperEHSView= (props:any) => {
+            let params = useParams();
+            return <EHSView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+          const WrapperJSRAView= (props:any) => {
+            let params = useParams();
+            return <JSRAView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
+            const WrapperTAGView= (props:any) => {
+            let params = useParams();
+            return <TAGView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+        }
         return(
             <Suspense fallback={<div></div>}>
                 <Routes>
@@ -163,6 +208,20 @@ class RoutesItems extends React.Component<RoutesProps,RoutesState> {
                     <Route path="/CHECK-LISTSTEP2Form/:id?" element={ <WrapperCHECKLISTSTEP2Form />}/>
                     <Route path="/CHECK-LISTSTEP3Form/:id?" element={ <WrapperCHECKLISTSTEP3Form />}/>
                     {/* Views */}
+                    <Route path="/CHECK-LISTSTEP1View" element={<WrapperCHECKLISTSTEP1View/>}/>
+                    <Route path="/CHECK-LISTSTEP2View" element={<WrapperCHECKLISTSTEP2View/>}/>
+                    <Route path="/CHECK-LISTSTEP3View" element={<WrapperCHECKLISTSTEP3View/>}/>
+                    <Route path="/SEWOView" element={<WrapperSEWOView/>}/>
+                    <Route path="/UCANView" element={<WrapperUCANView/>}/>
+                    <Route path="/SMATView" element={<WrapperSMATView/>}/>
+                    <Route path="/EHSView" element={<WrapperEHSView/>}/>
+                    <Route path="/JSRAView" element={<WrapperJSRAView/>}/>
+                    <Route path="/TAGView" element={<WrapperTAGView/>}/>
+
+
+
+                     
+
                 </Routes>
             </Suspense>
         )

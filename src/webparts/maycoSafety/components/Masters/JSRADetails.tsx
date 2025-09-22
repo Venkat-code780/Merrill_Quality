@@ -14,6 +14,8 @@ import formValidation from "../Utilities/FormValidator";
 // import InputCheckBox from "../Shared/InputCheckBox";
 import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
+import Dropdown from "../Shared/Dropdown";
+// import Dropdown from "../Shared/Dropdown";
 
 export interface ActionsProps {
     match:any;
@@ -34,22 +36,40 @@ export interface ActionsState {
     isFormOpen: boolean;
     ItemId: number;
     formData: {
-        Title: string;
-        RootCause:Number;
-        SecondaryRootCause: Number;
+        CategoryId:Number;
+        Sub_x0020_CategoryId: Number;
+        Details:string;
+        Mitigation_x002f_Controls_x0020_:string;
+        Mitigation_x002f_Controls_x0020_0:string;
+        Mitigation_x002f_Controls_x0020_1:string;
+        Probability_x0020_1:string;
+        Probability_x0020_2:string;
+        Probability_x0020_3:string;
+
+
     },
     redirect: boolean,
     isEdit: boolean,
     displayMessage:string,
     isUnauthorized: Boolean,
-    RootCauses:any,
-    SecondaryRootCauses:any
+    JSRACategories:any,
+    JSRASubCategories:any
+    FilteredSubCategories: any;
 }
 
 export default class JSRADetails extends React.Component<ActionsProps, ActionsState> {
 
-    private ActionsList = "Actions";
-    private txtLeadSourceName;
+    private ActionsList = "JSRA Details";
+
+    private Details;
+    private Mitigation_x002f_Controls_x0020_;
+    private Mitigation_x002f_Controls_x0020_0;
+    private Mitigation_x002f_Controls_x0020_1;
+         private Probability_x0020_1;
+       private Probability_x0020_2;
+       private Probability_x0020_3;
+
+
     private sp = spfi().using(SPFx(this.props.context));
 
     constructor(props: ActionsProps){
@@ -68,24 +88,39 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
             isFormOpen: false,
             ItemId: 0,
             formData: {
-                Title: '',
-                RootCause: 0,
-                SecondaryRootCause:0
+                    CategoryId:0,
+                    Sub_x0020_CategoryId: 0,
+                    Details:'',
+                    Mitigation_x002f_Controls_x0020_:'',
+                    Mitigation_x002f_Controls_x0020_0:'',
+                    Mitigation_x002f_Controls_x0020_1:'',
+                    Probability_x0020_1:'',
+                    Probability_x0020_2:'',
+                    Probability_x0020_3:'',
             },
             redirect: false,
             isEdit: false,
             displayMessage:'',
             isUnauthorized: false,
-            RootCauses:[],
-            SecondaryRootCauses:[]
+            JSRACategories:[],
+            JSRASubCategories:[],
+            FilteredSubCategories: []
+
         };
 
-        this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+    
+        this.Details = React.createRef<HTMLTextAreaElement>();
+        this.Mitigation_x002f_Controls_x0020_=React.createRef<HTMLInputElement>();
+        this.Mitigation_x002f_Controls_x0020_0=React.createRef<HTMLInputElement>();
+        this.Mitigation_x002f_Controls_x0020_1=React.createRef<HTMLInputElement>();
+        this.Probability_x0020_1=React.createRef<HTMLInputElement>();
+        this.Probability_x0020_2=React.createRef<HTMLInputElement>();
+        this.Probability_x0020_3=React.createRef<HTMLInputElement>();
     }
 
     public componentDidMount(){
-        highlightCurrentNav("liActions");
-        document.title = "Mayco - Safety | Actions";
+        highlightCurrentNav("liJSRADetails");
+        document.title = "Mayco - Safety | JSRA Details";
         this.loadListData();
     }
 
@@ -102,24 +137,40 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
              let lsTableProps = {'PageNumber':1,"sortOrder":false,"sortBy":1,'SearchKey':null};
             localStorage.setItem('PrvData', JSON.stringify(lsTableProps));
 
-           let  [Actions,RootCauses,SecondaryRootCauses]=await Promise.all([
-            this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Title,RootCause/Title,RootCause/Id,SecondaryRootCause/Title,SecondaryRootCause/Id,*').expand('RootCause,SecondaryRootCause').orderBy("Modified", false)(),
-            this.sp.web.lists.getByTitle('RootCauses').items.top(2000).orderBy("Title", true)(),
-            this.sp.web.lists.getByTitle('SecondaryRootCauses').items.top(2000).orderBy("Title", true)(),
+           let  [JSRADetails,JSRACategories,JSRASubCategories]=await Promise.all([
+            this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Sub_x0020_Category/Title,Sub_x0020_Category/Id,Category/Title,Category/Id,*').expand('Sub_x0020_Category,Category').orderBy("Modified", false)(),
+           this.sp.web.lists.getByTitle('JSRACategories').items.select('Id,Title').top(2000).orderBy("Title", true)(),
+            this.sp.web.lists.getByTitle('JSRASubCategories').items.top(2000).select('id,Title,Category/Title,Category/Id').expand('Category').orderBy("Modified", false)(),
            ])
-           let tableData: { Id: any; Title: any; RootCauseId: any; SecondaryRootCauseId: any; RootCauseTitle: any; SecondaryRootCauseTitle: any; }[]=[];
-           Actions.forEach(Act=>{
+           let tableData: { Id: any; Sub_x0020_CategoryId: any; Sub_x0020_CategoryTitle: any; CategoryId: any; CategoryTitle: any;Probability_x0020_1:any;Probability_x0020_2:any;Probability_x0020_3:any[];Mitigation_x002f_Controls_x0020_:any[];Mitigation_x002f_Controls_x0020_0:any[];Mitigation_x002f_Controls_x0020_1:any[] }[]=[];
+           JSRADetails.forEach(Act=>{
              let tableObj = {
                                 Id: Act.Id,
-                                Title: Act.Title,
-                                RootCauseId:Act.RootCause.Id,
-                                SecondaryRootCauseId:Act.SecondaryRootCause.Id,
-                                RootCauseTitle:Act.RootCause.Title,
-                                SecondaryRootCauseTitle:Act.SecondaryRootCause.Title,
+                                Sub_x0020_CategoryId:Act.Sub_x0020_Category.Id,
+                                Sub_x0020_CategoryTitle:Act.Sub_x0020_Category.Title,
+                                CategoryId:Act.Category.Id,
+                                CategoryTitle:Act.Category.Title,
+                                Probability_x0020_1:Act.Probability_x0020_1,
+                                Probability_x0020_2:Act.Probability_x0020_2,
+                                Probability_x0020_3:Act.Probability_x0020_3,
+                                Mitigation_x002f_Controls_x0020_:Act.Mitigation_x002f_Controls_x0020_,
+                                Mitigation_x002f_Controls_x0020_0:Act.Mitigation_x002f_Controls_x0020_0,
+                                Mitigation_x002f_Controls_x0020_1:Act.Mitigation_x002f_Controls_x0020_1
+
                             }
                 tableData.push(tableObj);
            })
-        this.setState({ ActionsData: tableData,RootCauses, SecondaryRootCauses});
+            let categoryOptions = JSRACategories.map((item: any) => ({
+             label: item.Title,   
+             value: item.Id       
+             }));
+           let subCategories = JSRASubCategories.map((item: any) => ({
+                            Id: item.Id,
+                          Title: item.Title,
+                         CategoryId: item.CategoryId ?? item.Category?.Id,  // ensure relation
+                   }));
+
+        this.setState({ ActionsData: tableData,JSRACategories:categoryOptions,JSRASubCategories:subCategories, FilteredSubCategories: []  });
         }
         catch(e){
             this.onError();
@@ -133,7 +184,7 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
     private async editItem( Id: number ){
         try{
              var formData = {...this.state.formData};
-            formData.Title = '';
+            formData.Details = '';
             //formData.IsActive = false;
             showLoader();
             this.setState({ isFormOpen: true, ItemId: Id, formData});
@@ -143,10 +194,24 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
                     console.log(item.Error);
                 }
                 else{
-                    formData.Title = item.Title;
-                    //formData.IsActive = item.IsActive;
+                     formData.CategoryId=item.CategoryId;
+                     formData.Sub_x0020_CategoryId=item.Sub_x0020_CategoryId;
+                     formData.Probability_x0020_1=item.Probability_x0020_1;
+                     formData.Probability_x0020_2=item.Probability_x0020_2;
+                     formData.Probability_x0020_3=item.Probability_x0020_3;
+                     formData.Mitigation_x002f_Controls_x0020_=item.Mitigation_x002f_Controls_x0020_;
+                     formData.Mitigation_x002f_Controls_x0020_0=item.Mitigation_x002f_Controls_x0020_0;
+                     formData.Mitigation_x002f_Controls_x0020_1=item.Mitigation_x002f_Controls_x0020_1;
+                     formData.Details=item.Details;
+                     
+                      const filteredSubCategories = this.state.JSRASubCategories
+                      .filter((sub: any) => sub.CategoryId === formData.CategoryId)
+                       .map((sub: any) => ({
+                       label: sub.Title,
+                       value: sub.Id,
+                         }));
                     hideLoader();
-                    this.setState({ formData });
+                    this.setState({ formData,FilteredSubCategories: filteredSubCategories });
                 }
             })
         }
@@ -161,52 +226,61 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
         this.setState({ isFormOpen: true, ItemId: 0 });
     }
 
-    private async checkDuplicate(){
-        try{
-            showLoader();
-            var formData = {...this.state.formData};
-            let isValid = true;
-            let escapedTitle = formData.Title.replace(/'/g, "''"); 
-            let filterQuery = "Title eq '"+ escapedTitle +"'";
+    // private async checkDuplicate(){
+    //     try{
+    //         showLoader();
+    //         var formData = {...this.state.formData};
+    //         let isValid = true;
+    //         let escapedTitle = formData.Details.replace(/'/g, "''"); 
+    //         let filterQuery = "Title eq '"+ escapedTitle +"'";
 
-            if( this.state.ItemId > 0 ){
-                filterQuery += " and Id ne "+this.state.ItemId+"";
-            }
+    //         if( this.state.ItemId > 0 ){
+    //             filterQuery += " and Id ne "+this.state.ItemId+"";
+    //         }
 
-            await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
-                if( !res.Error && res.length > 0){
-                    isValid = false;
-                    var message = "Action already exists";
-                    showToast( "error", message );
-                    hideLoader();
-                }
-                else{
-                    hideLoader();
-                }
-            })
-            return isValid;
-        }
-        catch(e){
-            this.onError();
-            hideLoader();
-            console.log(e);
-        }
-    }
+    //         await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
+    //             if( !res.Error && res.length > 0){
+    //                 isValid = false;
+    //                 var message = "Action already exists";
+    //                 showToast( "error", message );
+    //                 hideLoader();
+    //             }
+    //             else{
+    //                 hideLoader();
+    //             }
+    //         })
+    //         return isValid;
+    //     }
+    //     catch(e){
+    //         this.onError();
+    //         hideLoader();
+    //         console.log(e);
+    //     }
+    // }
     private handleSubmit =async (event:any) =>{
         showLoader();
         try{
             event.preventDefault();
             var data = {
-                leadSource: { val: (this.state.formData.Title.trim()), required: true, Name: "'Lead Source'", Type: ControlType.string, Focusid: this.txtLeadSourceName }
+                Category: {val: this.state.formData.CategoryId, required: true, Name: "Category", Type: ControlType.reactSelect, Focusid: "divCategory"},
+                SubCategory:{val: this.state.formData.Sub_x0020_CategoryId, required: true, Name: "Sub Category", Type: ControlType.reactSelect, Focusid: "divSubCategory"},
+                Probability1: { val: (this.state.formData.Probability_x0020_1.trim()), required: true, Name: "'Probability 1'", Type: ControlType.string, Focusid: this.Probability_x0020_1 },
+                 Probability2: { val: (this.state.formData.Probability_x0020_2.trim()), required: true, Name: "'Probability 2'", Type: ControlType.string, Focusid: this.Probability_x0020_2 },
+                 Probability3: { val: (this.state.formData.Probability_x0020_3.trim()), required: true, Name: "'Probability 3'", Type: ControlType.string, Focusid: this.Probability_x0020_3 },
+                 MigrationControls1: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_.trim()), required: true, Name: "'Mitigation/Controls 1'", Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_ },
+                  MigrationControls2: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_0.trim()), required: true, Name: "'Mitigation/Controls 2'", Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_0 },
+                   MigrationControls3: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_1.trim()), required: true, Name: "'Mitigation/Controls 3'", Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_1 },
+                          Details: { val: (this.state.formData.Details.trim()), required: true, Name: "'Details'", Type: ControlType.string, Focusid: this.Details },
+
             }
             let isValid = formValidation.FormValidation( data );
 
             if( isValid.status ){ 
-                let validDuplicate = await this.checkDuplicate();
-                
-                if( validDuplicate ){
-                    this.InsertOrUpdateDate();
-                }
+                // let validDuplicate = await this.checkDuplicate();
+                  this.InsertOrUpdateDate();
+                // if( validDuplicate ){
+                  
+                // }
 
             }else{
                 showToast( "error", isValid.message  );
@@ -227,7 +301,7 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
 
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
-                    let msg = "Action updated successfully";
+                    let msg = "JSRA Details updated successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -237,7 +311,7 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
             }
             else{
                 this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then( (res) => {
-                    let msg = "Action submitted successfully";
+                    let msg = "JSRA Details submitted successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -266,19 +340,22 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
 
     private closeForm= () =>{
         var formData = {...this.state.formData};
-        formData.Title = '';
+        formData.Details = '';
+        formData.CategoryId=0;
+        formData.Sub_x0020_CategoryId=0;
+        formData.Mitigation_x002f_Controls_x0020_='';
+        formData.Mitigation_x002f_Controls_x0020_0='';
+        formData.Mitigation_x002f_Controls_x0020_1='';
+        formData.Probability_x0020_1='';
+        formData.Probability_x0020_2='';
+        formData.Probability_x0020_3='';
         //formData.IsActive = true;
-        this.setState({ isFormOpen: false, formData });
+        this.setState({ isFormOpen: false, formData,FilteredSubCategories:[] });
     }
 
     private onPageChange =(pageIndex:any)=>{
         this.setState({pageNumber: pageIndex});  
     }
-
-    private sortOrder =(event:any,sortDirection:any)=>{
-        this.setState({sortBy: event.id,sortOrder:sortDirection});     
-    }
-
     private handleChangeDynamic = (event: any) => {
         const formData:any = {...this.state.formData};
         const name = event.target.name;
@@ -286,6 +363,70 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
         formData[name] = value;
         this.setState({formData});
     }
+private handleChangeClient = (selected: any) => {
+
+  const selectedCategoryId = !selected
+    ? null
+    : selected.value ??
+      selected.key ??
+      selected.Id ??
+      selected;
+    document.getElementById("divCategory")?.classList.remove("searchMandatory");
+
+  // Filter SubCategories based on Category
+  const filteredSubCategories = this.state.JSRASubCategories
+    .filter((sub: any) => sub.CategoryId === selectedCategoryId)
+    .map((sub: any) => ({
+      label: sub.Title,
+      value: sub.Id,
+    }));
+
+  this.setState((prevState: Readonly<ActionsState>) => ({
+    formData: {
+      ...prevState.formData,
+      CategoryId: selectedCategoryId,
+      Sub_x0020_CategoryId: 0, // reset subcategory when category changes
+    },
+    FilteredSubCategories: filteredSubCategories
+  }));
+};
+
+
+private handleSubCategoryChange = (selected: any) => {
+        document.getElementById("divSubCategory")?.classList.remove("searchMandatory");
+
+  this.setState((prevState: Readonly<ActionsState>) => ({
+    formData: {
+      ...prevState.formData,
+      Sub_x0020_CategoryId: !selected
+        ? null
+        : selected.value ??
+          selected.key ??
+          selected.Id ??
+          selected
+    }
+  }));
+};
+   private handleChange= (event: any) => {
+        const formData:any = {...this.state.formData};
+
+        const name = event.target.name;
+        let inputValue = (event.target.type == "text" || event.target.type == "textarea") ? event.target.value : event.target.checked ? event.target.value : '';
+      
+        formData[name] = inputValue;
+        this.setState({formData });
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     private handleRowClicked = (row:any,Id?: any) => {
         let ID = row.Id? row.Id:Id;
@@ -312,36 +453,88 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
                 },
                 sortable: false
             },
+         
             {
-                name: "Action",
-                selector: (row: { Title: any; }, i: any) => row.Title,
+                name: "Category",
+                selector: (row: { CategoryTitle: any; }, i: any) => row.CategoryTitle,
                 sortable: true,
-                cell: (record: { Title:  any; }) => {
+                cell: (record: { CategoryTitle:  any; }) => {
                     return (
-                        record.Title
+                        record.CategoryTitle
                     );
                 },
             },
             {
-                name: "Root Cause",
-                selector: (row: { RootCauseTitle: any; }, i: any) => row.RootCauseTitle,
+                name: "Sub Category",
+                selector: (row: { Sub_x0020_CategoryTitle: any; }, i: any) => row.Sub_x0020_CategoryTitle,
                 sortable: true,
-                cell: (record: { RootCauseTitle:  any; }) => {
+                cell: (record: { Sub_x0020_CategoryTitle:  any; }) => {
                     return (
-                        record.RootCauseTitle
+                        record.Sub_x0020_CategoryTitle
                     );
                 },
             },
-            {
-                name: "Secondary Root Cause",
-                selector: (row: { SecondaryRootCauseTitle: any; }, i: any) => row.SecondaryRootCauseTitle,
+               {
+                name: "Probability 1",
+                selector: (row: { Probability_x0020_1: any; }, i: any) => row.Probability_x0020_1,
                 sortable: true,
-                cell: (record: { SecondaryRootCauseTitle:  any; }) => {
+                cell: (record: { Probability_x0020_1:  any; }) => {
                     return (
-                        record.SecondaryRootCauseTitle
+                        record.Probability_x0020_1
                     );
                 },
-            }
+            },
+               {
+                name: "Probability 2",
+                selector: (row: { Probability_x0020_2: any; }, i: any) => row.Probability_x0020_2,
+                sortable: true,
+                cell: (record: { Probability_x0020_2:  any; }) => {
+                    return (
+                        record.Probability_x0020_2
+                    );
+                },
+            },
+               {
+                name: "Probability 3",
+                selector: (row: { Probability_x0020_3: any; }, i: any) => row.Probability_x0020_3,
+                sortable: true,
+                cell: (record: { Probability_x0020_3:  any; }) => {
+                    return (
+                        record.Probability_x0020_3
+                    );
+                },
+            },
+               {
+                name: "Mitigation/Controls 1",
+                selector: (row: { Mitigation_x002f_Controls_x0020_: any; }, i: any) => row.Mitigation_x002f_Controls_x0020_,
+                sortable: true,
+                cell: (record: { Mitigation_x002f_Controls_x0020_:  any; }) => {
+                    return (
+                        record.Mitigation_x002f_Controls_x0020_
+                    );
+                },
+            },
+                {
+                name: "Mitigation/Controls 2",
+                selector: (row: { Mitigation_x002f_Controls_x0020_0: any; }, i: any) => row.Mitigation_x002f_Controls_x0020_0,
+                sortable: true,
+                cell: (record: { Mitigation_x002f_Controls_x0020_0:  any; }) => {
+                    return (
+                        record.Mitigation_x002f_Controls_x0020_0
+                    );
+                },
+            },
+                {
+                name: "Mitigation/Controls 3",
+                selector: (row: { Mitigation_x002f_Controls_x0020_1: any; }, i: any) => row.Mitigation_x002f_Controls_x0020_1,
+                sortable: true,
+                cell: (record: { Mitigation_x002f_Controls_x0020_1:  any; }) => {
+                    return (
+                        record.Mitigation_x002f_Controls_x0020_1
+                    );
+                },
+            },
+
         ];
 
         if(this.state.isUnauthorized){
@@ -354,7 +547,7 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
                         <div id="content" className="content p-2 pt-2">
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
-                                    <div className="title">Lead Source</div>
+                                    <div className="title">JSRA Details</div>
                                     <div className="" id="">
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
@@ -364,11 +557,61 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
                                         { this.state.isFormOpen && 
                                             <div className="" id="divNew">
                                                 <div className="border-top mt-3 py-3">
-                                                    <div className="row">
+                                                    <div className="row pt-2 px-2">
                                                         <div className="col-md-3">
                                                             <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Lead Source" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
-                                                                <label>Lead Source Name <span className="mandatoryhastrick">*</span></label>
+                                                                  <div className="custom-dropdown" id="divCategory">
+                                                                <Dropdown label={"Category"} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                  <div className="col-md-3">
+                                                            <div className="form-floating">
+                                                                  <div className="custom-dropdown" id="divSubCategory">
+                                                                <Dropdown label={"Sub Category"} Title={"CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange= {this.handleSubCategoryChange} isRequired={true} disabled={false}></Dropdown>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                 <div className="col-md-3">
+                                                            <div className="form-floating">
+                                                                <input className="form-control" required={true} placeholder="Probability 1" type="text" name="Probability_x0020_1" title="LeadSource" value={ this.state.formData.Probability_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_1} maxLength={250}/>
+                                                                <label>Probability 1 <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
+                                                                    <div className="col-md-3">
+                                                            <div className="form-floating">
+                                                                <input className="form-control" required={true} placeholder="Probability 2" type="text" name="Probability_x0020_2" title="LeadSource" value={ this.state.formData.Probability_x0020_2} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_2} maxLength={250}/>
+                                                                <label>Probability 2 <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
+                                                                      <div className="col-md-3">
+                                                            <div className="form-floating mb-2">
+                                                                <input className="form-control" required={true} placeholder="Probability 3" type="text" name="Probability_x0020_3" title="LeadSource" value={ this.state.formData.Probability_x0020_3} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_3} maxLength={250}/>
+                                                                <label>Probability 3 <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
+                                                                  <div className="col-md-3">
+                                                            <div className="form-floating mb-2">
+                                                                <input className="form-control" required={true} placeholder="Mitigation/Controls 1" type="text" name="Mitigation_x002f_Controls_x0020_" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_} maxLength={250}/>
+                                                                <label>Mitigation/Controls 1 <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
+                                                             <div className="col-md-3">
+                                                            <div className="form-floating mb-2">
+                                                                <input className="form-control" required={true} placeholder="Mitigation/Controls 2" type="text" name="Mitigation_x002f_Controls_x0020_0" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_0} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_0} maxLength={250}/>
+                                                                <label>Mitigation/Controls 2 <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
+                                                          <div className="col-md-3">
+                                                            <div className="form-floating mb-2">
+                                                                <input className="form-control" required={true} placeholder="Mitigation/Controls 3" type="text" name="Mitigation_x002f_Controls_x0020_1" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_1} maxLength={250}/>
+                                                                <label>Mitigation/Controls 3 <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-md-12">
+                                                            <div className="form-floating mb-2">
+                                                                 <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} placeholder="Description of Incident" value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title="Description of Incident" style={{height:"150px"}}></textarea>                                                      
+                                                                <label>Details<span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                         {/* <InputCheckBox 
@@ -390,7 +633,7 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
                                             </div>
                                         }
                                     </div>
-                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} onSortChange={this.sortOrder} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} prvSort={this.state.sortBy} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                                 </div>
                             </div>
                         </div>

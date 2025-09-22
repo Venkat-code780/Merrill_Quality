@@ -14,7 +14,7 @@ import formValidation from "../Utilities/FormValidator";
 // import InputCheckBox from "../Shared/InputCheckBox";
 import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
-
+import  Dropdown  from "../Shared/Dropdown";
 export interface ActionsProps {
     match:any;
     spContext:any;
@@ -35,20 +35,19 @@ export interface ActionsState {
     ItemId: number;
     formData: {
         Title: string;
-        RootCause:Number;
-        SecondaryRootCause: Number;
+        CategoryId:Number;
     },
     redirect: boolean,
     isEdit: boolean,
     displayMessage:string,
     isUnauthorized: Boolean,
-    RootCauses:any,
-    SecondaryRootCauses:any
+    JSRACategory:any,
+
 }
 
  export default class JSRASubCategories extends React.Component<ActionsProps, ActionsState> {
 
-    private ActionsList = "Actions";
+    private ActionsList = "JSRASubCategories";
     private txtLeadSourceName;
     private sp = spfi().using(SPFx(this.props.context));
 
@@ -69,23 +68,23 @@ export interface ActionsState {
             ItemId: 0,
             formData: {
                 Title: '',
-                RootCause: 0,
-                SecondaryRootCause:0
+                CategoryId: 0,
             },
             redirect: false,
             isEdit: false,
             displayMessage:'',
             isUnauthorized: false,
-            RootCauses:[],
-            SecondaryRootCauses:[]
+            JSRACategory:[],
+       
         };
 
         this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+    
     }
 
     public componentDidMount(){
-        highlightCurrentNav("liActions");
-        document.title = "Mayco - Safety | Actions";
+        highlightCurrentNav("liJSRASub-Categories");
+        document.title = "Mayco - Safety | JSRA Sub - Categories";
         this.loadListData();
     }
 
@@ -102,24 +101,27 @@ export interface ActionsState {
              let lsTableProps = {'PageNumber':1,"sortOrder":false,"sortBy":1,'SearchKey':null};
             localStorage.setItem('PrvData', JSON.stringify(lsTableProps));
 
-           let  [Actions,RootCauses,SecondaryRootCauses]=await Promise.all([
-            this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Title,RootCause/Title,RootCause/Id,SecondaryRootCause/Title,SecondaryRootCause/Id,*').expand('RootCause,SecondaryRootCause').orderBy("Modified", false)(),
-            this.sp.web.lists.getByTitle('RootCauses').items.top(2000).orderBy("Title", true)(),
-            this.sp.web.lists.getByTitle('SecondaryRootCauses').items.top(2000).orderBy("Title", true)(),
+           let  [JSRASubCategories,JSRACategory]=await Promise.all([
+            this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Title,Category/Title,Category/Id,*').expand('Category').orderBy("Modified", false)(),
+            this.sp.web.lists.getByTitle('JSRACategories').items.select("Id,Title").top(2000).orderBy("Title", true)(),
+            
            ])
-           let tableData: { Id: any; Title: any; RootCauseId: any; SecondaryRootCauseId: any; RootCauseTitle: any; SecondaryRootCauseTitle: any; }[]=[];
-           Actions.forEach(Act=>{
+           let tableData: { Id: any; Title: any; CategoryId: any; CategoryTitle: any;}[]=[];
+           JSRASubCategories.forEach(Act=>{
              let tableObj = {
                                 Id: Act.Id,
                                 Title: Act.Title,
-                                RootCauseId:Act.RootCause.Id,
-                                SecondaryRootCauseId:Act.SecondaryRootCause.Id,
-                                RootCauseTitle:Act.RootCause.Title,
-                                SecondaryRootCauseTitle:Act.SecondaryRootCause.Title,
+                                CategoryId:Act.Category.Id,
+                               CategoryTitle:Act.Category.Title,
+                      
                             }
                 tableData.push(tableObj);
            })
-        this.setState({ ActionsData: tableData,RootCauses, SecondaryRootCauses});
+           let categoryOptions = JSRACategory.map((item: any) => ({
+             label: item.Title,   
+             value: item.Id       
+             }));
+        this.setState({ ActionsData: tableData,JSRACategory:categoryOptions});
         }
         catch(e){
             this.onError();
@@ -144,6 +146,7 @@ export interface ActionsState {
                 }
                 else{
                     formData.Title = item.Title;
+                    formData.CategoryId=item.CategoryId;
                     //formData.IsActive = item.IsActive;
                     hideLoader();
                     this.setState({ formData });
@@ -161,43 +164,50 @@ export interface ActionsState {
         this.setState({ isFormOpen: true, ItemId: 0 });
     }
 
-    private async checkDuplicate(){
-        try{
-            showLoader();
-            var formData = {...this.state.formData};
-            let isValid = true;
-            let escapedTitle = formData.Title.replace(/'/g, "''"); 
-            let filterQuery = "Title eq '"+ escapedTitle +"'";
+private async checkDuplicate() {
+    try {
+        showLoader();
+        const formData = { ...this.state.formData };
 
-            if( this.state.ItemId > 0 ){
-                filterQuery += " and Id ne "+this.state.ItemId+"";
-            }
+        let isValid = true;
 
-            await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
-                if( !res.Error && res.length > 0){
-                    isValid = false;
-                    var message = "Action already exists";
-                    showToast( "error", message );
-                    hideLoader();
-                }
-                else{
-                    hideLoader();
-                }
-            })
-            return isValid;
+        // Escape single quotes in Title
+        const escapedTitle = formData.Title.replace(/'/g, "''");
+
+        // Build OData filter for all three fields
+        // Note: Adjust property names according to your SharePoint list fields
+        let filterQuery = `Title eq '${escapedTitle}' and CategoryId eq ${formData.CategoryId}`;
+
+        if (this.state.ItemId > 0) {
+            // Exclude the current item (for update scenario)
+            filterQuery += ` and Id ne ${this.state.ItemId}`;
         }
-        catch(e){
-            this.onError();
-            hideLoader();
-            console.log(e);
+
+        const results = await this.sp.web.lists
+            .getByTitle(this.ActionsList)
+            .items.filter(filterQuery)();
+
+        if (results && results.length > 0) {
+            isValid = false;
+            showToast("error", "Record already exists");
         }
+
+        hideLoader();
+        return isValid;
+    } catch (e) {
+        this.onError();
+        hideLoader();
+        console.error(e);
+        return false;
     }
+}
     private handleSubmit =async (event:any) =>{
         showLoader();
         try{
             event.preventDefault();
             var data = {
-                leadSource: { val: (this.state.formData.Title.trim()), required: true, Name: "'Lead Source'", Type: ControlType.string, Focusid: this.txtLeadSourceName }
+                SubCategory: { val: (this.state.formData.Title.trim()), required: true, Name: "'JSRA SubCategory'", Type: ControlType.string, Focusid: this.txtLeadSourceName },
+                Category: { val: (this.state.formData.CategoryId), required: true, Name: "'JSRA Category'", Type: ControlType.reactSelect, Focusid:"divCategory"}
             }
             let isValid = formValidation.FormValidation( data );
 
@@ -227,7 +237,7 @@ export interface ActionsState {
 
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
-                    let msg = "Action updated successfully";
+                    let msg = "JSRA SubCategories updated successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -237,7 +247,7 @@ export interface ActionsState {
             }
             else{
                 this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then( (res) => {
-                    let msg = "Action submitted successfully";
+                    let msg = "JSRA SubCategories submitted successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -259,14 +269,68 @@ export interface ActionsState {
         hideLoader();
     }
 
+
+
     private onError = () =>{
         showToast( "error", ActionStatus.Error );
         hideLoader();
     }
+private handleChangeClient = (selected: any) => {
+  console.log("Dropdown selected:", selected);
+    document.getElementById("divCategory")?.classList.remove("searchMandatory");
+
+  this.setState((prevState: Readonly<ActionsState>) => ({
+    formData: {
+      ...prevState.formData,
+      CategoryId: !selected
+        ? null // ❌ when cleared
+        : selected.value ??  // if { label, value }
+          selected.key ??    // if { text, key }
+          selected.Id ??     // if SharePoint object
+          selected           // if raw number
+    }
+  }));
+};
+
+
+//    private handleChangeClient = (selectedOption: any, actionMeta?: any) => {
+//   let returnObj: any = {};
+//   let name: string | undefined;
+//   let value: any;
+
+
+//   if (selectedOption && selectedOption.target) {
+//     name = selectedOption.target.name;
+//     value =
+//       selectedOption.target.type === "checkbox"
+//         ? selectedOption.target.checked
+//         : selectedOption.target.value;
+//   }
+  
+//   else if (actionMeta && actionMeta.name) {
+//     name = actionMeta.name;
+
+//     if (actionMeta.action === "clear") {
+//       value = null; 
+//     } else {
+//       value = selectedOption?.value;
+
+//       if (name === "CategoryId" && value !== null && value !== undefined) {
+//         value = Number(value);
+//       }
+//     }
+//   }
+
+//   if (name !== undefined) {
+//     returnObj[name] = value;
+//     this.setState(returnObj);
+//   }
+// };
 
     private closeForm= () =>{
         var formData = {...this.state.formData};
         formData.Title = '';
+        formData.CategoryId=0;
         //formData.IsActive = true;
         this.setState({ isFormOpen: false, formData });
     }
@@ -274,11 +338,6 @@ export interface ActionsState {
     private onPageChange =(pageIndex:any)=>{
         this.setState({pageNumber: pageIndex});  
     }
-
-    private sortOrder =(event:any,sortDirection:any)=>{
-        this.setState({sortBy: event.id,sortOrder:sortDirection});     
-    }
-
     private handleChangeDynamic = (event: any) => {
         const formData:any = {...this.state.formData};
         const name = event.target.name;
@@ -313,7 +372,7 @@ export interface ActionsState {
                 sortable: false
             },
             {
-                name: "Action",
+                name: "SubCategory",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
                 cell: (record: { Title:  any; }) => {
@@ -323,25 +382,16 @@ export interface ActionsState {
                 },
             },
             {
-                name: "Root Cause",
-                selector: (row: { RootCauseTitle: any; }, i: any) => row.RootCauseTitle,
+                name: "Category",
+                selector: (row: { CategoryTitle: any; }, i: any) => row.CategoryTitle,
                 sortable: true,
-                cell: (record: { RootCauseTitle:  any; }) => {
+                cell: (record: { CategoryTitle:  any; }) => {
                     return (
-                        record.RootCauseTitle
+                        record.CategoryTitle
                     );
                 },
             },
-            {
-                name: "Secondary Root Cause",
-                selector: (row: { SecondaryRootCauseTitle: any; }, i: any) => row.SecondaryRootCauseTitle,
-                sortable: true,
-                cell: (record: { SecondaryRootCauseTitle:  any; }) => {
-                    return (
-                        record.SecondaryRootCauseTitle
-                    );
-                },
-            }
+        
         ];
 
         if(this.state.isUnauthorized){
@@ -354,7 +404,7 @@ export interface ActionsState {
                         <div id="content" className="content p-2 pt-2">
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
-                                    <div className="title">Lead Source</div>
+                                    <div className="title">JSRA SubCategories</div>
                                     <div className="" id="">
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
@@ -367,8 +417,15 @@ export interface ActionsState {
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Lead Source" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
-                                                                <label>Lead Source Name <span className="mandatoryhastrick">*</span></label>
+                                                                <input className="form-control" required={true} placeholder="SubCategory" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                                <label>JSRASubCategory <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
+                                                         <div className="col-md-3">
+                                                              <div className="form-floating">
+                                                            <div className="custom-dropdown" id="divCategory">
+                                                                <Dropdown label={"JSRA Category"} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
+                                                            </div>
                                                             </div>
                                                         </div>
                                                         {/* <InputCheckBox 
@@ -390,7 +447,7 @@ export interface ActionsState {
                                             </div>
                                         }
                                     </div>
-                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} onSortChange={this.sortOrder} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} prvSort={this.state.sortBy} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                                 </div>
                             </div>
                         </div>

@@ -14,6 +14,7 @@ import formValidation from "../Utilities/FormValidator";
 // import InputCheckBox from "../Shared/InputCheckBox";
 import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
+import SearchableDropdown from "../Shared/Dropdown";
 
 export interface ActionsProps {
     match:any;
@@ -34,22 +35,28 @@ export interface ActionsState {
     isFormOpen: boolean;
     ItemId: number;
     formData: {
-        Title: string;
-        RootCause:Number;
-        SecondaryRootCause: Number;
+        Audit_categoriesId:number;
+        Audit_SubCategory:string;
+        Form_x0020_Type:string;
+        Is_x0020_Active:boolean | null
     },
     redirect: boolean,
     isEdit: boolean,
     displayMessage:string,
     isUnauthorized: Boolean,
-    RootCauses:any,
-    SecondaryRootCauses:any
+    AuditCategory:any,
+    AuditCategoryid:number,
+    
 }
 
-export default class SMATandEHSMapping extends React.Component<ActionsProps, ActionsState> {
+ export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
 
-    private ActionsList = "Actions";
-    private txtLeadSourceName;
+    private ActionsList = "WCC/EHS mapping screen";
+    private Audit_SubCategory;
+
+     private  Form_x0020_Type;
+       private Is_x0020_Active;
+
     private sp = spfi().using(SPFx(this.props.context));
 
     constructor(props: ActionsProps){
@@ -68,24 +75,29 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
             isFormOpen: false,
             ItemId: 0,
             formData: {
-                Title: '',
-                RootCause: 0,
-                SecondaryRootCause:0
+                    Audit_categoriesId:0,
+        Audit_SubCategory:'',
+        Form_x0020_Type:'',
+        Is_x0020_Active: null
             },
             redirect: false,
             isEdit: false,
             displayMessage:'',
             isUnauthorized: false,
-            RootCauses:[],
-            SecondaryRootCauses:[]
+            AuditCategory:[],
+               AuditCategoryid:0,
         };
 
-        this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+        this.Audit_SubCategory = React.createRef<HTMLInputElement>();
+     this.Form_x0020_Type = React.createRef<HTMLSelectElement>();
+          this.Is_x0020_Active = React.createRef<HTMLSelectElement>();
+
+
     }
 
     public componentDidMount(){
-        highlightCurrentNav("liActions");
-        document.title = "Mayco - Safety | Actions";
+        highlightCurrentNav("liSMATandEHSMapping");
+        document.title = "Mayco - Safety | SMAT and EHS Mapping";
         this.loadListData();
     }
 
@@ -102,24 +114,31 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
              let lsTableProps = {'PageNumber':1,"sortOrder":false,"sortBy":1,'SearchKey':null};
             localStorage.setItem('PrvData', JSON.stringify(lsTableProps));
 
-           let  [Actions,RootCauses,SecondaryRootCauses]=await Promise.all([
-            this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Title,RootCause/Title,RootCause/Id,SecondaryRootCause/Title,SecondaryRootCause/Id,*').expand('RootCause,SecondaryRootCause').orderBy("Modified", false)(),
-            this.sp.web.lists.getByTitle('RootCauses').items.top(2000).orderBy("Title", true)(),
-            this.sp.web.lists.getByTitle('SecondaryRootCauses').items.top(2000).orderBy("Title", true)(),
+           let  [AuditCategories,SmatandEhs]=await Promise.all([
+            this.sp.web.lists.getByTitle('Audit_Categories').items.top(2000).orderBy("Title", true)(),
+            this.sp.web.lists.getByTitle('WCC/EHS mapping screen').items.top(2000).select('Audit_categories/Title,Audit_categories/Id,*').expand('Audit_categories').orderBy("Modified", false)(),
            ])
-           let tableData: { Id: any; Title: any; RootCauseId: any; SecondaryRootCauseId: any; RootCauseTitle: any; SecondaryRootCauseTitle: any; }[]=[];
-           Actions.forEach(Act=>{
+           let tableData: { Id: any; Audit_categoriesId: any; Audit_categoriesTitle: any; Audit_SubCategory:any ;Form_x0020_Type:any;Is_x0020_Active:any}[]=[];
+           SmatandEhs.forEach(Src=>{
              let tableObj = {
-                                Id: Act.Id,
-                                Title: Act.Title,
-                                RootCauseId:Act.RootCause.Id,
-                                SecondaryRootCauseId:Act.SecondaryRootCause.Id,
-                                RootCauseTitle:Act.RootCause.Title,
-                                SecondaryRootCauseTitle:Act.SecondaryRootCause.Title,
+                                Id: Src.Id,
+                                Audit_categoriesId:Src.Audit_categories.Id,  
+                                Audit_categoriesTitle:Src.Audit_categories.Title,
+                                Audit_SubCategory:Src.Audit_SubCategory,
+                                Form_x0020_Type:Src.Form_x0020_Type,
+                                Is_x0020_Active:Src.Is_x0020_Active
+
+                            
                             }
                 tableData.push(tableObj);
            })
-        this.setState({ ActionsData: tableData,RootCauses, SecondaryRootCauses});
+               let AuditCategoryOptions = AuditCategories.map((item: any) => ({
+             label: item.Title,   
+             value: item.Id       
+             }));
+
+           
+        this.setState({ ActionsData: tableData,AuditCategory:AuditCategoryOptions,});
         }
         catch(e){
             this.onError();
@@ -133,7 +152,6 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
     private async editItem( Id: number ){
         try{
              var formData = {...this.state.formData};
-            formData.Title = '';
             //formData.IsActive = false;
             showLoader();
             this.setState({ isFormOpen: true, ItemId: Id, formData});
@@ -143,10 +161,16 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
                     console.log(item.Error);
                 }
                 else{
-                    formData.Title = item.Title;
-                    //formData.IsActive = item.IsActive;
+                      formData.Audit_categoriesId=item.Audit_categoriesId,
+                      formData.Audit_SubCategory=item.Audit_SubCategory,
+                        formData.Form_x0020_Type=item.Form_x0020_Type,
+                         formData.Is_x0020_Active=item.Is_x0020_Active
+                  //formData.IsActive = item.IsActive;
                     hideLoader();
-                    this.setState({ formData });
+                    this.setState({ formData,
+                        AuditCategoryid: item.RootCauseId,
+                     
+                    });
                 }
             })
         }
@@ -161,43 +185,52 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
         this.setState({ isFormOpen: true, ItemId: 0 });
     }
 
-    private async checkDuplicate(){
-        try{
-            showLoader();
-            var formData = {...this.state.formData};
-            let isValid = true;
-            let escapedTitle = formData.Title.replace(/'/g, "''"); 
-            let filterQuery = "Title eq '"+ escapedTitle +"'";
+   
+private async checkDuplicate() {
+    try {
+        showLoader();
+        const formData = { ...this.state.formData };
 
-            if( this.state.ItemId > 0 ){
-                filterQuery += " and Id ne "+this.state.ItemId+"";
-            }
+        let isValid = true;
+        const escapedTitle = formData.Audit_SubCategory.replace(/'/g, "''");
 
-            await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
-                if( !res.Error && res.length > 0){
-                    isValid = false;
-                    var message = "Action already exists";
-                    showToast( "error", message );
-                    hideLoader();
-                }
-                else{
-                    hideLoader();
-                }
-            })
-            return isValid;
+     
+        let filterQuery = `Audit_SubCategory eq '${escapedTitle}' and Audit_categoriesId eq '${formData.Audit_categoriesId}' and Form_x0020_Type eq '${formData.Form_x0020_Type}'`;
+
+        if (this.state.ItemId > 0) {
+            // Exclude the current item (for update scenario)
+            filterQuery += ` and Id ne ${this.state.ItemId}`;
         }
-        catch(e){
-            this.onError();
-            hideLoader();
-            console.log(e);
+
+        const results = await this.sp.web.lists
+            .getByTitle(this.ActionsList)
+            .items.filter(filterQuery)();
+
+        if (results && results.length > 0) {
+            isValid = false;
+            showToast("error", "Record already exists");
         }
+
+        hideLoader();
+        return isValid;
+    } catch (e) {
+        this.onError();
+        hideLoader();
+        console.error(e);
+        return false;
     }
+}
+
     private handleSubmit =async (event:any) =>{
         showLoader();
         try{
             event.preventDefault();
             var data = {
-                leadSource: { val: (this.state.formData.Title.trim()), required: true, Name: "'Lead Source'", Type: ControlType.string, Focusid: this.txtLeadSourceName }
+                AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: "'Audit Category'", Type: ControlType.reactSelect, Focusid:'divAuditCategory' },
+                AuditSubcategory: { val: (this.state.formData.Audit_SubCategory.trim()), required: true, Name: "Audit Subcategory", Type: ControlType.string, Focusid: this.Audit_SubCategory },
+                FormType:{ val: (this.state.formData.Form_x0020_Type), required: true, Name: "FormType", Type: ControlType.string, Focusid: this.Form_x0020_Type },
+                IsActive:{ val: (this.state.formData.Is_x0020_Active), required: true, Name: "'Is Active'", Type: ControlType.string, Focusid: this.Is_x0020_Active },
+                 
             }
             let isValid = formValidation.FormValidation( data );
 
@@ -227,7 +260,7 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
 
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
-                    let msg = "Action updated successfully";
+                    let msg = "SMAT and EHS Mapping updated successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -237,7 +270,7 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
             }
             else{
                 this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then( (res) => {
-                    let msg = "Action submitted successfully";
+                    let msg = "SMAT and EHS Mapping submitted successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -263,10 +296,27 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
         showToast( "error", ActionStatus.Error );
         hideLoader();
     }
+   private handleAcive = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const { name, value } = e.target;
+
+  let boolValue: boolean | null = null;
+  if (value === "true") boolValue = true;
+  else if (value === "false") boolValue = false;
+
+  this.setState((prevState: any) => ({
+    formData: {
+      ...prevState.formData,
+      [name]: boolValue   //  now it's true/false/null
+    }
+  }));
+};
 
     private closeForm= () =>{
         var formData = {...this.state.formData};
-        formData.Title = '';
+        formData.Audit_SubCategory = '';
+        formData.Audit_categoriesId=0;
+        formData.Form_x0020_Type='',
+        formData.Is_x0020_Active=null
         //formData.IsActive = true;
         this.setState({ isFormOpen: false, formData });
     }
@@ -274,10 +324,21 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
     private onPageChange =(pageIndex:any)=>{
         this.setState({pageNumber: pageIndex});  
     }
+    private handleChangeClient = (selected: any) => {
+            document.getElementById("divAuditCategory")?.classList.remove("searchMandatory");
 
-    private sortOrder =(event:any,sortDirection:any)=>{
-        this.setState({sortBy: event.id,sortOrder:sortDirection});     
-    }
+      this.setState((prevState: Readonly<ActionsState>) => ({
+        formData: {
+          ...prevState.formData,
+          Audit_categoriesId: !selected
+            ? null //  when cleared
+            : selected.value ??  // if { label, value }
+              selected.key ??    // if { text, key }
+              selected.Id ??     // if SharePoint object
+              selected           // if raw number
+        }
+      }));
+    };
 
     private handleChangeDynamic = (event: any) => {
         const formData:any = {...this.state.formData};
@@ -286,6 +347,16 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
         formData[name] = value;
         this.setState({formData});
     }
+   private handleSecondary = (event: any) => {
+  const formData = { ...this.state.formData };
+  const name = event.target.name as keyof typeof formData;
+  const value = event.target.value;
+
+formData[name as keyof typeof formData] = value as never;
+  this.setState({ formData });
+
+  console.log("Selected:", name, value);
+}
 
     private handleRowClicked = (row:any,Id?: any) => {
         let ID = row.Id? row.Id:Id;
@@ -313,35 +384,35 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
                 sortable: false
             },
             {
-                name: "Action",
-                selector: (row: { Title: any; }, i: any) => row.Title,
+                name: "Audit Categories",
+                selector: (row: { Audit_categoriesTitle: any; }, i: any) => row.Audit_categoriesTitle,
                 sortable: true,
-                cell: (record: { Title:  any; }) => {
+                cell: (record: { Audit_categoriesTitle:  any; }) => {
                     return (
-                        record.Title
+                        record.Audit_categoriesTitle
                     );
                 },
             },
             {
-                name: "Root Cause",
-                selector: (row: { RootCauseTitle: any; }, i: any) => row.RootCauseTitle,
+                name: "Audit SubCategory",
+                selector: (row: { Audit_SubCategory: any; }, i: any) => row.Audit_SubCategory,
                 sortable: true,
-                cell: (record: { RootCauseTitle:  any; }) => {
+                cell: (record: { Audit_SubCategory:  any; }) => {
                     return (
-                        record.RootCauseTitle
+                        record.Audit_SubCategory
                     );
                 },
             },
-            {
-                name: "Secondary Root Cause",
-                selector: (row: { SecondaryRootCauseTitle: any; }, i: any) => row.SecondaryRootCauseTitle,
+              {
+                name: "Form Type",
+                selector: (row: { Form_x0020_Type: any; }, i: any) => row.Form_x0020_Type,
                 sortable: true,
-                cell: (record: { SecondaryRootCauseTitle:  any; }) => {
+                cell: (record: { Form_x0020_Type:  any; }) => {
                     return (
-                        record.SecondaryRootCauseTitle
+                        record.Form_x0020_Type
                     );
                 },
-            }
+            },
         ];
 
         if(this.state.isUnauthorized){
@@ -354,7 +425,7 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
                         <div id="content" className="content p-2 pt-2">
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
-                                    <div className="title">Lead Source</div>
+                                    <div className="title">SMAT and EHS Mapping</div>
                                     <div className="" id="">
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
@@ -365,32 +436,53 @@ export default class SMATandEHSMapping extends React.Component<ActionsProps, Act
                                             <div className="" id="divNew">
                                                 <div className="border-top mt-3 py-3">
                                                     <div className="row">
+                                                         <div className="col-md-3">
+                                                            <div className="form-floating">
+                                                                <div className="custom-dropdown" id="divAuditCategory">
+                                                                 <SearchableDropdown label={"Audit Category"} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                </div>
+                                                              </div>
+                                                        </div>
                                                         <div className="col-md-3">
                                                             <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Lead Source" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
-                                                                <label>Lead Source Name <span className="mandatoryhastrick">*</span></label>
+                                                                <input className="form-control" required={true} placeholder="Audit SubCategory" type="text" name="Audit_SubCategory" title="LeadSource" value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
+                                                                <label>Audit SubCategory <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                        {/* <InputCheckBox 
-                                                            label="Is Active"
-                                                            name="IsActive" 
-                                                            checked={this.state.formData.IsActive} 
-                                                            onChange={this.handleChangeDynamic} 
-                                                            isdisable={false} 
-                                                            isRequired={false}   
-                                                            id="chckIsActiveLeadSource"                                                 
-                                                        /> */}
+                                                        
+                                                           <div className="col-md-3">
+                                                            <div className="form-floating">
+                                                                <select className="form-select"  name="Form_x0020_Type" title="Form_x0020_Type" value={ this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
+                                                                    <option value={""}>--Select One--</option>
+                                                                    <option value={'WCC'}>WCC</option>
+                                                                    <option value={'EHS'}>EHS</option>
+                                                                 
+                                                                </select>
+                                                                <label>Form Type<span className="mandatoryhastrick">*</span></label>
+                                                              </div>
+                                                        </div>
+                                                            <div className="col-md-3">
+                                                            <div className="form-floating">
+                                                                <select className="form-select"  name="Is_x0020_Active" title="Is_x0020_Active" value={ this.state.formData.Is_x0020_Active === null?"":String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
+                                                                    <option value={0}>--Select One--</option>
+                                                                    <option value={'true'}>Yes</option>
+                                                                    <option value={'false'}>No</option>
+                                                                </select>
+                                                                <label>Is Active<span className="mandatoryhastrick">*</span></label>
+                                                              </div>
+                                                        </div>
+                                                         </div>
+                                                        </div>
+
                                                         <div className="col-md-3 btnDiv" id="">
                                                             <button type="button" id="btnSubmit" className="SubmitButtons btn" title="Submit" onClick={this.handleSubmit}>Submit</button>
-                                                            <button type="button" id="btnCancel" className="CancelButtons btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
-                                                        </div>
-                                                    </div>
+                                                            <button type="button" id="btnCancel" className="CancelButtons btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>                                                  
                                                 </div>
                                                 <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
                                             </div>
                                         }
                                     </div>
-                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} onSortChange={this.sortOrder} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} prvSort={this.state.sortBy} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                                 </div>
                             </div>
                         </div>

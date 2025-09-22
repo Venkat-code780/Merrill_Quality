@@ -35,21 +35,23 @@ export interface ActionsState {
     ItemId: number;
     formData: {
         Title: string;
-        RootCause:Number;
-        SecondaryRootCause: Number;
+    
     },
     redirect: boolean,
     isEdit: boolean,
     displayMessage:string,
     isUnauthorized: Boolean,
     RootCauses:any,
-    SecondaryRootCauses:any
+    RootCausesid:number,
+    
 }
 
-export default class Status extends React.Component<ActionsProps, ActionsState> {
+ export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
 
-    private ActionsList = "Actions";
+    private ActionsList = "Status";
     private txtLeadSourceName;
+    
+
     private sp = spfi().using(SPFx(this.props.context));
 
     constructor(props: ActionsProps){
@@ -69,23 +71,26 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
             ItemId: 0,
             formData: {
                 Title: '',
-                RootCause: 0,
-                SecondaryRootCause:0
+           
+               
             },
             redirect: false,
             isEdit: false,
             displayMessage:'',
             isUnauthorized: false,
             RootCauses:[],
-            SecondaryRootCauses:[]
+               RootCausesid:0,
         };
 
         this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+   
+
+
     }
 
     public componentDidMount(){
-        highlightCurrentNav("liActions");
-        document.title = "Mayco - Safety | Actions";
+        highlightCurrentNav("liStatus");
+        document.title = "Mayco - Safety | Status";
         this.loadListData();
     }
 
@@ -102,24 +107,22 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
              let lsTableProps = {'PageNumber':1,"sortOrder":false,"sortBy":1,'SearchKey':null};
             localStorage.setItem('PrvData', JSON.stringify(lsTableProps));
 
-           let  [Actions,RootCauses,SecondaryRootCauses]=await Promise.all([
-            this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Title,RootCause/Title,RootCause/Id,SecondaryRootCause/Title,SecondaryRootCause/Id,*').expand('RootCause,SecondaryRootCause').orderBy("Modified", false)(),
-            this.sp.web.lists.getByTitle('RootCauses').items.top(2000).orderBy("Title", true)(),
-            this.sp.web.lists.getByTitle('SecondaryRootCauses').items.top(2000).orderBy("Title", true)(),
+           let  [Status]=await Promise.all([
+            this.sp.web.lists.getByTitle('Status').items.select('Id', 'Title').top(2000).orderBy("Modified", false)(),
            ])
-           let tableData: { Id: any; Title: any; RootCauseId: any; SecondaryRootCauseId: any; RootCauseTitle: any; SecondaryRootCauseTitle: any; }[]=[];
-           Actions.forEach(Act=>{
+           let tableData: { Id: any; Title: any;}[]=[];
+           Status.forEach(Src=>{
              let tableObj = {
-                                Id: Act.Id,
-                                Title: Act.Title,
-                                RootCauseId:Act.RootCause.Id,
-                                SecondaryRootCauseId:Act.SecondaryRootCause.Id,
-                                RootCauseTitle:Act.RootCause.Title,
-                                SecondaryRootCauseTitle:Act.SecondaryRootCause.Title,
+                                Id: Src.Id,
+                                Title: Src.Title,
+                            
+                            
                             }
                 tableData.push(tableObj);
            })
-        this.setState({ ActionsData: tableData,RootCauses, SecondaryRootCauses});
+
+           
+        this.setState({ ActionsData: tableData});
         }
         catch(e){
             this.onError();
@@ -144,9 +147,12 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
                 }
                 else{
                     formData.Title = item.Title;
-                    //formData.IsActive = item.IsActive;
+                 
+                  //formData.IsActive = item.IsActive;
                     hideLoader();
-                    this.setState({ formData });
+                    this.setState({ formData,   
+                     
+                    });
                 }
             })
         }
@@ -161,43 +167,62 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
         this.setState({ isFormOpen: true, ItemId: 0 });
     }
 
-    private async checkDuplicate(){
-        try{
-            showLoader();
-            var formData = {...this.state.formData};
-            let isValid = true;
-            let escapedTitle = formData.Title.replace(/'/g, "''"); 
-            let filterQuery = "Title eq '"+ escapedTitle +"'";
+   
 
-            if( this.state.ItemId > 0 ){
-                filterQuery += " and Id ne "+this.state.ItemId+"";
-            }
+private async checkDuplicate() {
+    try {
+        showLoader();
+        const formData = { ...this.state.formData };
 
-            await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
-                if( !res.Error && res.length > 0){
-                    isValid = false;
-                    var message = "Action already exists";
-                    showToast( "error", message );
-                    hideLoader();
-                }
-                else{
-                    hideLoader();
-                }
-            })
-            return isValid;
+        let isValid = true;
+
+        // Escape single quotes in Title
+        const escapedTitle = formData.Title.replace(/'/g, "''");
+
+        // Build OData filter for all three fields
+        // Note: Adjust property names according to your SharePoint list fields
+        let filterQuery = `Title eq '${escapedTitle}'`;
+
+        if (this.state.ItemId > 0) {
+            // Exclude the current item (for update scenario)
+            filterQuery += ` and Id ne ${this.state.ItemId}`;
         }
-        catch(e){
-            this.onError();
-            hideLoader();
-            console.log(e);
+
+        const results = await this.sp.web.lists
+            .getByTitle(this.ActionsList)
+            .items.filter(filterQuery)();
+
+        if (results && results.length > 0) {
+            isValid = false;
+            showToast("error", "Record already exists");
         }
+
+        hideLoader();
+        return isValid;
+    } catch (e) {
+        this.onError();
+        hideLoader();
+        console.error(e);
+        return false;
     }
+}
+
+
+
+
+
+
+
+
+
     private handleSubmit =async (event:any) =>{
         showLoader();
         try{
             event.preventDefault();
             var data = {
-                leadSource: { val: (this.state.formData.Title.trim()), required: true, Name: "'Lead Source'", Type: ControlType.string, Focusid: this.txtLeadSourceName }
+                Status: { val: (this.state.formData.Title.trim()), required: true, Name: "'Status'", Type: ControlType.string, Focusid: this.txtLeadSourceName },
+
+                 
             }
             let isValid = formValidation.FormValidation( data );
 
@@ -227,7 +252,7 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
 
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
-                    let msg = "Action updated successfully";
+                    let msg = "Status updated successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -237,7 +262,7 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
             }
             else{
                 this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then( (res) => {
-                    let msg = "Action submitted successfully";
+                    let msg = "Status submitted successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -275,10 +300,6 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
         this.setState({pageNumber: pageIndex});  
     }
 
-    private sortOrder =(event:any,sortDirection:any)=>{
-        this.setState({sortBy: event.id,sortOrder:sortDirection});     
-    }
-
     private handleChangeDynamic = (event: any) => {
         const formData:any = {...this.state.formData};
         const name = event.target.name;
@@ -286,6 +307,7 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
         formData[name] = value;
         this.setState({formData});
     }
+
 
     private handleRowClicked = (row:any,Id?: any) => {
         let ID = row.Id? row.Id:Id;
@@ -313,7 +335,7 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
                 sortable: false
             },
             {
-                name: "Action",
+                name: "Status",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
                 cell: (record: { Title:  any; }) => {
@@ -322,26 +344,7 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
                     );
                 },
             },
-            {
-                name: "Root Cause",
-                selector: (row: { RootCauseTitle: any; }, i: any) => row.RootCauseTitle,
-                sortable: true,
-                cell: (record: { RootCauseTitle:  any; }) => {
-                    return (
-                        record.RootCauseTitle
-                    );
-                },
-            },
-            {
-                name: "Secondary Root Cause",
-                selector: (row: { SecondaryRootCauseTitle: any; }, i: any) => row.SecondaryRootCauseTitle,
-                sortable: true,
-                cell: (record: { SecondaryRootCauseTitle:  any; }) => {
-                    return (
-                        record.SecondaryRootCauseTitle
-                    );
-                },
-            }
+     
         ];
 
         if(this.state.isUnauthorized){
@@ -354,7 +357,7 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
                         <div id="content" className="content p-2 pt-2">
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
-                                    <div className="title">Lead Source</div>
+                                    <div className="title">Status</div>
                                     <div className="" id="">
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
@@ -368,18 +371,11 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
                                                         <div className="col-md-3">
                                                             <div className="form-floating">
                                                                 <input className="form-control" required={true} placeholder="Lead Source" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
-                                                                <label>Lead Source Name <span className="mandatoryhastrick">*</span></label>
+                                                                <label>Status <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                        {/* <InputCheckBox 
-                                                            label="Is Active"
-                                                            name="IsActive" 
-                                                            checked={this.state.formData.IsActive} 
-                                                            onChange={this.handleChangeDynamic} 
-                                                            isdisable={false} 
-                                                            isRequired={false}   
-                                                            id="chckIsActiveLeadSource"                                                 
-                                                        /> */}
+                                                    
+                                                       
                                                         <div className="col-md-3 btnDiv" id="">
                                                             <button type="button" id="btnSubmit" className="SubmitButtons btn" title="Submit" onClick={this.handleSubmit}>Submit</button>
                                                             <button type="button" id="btnCancel" className="CancelButtons btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
@@ -390,7 +386,7 @@ export default class Status extends React.Component<ActionsProps, ActionsState> 
                                             </div>
                                         }
                                     </div>
-                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} onSortChange={this.sortOrder} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} prvSort={this.state.sortBy} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                                 </div>
                             </div>
                         </div>

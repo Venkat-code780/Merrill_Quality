@@ -30,7 +30,7 @@ function ValidateForm(data:any){
             status = false;
             break;
         }
-        else if( [undefined,null,''].includes(value) && propertieTypes.reactSelect == type && isrequired ){
+        else if( [undefined,null,'',0].includes(value) && propertieTypes.reactSelect == type && isrequired ){
             message ="'"+data[key].Name+"' cannot be blank.";
             let prpel =data[key].Focusid;
             document.getElementById(prpel)?.getElementsByTagName("input")[0].focus();

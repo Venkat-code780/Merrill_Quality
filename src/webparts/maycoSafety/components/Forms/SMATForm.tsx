@@ -318,7 +318,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             zoneOptions = [];
 
             if (actionMeta.action != "clear") {
-                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
         }
         else if (name == "Department") {
@@ -429,7 +429,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                     let mmddyyyyDate = format(formData.WCCDate, "MM/dd/yyyy");
                     // console.log(mmddyyyyDate);
                     formData.Year = mmddyyyyDate.split("/")[2];
-                    formData.YearMonth = mmddyyyyDate.split("/")[1];
+                    formData.YearMonth = mmddyyyyDate.split("/")[0];
                     if( formData.CompletedDate != "" ){
                         formData.CompletedDate = DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData.CompletedDate)), this.props.spContext.webTimeZoneData ).toISOString();
                     }

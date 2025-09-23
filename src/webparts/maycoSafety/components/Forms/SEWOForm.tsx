@@ -30,7 +30,8 @@ export interface SEWOFormProps {
     webAbsoluteURL: string;
     currPlantTitle: string;
     isSuperAdmin: boolean;
-    currentUserGroupsList:any;
+    currentUserGroups: any;
+    isWCM: boolean;
 }
 
 export interface SEWOFormState {
@@ -83,6 +84,32 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     private txtWitnessStatement: any;
     private txtInjuredSignature: any;
     private txtWitnessSignature: any;
+
+    private dateFields = [
+        'Reported_x0020_Date',
+        'DueDate',
+        'BackToWork',
+        'InjuredDate',
+        'WitnessDate',
+        'EmployeeDate',
+        'TeamLeadDate',
+        "CloseDate",
+        'SupervisorDate',
+        'DeptManagerDate',
+        'SafetyMgrDate',
+        'PlantMgrDate'
+    ];
+
+    private optionalLookUpFields = [
+        "AccidentCauseId",
+        "ActionId",
+        "ExpansionPlanId",
+        "PPEInUseId",
+        "PPESuppliedId",
+        "StatusId",
+        "UsualWorkId"
+    ]
+
     public state = {
         formData: {
             AccidentCauseId: '',
@@ -117,7 +144,6 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             InjuredSignature: '',
             InjuredStatement: '',
             Injury_x0020_Date_x0020_Time: '',
-            InjuryDate: '',
             InjuryTime: '',
             InjuryTypeId: '',
             IsHospitalRefused: false,
@@ -148,7 +174,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             StatusId: '',
             SupervisorDate: '',
             SupervisorName: '',
-            SupervisorSignature: '',
+            SuperVisorSignature: '',
             TeamLeadDate: '',
             TeamLeadName: '',
             TeamLeadSignature: '',
@@ -194,7 +220,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         displayMessage: '',
         showSubmit: false,
         isAdmin: false,
-        statusText:'',
+        statusText: '',
     }
 
     constructor(props: SEWOFormProps) {
@@ -252,7 +278,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     private getOnLoadData = async () => {
         try {
             showLoader();
-            var formData = { ...this.state.formData };
+            var formData:any = { ...this.state.formData };
             let itemId = this.props.match.params.id;
             let showSubmit = false;
 
@@ -325,6 +351,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
 
             if (itemId != undefined) {
                 await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")().then((editSEWOItem: any) => {
+                    console.log(editSEWOItem);
                     if (editSEWOItem != Error) {
 
                         formData.AccidentCauseId = editSEWOItem.AccidentCauseId ?? '';
@@ -358,8 +385,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         formData.InjuredJob = editSEWOItem.InjuredJob ?? '';
                         formData.InjuredSignature = editSEWOItem.InjuredSignature ?? '';
                         formData.InjuredStatement = editSEWOItem.InjuredStatement ?? '';
-                        formData.Injury_x0020_Date_x0020_Time = editSEWOItem.Injury_x0020_Date_x0020_Time ?? '';
-                        formData.InjuryDate = editSEWOItem.InjuryDate ?? '';
+                        formData.Injury_x0020_Date_x0020_Time = DateUtilities.removeBrowserwrtServer(new Date(editSEWOItem.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString();
                         formData.InjuryTime = editSEWOItem.InjuryTime ?? '';
                         formData.InjuryTypeId = editSEWOItem.InjuryTypeId ?? '';
                         formData.IsHospitalRefused = editSEWOItem.IsHospitalRefused ?? '';
@@ -385,12 +411,11 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         formData.SafetyMgrSignature = editSEWOItem.SafetyMgrSignature ?? '';
                         formData.SecondaryRootCauseId = editSEWOItem.SecondaryRootCauseId ?? '';
                         formData.Sex = editSEWOItem.Sex ?? '';
-                        formData.Shift = editSEWOItem.Shift ?? '';
                         formData.Sketch = editSEWOItem.Sketch ?? '';
                         formData.StatusId = editSEWOItem.StatusId ?? '';
                         formData.SupervisorDate = editSEWOItem.SupervisorDate ?? '';
                         formData.SupervisorName = editSEWOItem.SupervisorName ?? '';
-                        formData.SupervisorSignature = editSEWOItem.SupervisorSignature ?? '';
+                        formData.SuperVisorSignature = editSEWOItem.SuperVisorSignature ?? '';
                         formData.TeamLeadDate = editSEWOItem.TeamLeadDate ?? '';
                         formData.TeamLeadName = editSEWOItem.TeamLeadName ?? '';
                         formData.TeamLeadSignature = editSEWOItem.TeamLeadSignature ?? '';
@@ -407,20 +432,27 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         formData.Year = editSEWOItem.Year ?? '';
                         formData.YearMonth = editSEWOItem.YearMonth ?? '';
                         formData.Zone = editSEWOItem.Zone ?? '';
+                        //Shifts column if WCM
+                        if( this.props.isWCM ){
+                            formData.Shift = editSEWOItem.Shifts ?? '';
+                        }
+                        else{
+                            formData.Shift = editSEWOItem.Shift ?? '';
+                        }
 
                         zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editSEWOItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
                         machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone.Title == editSEWOItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                        secondaryRootCausesOptions = secondaryRootCausesData.filter( (option:any) => ( option.RootCauseId == formData.RootCauseId )).map((item:any) => ({label: item.Title, value: item.Id}));
+                        secondaryRootCausesOptions = secondaryRootCausesData.filter((option: any) => (option.RootCauseId == formData.RootCauseId)).map((item: any) => ({ label: item.Title, value: item.Id }));
 
-                        microRootCausesOptions = microRootCausesData.filter( (option:any) => ( option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId  )).map((item:any) => ({label: item.Title, value: item.Id}));
+                        microRootCausesOptions = microRootCausesData.filter((option: any) => (option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId)).map((item: any) => ({ label: item.Title, value: item.Id }));
 
-                        actionsOptions = actionsData.filter( (option:any) => ( option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId  )).map((item:any) => ({label: item.Title, value: item.Id}));
+                        actionsOptions = actionsData.filter((option: any) => (option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId)).map((item: any) => ({ label: item.Title, value: item.Id }));
 
                         //Groups Check
-                        let currentUserGroupsList = [...this.props.currentUserGroupsList];
-                        if ( currentUserGroupsList.includes("Venture Global Owners") || currentUserGroupsList.includes("WCM Safety Admin") || currentUserGroupsList.includes("WCM Merrill Safety Mgt") ) {
+                        let currentUserGroups = this.props.currentUserGroups;
+                        if (currentUserGroups.includes("Venture Global Owners") || currentUserGroups.includes("WCM Safety Admin") || currentUserGroups.includes("WCM Merrill Safety Mgt")) {
                             showSubmit = true;
                         }
                     }
@@ -449,12 +481,15 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         if (classArr.includes("onlyNum")) {
             inputValue = inputValue.replace(/[^0-9]/g, '');
         }
-        if( name == "InjuredName" ){
+        if (name == "InjuredName") {
             formData.EmployeeName = inputValue;
         }
-        
+        else if( name == "IsHospitalRefused"){
+            formData.NameoftheHospital = '';
+        }
+
         formData[name] = inputValue;
-        this.setState({ formData,  });
+        this.setState({ formData, });
     }
 
     private handleDropdownChange = (event: any, actionMeta: any, id: any) => {
@@ -466,17 +501,17 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         let machineData = [...this.state.machineData];
         let machineOptions: any = [...this.state.machineOptions];
         let secondaryRootCausesData = [...this.state.secondaryRootCausesData];
-        let secondaryRootCausesOptions:any = [...this.state.secondaryRootCausesOptions];
+        let secondaryRootCausesOptions: any = [...this.state.secondaryRootCausesOptions];
         let microRootCausesData = [...this.state.microRootCausesData];
-        let microRootCausesOptions:any = [...this.state.microRootCausesOptions];
+        let microRootCausesOptions: any = [...this.state.microRootCausesOptions];
         let actionsData = [...this.state.actionsData];
-        let actionsOptions:any = [...this.state.actionsOptions];
+        let actionsOptions: any = [...this.state.actionsOptions];
         const name = actionMeta.name;
         const value = actionMeta.action == "clear" ? '' : event.value;
         formData[name] = value;
         let statusText = this.state.statusText;
 
-        if( name == "Plant" ){
+        if (name == "Plant") {
             formData.Department = "";
             formData.Zone = "";
             formData.Machine = "";
@@ -485,7 +520,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             zoneOptions = [];
 
             if (actionMeta.action != "clear") {
-                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department )).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
         }
         else if (name == "Department") {
@@ -506,7 +541,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
         }
-        else if(name=="RootCauseId"){
+        else if (name == "RootCauseId") {
             formData.SecondaryRootCauseId = '';
             formData.MicroRootCauseId = '';
             formData.ActionId = '';
@@ -514,27 +549,27 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             microRootCausesOptions = [];
             actionsOptions = [];
 
-            if( actionMeta.action != "clear" ){
-                secondaryRootCausesOptions = secondaryRootCausesData.filter( (option:any) => ( option.RootCauseId == formData.RootCauseId )).map((item:any) => ({label: item.Title, value: item.Id}));
+            if (actionMeta.action != "clear") {
+                secondaryRootCausesOptions = secondaryRootCausesData.filter((option: any) => (option.RootCauseId == formData.RootCauseId)).map((item: any) => ({ label: item.Title, value: item.Id }));
             }
         }
-        else if(name=="SecondaryRootCauseId"){
+        else if (name == "SecondaryRootCauseId") {
             formData.MicroRootCauseId = '';
             formData.ActionId = '';
             microRootCausesOptions = [];
             actionsOptions = [];
 
-            if( actionMeta.action != "clear" ){
-                microRootCausesOptions = microRootCausesData.filter( (option:any) => ( option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId  )).map((item:any) => ({label: item.Title, value: item.Id}));
+            if (actionMeta.action != "clear") {
+                microRootCausesOptions = microRootCausesData.filter((option: any) => (option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId)).map((item: any) => ({ label: item.Title, value: item.Id }));
 
-                actionsOptions = actionsData.filter( (option:any) => ( option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId  )).map((item:any) => ({label: item.Title, value: item.Id}));
+                actionsOptions = actionsData.filter((option: any) => (option.RootCauseId == formData.RootCauseId && option.SecondaryRootCauseId == formData.SecondaryRootCauseId)).map((item: any) => ({ label: item.Title, value: item.Id }));
             }
         }
-        else if( name == "StatusId" ){
-            if(actionMeta.action !="clear" && event.label == "Closed"){
+        else if (name == "StatusId") {
+            if (actionMeta.action != "clear" && event.label == "Closed") {
                 statusText = event.label;
             }
-            else{
+            else {
                 statusText = '';
                 formData.CloseDate = '';
             }
@@ -569,11 +604,11 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         }
 
         if (dateValue != null) {
-            if( name == "InjuryDate"){
-                dateValue = format( dateValue, "MM/dd/yyyy HH:mm")
+            if (name == "Injury_x0020_Date_x0020_Time") {
+                dateValue = format(dateValue, "MM/dd/yyyy HH:mm")
                 console.log(dateValue);
             }
-            else{
+            else {
                 dateValue = format(DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(dateValue)), this.props.spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy");
             }
         }
@@ -581,16 +616,16 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             dateValue = "";
         }
 
-        if( name == "CloseDate" ){
+        if (name == "CloseDate") {
 
-            if( !(["", null, undefined].includes( dateValue )) ){
+            if (!(["", null, undefined].includes(dateValue))) {
                 let statusData = [...this.state.statusData];
-                let closedStatusObj:any = statusData.find( (status:any) => status.label == "Closed" )
+                let closedStatusObj: any = statusData.find((status: any) => status.label == "Closed")
                 formData.StatusId = closedStatusObj.value;
                 statusText = 'Closed';
             }
-            else{
-                if( statusText == "Closed" ){
+            else {
+                if (statusText == "Closed") {
                     statusText = "";
                     formData.StatusId = '';
                 }
@@ -605,35 +640,48 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     private handleSubmit = () => {
         try {
             showLoader();
-            var formData = {...this.state.formData};
+            var formData: any = { ...this.state.formData };
             var data = {
-                plant: {val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant"},
-                department: {val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment"},
-                zone: {val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone"},
-                machine: {val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine"},
-                accidentType: {val: formData.AccidentTypeId, required: true, Name: "Accident Type", Type: ControlType.reactSelect, Focusid: "ddlAccidentType"},
-                injuredName: {val: formData.InjuredName, required: true, Name: "Accident Type", Type: ControlType.string, Focusid: this.txtNameofInjured},
-                sex: {val: formData.Sex, required: true, Name: "Sex", Type: ControlType.reactSelect, Focusid: "ddlSex"},
-                injuryType: {val: formData.InjuryTypeId, required: true, Name: "Injury Type", Type: ControlType.reactSelect, Focusid: "ddlInjuryType"},
-                injuryDateTime: {val: formData.InjuryDate, required: true, Name: "Injury Date Time", Type: ControlType.date, Focusid: "dtInjuryDateTime"},
-                injuryDateTimeToday: {val: formData.InjuryDate, required: true, Name: "Injury Date Time", Type: ControlType.lessthanTodayDate, Focusid: "dtInjuryDateTime"},
-                reportedDate: {val: formData.Reported_x0020_Date, required: true, Name: "Reported Date", Type: ControlType.date, Focusid: "dtReportedDate"},
-                reportedDateToday: {val: formData.Reported_x0020_Date, required: true, Name: "Reported Date", Type: ControlType.lessthanTodayDate, Focusid: "dtReportedDate"},
-                nameofHospital: {val: formData.NameoftheHospital, required: (!formData.IsHospitalRefused), Name: "Name of the Clinic/Hospital", Type: ControlType.string, Focusid: this.txtNameoftheHospital},
-                bodyPart: {val: formData.BodyPartId, required: true, Name: "Body Part", Type: ControlType.reactSelect, Focusid: "ddlBodyPart"},
-                rootCause: {val: formData.RootCauseId, required: true, Name: "Root Cause", Type: ControlType.reactSelect, Focusid: "ddlRootCause"},
-                secondaryRootCause: {val: formData.SecondaryRootCauseId, required: true, Name: "Secondary Root Cause", Type: ControlType.reactSelect, Focusid: "ddlSecondaryRootCause"},
-                microRootCause: {val: formData.MicroRootCauseId, required: true, Name: "Micro Root Cause", Type: ControlType.reactSelect, Focusid: "ddlMicroRootCause"},
-                closeDate: {val: formData.CloseDate, required: ( this.state.statusText == "Closed" ), Name: "Close Date", Type: ControlType.date, Focusid: "dtCloseDate"},
-                closeDateToday: {val: formData.CloseDate, required: formData.CloseDate != "", Name: "Close Date", Type: ControlType.lessthanTodayDate, Focusid: "dtCloseDate"},
-                closeDateCompare: { startDate: formData.InjuredDate, endDate: formData.CloseDate, required: formData.CloseDate != "", startDateName:"Injured Date", endDateName: "Close Date", Type: ControlType.compareDates, Focusid: "dtCloseDate"},
-                supervisorName: {val: formData.SupervisorName, required: true, Name: "Supervisor Name", Type: ControlType.string, Focusid: this.txtSupervisorName}
+                plant: { val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant" },
+                department: { val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment" },
+                zone: { val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone" },
+                machine: { val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine" },
+                accidentType: { val: formData.AccidentTypeId, required: true, Name: "Accident Type", Type: ControlType.reactSelect, Focusid: "ddlAccidentType" },
+                injuredName: { val: formData.InjuredName, required: true, Name: "Accident Type", Type: ControlType.string, Focusid: this.txtNameofInjured },
+                sex: { val: formData.Sex, required: true, Name: "Sex", Type: ControlType.reactSelect, Focusid: "ddlSex" },
+                injuryType: { val: formData.InjuryTypeId, required: true, Name: "Injury Type", Type: ControlType.reactSelect, Focusid: "ddlInjuryType" },
+                injuryDateTime: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.date, Focusid: "dtInjuryDateTime" },
+                injuryDateTimeToday: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.lessthanTodayDate, Focusid: "dtInjuryDateTime" },
+                reportedDate: { val: formData.Reported_x0020_Date, required: true, Name: "Reported Date", Type: ControlType.date, Focusid: "dtReportedDate" },
+                reportedDateToday: { val: formData.Reported_x0020_Date, required: true, Name: "Reported Date", Type: ControlType.lessthanTodayDate, Focusid: "dtReportedDate" },
+                nameofHospital: { val: formData.NameoftheHospital, required: (!formData.IsHospitalRefused), Name: "Name of the Clinic/Hospital", Type: ControlType.string, Focusid: this.txtNameoftheHospital },
+                bodyPart: { val: formData.BodyPartId, required: true, Name: "Body Part", Type: ControlType.reactSelect, Focusid: "ddlBodyPart" },
+                rootCause: { val: formData.RootCauseId, required: true, Name: "Root Cause", Type: ControlType.reactSelect, Focusid: "ddlRootCause" },
+                secondaryRootCause: { val: formData.SecondaryRootCauseId, required: true, Name: "Secondary Root Cause", Type: ControlType.reactSelect, Focusid: "ddlSecondaryRootCause" },
+                microRootCause: { val: formData.MicroRootCauseId, required: true, Name: "Micro Root Cause", Type: ControlType.reactSelect, Focusid: "ddlMicroRootCause" },
+                closeDate: { val: formData.CloseDate, required: (this.state.statusText == "Closed"), Name: "Close Date", Type: ControlType.date, Focusid: "dtCloseDate" },
+                closeDateToday: { val: formData.CloseDate, required: formData.CloseDate != "", Name: "Close Date", Type: ControlType.lessthanTodayDate, Focusid: "dtCloseDate" },
+                closeDateCompare: { startDate: formData.InjuredDate, endDate: formData.CloseDate, required: formData.CloseDate != "", startDateName: "Injured Date", endDateName: "Close Date", Type: ControlType.compareDates, Focusid: "dtCloseDate" },
+                supervisorName: { val: formData.SupervisorName, required: true, Name: "Supervisor Name", Type: ControlType.string, Focusid: this.txtSupervisorName }
             }
             let isValid = formValidation.FormValidation(data);
-            if( isValid.status ){
-                console.log("Valid Data");
+            if (isValid.status) {
+
+                let mmddyyyyDate = format(formData.Injury_x0020_Date_x0020_Time, "MM/dd/yyyy");
+                formData.Year = mmddyyyyDate.split("/")[2];
+                formData.YearMonth = mmddyyyyDate.split("/")[0];
+                formData.Injury_x0020_Date_x0020_Time = DateUtilities.addBrowserwrtServer(new Date(formData.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString();
+                formData.DaysOff = Number(formData.DaysOff);
+
+                //To handle optional Date fields
+                this.processOptionalDateFields(formData);
+                //To handle optional LookUp Fields
+                this.processOptionalLookUpFields(formData);
+                console.clear();
+                console.log(formData);
+                this.InsertOrUpdateData(formData);
             }
-            else{
+            else {
                 showToast("error", isValid.message);
                 hideLoader();
             }
@@ -644,14 +692,71 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         }
     }
 
+    private InsertOrUpdateData = async (formData: any) => {
+        try {
+
+            let itemId = this.props.match.params.id;
+            if (itemId > 0) {
+                await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).update(formData).then((res: any) => {
+                    let msg = "SEWO updated successfully";
+                    this.setState({ displayMessage: msg });
+                    this.onSuccess();
+                }, (error) => {
+                    console.log(error);
+                    this.onError();
+                })
+            }
+            else {
+                await this.sp.web.lists.getByTitle(this.SEWOList).items.add(formData).then((res: any) => {
+                    let msg = "SEWO submitted successfully";
+                    this.setState({ displayMessage: msg });
+                    this.onSuccess();
+                }, (error) => {
+                    console.log(error);
+                    this.onError();
+                })
+            }
+        }
+        catch (e) {
+            console.log(e);
+            this.onError();
+        }
+    }
+
+    private processOptionalDateFields = (formData: any) => {
+        for (const dateField of this.dateFields) {
+            if (formData[dateField] !== "") {
+                formData[dateField] =  DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData[dateField])), this.props.spContext.webTimeZoneData ).toISOString();
+            } else {
+                delete formData[dateField];
+            }
+        }
+    };
+
+    private processOptionalLookUpFields = (formData: any) => {
+        for (const lookupField of this.optionalLookUpFields) {
+            if (formData[lookupField] == "" ) {
+                delete formData[lookupField];
+            }
+        }
+
+        let selShift = formData.Shift;
+
+        if(this.props.isWCM){ 
+            delete formData.Shift;
+            formData["Shifts"] = selShift;
+        }
+    };
+
+
     private handlefullClose = () => {
         this.setState({ Homeredirect: true, ItemID: 0 });
     }
-    // private onSuccess = () => {
-    //     hideLoader();
-    //     this.setState({ Homeredirect: true, ItemID: 0  });
-    //     showToast("success", this.state.displayMessage );
-    // }
+    private onSuccess = () => {
+        hideLoader();
+        this.setState({ Homeredirect: true, ItemID: 0 });
+        showToast("success", this.state.displayMessage);
+    }
 
     private onError = () => {
         showToast("error", ActionStatus.Error);
@@ -808,7 +913,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.Sex}
-                                                OptionsList={[ {label: "Female", value: "Female"}, {label: "Male", value: "Male"}]}
+                                                OptionsList={[{ label: "Female", value: "Female" }, { label: "Male", value: "Male" }]}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSex") }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
@@ -852,7 +957,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     {/* Injury Date Time*/}
                                     <div className="col-md-3 greybg c-date-picker" id="divInjuryDateTime">
                                         <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.InjuryDate} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="InjuryDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showIcon showTime={true} />
+                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showIcon showTime={true} />
                                     </div>
                                     {/* Usual Work & Shift */}
                                     <div className="col-md-3 form-floating row">
@@ -908,7 +1013,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.PositionType}
-                                                OptionsList={[ {label: "Permanent", value: "Permanent"}, {label: "Temporory", value: "Temporory"}]}
+                                                OptionsList={[{ label: "Permanent", value: "Permanent" }, { label: "Temporory", value: "Temporory" }]}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPositionType") }}
                                                 isRequired={false}
                                                 disabled={this.state.isInputDisabled}
@@ -960,7 +1065,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         <input className="" placeholder="Is Hospital/Clinic Refused" name="IsHospitalRefused" type="checkbox" id="rdIsHospitalRefused" ref={this.rdIsHospitalRefused} checked={this.state.formData.IsHospitalRefused} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Is Hospital/Clinic Refused" />
                                     </div>
                                     {/* Name of the Clinic/Hospital */}
-                                    { !this.state.formData.IsHospitalRefused && <div className="col-md-6 greybg">
+                                    {!this.state.formData.IsHospitalRefused && <div className="col-md-6 greybg">
                                         <div className="form-floating">
                                             <input className="form-control" placeholder="Name of the Clinic/Hospital" name="NameoftheHospital" type="text" id="txtNameoftheHospital" ref={this.txtNameoftheHospital} value={this.state.formData.NameoftheHospital} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Name of the Clinic/Hospital" />
                                             <label className=" col-form-label" htmlFor="txtNameoftheHospital">Name of the Clinic/Hospital <span className="mandatoryhastrick"> *</span></label>
@@ -1220,7 +1325,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                         {/* Close Date */}
                                         <div className="greybg c-date-picker" id="divCloseDate">
-                                            <label className="label-datePicker" htmlFor="dtCloseDate"> Close Date { this.state.statusText == "Closed" && <span className="mandatoryhastrick"> *</span>}</label>
+                                            <label className="label-datePicker" htmlFor="dtCloseDate"> Close Date {this.state.statusText == "Closed" && <span className="mandatoryhastrick"> *</span>}</label>
                                             <DatePickercontrol placeholder="" selectedDate={this.state.formData.CloseDate} id='dtCloseDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="CloseDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCloseDate", dateProps)} highlightDate={new Date()} showIcon />
                                         </div>
                                     </div>
@@ -1418,7 +1523,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             </td>
                                             <td>
                                                 <div className="form-floating">
-                                                    <input className="form-control" placeholder="Supervisor Signature" name="SupervisorSignature" type="text" id="txtSupervisorSignature" ref={this.txtSupervisorSignature} value={this.state.formData.SupervisorSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Signature" />
+                                                    <input className="form-control" placeholder="Supervisor Signature" name="SuperVisorSignature" type="text" id="txtSupervisorSignature" ref={this.txtSupervisorSignature} value={this.state.formData.SuperVisorSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Signature" />
                                                     <label className=" col-form-label" htmlFor="txtSupervisorSignature">Supervisor Signature </label>
                                                 </div>
                                             </td>

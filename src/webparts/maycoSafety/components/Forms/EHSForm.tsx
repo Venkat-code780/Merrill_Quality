@@ -325,7 +325,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             zoneOptions = [];
 
             if (actionMeta.action != "clear") {
-                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Id == event.id)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department )).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
         }
         else if (name == "Department") {
@@ -433,7 +433,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                 let mmddyyyyDate = format(formData.Date, "MM/dd/yyyy");
                 // console.log(mmddyyyyDate);
                 formData.Year = mmddyyyyDate.split("/")[2];
-                formData.YearMonth = mmddyyyyDate.split("/")[1];
+                formData.YearMonth = mmddyyyyDate.split("/")[0];
 
                 //Get Status Count
                 let allMappingData = {...this.state.allMappingData}

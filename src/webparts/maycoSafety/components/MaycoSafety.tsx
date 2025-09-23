@@ -17,8 +17,9 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
     currentUserGroups: [],
     siteURL: '',
     webAbsoluteURL: '',
-    currPlantTitle:'',
-    isSuperAdmin:false
+    currPlantTitle: '',
+    isSuperAdmin: false,
+    isWCM: false,
   }
   private siteURL = this.props.spContext.siteAbsoluteUrl;
 
@@ -37,27 +38,33 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
       let webAbsoluteURL = this.props.spContext.webAbsoluteUrl;
 
       var webUrlSplit = webAbsoluteURL.split("/");
-      let currPlantTitle = webUrlSplit[webUrlSplit.length-2];
+      let currPlantTitle = webUrlSplit[webUrlSplit.length - 2];
+      let currEnvironment = webUrlSplit[webUrlSplit.length - 4];
+      console.log("Environment: " + currEnvironment);
+      let isWCM = false;
+
 
       const spGroupsQuery = this.siteURL + "/_api/web/currentuser/groups";
-      await this.props.spHttpClient.get( spGroupsQuery, SPHttpClient.configurations.v1 ).then( (res: SPHttpClientResponse) => {
-        if(res.ok){
-          res.json().then((resp)=>{
+      await this.props.spHttpClient.get(spGroupsQuery, SPHttpClient.configurations.v1).then((res: SPHttpClientResponse) => {
+        if (res.ok) {
+          res.json().then((resp) => {
             let items = resp.value;
-             for( let group of items ){
-              if( group.Title == superAdminGrp ){ isSuperAdmin = true; }
+            for (let group of items) {
+              if (group.Title == superAdminGrp) { isSuperAdmin = true; }
 
               currentUserGroupsList.push(group.Title);
             }
-
+            console.log("Current user groups");
+            console.log(currentUserGroupsList);
+            if (currEnvironment.toLowerCase() == "wcm") { isWCM = true };
             this.setState({
               isAuthorized: true,
               currentUserGroups: currentUserGroupsList,
-              siteURL, webAbsoluteURL, currPlantTitle, isSuperAdmin
+              siteURL, webAbsoluteURL, currPlantTitle, isSuperAdmin, isWCM
             });
-          });  
+          });
         }
-        else{
+        else {
           console.log("Something went wrong while fetching user groups");
         }
       });
@@ -67,61 +74,61 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
     }
   }
 
-    private removeExtraClasses(){
-  var workbenchElement = document.getElementById("workbenchPageContent");
-  let wbClass = workbenchElement?.classList.value;
-  workbenchElement?.classList.remove(wbClass? wbClass : "");
-  // this.removeAll();
-  workbenchElement?.addEventListener("click", this.removeAll);
+  private removeExtraClasses() {
+    var workbenchElement = document.getElementById("workbenchPageContent");
+    let wbClass = workbenchElement?.classList.value;
+    workbenchElement?.classList.remove(wbClass ? wbClass : "");
+    // this.removeAll();
+    workbenchElement?.addEventListener("click", this.removeAll);
 
-}
+  }
 
-private removeAll = () => {
-  var workbenchElement = document.getElementById("workbenchPageContent");
-  workbenchElement?.removeEventListener("click",this.removeAll);
+  private removeAll = () => {
+    var workbenchElement = document.getElementById("workbenchPageContent");
+    workbenchElement?.removeEventListener("click", this.removeAll);
 
-  var canvasComponent1 = document.getElementsByClassName("CanvasZoneContainer");
-  forEach( canvasComponent1, element => {
-    let eleClass = element.classList.value;
-    let eleClassArr = eleClass.split(" ");
+    var canvasComponent1 = document.getElementsByClassName("CanvasZoneContainer");
+    forEach(canvasComponent1, element => {
+      let eleClass = element.classList.value;
+      let eleClassArr = eleClass.split(" ");
 
-    eleClassArr.forEach((elem: string) => {
-      element.classList.remove(elem.trim());
-    });
-  })
-  var canvasComponent1 = document.getElementsByClassName("CanvasZone");
-  forEach( canvasComponent1, element => {
-    let eleClass = element.classList.value;
-   let eleClassArr = eleClass.split(" ");
+      eleClassArr.forEach((elem: string) => {
+        element.classList.remove(elem.trim());
+      });
+    })
+    var canvasComponent1 = document.getElementsByClassName("CanvasZone");
+    forEach(canvasComponent1, element => {
+      let eleClass = element.classList.value;
+      let eleClassArr = eleClass.split(" ");
 
-    eleClassArr.forEach((elem: string) => {
-      element.classList.remove(elem.trim());
-    });
-  })
-  var canvasComponent1 = document.getElementsByClassName("CanvasSection");
-  forEach( canvasComponent1, element => {
-    let eleClass = element.classList.value;
-   let eleClassArr = eleClass.split(" ");
+      eleClassArr.forEach((elem: string) => {
+        element.classList.remove(elem.trim());
+      });
+    })
+    var canvasComponent1 = document.getElementsByClassName("CanvasSection");
+    forEach(canvasComponent1, element => {
+      let eleClass = element.classList.value;
+      let eleClassArr = eleClass.split(" ");
 
-    eleClassArr.forEach((elem: string) => {
-      element.classList.remove(elem.trim());
-    });
-  })
-}
+      eleClassArr.forEach((elem: string) => {
+        element.classList.remove(elem.trim());
+      });
+    })
+  }
 
   private onError = () => {
-    showToast("error", ActionStatus.Error );
+    showToast("error", ActionStatus.Error);
     hideLoader();
   }
-  
-  public render(){
-    return(
+
+  public render() {
+    return (
       <React.Fragment>
         <ToastContainer />
         <HashRouter>
           <div className='menu-hide wrapper d-flex align-items-stretch' id="sideMenuNav">
-            { this.state.isAuthorized ? <NavBar {...this.props} {...this.state} />: null}
-            { this.state.isAuthorized ? <RoutesItems {...this.props} {...this.state} />: null}
+            {this.state.isAuthorized ? <NavBar {...this.props} {...this.state} /> : null}
+            {this.state.isAuthorized ? <RoutesItems {...this.props} {...this.state} /> : null}
           </div>
         </HashRouter>
       </React.Fragment>

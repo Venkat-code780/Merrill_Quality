@@ -238,7 +238,7 @@ private async loadListData() {
       { name: "Original Tag No.", selector: (row: any) => row.Original_x0020_Tag_x0020_No_x002, sortable: true },
       { name: "Date Completed", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Date_x0020_Completed) , sortable: true },
       { name: "Action Completed", selector: (row: any) => row.Action_x0020_Completed, sortable: true },
-      { name: "Modified", selector: (row: any) =>DateUtilities.getFriendlyDate(row.Modified) , sortable: true },
+      { name: "Modified", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Modified) , sortable: true },
       { name: "Year", selector: (row: any) =>row.Year, sortable: true },
 
 
@@ -262,7 +262,7 @@ private async loadListData() {
             </div>
             </div>
             </div>
-            <TableGenerator
+            <TableGenerator className="right-search-table"
               columns={columns}
               data={filteredData}
               onRowClick={this.handleRowClicked}

@@ -22,29 +22,6 @@ class DateUtilities {
         return newDate;
     }
 
-    public static getFriendlyDate(givenDate: any): string {
-        if (!givenDate) return "";
-        let date = new Date(givenDate);
-        const now = new Date();
-
-        const diffMs = now.getTime() - date.getTime();
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) {
-            return "Today";
-        } else if (diffDays === 1) {
-            return "Yesterday";
-        } else if (diffDays <= 7) {
-            return `${diffDays} days ago`;
-        } else {
-            return date.toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-            }); // e.g., "August 13, 2020"
-        }
-    }
-
      public static removeBrowserwrtServer(date: Date, webTimeZoneData: any) {
     var utcOffsetMinutes = date.getTimezoneOffset();
     var newDate = new Date(date.getTime());

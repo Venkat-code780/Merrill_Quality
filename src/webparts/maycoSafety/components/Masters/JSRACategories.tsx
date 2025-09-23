@@ -392,7 +392,7 @@ private async checkDuplicate() {
                                     <div className="" id="">
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
-                                            <button type="button" id="btnNew" className="SubmitButtons btn btn-new fw-bold" title="New" onClick={this.addNew}>
+                                            <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
@@ -408,8 +408,8 @@ private async checkDuplicate() {
                                                     
                                                        
                                                         <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="SubmitButtons btn" title="Submit" onClick={this.handleSubmit}>Submit</button>
-                                                            <button type="button" id="btnCancel" className="CancelButtons btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                            <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>

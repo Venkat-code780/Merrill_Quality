@@ -201,3 +201,81 @@
 .focus-Div{
   border: red solid 3px !important;
 }
+
+
+/* Views tables Styles */
+.rdt_TableCol_Sortable div {
+    overflow: visible !important;
+    text-overflow: unset !important;
+    white-space: normal !important;
+}
+
+.rdt_TableCell {
+ cursor: pointer;  
+padding-left: 10px !important;
+}
+.rdt_TableCell div{
+  white-space: normal !important;
+}
+.ViewTable{
+    display: grid;
+}
+.ViewTable .after-title {
+    margin: 30px 0!important;
+}
+ .dataTables_wrapper .row:first-child {
+        margin-top: 20px;
+  }
+   .rdt_TableHeadRow div.sc-eCssSg:nth-child(1) {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+  }
+.rdt_TableCol {
+    color: black !important;
+
+}
+.rdt_TableCell {
+ cursor: pointer;  
+padding-left: 10px !important;
+}
+.rdt_TableCell div{
+  white-space: normal !important;
+}
+.ViewTable{
+    display: grid;
+}
+.ViewTable .after-title {
+    margin: 30px 0!important;
+}
+  .rdt_TableBody .rdt_TableRow {
+    min-height: 50px;
+}
+.rdt_TableCol {
+    color: black !important;
+
+}
+.right-search-table .col-6:nth-child(1) {
+    width: 100%;
+}
+
+.right-search-table .col-6:nth-child(1) input {
+    margin-left: auto !important;
+}
+/* Masers styles */
+ .SubmitButtons{
+    line-height: 1.5;
+    transition: all .15s ease-in-out;
+    margin-bottom: 25px;
+    background: #0b3e50;
+    color: white;
+    border: 1px solid #0b3e50;
+    padding: 6px 18px;
+    margin-top: 5px;
+    margin-left: inherit;
+    font-family: inherit;
+    font-size: inherit;   
+  
+    border-radius: 0px;
+    -webkit-border-radius: 0px;             
+  }

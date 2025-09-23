@@ -44,5 +44,12 @@ class DateUtilities {
             }); // e.g., "August 13, 2020"
         }
     }
+
+     public static removeBrowserwrtServer(date: Date, webTimeZoneData: any) {
+    var utcOffsetMinutes = date.getTimezoneOffset();
+    var newDate = new Date(date.getTime());
+    newDate.setTime(newDate.getTime() - ((webTimeZoneData.Bias - utcOffsetMinutes + webTimeZoneData.DaylightBias) * 60 * 1000));
+    return newDate;
+  }
  }
  export default DateUtilities;

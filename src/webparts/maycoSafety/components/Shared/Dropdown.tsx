@@ -25,14 +25,14 @@ const SearchableDropdown = ({ label, Title, name, id, placeholderText, className
     }
     return(
         <React.Fragment>
-            <label>{label}
+            {![null,""].includes(label)?<label>{label}
                 { isRequired && <span className="mandatoryhastrick"> *</span>}
-            </label>
+            </label>:''}
             <Select
                 name={name}
                 id={id}
                 divId={'divSearch'}
-                title={Title}
+                titleText={Title}
                 placeholder={placeholderText}
                 className={className}
                 value={ isMultiple? selectedValue:( OptionsList.find( (option:any) => option.value === selectedValue )|| '')}

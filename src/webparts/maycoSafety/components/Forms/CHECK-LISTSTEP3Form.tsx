@@ -470,7 +470,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
             bodyStructure[topicKey].forEach((row, index) => {
                 // Dynamically create table row
                 BodyRows.push(
-                    <tr key={`BodyRow${row.No + 1}`} className="BodyRows">
+                    <tr key={`BodyRow${row.No + 1}`} className="BodyRows fw-bold">
                         {index == 0 ? <td rowSpan={bodyStructure[topicKey].length} className="TopicCell text-center">{topicKey}</td> : ''}
                         <td className="text-center">{row.No + 1}</td>
                         <td >{row.Checks}</td>
@@ -523,14 +523,14 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
             { text: '' },
             ],
             //3rd heading
-            [{ text: 'Topic', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2' },
-            { text: 'No.', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2' },
-            { text: 'Checks', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2' },
-            { text: 'Rating Criteria', rowspan: undefined, colspan: 3, classeNames: 'text-center Heading2' },
+            [{ text: 'Topic', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2 WPercent-15' },
+            { text: 'No.', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2 WPercent-5' },
+            { text: 'Checks', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2 WPercent-20' },
+            { text: 'Rating Criteria', rowspan: undefined, colspan: 3, classeNames: 'text-center Heading2 WPercent-15' },
             { text: '' },
             { text: '' },
-            { text: 'Score', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2' },
-            { text: 'Evidence, Comments', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2' }],
+            { text: 'Score', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2 WPercent-10' },
+            { text: 'Evidence, Comments', rowspan: 2, colspan: undefined, classeNames: 'text-center Heading2 WPercent-35' }],
             //4th heading
             [
                 { text: '' },

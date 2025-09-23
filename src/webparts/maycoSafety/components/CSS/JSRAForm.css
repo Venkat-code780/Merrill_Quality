@@ -1,9 +1,8 @@
 
 /* Required CSS */
-table {
+.divSection table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 15px;
 }
 .divSection{
    background-color: #daeff7;
@@ -36,4 +35,26 @@ background-color:#FFFF00 ;
 .RiskLevel-3
 {
 background-color:#CC0000 ;
+}
+.TablejobSteps tbody tr:nth-child(odd)
+{
+background-color: #f6f7f8;
+}
+.TablejobSteps tbody tr:nth-child(even)
+{
+background-color: #bfe1f8;
+}
+/* add button css */
+.addbutton {
+    background-color: #629fe9;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    margin: 10px;
+    border: 2px solid gray;
+}
+.addbutton:hover{
+      background-color: #3675c2;
+
 }

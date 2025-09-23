@@ -21,7 +21,7 @@ import { format } from "date-fns";
 // import InputCheckBox from "../Shared/InputCheckBox";
 // import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faAdd } from "@fortawesome/free-solid-svg-icons";
 import Formvalidator from "../Utilities/FormValidator";
 
 export interface JSRAFormProps {
@@ -696,19 +696,19 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
 
         DynamicHTML = jobSteps.map((jobStep, index) => (
             <tr key={jobStep.id}>
-                <td>{jobStep.id}</td>
+                <td className="text-center">{jobStep.id}</td>
                 <td>
                     <input className="form-control" placeholder={``} name={`JobStep_${jobStep.id}`} type="text" id={`JobStep_${jobStep.id}`} value={jobStep.Step} title={jobStep.Step} onChange={(e) => this.handleJobStepChange(index, 'Step', e.target.value)} disabled={this.state.isEditForm} />
 
                 </td>
-                <td>
+                <td className="text-center">
                     <input
                         type="checkbox"
                         checked={jobStep.Required}
                         onChange={(e) => this.handleJobStepChange(index, 'Required', e.target.checked)} disabled={this.state.isEditForm} />
                 </td>
                 <td>
-                    <div className="custom-dropdown" id={`divRiskFamily_${jobStep.id}`} title={jobStep.RiskFamily}>
+                    {/* <div className="custom-dropdown" id={`divRiskFamily_${jobStep.id}`} title={jobStep.RiskFamily}> */}
                         <SearchableDropdown
                             label={""}
                             Title={jobStep.RiskFamily}
@@ -723,10 +723,10 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             disabled={(!jobStep.Required) || this.state.isEditForm}
                             noOptionsMessage="No Risk Family"
                         />
-                    </div>
+                    {/* </div> */}
                 </td>
                 <td>
-                    <div className="custom-dropdown" id={`divRisk_${jobStep.id}`} title={jobStep.Risk}>
+                    {/* <div className="custom-dropdown" id={`divRisk_${jobStep.id}`} title={jobStep.Risk}> */}
                         <SearchableDropdown
                             label={""}
                             Title={jobStep.Risk}
@@ -741,7 +741,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             disabled={(!jobStep.Required) || this.state.isEditForm}
                             noOptionsMessage="No Risk"
                         />
-                    </div>
+                    {/* </div> */}
                 </td>
                 <td>
                     <div className="bs-field form-floating" title={String(jobStep.Probability)}>
@@ -930,7 +930,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
 
             <tr key={PPE.id}>
                 <td>
-                    <div className="custom-dropdown" id={`divPPE_${PPE.id}`} title={PPE.PPEType}>
+                    {/* <div className="custom-dropdown" id={`divPPE_${PPE.id}`} title={PPE.PPEType}> */}
                         <SearchableDropdown
                             label={""}
                             Title={PPE.PPEType}
@@ -945,7 +945,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             disabled={false}
                             noOptionsMessage="No PPE Type"
                         />
-                    </div>
+                    {/* </div> */}
                 </td>
                 <td>{PPETypes.length > 1 ? <button type='button' className="btn text-danger" onClick={() => this.deletePPEType(index)} title="Delete PPE Type"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
             </tr>
@@ -1018,9 +1018,9 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
 
                 </td>
                 <td>
-                    <div className="c-date-picker">
+                    {/* <div className="c-date-picker"> */}
                         <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
-                    </div>
+                    {/* </div> */}
                 </td>
                 <td>{Persons.length > 1 ? <button type='button' className="btn text-danger" onClick={() => this.deletePerson(index)} title="Delete Person"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
             </tr>
@@ -1270,12 +1270,12 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 {/* Job Steps Table */}
                                 <div className={'divSection'}>
                                     <div className="SectionHeader">Job Steps</div>
-                                    <table id="jobStepsTable">
+                                    <table id="jobStepsTable" className="TablejobSteps">
                                         <thead>
                                             <tr className="bluebg">
                                                 <th></th>
                                                 <th>Job Step</th>
-                                                <th>Required</th>
+                                                <th className="text-center">Required</th>
                                                 <th>Risk Family</th>
                                                 <th>Risk</th>
                                                 <th>Factors</th>
@@ -1287,7 +1287,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {this.bindJobSteps()}
                                         </tbody>
                                     </table>
-                                    {!this.state.isEditForm && <input type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" />}
+                                    {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} />Add Job Step</button>}
                                 </div>
 
                                 {/* Permits Section */}
@@ -1310,41 +1310,42 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                         </tbody>
                                     </table>
                                 </div>
+                                <div className="row">
+                                    {/* PPE Requirements */}
 
-                                {/* PPE Requirements */}
+                                    <div className={'divSection'} style={{width:'30%'}}>
+                                        <div className="SectionHeader">PPE Requirements</div>
+                                        <table id="PPEREquirementsTable">
+                                            <thead>
+                                                <tr className="bluebg">
+                                                    <th >PPE Type</th>
+                                                    <th >{this.state.PPETypes.length>1?"Delete":""}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.bindPPETypes()}
+                                            </tbody>
+                                        </table>
+                                        <button type="button" value="Add PPE" title="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" ><FontAwesomeIcon icon={faAdd} /> Add PPE</button>
+                                    </div>
 
-                                <div className={'divSection'}>
-                                    <div className="SectionHeader">PPE Requirements</div>
-                                    <table id="PPEREquirementsTable">
-                                        <thead>
-                                            <tr className="bluebg">
-                                                <th >PPE Type</th>
-                                                <th ></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {this.bindPPETypes()}
-                                        </tbody>
-                                    </table>
-                                    <input type="button" value="Add PPE" title="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" />
-                                </div>
-
-                                {/* Persons Involved */}
-                                <div className={'divSection'}>
-                                    <div className="SectionHeader">Persons Involved</div>
-                                    <table id="PersonsInvolvedTable">
-                                        <thead>
-                                            <tr className="bluebg">
-                                                <th >Name</th>
-                                                <th >Date</th>
-                                                <td ></td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {this.bindPersons()}
-                                        </tbody>
-                                    </table>
-                                    <input type="button" value="Add Person" title="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson" />
+                                    {/* Persons Involved */}
+                                    <div className={'divSection'} style={{width:'70%'}}>
+                                        <div className="SectionHeader">Persons Involved</div>
+                                        <table id="PersonsInvolvedTable">
+                                            <thead>
+                                                <tr className="bluebg">
+                                                    <th >Name</th>
+                                                    <th >Date</th>
+                                                    <td >{this.state.Persons.length>1?"Delete":""}</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.bindPersons()}
+                                            </tbody>
+                                        </table>
+                                        <button type="button" value="Add Person" title="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson"><FontAwesomeIcon icon={faAdd} /> Add Person</button>
+                                    </div>
                                 </div>
                                 {/* Supervisor Info */}
                                 <div className={'row divSection'}>

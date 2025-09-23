@@ -1,12 +1,5 @@
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
-    border: 1px solid #0fbafe;
-}
-
-table td,
-table th {
+.CheckListTable td,
+.CheckListTable th {
     border-collapse: collapse;
     border: 1px solid #0fbafe;
 }
@@ -14,34 +7,64 @@ table th {
 .Heading1 {
     color: #fff;
     background-color: #3498db;
+    font-size: 22px;
 }
 
 .Heading2 {
     color: #025d81 !important;
     background-color: #a4e2fa;
+    font-size: 19px;
 }
-.Low
-{
- background-color: #d7e5eb;
+
+.Low {
+    background-color: #d7e5eb;
 }
-.Medium
-{
- background-color: #b5c4ca;
+
+.Medium {
+    background-color: #b5c4ca;
 }
-.High
-{
- background-color: #8f9da3;
+
+.High {
+    background-color: #8f9da3;
 }
-.TopicCell
-{
+
+.TopicCell {
     background-color: #71d6fd;
-    font-size: 16px;
+    font-size: 19px;
     font-weight: bold !important;
     color: #345260;
 }
-.ScoreCell
-{
+
+.ScoreCell {
     background-color: #71d6fd;
     font-weight: bold !important;
     color: #345260;
+}
+
+/* custom widths */
+.WPercent-5 {
+    width: 5%;
+}
+
+.WPercent-10 {
+    width: 10%;
+}
+
+.WPercent-15 {
+    width: 15%;
+}
+
+.WPercent-20 {
+    width: 20%;
+}
+
+.WPercent-35 {
+    width: 35%;
+}
+
+.ScoreCell select {
+
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
 }

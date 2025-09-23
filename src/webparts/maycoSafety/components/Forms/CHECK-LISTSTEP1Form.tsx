@@ -95,7 +95,8 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
         isEditForm: false,
         showSubmit: false,
         ItemId: 0,
-        Homeredirect: false,
+        Redirect: false,
+        RedirectTo:'',
     }
 
     constructor(props: CHECKLISTSTEP1FormProps) {
@@ -107,7 +108,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
     }
 
     public componentDidMount(): void {
-        highlightCurrentNav("liCHECKLISTSTEP1Form");
+        highlightCurrentNav("liCHECK-LISTSTEP1Form");
         document.title = "Mayco - Safety | CHECKLISTSTEP1";
         this.getOnLoadData();
     }
@@ -196,7 +197,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                     }
                     else {
                         showToast("error", "No Check List found");
-                        this.setState({ Homeredirect: true });
+                        this.setState({ Redirect: true,RedirectTo:'Home' });
                     }
                 }
             }
@@ -277,7 +278,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
     }
     private onSuccess = (successMessage: string) => {
         hideLoader();
-        this.setState({ Homeredirect: true, ItemID: 0 });
+        this.setState({ Redirect: true,RedirectTo:'CHECK-LISTSTEP1View', ItemID: 0 });
         showToast("success", successMessage);
     }
     private getCheckListPostData = () => {
@@ -564,11 +565,11 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({ Homeredirect: true, ItemId: 0 });
+        this.setState({ Redirect: true,RedirectTo:'Home', ItemId: 0 });
     }
     public render() {
-        if (this.state.Homeredirect) {
-            let url = "/Home";
+        if (this.state.Redirect) {
+            let url = `/${this.state.RedirectTo}`;
             return (<Navigate to={url} />)
         }
         else {

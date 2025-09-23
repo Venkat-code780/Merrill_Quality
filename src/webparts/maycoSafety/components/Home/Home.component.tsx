@@ -22,7 +22,7 @@ const Home =(Props:HomeProps)=>{
                           <div className="background">
                             <div className="overlay-color"></div>
                             <div className="overlay-box">
-                                <img src="https://vna1.sharepoint.com//sites/wcm/mayco/merrill/sa/SiteAssets/Images/SafetyIcon.png" alt="Safety Logo" className="logo-image" />
+                                <img src={`${Props.spContext.webAbsoluteUrl}/SiteAssets/Images/SafetyIcon.png`} alt="Safety Logo" className="logo-image" />
                             </div>
                         </div>
                     </React.Fragment>

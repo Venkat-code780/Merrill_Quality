@@ -110,7 +110,8 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         showSubmit: false,
         ItemId: 0,
         activeTag: 'Safety',
-        Homeredirect: false,
+        Redirect: false,
+        RedirectTo: '',
     }
 
     constructor(props: TAGFormProps) {
@@ -171,14 +172,16 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
 
                 this.setState({ formData: stateData.formData, SafetyformData: stateData.SafetyformData, AMWOformData: stateData.AMWOformData, PMformData: stateData.PMformData, activeTag: stateData.activeTag, isEditForm, ItemId, showSubmit, DepartmentsOpt: stateData.DepartmentsOpt, ZonesOpt: stateData.ZonesOpt, MachinesOpt: stateData.MachinesOpt });
             }
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
         }
+        finally {
+            hideLoader();
+        }
     }
     private getTAGEditData = async (stateData: any, ItemId: any) => {
-        let { getListItemById } = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { getListItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let currentactiveTag = this.currentSiteURL.split('/')[this.currentSiteURL.split('/').length - 1]
         let selectedTagformData = `${stateData.activeTag}formData`;
         let updatedTagformData: any = {};
@@ -212,9 +215,11 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
             updatedTagformData = { ...(stateData as any)[selectedTagformData] };
         }
         try {
-            let TAGData = await getListItemById(TagListName, TagListURL, ItemId, 'Author/Title,Author/Id,CompletedBy/Title,CompletedBy/Id,CompletedBy/EMail,*', 'Author,CompletedBy');
-            if (!TAGData.isHttpRequestError) {
-                if (TAGData) {
+            let TAGRes:any = await getListItems(TagListName, TagListURL, 'Author/Title,Author/Id,CompletedBy/Title,CompletedBy/Id,CompletedBy/EMail,*', 'Author,CompletedBy', `Id eq ${ItemId}`);
+
+            if (!TAGRes.isHttpRequestError) {
+                if (TAGRes.length) {
+                    let TAGData=TAGRes[0];
                     stateData.formData.Plant = [null, undefined, '', 'None'].includes(TAGData.Plant) ? '' : TAGData.Plant;
                     stateData.formData.Department = [null, undefined, '', 'None'].includes(TAGData.Department) ? '' : TAGData.Department;
                     stateData.formData.Zone = [null, undefined, '', 'None'].includes(TAGData.Zone) ? '' : TAGData.Zone;
@@ -261,7 +266,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
 
                 else {
                     showToast("error", "No TAG found");
-                    this.setState({ Homeredirect: true });
+                    this.setState({ Redirect: true, RedirectTo: 'Home' });
                 }
             }
         }
@@ -340,7 +345,8 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
     }
     private onSuccess = (successMessage: string) => {
         hideLoader();
-        this.setState({ Homeredirect: true, ItemID: 0 });
+        let To = this.state.activeTag == 'Safety' ? 'TagView' : 'Home';
+        this.setState({ Redirect: true, RedirectTo: To, ItemID: 0 });
         showToast("success", successMessage);
     }
     private getTAGPostData = () => {
@@ -836,7 +842,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({ Homeredirect: true, ItemId: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'Home', ItemId: 0 });
     }
     private onTabClick = (TAGName: String, e?: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         showLoader();
@@ -850,8 +856,8 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         hideLoader();
     }
     public render() {
-        if (this.state.Homeredirect) {
-            let url = "/Home";
+        if (this.state.Redirect) {
+            let url = `/${this.state.RedirectTo}`;
             return (<Navigate to={url} />)
         }
         else {

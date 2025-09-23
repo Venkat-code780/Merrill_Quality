@@ -101,7 +101,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         isEditForm: false,
         showSubmit: false,
         ItemId: 0,
-        Homeredirect: false,
+        Redirect: false,
+        RedirectTo: '',
         isToolNumberMandatory: false,
     }
 
@@ -126,7 +127,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         showLoader();
         let ItemId = this.props.match.params.id;
         let showSubmit = true;
-        let { getListItems, getListItemById } = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { getListItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let PlantList = 'Plant';
         let DepartmentList = 'Department', DepartmentSelQuery = 'Title,Plant/Title,Plant/Id,*', DepartmentExpFields = 'Plant';
         let ZoneList = 'Zones', ZoneSelQuery = 'Title,Plant/Title,Plant/Id,Department/Title,Department/Id,*', ZoneExpFields = 'Plant,Department';
@@ -191,12 +192,14 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             //Edit mode starts here
             let stateData: any = { ...this.state };
             if (ItemId > 0) {
-                let [jsraData, JSRALineData] = await Promise.all([
-                    getListItemById('JSRA', this.currentSiteURL, ItemId, 'Author/Title,Author/Id,*', 'Author'),
+                let jsraRes: any, JSRALineData: any;
+                [jsraRes, JSRALineData] = await Promise.all([
+                    getListItems('JSRA', this.currentSiteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${ItemId}`),
                     getListItems('JSRA Line', this.currentSiteURL, '', '', `JSRA_x0020_ID eq '${ItemId}'`),
                 ]);
-                if (!jsraData.isHttpRequestError) {
-                    if (jsraData) {
+                if (!jsraRes.isHttpRequestError) {
+                    if (jsraRes.length) {
+                        let jsraData = jsraRes[0];
                         formData.Date = [null, undefined, '', 'None'].includes(jsraData.Date) ? '' : jsraData.Date;
                         formData.Plant = [null, undefined, '', 'None'].includes(jsraData.Plant) ? '' : jsraData.Plant;
                         formData.Department = [null, undefined, '', 'None'].includes(jsraData.Department) ? '' : jsraData.Department;
@@ -271,14 +274,16 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                     }
                     else {
                         showToast("error", "No JSRA found");
-                        this.setState({ Homeredirect: true });
+                        this.setState({ Redirect: true, RedirectTo: 'Home' });
                     }
                 }
             }
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+        finally {
+            hideLoader();
         }
     }
     //common functions
@@ -365,7 +370,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
     }
     private onSuccess = (successMessage: string) => {
         hideLoader();
-        this.setState({ Homeredirect: true, ItemID: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'JSRAView', ItemID: 0 });
         showToast("success", successMessage);
     }
     private getJSRApostObject = () => {
@@ -1089,11 +1094,11 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({ Homeredirect: true, ItemId: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'Home', ItemId: 0 });
     }
     public render() {
-        if (this.state.Homeredirect) {
-            let url = "/Home";
+        if (this.state.Redirect) {
+            let url = `/${this.state.RedirectTo}`;
             return (<Navigate to={url} />)
         }
         else {
@@ -1106,7 +1111,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
                             </div>
 
-                            <div className="mainContent row px-4 borderLine">
+                            <div className="mainContent px-4 borderLine">
                                 <div className="row py-3">
                                     <div className="col-md-3 c-date-picker form-floating" id="divDate">
                                         <label className="label-datePicker"> Date <span className="text-danger">*</span></label>
@@ -1344,13 +1349,13 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 {/* Supervisor Info */}
                                 <div className={'row divSection'}>
                                     <div className="SectionHeader">Supervisor</div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 p-2">
                                         <div className="form-floating">
                                             <input className="form-control" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
                                             <label className=" col-form-label">Supervisor Name </label>
                                         </div>
                                     </div>
-                                    <div className="col-md-3 c-date-picker" id="divDate">
+                                    <div className="col-md-3 p-2 c-date-picker" id="divDate">
                                         <label className="label-datePicker" > Date</label>
                                         <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
                                     </div>

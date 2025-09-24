@@ -1,17 +1,26 @@
 /* Sharepoint default classes */
 /* Hiding sharepoint navigation */
-#sideNavBox{ 
+#sideNavBox {
   display: none !important;
+}
+#sidenav{
+  display: none !important;
+}
+#site_content{
+  margin: 0px !important;
 }
 .ms-webpart-titleText {
   display: none;
 }
+
 .ms-core-pageTitle {
   display: none;
 }
-#contentRow{
+
+#contentRow {
   padding: 0 !important;
 }
+
 .FormContent {
   position: relative;
   margin-bottom: 10px;
@@ -29,6 +38,7 @@
   transition: all .4s ease 0s;
   -webkit-transition: all .4s ease 0s;
 }
+
 .title {
   background-color: #0b3e50;
   /* background-color: #572ba7; */
@@ -40,6 +50,7 @@
   left: -10px;
   top: 10px;
 }
+
 .light-box {
   border: 1px solid #eaeaea;
   background-color: white;
@@ -51,6 +62,7 @@
   transition: all 0.4s ease 0s;
   position: relative;
 }
+
 .border-box-shadow {
   box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
   -webkit-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
@@ -59,103 +71,64 @@
   transition: all .4s ease 0s;
   -webkit-transition: all .4s ease 0s;
 }
-.mandatoryhastrick{
+
+.mandatoryhastrick {
   color: red !important;
   font-size: 1rem !important;
 }
-.bs-field{
-  margin: 15px 0px ;
+
+.bs-field {
+  margin: 15px 0px;
 }
 
-/* Searchable dropdown CSS */
-.custom-dropdown{
-  position: relative;
-}
-.active.custom-dropdown label {
-  left: 5px;
-  position: absolute;
-  top: 3px;
-  transform: scale(.85);
-  z-index: 1;
-  pointer-events: none;
-}
 
-.custom-dropdown:has(.css-t3ipsp-control),
-.custom-dropdown:has(.css-1nmdiq5-menu) {
-  label {
-    left: 0;
-    position: absolute;
-    top: 3px;
-    transform: scale(.85);
-    z-index: 1;
-    pointer-events: none;
-  }
-}
-.custom-dropdown label {
-  color: #212529a6;
-  left: .6rem;
-  position: absolute;
-  top: 9px;
-  z-index: 1;
-  pointer-events: none;
-}
- 
-/* .searchMandatory .css-13cymwt-control { */
-.searchMandatory .css-t3ipsp-control, .searchMandatory .css-13cymwt-control {
-  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75) !important;
-  border-color: transparent !important;
-}
-.custom-dropdown .css-hlgwow{
-  padding: 16px 8px 8px 8px;
-}
-.css-1nmdiq5-menu{
-  z-index: 100 !important;
-}
-
-/* separator */
-.css-1u9des2-indicatorSeparator{
-  display: none;
-}
-.css-894a34-indicatorSeparator{
-  display: none;
-}
-.react-datepicker-wrapper{
+.react-datepicker-wrapper {
   width: 100%;
 }
-.react-datepicker-popper{
+
+.react-datepicker-popper {
   z-index: 100 !important;
 }
-.react-datepicker__day--today{
+
+.react-datepicker__day--today {
   background-color: lightblue !important;
   color: black !important;
 }
+
 .react-datepicker__calendar-icon {
   right: 3px;
   font-size: large;
 }
+
 .react-datepicker__view-calendar-icon input {
   padding: 6px 31px 5px 11px !important;
 }
 
 .borderLine {
-    border: 1px solid #99daf3;
+  border: 1px solid #99daf3;
 }
+
 .pull-left {
-    float: left !important;
+  float: left !important;
 }
+
 .pull-right {
-    float: right !important;
+  float: right !important;
 }
-.row{
-    margin: 0px !important;
-    padding: 0px !important;
+
+.row {
+  margin: 0px !important;
+  padding: 0px !important;
 }
-.c-date-picker{
+
+.c-date-picker {
   position: relative;
 }
-.c-date-picker .react-datepicker__calendar-icon{
+
+.c-date-picker .react-datepicker__calendar-icon {
   top: 11px;
 }
+
 .active.c-date-picker label {
   left: 10px;
   position: absolute;
@@ -164,6 +137,7 @@
   z-index: 1;
   pointer-events: none;
 }
+
 .c-date-picker label {
   color: #212529a6;
   left: 10px;
@@ -176,106 +150,242 @@
   text-overflow: ellipsis;
   width: 170px;
 }
-.c-date-picker .form-control.DatePicker{
+
+.c-date-picker .form-control.DatePicker {
   padding: 1.4rem .6rem .5rem !important;
 }
+
 /* validation */
-.mandatory-FormContent-focus + .select2-container .select2-selection:focus{
-  border-color: transparent!important;
-  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important; 
-  outline: none!important;
+.mandatory-FormContent-focus+.select2-container .select2-selection:focus {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 0.2rem rgba(223, 43, 42, .75) !important;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(223, 43, 42, .75) !important;
+  outline: none !important;
 }
-.mandatory-FormContent-focus:focus{
-  border-color: transparent!important;
-  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;    
-  outline: none!important;    
+
+.mandatory-FormContent-focus:focus {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 0.2rem rgba(223, 43, 42, .75) !important;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(223, 43, 42, .75) !important;
+  outline: none !important;
 }
-.mandatory-FormContent-focus .custom-control-input:focus~.custom-control-label::before{
+
+.mandatory-FormContent-focus .custom-control-input:focus~.custom-control-label::before {
   border-color: transparent;
-  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75)!important;
-  outline: none!important;
+  box-shadow: 0 0 0 0.2rem rgba(223, 43, 42, .75) !important;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(223, 43, 42, .75) !important;
+  outline: none !important;
 }
-.focus-Div{
-  border: red solid 3px !important;
+
+.focus-Div {
+  border: rgba(223, 43, 42, .75) solid 3px !important;
 }
 
 
 /* Views tables Styles */
 .rdt_TableCol_Sortable div {
-    overflow: visible !important;
-    text-overflow: unset !important;
-    white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: normal !important;
 }
 
 .rdt_TableCell {
- cursor: pointer;  
-padding-left: 10px !important;
+  cursor: pointer;
+  padding-left: 10px !important;
 }
-.rdt_TableCell div{
+
+.rdt_TableCell div {
   white-space: normal !important;
 }
-.ViewTable{
-    display: grid;
+
+.ViewTable {
+  display: grid;
 }
+
 .ViewTable .after-title {
-    margin: 30px 0!important;
+  margin: 30px 0 !important;
 }
- .dataTables_wrapper .row:first-child {
-        margin-top: 20px;
-  }
-   .rdt_TableHeadRow div.sc-eCssSg:nth-child(1) {
-    width: 80px;
-    min-width: 80px;
-    max-width: 80px;
-  }
+
+.dataTables_wrapper .row:first-child {
+  margin-top: 20px;
+}
+
+.rdt_TableHeadRow div.sc-eCssSg:nth-child(1) {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+}
+
 .rdt_TableCol {
-    color: black !important;
+  color: black !important;
 
 }
+
 .rdt_TableCell {
- cursor: pointer;  
-padding-left: 10px !important;
+  cursor: pointer;
+  padding-left: 10px !important;
 }
-.rdt_TableCell div{
+
+.rdt_TableCell div {
   white-space: normal !important;
 }
-.ViewTable{
-    display: grid;
+
+.ViewTable {
+  display: grid;
 }
+
 .ViewTable .after-title {
-    margin: 30px 0!important;
+  margin: 30px 0 !important;
 }
-  .rdt_TableBody .rdt_TableRow {
-    min-height: 50px;
+
+.rdt_TableBody .rdt_TableRow {
+  min-height: 50px;
 }
+
 .rdt_TableCol {
-    color: black !important;
+  color: black !important;
 
 }
+
 .right-search-table .col-6:nth-child(1) {
-    width: 100%;
+  width: 100%;
 }
 
 .right-search-table .col-6:nth-child(1) input {
-    margin-left: auto !important;
+  margin-left: auto !important;
 }
+
 /* Masers styles */
- .SubmitButtons{
-    line-height: 1.5;
-    transition: all .15s ease-in-out;
-    margin-bottom: 25px;
-    background: #0b3e50;
-    color: white;
-    border: 1px solid #0b3e50;
-    padding: 6px 18px;
-    margin-top: 5px;
-    margin-left: inherit;
-    font-family: inherit;
-    font-size: inherit;   
-  
-    border-radius: 0px;
-    -webkit-border-radius: 0px;             
-  }
+.SubmitButtons {
+  line-height: 1.5;
+  transition: all .15s ease-in-out;
+  margin-bottom: 25px;
+  background: #0b3e50;
+  color: white;
+  border: 1px solid #0b3e50;
+  padding: 6px 18px;
+  margin-top: 5px;
+  margin-left: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  border-radius: 0px;
+  -webkit-border-radius: 0px;
+}
+
+/* input controls css for lable on border itself*/
+.light-text{
+  position: relative;
+   margin-top: 10px;
+}
+.light-text label{
+  position: absolute;
+  top: -9px;
+  left: 5px;
+  padding: 0 5px;
+  background-color: #fff;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: bold;
+}
+.light-text input.form-control {
+  height: calc(2em + .75rem + 2px) !important;
+}
+
+.light-text select.form-control {
+  height: calc(1.5em + .75rem + 2px) !important;
+}
+
+.light-text textarea.form-control {
+  height: auto;
+}
+
+.light-text .form-control {
+  width: 100%;
+  border: 1px solid #a19f9d !important;
+}
+
+.form-control-box input,
+.form-control-box select {
+  border: 1px solid #a19f9d !important;
+  font-size: 14px !important;
+}
+
+.light-text input {
+  padding-left: 7px !important;
+  padding-top: 4px;
+  border-radius: .25rem;
+  font-size: 12px;
+}
+
+.light-text select {
+  padding-left: 3px;
+  padding-top: 4px;
+  border-radius: .25rem;
+  font-size: 12px;
+}
+
+.custom-dropdown {
+  position: relative;
+  margin-top: 10px;
+}
+
+.custom-dropdown label {
+  position: absolute;
+  top: -9px;
+  left: 5px;
+  padding: 0 5px;
+  background-color: #fff;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: bold;
+}
+.searchMandatory .css-t3ipsp-control, .searchMandatory .css-13cymwt-control {
+  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75) !important;
+  border-color: transparent !important;
+}
+/* separator */
+.css-1u9des2-indicatorSeparator{
+  display: none;
+}
+.css-894a34-indicatorSeparator{
+  display: none;
+}
+.css-1nmdiq5-menu {
+  z-index: 100 !important;
+}
+.ms-BasePicker-text
+{
+  padding-top: 15px;
+}
+
+.custom-datepicker, .custom-datepicker-disabled-dates {
+  position: relative;
+}
+
+.custom-datepicker .react-datepicker-wrapper {
+  position: relative;
+  width: -webkit-fill-available;
+}
+
+.custom-datepicker-disabled-dates .react-datepicker-wrapper {
+  display: block !important;
+}
+.custom-peoplepicker input{
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  border: 0;
+  height: inherit;
+  position: relative;
+  top: -3.55px;
+}
+
+.custom-peoplepicker{
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;    
+}
+.lblPeoplepicker{
+z-index: 2 !important;
+}

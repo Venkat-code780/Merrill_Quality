@@ -215,11 +215,11 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
             updatedTagformData = { ...(stateData as any)[selectedTagformData] };
         }
         try {
-            let TAGRes:any = await getListItems(TagListName, TagListURL, 'Author/Title,Author/Id,CompletedBy/Title,CompletedBy/Id,CompletedBy/EMail,*', 'Author,CompletedBy', `Id eq ${ItemId}`);
+            let TAGRes: any = await getListItems(TagListName, TagListURL, 'Author/Title,Author/Id,CompletedBy/Title,CompletedBy/Id,CompletedBy/EMail,*', 'Author,CompletedBy', `Id eq ${ItemId}`);
 
             if (!TAGRes.isHttpRequestError) {
                 if (TAGRes.length) {
-                    let TAGData=TAGRes[0];
+                    let TAGData = TAGRes[0];
                     stateData.formData.Plant = [null, undefined, '', 'None'].includes(TAGData.Plant) ? '' : TAGData.Plant;
                     stateData.formData.Department = [null, undefined, '', 'None'].includes(TAGData.Department) ? '' : TAGData.Department;
                     stateData.formData.Zone = [null, undefined, '', 'None'].includes(TAGData.Zone) ? '' : TAGData.Zone;
@@ -617,9 +617,9 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
             <div className="row">
                 <div className="col-md-3"><h1 className="text-left">Safety</h1></div>
                 <div className="col-md-9">
-                    <div className="form-floating">
+                    <div className="light-text">
+                        <label className="col-form-label">TAG# </label>
                         <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.SafetyformData.TAG} title={this.state.SafetyformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
-                        <label className=" col-form-label">TAG# </label>
                     </div>
                 </div>
             </div>
@@ -639,26 +639,29 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 </div>
             </div>
             <div className="col-md-9 mb-3">
-                <div className={"form-floating"} >
-                    <textarea className="form-control bs-textarea" rows={3} id="txtProblemDetails" name="ProblemDetails" placeholder="Problem Details" value={this.state.SafetyformData.ProblemDetails} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.ProblemDetails}></textarea>
-                    <span className="span-floating-textarea"></span>
+                <div className={"light-text"} >
                     <label className=" col-form-label" htmlFor="txtLocationPersons">Problem Details</label>
+                    <textarea className="form-control bs-textarea" rows={3} id="txtProblemDetails" name="ProblemDetails" placeholder="Problem Details" value={this.state.SafetyformData.ProblemDetails} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.ProblemDetails}></textarea>
                 </div>
             </div>
             <div className="col-md-9 mb-3">
-                <div className={"form-floating"} >
-                    <textarea className="form-control bs-textarea" rows={3} id="txtCounterMeasures" name="CounterMeasures" placeholder="Counter Measures" value={this.state.SafetyformData.CounterMeasures} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.CounterMeasures}></textarea>
-                    <span className="span-floating-textarea"></span>
+                <div className={"light-text"} >
                     <label className=" col-form-label" htmlFor="txtCounterMeasures">Counter Measures</label>
+                    <textarea className="form-control bs-textarea" rows={3} id="txtCounterMeasures" name="CounterMeasures" placeholder="Counter Measures" value={this.state.SafetyformData.CounterMeasures} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.CounterMeasures}></textarea>
                 </div>
             </div>
             <div className="row">
-                <div className="col-md-4 c-date-picker" id="divDate">
-                    <label className="label-datePicker" >Completed Date {this.state.SafetyformData.CompletedByIds.length > 0 ? <span className="text-danger">* </span> : ''}</label>
-                    <DatePickercontrol placeholder="" selectedDate={this.state.SafetyformData.CompletedDate} title={this.state.SafetyformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                <div className="col-md-4" id="divDate">
+                    <div className="light-text">
+                        <label className="" >Completed Date {this.state.SafetyformData.CompletedByIds.length > 0 ? <span className="mandatoryhastrick">* </span> : ''}</label>
+                        <div className="custom-datepicker" id="divCompletedDate">
+                            <DatePickercontrol placeholder="" selectedDate={this.state.SafetyformData.CompletedDate} title={this.state.SafetyformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                        </div>
+                    </div>
                 </div>
                 <div className="col-md-8">
-                    <div className="form-floating">
+                    <div className="light-text">
+                        <label className='lblPeoplepicker'>Completed By{![null, undefined, ''].includes(this.state.SafetyformData.CompletedDate) ? <span className="mandatoryhastrick">*</span> : ''}</label>
                         <div className="custom-peoplepicker" id="divCompletedBy">
                             <PeoplePicker
                                 context={this._peoplePickerContext}
@@ -694,21 +697,21 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
             <div className="row mb-3">
                 <div className="col-md-6"><h1 className="text-left">AM/WO</h1></div>
                 <div className="col-md-6">
-                    <div className="form-floating">
-                        <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.AMWOformData.TAG} title={this.state.AMWOformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
+                    <div className="light-text">
                         <label className=" col-form-label">TAG# </label>
+                        <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.AMWOformData.TAG} title={this.state.AMWOformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
                     </div>
                 </div>
             </div>
             <div className="row mb-3">
                 <div className="col-md-9">
-                    <div className="form-floating">
+                    <div className="light-text">
+                        <label className=" col-form-label">Tag Type<span className="mandatoryhastrick">* </span></label>
                         <select className="form-control" placeholder="" name="TagType" id="txtTagType" ref={this.TagType} value={this.state.AMWOformData.TagType} title={this.state.AMWOformData.TagType} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={this.state.ItemId > 0}>
                             <option value="">None</option>
                             <option value="AM">AM</option>
                             <option value="WO">WO</option>
                         </select>
-                        <label className=" col-form-label">Tag Type<span className="text-danger">* </span></label>
                     </div>
                 </div>
             </div>
@@ -721,12 +724,17 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 {CheckListElements}
             </div>
             <div className="row mb-3">
-                <div className="col-md-4 c-date-picker" id="divDate">
-                    <label className="label-datePicker" >Completed Date{this.state.AMWOformData.CompletedByIds.length > 0 ? <span className="text-danger">* </span> : ''}</label>
-                    <DatePickercontrol placeholder="" selectedDate={this.state.AMWOformData.CompletedDate} title={this.state.AMWOformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                <div className="col-md-4" id="divDate">
+                    <div className="light-text">
+                        <label className="" >Completed Date{this.state.AMWOformData.CompletedByIds.length > 0 ? <span className="mandatoryhastrick">* </span> : ''}</label>
+                        <div className="custom-datepicker" id="divCompletedDate">
+                            <DatePickercontrol placeholder="" selectedDate={this.state.AMWOformData.CompletedDate} title={this.state.AMWOformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                        </div>
+                    </div>
                 </div>
                 <div className="col-md-8">
-                    <div className="form-floating">
+                    <div className="light-text">
+                        <label className='lblPeoplepicker'>Completed By{![null, undefined, ''].includes(this.state.AMWOformData.CompletedDate) ? <span className="mandatoryhastrick">*</span> : ''}</label>
                         <div className="custom-peoplepicker" id="divCompletedBy">
                             <PeoplePicker
                                 context={this._peoplePickerContext}
@@ -747,9 +755,8 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 </div>
             </div>
             <div className="col-md-12">
-                <div className={"form-floating"} >
+                <div className={"light-text"} >
                     <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.AMWOformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.AMWOformData.Comments}></textarea>
-                    <span className="span-floating-textarea"></span>
                     <label className=" col-form-label" htmlFor="txtComments">Comments</label>
                 </div>
             </div>
@@ -762,19 +769,24 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
             <div className="col-md-12"><h1 className="text-left">Professional Maintenance</h1></div>
             <div className="row mb-3">
                 <div className="col-md-9 ms-auto">
-                    <div className="form-floating">
-                        <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.PMformData.TAG} title={this.state.PMformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
+                    <div className="light-text">
                         <label className=" col-form-label">TAG# </label>
+                        <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.PMformData.TAG} title={this.state.PMformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
                     </div>
                 </div>
             </div>
             <div className="row mb-3">
-                <div className="col-md-4 c-date-picker" id="divDate">
-                    <label className="label-datePicker" >Completed Date{this.state.PMformData.CompletedByIds.length > 0 ? <span className="text-danger">* </span> : ''}</label>
-                    <DatePickercontrol placeholder="" selectedDate={this.state.PMformData.CompletedDate} title={this.state.PMformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                <div className="col-md-4" id="divDate">
+                    <div className="light-text">
+                        <label className="" >Completed Date{this.state.PMformData.CompletedByIds.length > 0 ? <span className="mandatoryhastrick">* </span> : ''}</label>
+                        <div className="custom-datepicker" id="divCompletedDate">
+                            <DatePickercontrol placeholder="" selectedDate={this.state.PMformData.CompletedDate} title={this.state.PMformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                        </div>
+                    </div>
                 </div>
                 <div className="col-md-8">
-                    <div className="form-floating">
+                    <div className="light-text">
+                        <label className='lblPeoplepicker'>Completed By{![null, undefined, ''].includes(this.state.PMformData.CompletedDate) ? <span className="mandatoryhastrick">*</span> : ''}</label>
                         <div className="custom-peoplepicker" id="divCompletedBy">
                             <PeoplePicker
                                 context={this._peoplePickerContext}
@@ -795,10 +807,9 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 </div>
             </div>
             <div className="col-md-12">
-                <div className={"form-floating"} >
-                    <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.PMformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.PMformData.Comments}></textarea>
-                    <span className="span-floating-textarea"></span>
+                <div className={"light-text"} >
                     <label className=" col-form-label" htmlFor="txtComments">Comments</label>
+                    <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.PMformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.PMformData.Comments}></textarea>
                 </div>
             </div>
         </div>
@@ -807,7 +818,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
     private validateTagForm = () => {
         let selectedTagformData = `${this.state.activeTag}formData`;
         let updatedTagformData = { ...(this.state as any)[selectedTagformData] };
-        //const updatedSafetyformData = { ...this.state.SafetyformData };
+        //const updatedSafetyformData = {...this.state.SafetyformData};
         let isValid = { message: '', status: true };
         if (this.state.activeTag === 'AMWO' && [null, undefined, ''].includes(updatedTagformData.TagType)) {
             let data = {
@@ -819,13 +830,15 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         if (![null, undefined, ''].includes(updatedTagformData.CompletedDate)) {
             let data = {
                 CompletedDate: { startDate: this.state.formData.Date, endDate: updatedTagformData.CompletedDate, startDateName: 'Date', endDateName: 'Completed Date', required: true, Name: "Date", Type: ControlType.compareDates, Focusid: "dtCompletedDate" },
+                CompletedBy: { val: updatedTagformData.CompletedByIds, required: true, Name: 'Completed By', Type: ControlType.people, Focusid: 'divCompletedBy' },
+
             }
 
-            let pdata = {
-                CompletedBy: { val: { results: updatedTagformData.CompletedByIds }, required: true, Name: 'Completed By', Type: ControlType.people, Focusid: 'divCompletedBy' },
-            }
+            // let pdata = {
+            //     CompletedBy: { val: { results: updatedTagformData.CompletedByIds }, required: true, Name: 'Completed By', Type: ControlType.people, Focusid: 'divCompletedBy' },
+            // }
             isValid = Formvalidator.FormValidation(data);
-            isValid = isValid.status ? Formvalidator.multiplePeoplePickerValidation(pdata) : isValid;
+            // isValid = isValid.status ? Formvalidator.multiplePeoplePickerValidation(pdata) : isValid;
             return isValid;
         }
         else if (updatedTagformData.CompletedByIds.length > 0) {
@@ -867,12 +880,12 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
                                 <h4 className="mb-0 pt-2 text-center">{" TAG " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="mainContent row px-4 borderLine">
                                 <div className="row py-3">
-                                    <div className="col-md-3  form-floating" title={this.state.formData.Plant}>
+                                    <div className="col-md-3" title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">
                                             <SearchableDropdown
                                                 label={"Plant"}
@@ -890,7 +903,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Department}>
+                                    <div className="col-md-3" title={this.state.formData.Department}>
                                         <div className="custom-dropdown" id="divDepartment">
                                             <SearchableDropdown
                                                 label={"Department"}
@@ -908,7 +921,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Zone}>
+                                    <div className="col-md-3" title={this.state.formData.Zone}>
                                         <div className="custom-dropdown" id="divZone">
                                             <SearchableDropdown
                                                 label={"Zone"}
@@ -926,7 +939,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Machine}>
+                                    <div className="col-md-3" title={this.state.formData.Machine}>
                                         <div className="custom-dropdown" id="divMachine">
                                             <SearchableDropdown
                                                 label={"Machine"}
@@ -947,7 +960,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                 </div>
                                 <div className="row py-3">
 
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Shift}>
+                                    <div className="col-md-3" title={this.state.formData.Shift}>
                                         <div className="custom-dropdown" id="divShift">
                                             <SearchableDropdown
                                                 label={"Shift"}
@@ -966,14 +979,18 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                         </div>
                                     </div>
                                     <div className="col-md-3">
-                                        <div className="form-floating">
+                                        <div className="light-text">
                                             <input className="form-control" placeholder="" name="Name" type="text" id="txtName" ref={this.Name} value={this.state.formData.Name} title={this.state.formData.Name} onChange={this.handleChange} disabled={false} />
-                                            <label className=" col-form-label">Name<span className="text-danger">*</span> </label>
+                                            <label className=" col-form-label">Name<span className="mandatoryhastrick">*</span> </label>
                                         </div>
                                     </div>
-                                    <div className="col-md-3 c-date-picker form-floating" id="divDate">
-                                        <label className="label-datePicker"> Date <span className="text-danger">*</span></label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
+                                    <div className="col-md-3" id="divDate">
+                                        <div className="light-text">
+                                            <label className=""> Date <span className="mandatoryhastrick">*</span></label>
+                                            <div className="custom-datepicker" id="divDate">
+                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -983,7 +1000,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                         <ul className="nav nav-tabs nav-fill">
                                             <li className="nav-item" role="presentation">
                                                 <a
-                                                    className={`nav-link Safety ${this.state.activeTag === 'Safety' ? 'active SafetyTab' : ''}`}
+                                                    className={`tab-link Safety ${this.state.activeTag === 'Safety' ? 'active SafetyTab' : ''}`}
                                                     onClick={(e) => this.onTabClick('Safety', e)}
                                                 >
                                                     Safety
@@ -991,7 +1008,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                             </li>
                                             <li className="nav-item" role="presentation">
                                                 <a
-                                                    className={`nav-link AMWO ${this.state.activeTag === 'AMWO' ? 'active AMWOTab' : ''}`}
+                                                    className={`tab-link AMWO ${this.state.activeTag === 'AMWO' ? 'active AMWOTab' : ''}`}
                                                     onClick={(e) => this.onTabClick('AMWO', e)}
                                                 >
                                                     AM/WO
@@ -999,7 +1016,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                             </li>
                                             <li className="nav-item" role="presentation">
                                                 <a
-                                                    className={`nav-link PM ${this.state.activeTag === 'PM' ? 'active PMTab' : ''}`}
+                                                    className={`tab-link PM ${this.state.activeTag === 'PM' ? 'active PMTab' : ''}`}
                                                     onClick={(e) => this.onTabClick('PM', e)}
                                                 >
                                                     PM

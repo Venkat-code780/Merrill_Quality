@@ -568,7 +568,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({Redirect: true,RedirectTo:'Home', ItemId: 0 });
+        this.setState({Redirect: true,RedirectTo:'CHECK-LISTSTEP3View', ItemId: 0 });
     }
     public render() {
         if (this.state.Redirect) {
@@ -583,16 +583,20 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                             <div className="m-0 titlebg">
                                 <h4 className="mb-0 pt-2 text-center">{" Mayco International - WCM Safety Pillar Step Audits - Level 3 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
                                 <h6 className="mb-0 pt-2 text-center">AUDIT CHECK-LIST</h6>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="mainContent row px-4 borderLine">
                                 <div className="row py-3">
-                                    <div className="col-md-3 c-date-picker form-floating" id="divDate">
-                                        <label className="label-datePicker"> Date <span className="text-danger">*</span></label>
+                                    <div className="col-md-3" id="divDate">
+                                        <div className="light-text">
+                                        <label className=""> Date <span className="mandatoryhastrick">*</span></label>
+                                        <div className="custom-datepicker" id="divDate">
                                         <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
                                     </div>
-                                    <div className="col-md-3  form-floating" title={this.state.formData.Plant}>
+                                    </div>
+                                    </div>
+                                    <div className="col-md-3 " title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">
                                             <SearchableDropdown
                                                 label={"Plant"}
@@ -610,7 +614,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Department}>
+                                    <div className="col-md-3" title={this.state.formData.Department}>
                                         <div className="custom-dropdown" id="divDepartment">
                                             <SearchableDropdown
                                                 label={"Department"}
@@ -628,7 +632,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Zone}>
+                                    <div className="col-md-3" title={this.state.formData.Zone}>
                                         <div className="custom-dropdown" id="divZone">
                                             <SearchableDropdown
                                                 label={"Zone"}
@@ -648,7 +652,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                     </div>
                                 </div>
                                 <div className="row py-3">
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Machine}>
+                                    <div className="col-md-3" title={this.state.formData.Machine}>
                                         <div className="custom-dropdown" id="divMachine">
                                             <SearchableDropdown
                                                 label={"Machine"}
@@ -666,7 +670,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Shift}>
+                                    <div className="col-md-3" title={this.state.formData.Shift}>
                                         <div className="custom-dropdown" id="divShift">
                                             <SearchableDropdown
                                                 label={"Shift"}
@@ -684,7 +688,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Auditor}>
+                                    <div className="col-md-3" title={this.state.formData.Auditor}>
                                         <div className="custom-dropdown" id="divAuditor">
                                             <SearchableDropdown
                                                 label={"Auditor"}

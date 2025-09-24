@@ -24,7 +24,7 @@
   margin: 0 10px;
 }
 
-.nav-link {
+.tab-link {
   display: block;
   padding: 10px 20px;
   background-color: #e0efff; /* Tab background */
@@ -34,17 +34,18 @@
   text-align: center;
   font-size: 18px !important;
   font-weight: bold !important;
+  text-decoration: none;
 }
-.nav-link.Safety{
+.tab-link.Safety{
   color: #0d9459;  
 }
-.nav-link.AMWO{
+.tab-link.AMWO{
   color: #1249a7;  
 }
-.nav-link.PM{
+.tab-link.PM{
   color: #ee3d48;  
 }
-.nav-link:hover {
+.tab-link:hover {
   background-color: #cce8ff; /* Hover effect for tabs */
 }
 /* Tab content section */
@@ -65,7 +66,7 @@
 }
 
 
-.nav-link.active {
+.tab-link.active {
   color: white;  
   font-weight: bold;
 }

@@ -68,8 +68,7 @@ function ValidateForm(data:any){
             let element = document.getElementById(prpIsreq);
 
             if( element ){
-                element.focus();
-                // element.classList.add('mandatory-FormContent-focus');
+                element?.getElementsByTagName('input')[0]?.focus();
                 element.classList.add('focus-Div');
             }
             status = false;
@@ -231,33 +230,6 @@ function IsEmail(email:any) {
         return true;
     }
 }
-function peoplePickerValidation(data:any){
-    let status = true;
-    let message ="";
-    let propertieTypes={Number:ControlType.number,String:ControlType.string,MobileNumber:ControlType.mobileNumber,Email:ControlType.email,People:ControlType.people,Date:ControlType.date,compareDates:ControlType.compareDates};
-    for (let key in data) {
-        let value = data[key].val.results.length
-        value = value>0?value:null
-        let type =data[key].Type;
-        let isrequired =data[key].required;
-
-     if((propertieTypes.People==type && isrequired) && [undefined,null,''].includes(value))
-    {
-        message =data[key].Name+" cannot be blank.";
-        let prpIsreq =data[key].Focusid;
-        const peoplePickerElem = document.getElementById(prpIsreq);
-        const inputElem = peoplePickerElem?.getElementsByTagName('input')[0];
-        if (inputElem) {
-            inputElem.focus();
-            inputElem.classList.add('mandatory-FormContent-focus');
-        }
-        status = false;
-        break;
-    }
-}
-let retunobject ={message,status};
-return retunobject;
-}
 
 
 class formValidation {
@@ -270,10 +242,6 @@ class formValidation {
         let status = ValidateInputFiles(filesArray, isRequired);
         return status;
     }
-    public static multiplePeoplePickerValidation=(formData:any)=>{
-        let status= peoplePickerValidation(formData); 
-        return status;
-      }
  }
  export default formValidation;
 

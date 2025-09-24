@@ -59,15 +59,15 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
         CheckListTable: {
             'Safety Policies/Procedures': [
                 { No: 0, Checks: 'Certification of Authorized employees in LOTO are complete.', Low: 1, Medium: 2, High: 3, AuditScore: '', Score: [1, 2, 3], Comments: '' },
-                { No: 1, Checks: 'LOTO placards are visible on all machines/equipment.', Low: 1, Medium: 2, High: 3, AuditScore: '', Score: [1, 2,3], Comments: '' },
-                { No: 2, Checks: 'Machine Guarding Checklist - Implemented, employees trained on hazards.', Low: 1, Medium: 2, High: 3, AuditScore: '', Score: [1, 2,3], Comments: '' },
+                { No: 1, Checks: 'LOTO placards are visible on all machines/equipment.', Low: 1, Medium: 2, High: 3, AuditScore: '', Score: [1, 2, 3], Comments: '' },
+                { No: 2, Checks: 'Machine Guarding Checklist - Implemented, employees trained on hazards.', Low: 1, Medium: 2, High: 3, AuditScore: '', Score: [1, 2, 3], Comments: '' },
                 { No: 3, Checks: 'Legal Compliance Calendar is reviewed Quarterly and updated as needed.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
                 { No: 4, Checks: 'Safety Versatility Matrix is established and maintained to indicate training.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
                 { No: 5, Checks: 'Safety Incentive/Reward Program implemented. (Safety Game,Safety Incentive Program - Dept, etc.)', Low: 0, Medium: 0.5, High: 1, AuditScore: '', Score: [0, 0.5, 1], Comments: '' },
                 { No: 6, Checks: 'Safety Team established with representation from various departments.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
                 { No: 7, Checks: 'Visitor/Contractor Policy and procedure exists and adhered to.', Low: 0, Medium: 0.5, High: 1, AuditScore: '', Score: [0, 0.5, 1], Comments: '' },
             ],
-            'Management of Accidents':[
+            'Management of Accidents': [
                 { No: 8, Checks: 'Share Point is established for the location and being used to complete safety forms and identify issues.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
                 { No: 9, Checks: 'Accident events are attacked and analyzed using the SEWO form.Temporary solutions are implemented and Corrective actions implemented and tracked.', Low: 1, Medium: 2, High: 3, AuditScore: '', Score: [1, 2, 3], Comments: '' },
                 { No: 10, Checks: 'The dynamics of the event are discussed with the persons involved (increased awareness of the worker, Safety Alert).', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
@@ -75,7 +75,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
             ],
             'Management of Near Misses/Unsafe Acts/ Unsafe Conditions': [
                 { No: 12, Checks: 'SA Tag program is implemented to allow employees method to identify and track safety issues.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
-                { No: 13, Checks: 'UCAN form is utilized to report unsafe conditions and unsafe behaviors. Corrective actions are implemented and tracked.',Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
+                { No: 13, Checks: 'UCAN form is utilized to report unsafe conditions and unsafe behaviors. Corrective actions are implemented and tracked.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
                 { No: 14, Checks: 'SMAT audits are implemented, management is trained and schedule is communicated.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
                 { No: 15, Checks: 'Safety Alerts are communicated regarding near misses/unsafe behaviors/acts and/or injuries.', Low: 0, Medium: 1, High: 2, AuditScore: '', Score: [0, 1, 2], Comments: '' },
             ],
@@ -101,7 +101,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
         showSubmit: false,
         ItemId: 0,
         Redirect: false,
-        RedirectTo:'',
+        RedirectTo: '',
     }
 
     constructor(props: CHECKLISTSTEP2FormProps) {
@@ -153,12 +153,12 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
             //Edit mode starts here
             let stateData: any = { ...this.state };
             if (ItemId > 0) {
-                let CheckListRes:any = await getListItems('CheckListStep2', this.currentSiteURL, 'Author/Title,Author/Id,*', 'Author',`Id eq ${ItemId}`);
+                let CheckListRes: any = await getListItems('CheckListStep2', this.currentSiteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${ItemId}`);
 
-               
+
                 if (!CheckListRes.isHttpRequestError) {
                     if (CheckListRes.length) {
-                    let CheckListData=CheckListRes[0];
+                        let CheckListData = CheckListRes[0];
                         formData.Date = [null, undefined, '', 'None'].includes(CheckListData.Date) ? '' : CheckListData.Date;
                         formData.Plant = [null, undefined, '', 'None'].includes(CheckListData.Plant) ? '' : CheckListData.Plant;
                         formData.Department = [null, undefined, '', 'None'].includes(CheckListData.Department) ? '' : CheckListData.Department;
@@ -202,7 +202,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                     }
                     else {
                         showToast("error", "No Check List found");
-                        this.setState({ Redirect: true,RedirectTo:'Home' });
+                        this.setState({ Redirect: true, RedirectTo: 'Home' });
                     }
                 }
             }
@@ -210,8 +210,8 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
             console.log(e);
             this.onError();
         }
-        finally{
-        hideLoader();
+        finally {
+            hideLoader();
         }
     }
     //common functions
@@ -283,7 +283,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
     }
     private onSuccess = (successMessage: string) => {
         hideLoader();
-        this.setState({ Redirect: true,RedirectTo:'CHECK-LISTSTEP2View', ItemID: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'CHECK-LISTSTEP2View', ItemID: 0 });
         showToast("success", successMessage);
     }
     private getCheckListPostData = () => {
@@ -570,7 +570,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({ Redirect: true,RedirectTo:'Home', ItemId: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'CHECK-LISTSTEP2View', ItemId: 0 });
     }
     public render() {
         if (this.state.Redirect) {
@@ -585,16 +585,20 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                             <div className="m-0 titlebg">
                                 <h4 className="mb-0 pt-2 text-center">{" Mayco International - WCM Safety Pillar Step Audits - Level 2 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
                                 <h6 className="mb-0 pt-2 text-center">AUDIT CHECK-LIST</h6>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="mainContent row px-4 borderLine">
                                 <div className="row py-3">
-                                    <div className="col-md-3 c-date-picker form-floating" id="divDate">
-                                        <label className="label-datePicker"> Date <span className="text-danger">*</span></label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
+                                    <div className="col-md-3" id="divDate">
+                                        <div className="light-text">
+                                            <label className=""> Date <span className="mandatoryhastrick">*</span></label>
+                                            <div className="custom-datepicker" id="divCompletedDate">
+                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="col-md-3  form-floating" title={this.state.formData.Plant}>
+                                    <div className="col-md-3 " title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">
                                             <SearchableDropdown
                                                 label={"Plant"}
@@ -612,7 +616,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Department}>
+                                    <div className="col-md-3" title={this.state.formData.Department}>
                                         <div className="custom-dropdown" id="divDepartment">
                                             <SearchableDropdown
                                                 label={"Department"}
@@ -630,7 +634,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Zone}>
+                                    <div className="col-md-3" title={this.state.formData.Zone}>
                                         <div className="custom-dropdown" id="divZone">
                                             <SearchableDropdown
                                                 label={"Zone"}
@@ -650,7 +654,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                     </div>
                                 </div>
                                 <div className="row py-3">
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Machine}>
+                                    <div className="col-md-3" title={this.state.formData.Machine}>
                                         <div className="custom-dropdown" id="divMachine">
                                             <SearchableDropdown
                                                 label={"Machine"}
@@ -668,7 +672,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Shift}>
+                                    <div className="col-md-3" title={this.state.formData.Shift}>
                                         <div className="custom-dropdown" id="divShift">
                                             <SearchableDropdown
                                                 label={"Shift"}
@@ -686,7 +690,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Auditor}>
+                                    <div className="col-md-3" title={this.state.formData.Auditor}>
                                         <div className="custom-dropdown" id="divAuditor">
                                             <SearchableDropdown
                                                 label={"Auditor"}

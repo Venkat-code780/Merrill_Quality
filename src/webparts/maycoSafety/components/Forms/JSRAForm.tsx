@@ -33,6 +33,7 @@ export interface JSRAFormProps {
     userDisplayName: string;
     siteURL: string;
     webAbsoluteURL: string;
+    currentUserGroups: any;
     currPlantTitle: string;
     isSuperAdmin: boolean;
 }
@@ -268,7 +269,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         stateData = this.onPlantChange(stateData, formData.Plant, false);
                         stateData = this.onDepartmentChange(stateData, formData.Plant, formData.Department, false);
                         stateData = this.onZoneChange(stateData, formData.Plant, formData.Department, formData.Zone, false);
-                        showSubmit = this.props.isSuperAdmin || (jsraData.Author.Title == this.props.userDisplayName) ? true : false;
+                        showSubmit = this.props.currentUserGroups.includes('Venture Global Owners') || (jsraData.Author.Title == this.props.userDisplayName) ? true : false;
 
                         this.setState({ formData, isEditForm, ItemId, Permits, PPETypes, Persons, jobSteps, showSubmit, DepartmentsOpt: stateData.DepartmentsOpt, ZonesOpt: stateData.ZonesOpt, WorkCellsOpt: stateData.WorkCellsOpt, MachinesOpt: stateData.MachinesOpt, SupervisorsOpt: stateData.SupervisorsOpt, ToolNumbersOpt: stateData.ToolNumbersOpt });
                     }
@@ -709,42 +710,42 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 </td>
                 <td>
                     {/* <div className="custom-dropdown" id={`divRiskFamily_${jobStep.id}`} title={jobStep.RiskFamily}> */}
-                        <SearchableDropdown
-                            label={""}
-                            Title={jobStep.RiskFamily}
-                            name={""}
-                            id={`RiskFamily_${jobStep.id}`}
-                            placeholderText={""}
-                            className={""}
-                            selectedValue={jobStep.RiskFamily}
-                            OptionsList={this.state.RiskFamilyOpt}
-                            OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'RiskFamily', selectedOption ? selectedOption.value : '')}
-                            isRequired={false}
-                            disabled={(!jobStep.Required) || this.state.isEditForm}
-                            noOptionsMessage="No Risk Family"
-                        />
+                    <SearchableDropdown
+                        label={""}
+                        Title={jobStep.RiskFamily}
+                        name={""}
+                        id={`RiskFamily_${jobStep.id}`}
+                        placeholderText={""}
+                        className={""}
+                        selectedValue={jobStep.RiskFamily}
+                        OptionsList={this.state.RiskFamilyOpt}
+                        OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'RiskFamily', selectedOption ? selectedOption.value : '')}
+                        isRequired={false}
+                        disabled={(!jobStep.Required) || this.state.isEditForm}
+                        noOptionsMessage="No Risk Family"
+                    />
                     {/* </div> */}
                 </td>
                 <td>
                     {/* <div className="custom-dropdown" id={`divRisk_${jobStep.id}`} title={jobStep.Risk}> */}
-                        <SearchableDropdown
-                            label={""}
-                            Title={jobStep.Risk}
-                            name={""}
-                            id={`Risk_${jobStep.id}`}
-                            placeholderText={""}
-                            className={""}
-                            selectedValue={jobStep.Risk}
-                            OptionsList={jobStep.RiskOpt}
-                            OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Risk', selectedOption ? selectedOption.value : '')}
-                            isRequired={false}
-                            disabled={(!jobStep.Required) || this.state.isEditForm}
-                            noOptionsMessage="No Risk"
-                        />
+                    <SearchableDropdown
+                        label={""}
+                        Title={jobStep.Risk}
+                        name={""}
+                        id={`Risk_${jobStep.id}`}
+                        placeholderText={""}
+                        className={""}
+                        selectedValue={jobStep.Risk}
+                        OptionsList={jobStep.RiskOpt}
+                        OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Risk', selectedOption ? selectedOption.value : '')}
+                        isRequired={false}
+                        disabled={(!jobStep.Required) || this.state.isEditForm}
+                        noOptionsMessage="No Risk"
+                    />
                     {/* </div> */}
                 </td>
                 <td>
-                    <div className="bs-field form-floating" title={String(jobStep.Probability)}>
+                    <div className="" title={String(jobStep.Probability)}>
                         <div className="custom-dropdown" id={`divProbability_${jobStep.id}`}>
                             <SearchableDropdown
                                 label={"Probability"}
@@ -762,7 +763,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             />
                         </div>
                     </div>
-                    <div className="bs-field form-floating" title={String(jobStep.Controls)}>
+                    <div className="" title={String(jobStep.Controls)}>
                         <div className="custom-dropdown" id={`divControls_${jobStep.id}`}>
                             <SearchableDropdown
                                 label={"Controls"}
@@ -780,7 +781,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             />
                         </div>
                     </div>
-                    <div className="bs-field form-floating" title={String(jobStep.Severity)}>
+                    <div className="" title={String(jobStep.Severity)}>
                         <div className="custom-dropdown" id={`divSeverity_${jobStep.id}`}>
                             <SearchableDropdown
                                 label={"Severity"}
@@ -931,23 +932,23 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             <tr key={PPE.id}>
                 <td>
                     {/* <div className="custom-dropdown" id={`divPPE_${PPE.id}`} title={PPE.PPEType}> */}
-                        <SearchableDropdown
-                            label={""}
-                            Title={PPE.PPEType}
-                            name={""}
-                            id={`PPEType_${PPE.id}`}
-                            placeholderText={""}
-                            className={""}
-                            selectedValue={PPE.PPEType}
-                            OptionsList={this.state.PPETypesOpt}
-                            OnChange={(selectedOption: any, actionMeta: any) => this.handlePPETypeChange(index, 'PPEType', selectedOption ? selectedOption.value : '')}
-                            isRequired={false}
-                            disabled={false}
-                            noOptionsMessage="No PPE Type"
-                        />
+                    <SearchableDropdown
+                        label={""}
+                        Title={PPE.PPEType}
+                        name={""}
+                        id={`PPEType_${PPE.id}`}
+                        placeholderText={""}
+                        className={""}
+                        selectedValue={PPE.PPEType}
+                        OptionsList={this.state.PPETypesOpt}
+                        OnChange={(selectedOption: any, actionMeta: any) => this.handlePPETypeChange(index, 'PPEType', selectedOption ? selectedOption.value : '')}
+                        isRequired={false}
+                        disabled={false}
+                        noOptionsMessage="No PPE Type"
+                    />
                     {/* </div> */}
                 </td>
-                <td>{PPETypes.length > 1 ? <button type='button' className="btn text-danger" onClick={() => this.deletePPEType(index)} title="Delete PPE Type"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
+                <td>{PPETypes.length > 1 ? <button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePPEType(index)} title="Delete PPE Type"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
             </tr>
 
         ))
@@ -1019,10 +1020,10 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 </td>
                 <td>
                     {/* <div className="c-date-picker"> */}
-                        <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
+                    <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
                     {/* </div> */}
                 </td>
-                <td>{Persons.length > 1 ? <button type='button' className="btn text-danger" onClick={() => this.deletePerson(index)} title="Delete Person"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
+                <td>{Persons.length > 1 ? <button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePerson(index)} title="Delete Person"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
             </tr>
 
         ))
@@ -1099,7 +1100,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
     public render() {
         if (this.state.Redirect) {
             let url = `/${this.state.RedirectTo}`;
-            return (<Navigate to={url} />)
+            return (<Navigate to={url} />);
         }
         else {
             return (
@@ -1108,16 +1109,20 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
                                 <h4 className="mb-0 pt-2 text-center">{" JSRA " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="mainContent px-4 borderLine">
                                 <div className="row py-3">
-                                    <div className="col-md-3 c-date-picker form-floating" id="divDate">
-                                        <label className="label-datePicker"> Date <span className="text-danger">*</span></label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
+                                    <div className="col-md-3" id="divDate">
+                                        <div className="light-text">
+                                            <label className="z-in-9"> Date <span className="mandatoryhastrick">*</span></label>
+                                            <div className="custom-datepicker" id="divDate">
+                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="col-md-3  form-floating" title={this.state.formData.Plant}>
+                                    <div className="col-md-3" title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">
                                             <SearchableDropdown
                                                 label={"Plant"}
@@ -1135,7 +1140,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Department}>
+                                    <div className="col-md-3" title={this.state.formData.Department}>
                                         <div className="custom-dropdown" id="divDepartment">
                                             <SearchableDropdown
                                                 label={"Department"}
@@ -1153,7 +1158,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Zone}>
+                                    <div className="col-md-3" title={this.state.formData.Zone}>
                                         <div className="custom-dropdown" id="divZone">
                                             <SearchableDropdown
                                                 label={"Zone"}
@@ -1173,7 +1178,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                     </div>
                                 </div>
                                 <div className="row py-3">
-                                    <div className="col-md-3 form-floating" title={this.state.formData.WorkCell}>
+                                    <div className="col-md-3" title={this.state.formData.WorkCell}>
                                         <div className="custom-dropdown" id="divWorkCell">
                                             <SearchableDropdown
                                                 label={"Work Cell"}
@@ -1191,7 +1196,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Machine}>
+                                    <div className="col-md-3" title={this.state.formData.Machine}>
                                         <div className="custom-dropdown" id="divMachine">
                                             <SearchableDropdown
                                                 label={"Machine"}
@@ -1209,7 +1214,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Shift}>
+                                    <div className="col-md-3" title={this.state.formData.Shift}>
                                         <div className="custom-dropdown" id="divShift">
                                             <SearchableDropdown
                                                 label={"Shift"}
@@ -1227,7 +1232,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-3 form-floating" title={this.state.formData.Supervisor}>
+                                    <div className="col-md-3" title={this.state.formData.Supervisor}>
                                         <div className="custom-dropdown" id="divSupervisor">
                                             <SearchableDropdown
                                                 label={"Supervisor"}
@@ -1247,7 +1252,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                     </div>
                                 </div>
                                 <div className="row py-3">
-                                    <div className="col-md-3 form-floating" title={this.state.formData.ToolNumber}>
+                                    <div className="col-md-3" title={this.state.formData.ToolNumber}>
                                         <div className="custom-dropdown" id="divToolNumber">
                                             <SearchableDropdown
                                                 label={"Tool Number"}
@@ -1313,13 +1318,13 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 <div className="row">
                                     {/* PPE Requirements */}
 
-                                    <div className={'divSection'} style={{width:'30%'}}>
+                                    <div className={'divSection'} style={{ width: '30%' }}>
                                         <div className="SectionHeader">PPE Requirements</div>
                                         <table id="PPEREquirementsTable">
                                             <thead>
                                                 <tr className="bluebg">
                                                     <th >PPE Type</th>
-                                                    <th >{this.state.PPETypes.length>1?"Delete":""}</th>
+                                                    <th >{this.state.PPETypes.length > 1 ? "Delete" : ""}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1330,14 +1335,14 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                     </div>
 
                                     {/* Persons Involved */}
-                                    <div className={'divSection'} style={{width:'70%'}}>
+                                    <div className={'divSection'} style={{ width: '70%' }}>
                                         <div className="SectionHeader">Persons Involved</div>
                                         <table id="PersonsInvolvedTable">
                                             <thead>
                                                 <tr className="bluebg">
                                                     <th >Name</th>
                                                     <th >Date</th>
-                                                    <td >{this.state.Persons.length>1?"Delete":""}</td>
+                                                    <td >{this.state.Persons.length > 1 ? "Delete" : ""}</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1351,14 +1356,18 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 <div className={'row divSection'}>
                                     <div className="SectionHeader">Supervisor</div>
                                     <div className="col-md-3 p-2">
-                                        <div className="form-floating">
+                                        <div className="light-text">
+                                            <label className="">Supervisor Name </label>
                                             <input className="form-control" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
-                                            <label className=" col-form-label">Supervisor Name </label>
                                         </div>
                                     </div>
-                                    <div className="col-md-3 p-2 c-date-picker" id="divDate">
-                                        <label className="label-datePicker" > Date</label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
+                                    <div className="col-md-3 p-2" id="divDate">
+                                        <div className="light-text">
+                                            <label className="z-in-9"> Date</label>
+                                            <div className="custom-datepicker" id="divSupervisorDate">
+                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>

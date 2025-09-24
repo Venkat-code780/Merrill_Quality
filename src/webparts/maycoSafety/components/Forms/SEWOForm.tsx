@@ -18,6 +18,8 @@ import { format } from "date-fns";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import DatePickercontrol from "../Shared/DatePickerField";
 import formValidation from "../Utilities/FormValidator";
+import BodyPart from "../Utilities/BodyChart";
+import Sketch, { SketchHandle } from "../Utilities/Sketch";
 
 export interface SEWOFormProps {
     match: any;
@@ -84,6 +86,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     private txtWitnessStatement: any;
     private txtInjuredSignature: any;
     private txtWitnessSignature: any;
+    private sketchRef = React.createRef<SketchHandle>();
 
     private dateFields = [
         'Reported_x0020_Date',
@@ -221,6 +224,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         showSubmit: false,
         isAdmin: false,
         statusText: '',
+        selBodyPart:[]
     }
 
     constructor(props: SEWOFormProps) {
@@ -278,9 +282,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     private getOnLoadData = async () => {
         try {
             showLoader();
-            var formData:any = { ...this.state.formData };
+            var formData: any = { ...this.state.formData };
             let itemId = this.props.match.params.id;
             let showSubmit = false;
+            let selBodyPart: any = [];
 
             let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
             let PlantList = 'Plant', PlantSelQuery = 'Title,*', plantFiltQuery = '', PlantExpFields = '';
@@ -433,10 +438,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         formData.YearMonth = editSEWOItem.YearMonth ?? '';
                         formData.Zone = editSEWOItem.Zone ?? '';
                         //Shifts column if WCM
-                        if( this.props.isWCM ){
+                        if (this.props.isWCM) {
                             formData.Shift = editSEWOItem.Shifts ?? '';
                         }
-                        else{
+                        else {
                             formData.Shift = editSEWOItem.Shift ?? '';
                         }
 
@@ -455,14 +460,18 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         if (currentUserGroups.includes("Venture Global Owners") || currentUserGroups.includes("WCM Safety Admin") || currentUserGroups.includes("WCM Merrill Safety Mgt")) {
                             showSubmit = true;
                         }
+
+                        let bodyPartValue = bodyPartsData.find( (part:any) => (part.value == formData.BodyPartId))?.label;
+                        selBodyPart = this.handleBodyPartChange(bodyPartValue);
                     }
                 })
             }
             else {
                 showSubmit = true;
+                selBodyPart = this.handleBodyPartChange("None");
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, showSubmit, ItemId: itemId, accidentTypeData, accidentCauseData, injuryTypeData, bodyPartsData, rootCausesData, secondaryRootCausesData, microRootCausesData, actionsData, yesNoData, statusData, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions });
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, showSubmit, ItemId: itemId, accidentTypeData, accidentCauseData, injuryTypeData, bodyPartsData, rootCausesData, secondaryRootCausesData, microRootCausesData, actionsData, yesNoData, statusData, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, selBodyPart });
 
             hideLoader();
         } catch (e) {
@@ -484,7 +493,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         if (name == "InjuredName") {
             formData.EmployeeName = inputValue;
         }
-        else if( name == "IsHospitalRefused"){
+        else if (name == "IsHospitalRefused") {
             formData.NameoftheHospital = '';
         }
 
@@ -510,6 +519,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         const value = actionMeta.action == "clear" ? '' : event.value;
         formData[name] = value;
         let statusText = this.state.statusText;
+        var selBodyPart = [...this.state.selBodyPart];
 
         if (name == "Plant") {
             formData.Department = "";
@@ -520,7 +530,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             zoneOptions = [];
 
             if (actionMeta.action != "clear") {
-                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department )).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
         }
         else if (name == "Department") {
@@ -574,6 +584,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 formData.CloseDate = '';
             }
         }
+        else if(name == "BodyPartId"){
+            if( actionMeta.action != "clear"){
+                selBodyPart = this.handleBodyPartChange(event.label)
+            }
+            else{
+                selBodyPart = [];
+            }
+        } 
 
         if (!([null, undefined, ''].includes(id))) {
             var ddlElement = document.getElementById(id);
@@ -585,7 +603,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             }
         }
 
-        this.setState({ formData, departmentOptions, zoneOptions, machineOptions, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, statusText });
+        this.setState({ formData, departmentOptions, zoneOptions, machineOptions, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, statusText, selBodyPart });
     }
 
     private handleDateChange = (dateValue: any, name: any, divId: any, dateProps: any) => {
@@ -672,7 +690,8 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 formData.YearMonth = mmddyyyyDate.split("/")[0];
                 formData.Injury_x0020_Date_x0020_Time = DateUtilities.addBrowserwrtServer(new Date(formData.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString();
                 formData.DaysOff = Number(formData.DaysOff);
-
+                formData.Sketch = this.sketchRef.current?.getImageData();
+                console.log(formData.Sketch);
                 //To handle optional Date fields
                 this.processOptionalDateFields(formData);
                 //To handle optional LookUp Fields
@@ -726,7 +745,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     private processOptionalDateFields = (formData: any) => {
         for (const dateField of this.dateFields) {
             if (formData[dateField] !== "") {
-                formData[dateField] =  DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData[dateField])), this.props.spContext.webTimeZoneData ).toISOString();
+                formData[dateField] = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(formData[dateField])), this.props.spContext.webTimeZoneData).toISOString();
             } else {
                 delete formData[dateField];
             }
@@ -735,19 +754,18 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
 
     private processOptionalLookUpFields = (formData: any) => {
         for (const lookupField of this.optionalLookUpFields) {
-            if (formData[lookupField] == "" ) {
+            if (formData[lookupField] == "") {
                 delete formData[lookupField];
             }
         }
 
         let selShift = formData.Shift;
 
-        if(this.props.isWCM){ 
+        if (this.props.isWCM) {
             delete formData.Shift;
             formData["Shifts"] = selShift;
         }
     };
-
 
     private handlefullClose = () => {
         this.setState({ Homeredirect: true, ItemID: 0 });
@@ -762,6 +780,100 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
+
+    private handleBodyPartChange = (bodyPart:string) => {
+        const selValue = bodyPart;
+        let selBodyPart:any = [];
+        if (selValue === "None" || selValue === "NA" || selValue === "Other") { selBodyPart = [{slug: undefined, intensity:0}]; return selBodyPart; }
+        switch (selValue) {
+            case "Back":
+                selBodyPart = [
+                    { slug: "upper-back", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "lower-back", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "trapezius", leftSideIntensity: 2, rightSideIntensity: 2 }
+                ];
+                break;
+
+            case "Chest":
+                selBodyPart = [
+                    { slug: "chest", leftSideIntensity: 2, rightSideIntensity: 2 }
+                ];
+                break;
+
+            case "Elbow/ Forearm":
+                selBodyPart = [
+                    { slug: "forearm", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    // { slug: "triceps", leftSideIntensity: 2, rightSideIntensity: 2 }
+                ];
+                break;
+
+            case "Eye":
+                selBodyPart = [
+                    { slug: "head", intensity: 2 }
+                ];
+                break;
+
+            case "Foot/ Ankle":
+                selBodyPart = [
+                    { slug: "feet", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "ankles", leftSideIntensity: 2, rightSideIntensity: 2 }
+                ];
+                break;
+
+            case "Hand/ Finger/ Wrist":
+                selBodyPart = [
+                    { slug: "hands", leftSideIntensity: 2, rightSideIntensity: 2 }
+                ];
+                break;
+
+            case "Head/ Neck":
+                selBodyPart = [
+                    { slug: "head", intensity: 2 },
+                    { slug: "neck", intensity: 2 },
+                    { slug: "hair", intensity: 2 }
+                ];
+                break;
+
+            case "Leg/ Knee":
+                selBodyPart = [
+                    { slug: "knees", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "quadriceps", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "hamstring", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "calves", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "tibialis", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "adductors", leftSideIntensity: 2, rightSideIntensity: 2 },
+                ];
+                break;
+
+            case "Neck/ Back Upper":
+                selBodyPart = [
+                    { slug: "neck", intensity: 2 },
+                    { slug: "upper-back", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "trapezius", leftSideIntensity: 2, rightSideIntensity: 2 }
+                ];
+                break;
+
+            case "Shoulder":
+                selBodyPart = [
+                    { slug: "deltoids", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    // { slug: "trapezius", leftSideIntensity: 2, rightSideIntensity: 2 },
+                ];
+                break;
+
+            case "Upper Arm":
+                selBodyPart = [
+                    { slug: "biceps", leftSideIntensity: 2, rightSideIntensity: 2 },
+                    { slug: "triceps", leftSideIntensity: 2, rightSideIntensity: 2 }
+                ];
+                break;
+
+            default:
+                [{slug: undefined, intensity:0}];
+
+            }
+        return selBodyPart;
+    };
+
     public render() {
         if (this.state.Homeredirect) {
             let url = "/Home";
@@ -1074,6 +1186,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 </div>
                                 {/* 5W+1H Analysis, BODY CHART, SKETCH */}
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greybg row">
+                                    {/* 5W+1H Analysis */}
                                     <div className="col-md-3 greybg padding0">
                                         <h6 className="greenbg">5W+1H Analysis</h6>
                                         {/* What */}
@@ -1119,10 +1232,12 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             </div>
                                         </div>
                                     </div>
+                                    {/* BODY CHART */}
                                     <div className="col-md-3 greybg padding0">
                                         <h6 className="greenbg">BODY CHART</h6>
                                         {/* Body Part */}
                                         <div className="col-md-12 greybg form-floating">
+                                            <BodyPart selectedBodyPart={this.state.selBodyPart}/>
                                             <div className="custom-dropdown" id="divBodyPart">
                                                 <SearchableDropdown
                                                     label={"Body Part"}
@@ -1141,8 +1256,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             </div>
                                         </div>
                                     </div>
+                                    {/* SKETCH */}
                                     <div className="col-md-6 greybg padding0">
                                         <h6 className="greenbg">SKETCH</h6>
+                                        <Sketch ref={this.sketchRef} initialImage={this.state.formData.Sketch} />
                                     </div>
                                 </div>
                                 {/* CORRECTIVE ACTION */}

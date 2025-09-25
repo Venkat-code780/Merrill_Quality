@@ -37,13 +37,13 @@
   text-decoration: none;
 }
 .tab-link.Safety{
-  color: #0d9459;  
+  color: #0d9459 !important;  
 }
 .tab-link.AMWO{
-  color: #1249a7;  
+  color: #1249a7 !important;  
 }
 .tab-link.PM{
-  color: #ee3d48;  
+  color: #ee3d48 !important;  
 }
 .tab-link:hover {
   background-color: #cce8ff; /* Hover effect for tabs */

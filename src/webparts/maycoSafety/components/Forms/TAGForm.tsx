@@ -1000,7 +1000,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                         <ul className="nav nav-tabs nav-fill">
                                             <li className="nav-item" role="presentation">
                                                 <a
-                                                    className={`tab-link Safety ${this.state.activeTag === 'Safety' ? 'active SafetyTab' : ''}`}
+                                                    className={`tab-link ${this.state.activeTag === 'Safety' ? 'active SafetyTab' : 'Safety'}`}
                                                     onClick={(e) => this.onTabClick('Safety', e)}
                                                 >
                                                     Safety
@@ -1008,7 +1008,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                             </li>
                                             <li className="nav-item" role="presentation">
                                                 <a
-                                                    className={`tab-link AMWO ${this.state.activeTag === 'AMWO' ? 'active AMWOTab' : ''}`}
+                                                    className={`tab-link ${this.state.activeTag === 'AMWO' ? 'active AMWOTab' : 'AMWO'}`}
                                                     onClick={(e) => this.onTabClick('AMWO', e)}
                                                 >
                                                     AM/WO
@@ -1016,7 +1016,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                             </li>
                                             <li className="nav-item" role="presentation">
                                                 <a
-                                                    className={`tab-link PM ${this.state.activeTag === 'PM' ? 'active PMTab' : ''}`}
+                                                    className={`tab-link ${this.state.activeTag === 'PM' ? 'active PMTab' : 'PM'}`}
                                                     onClick={(e) => this.onTabClick('PM', e)}
                                                 >
                                                     PM

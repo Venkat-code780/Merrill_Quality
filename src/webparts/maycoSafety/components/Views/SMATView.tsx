@@ -71,7 +71,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
   }
 
   public componentDidMount() {
-    document.title = "Mayco - Safety | Actions";
+    document.title = "Mayco - Safety | SMAT View";
     this.loadListData();
   }
 
@@ -171,30 +171,6 @@ private handleConfirmDelete = async (id?: number | null) => {
   }
 };
 
-
-
-
-
-
-
-  //  private handleConfirmDelete = async () => {
-  //   try {
-  //     if (this.state.deleteItemId) {
-  //       const parentId=this.state.deleteItemId;
-  //       showLoader();
-  //       await this.sp.web.lists.getByTitle("WCC").items.getById(this.state.deleteItemId).delete();
-  //       this.setState({
-  //         ActionsData: this.state.ActionsData.filter(item => item.Id !== this.state.deleteItemId),
-  //         showDeleteModal: false,
-  //         deleteItemId: null,
-  //       });
-  //     }
-  //   } catch (err) {
-  //     console.error("Delete failed:", err);
-  //   } finally {
-  //     hideLoader();
-  //   }
-  // };
    private handleCancelDelete = () => {
     this.setState({ showDeleteModal: false, deleteItemId: null });
   };
@@ -259,9 +235,12 @@ private handleConfirmDelete = async (id?: number | null) => {
             <div className="title">SMAT</div>
                   <div id="content" className="content p-2 pt-2">
               <div className="col-md-3">
-                <div className="form-floating">
+                  <div className="light-text">
+                   <label htmlFor="">
+                    Year Filter <span className="mandatoryhastrick">*</span>
+                  </label>
                 <div className="custom-dropdown" id="divRootcauese">
-            <Serachbledropdown label={"Year Filter"} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+            <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
             </div>
             </div>
             </div>

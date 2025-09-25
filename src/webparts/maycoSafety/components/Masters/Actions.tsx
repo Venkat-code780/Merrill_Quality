@@ -14,7 +14,7 @@ import formValidation from "../Utilities/FormValidator";
 import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
 import SearchableDropdown from "../Shared/Dropdown";
-// import "../CSS/Masters.css"
+import "../CSS/Masters.css";
 
 export interface ActionsProps {
     match:any;
@@ -159,7 +159,7 @@ export interface ActionsState {
         try{
              var formData = {...this.state.formData};
             formData.Title = '';
-            //formData.IsActive = false;
+          
             showLoader();
             this.setState({ isFormOpen: true, ItemId: Id, formData});
             await this.sp.web.lists.getByTitle(this.ActionsList).items.getById(Id)().then( (item:any) => {
@@ -334,10 +334,6 @@ private async checkDuplicate() {
         this.setState({pageNumber: pageIndex});  
     }
 
-    // private sortOrder =(event:any,sortDirection:any)=>{
-    //     this.setState({sortBy: event.id,sortOrder:sortDirection});     
-    // }
-
     private handleChangeDynamic = (event: any) => {
         const formData:any = {...this.state.formData};
         const name = event.target.name;
@@ -448,24 +444,27 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
                                     <div className="title">Actions</div>
-                                    <div className="" id="">
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
                                             <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen &&
-                                            <div className="divNew" id="">
-                                                <div className="border-top mt-3 py-3 ">
+                                            <div className="divForm">
+                                                <div className="border-top mt-3 py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Action" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} placeholder="" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250}/>
                                                                 <label>Action <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
+                                                                     <label htmlFor="ddlRootCause">
+                                                                        Root Cause <span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                                      <div className="custom-dropdown" id="divRootcauese">
                                                                     <SearchableDropdown label={"Root Cause"} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                                  </div>
@@ -473,20 +472,22 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                                                         </div>
                                                     
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
+                                                                  <label htmlFor="ddlSecondaryRootCause">
+                                                                        Secondary Root Cause <span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                                    <div className="custom-dropdown" id="divSecondaryRootcause">
-                                                                <SearchableDropdown label={"Secondary Root Cause"} Title={"SecondaryRootCause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                <SearchableDropdown label={""} Title={"SecondaryRootCause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
                                                              </div>
                                                         
                                                               </div>
                                                         </div>
-                                                        <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
                                             </div>
                                         }
                                     </div>

@@ -433,25 +433,28 @@ formData[name as keyof typeof formData] = value as never;
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="" id="divNew">
+                                            <div className="divForm">
                                                 <div className="border-top mt-3 py-3">
                                                     <div className="row">
                                                          <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
+                                                                   <label htmlFor="ddAuditCategory">
+                                                                        Audit Category<span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                                 <div className="custom-dropdown" id="divAuditCategory">
-                                                                 <SearchableDropdown label={"Audit Category"} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                 <SearchableDropdown label={""} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                                 </div>
                                                               </div>
                                                         </div>
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Audit SubCategory" type="text" name="Audit_SubCategory" title="LeadSource" value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Audit_SubCategory" title="LeadSource" value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
                                                                 <label>Audit SubCategory <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                         
                                                            <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
                                                                 <select className="form-select"  name="Form_x0020_Type" title="Form_x0020_Type" value={ this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
                                                                     <option value={""}>--Select One--</option>
                                                                     <option value={'WCC'}>WCC</option>
@@ -462,7 +465,7 @@ formData[name as keyof typeof formData] = value as never;
                                                               </div>
                                                         </div>
                                                             <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
                                                                 <select className="form-select"  name="Is_x0020_Active" title="Is_x0020_Active" value={ this.state.formData.Is_x0020_Active === null?"":String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
                                                                     <option value={0}>--Select One--</option>
                                                                     <option value={'true'}>Yes</option>
@@ -474,11 +477,11 @@ formData[name as keyof typeof formData] = value as never;
                                                          </div>
                                                         </div>
 
-                                                        <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>                                                  
                                                 </div>
-                                                <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
+                                               
                                             </div>
                                         }
                                     </div>

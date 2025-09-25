@@ -171,38 +171,6 @@ export interface ActionsState {
         this.setState({ isFormOpen: true, ItemId: 0 });
     }
 
-    // private async checkDuplicate(){
-    //     try{
-    //         showLoader();
-    //         var formData = {...this.state.formData};
-    //         let isValid = true;
-    //         let escapedTitle = formData.Title.replace(/'/g, "''"); 
-    //         let filterQuery = "Title eq '"+ escapedTitle +"'";
-
-    //         if( this.state.ItemId > 0 ){
-    //             filterQuery += " and Id ne "+this.state.ItemId+"";
-    //         }
-
-    //         await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
-    //             if( !res.Error && res.length > 0){
-    //                 isValid = false;
-    //                 var message = "Action already exists";
-    //                 showToast( "error", message );
-    //                 hideLoader();
-    //             }
-    //             else{
-    //                 hideLoader();
-    //             }
-    //         })
-    //         return isValid;
-    //     }
-    //     catch(e){
-    //         this.onError();
-    //         hideLoader();
-    //         console.log(e);
-    //     }
-    // }
-
 private async checkDuplicate() {
     try {
         showLoader();
@@ -340,9 +308,7 @@ private async checkDuplicate() {
         this.setState({pageNumber: pageIndex});  
     }
 
-    // private sortOrder =(event:any,sortDirection:any)=>{
-    //     this.setState({sortBy: event.id,sortOrder:sortDirection});     
-    // }
+   
 
   private handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
   const formData = { ...this.state.formData };
@@ -414,19 +380,19 @@ private async checkDuplicate() {
                                 <div className="FormContent border-none">
                                     <div className="title">Audit Categories
                                     </div>
-                                    <div className="" id="">
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
                                             <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="" id="divNew">
+                                            <div className="divForm">
                                                 <div className="border-top mt-3 py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Lead Source" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Title" title="Category" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
                                                                 <label>Category<span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
@@ -436,13 +402,13 @@ private async checkDuplicate() {
                                                             </div>
                                                         </div>
                                                        
-                                                        <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
+                                               
                                             </div>
                                         }
                                     </div>

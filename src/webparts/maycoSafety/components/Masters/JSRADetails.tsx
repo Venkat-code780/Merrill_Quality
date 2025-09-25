@@ -548,88 +548,86 @@ private handleSubCategoryChange = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
                                     <div className="title">JSRA Details</div>
-                                    <div className="" id="">
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
                                             <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="" id="divNew">
+                                            <div className="divForm">
                                                 <div className="border-top mt-3 py-3">
                                                     <div className="row pt-2 px-2">
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
+                                                                 <label htmlFor="CategoryIdddl">
+                                                                        Category<span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                                   <div className="custom-dropdown" id="divCategory">
-                                                                <Dropdown label={"Category"} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
+                                                                <Dropdown label={""} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
                                                                 </div>
                                                                 </div>
                                                                 </div>
                                                                   <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
+                                                                 <label htmlFor="Sub_x0020_CategoryIdddl">
+                                                                        Sub Category<span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                                   <div className="custom-dropdown" id="divSubCategory">
-                                                                <Dropdown label={"Sub Category"} Title={"CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange= {this.handleSubCategoryChange} isRequired={true} disabled={false}></Dropdown>
+                                                                <Dropdown label={""} Title={"CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange= {this.handleSubCategoryChange} isRequired={true} disabled={false}></Dropdown>
                                                                 </div>
                                                                 </div>
                                                                 </div>
                                                                  <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Probability 1" type="text" name="Probability_x0020_1" title="LeadSource" value={ this.state.formData.Probability_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_1} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Probability_x0020_1" title="LeadSource" value={ this.state.formData.Probability_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_1} maxLength={250}/>
                                                                 <label>Probability 1 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                                     <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Probability 2" type="text" name="Probability_x0020_2" title="LeadSource" value={ this.state.formData.Probability_x0020_2} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_2} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Probability_x0020_2" title="LeadSource" value={ this.state.formData.Probability_x0020_2} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_2} maxLength={250}/>
                                                                 <label>Probability 2 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                                       <div className="col-md-3">
-                                                            <div className="form-floating mb-2">
-                                                                <input className="form-control" required={true} placeholder="Probability 3" type="text" name="Probability_x0020_3" title="LeadSource" value={ this.state.formData.Probability_x0020_3} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_3} maxLength={250}/>
+                                                            <div className="light-text mb-2">
+                                                                <input className="form-control" required={true} type="text" name="Probability_x0020_3" title="LeadSource" value={ this.state.formData.Probability_x0020_3} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_3} maxLength={250}/>
                                                                 <label>Probability 3 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                                   <div className="col-md-3">
-                                                            <div className="form-floating mb-2">
-                                                                <input className="form-control" required={true} placeholder="Mitigation/Controls 1" type="text" name="Mitigation_x002f_Controls_x0020_" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_} maxLength={250}/>
+                                                            <div className="light-text mb-2">
+                                                                <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_} maxLength={250}/>
                                                                 <label>Mitigation/Controls 1 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                              <div className="col-md-3">
-                                                            <div className="form-floating mb-2">
-                                                                <input className="form-control" required={true} placeholder="Mitigation/Controls 2" type="text" name="Mitigation_x002f_Controls_x0020_0" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_0} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_0} maxLength={250}/>
+                                                            <div className="light-text mb-2">
+                                                                <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_0" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_0} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_0} maxLength={250}/>
                                                                 <label>Mitigation/Controls 2 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                           <div className="col-md-3">
-                                                            <div className="form-floating mb-2">
-                                                                <input className="form-control" required={true} placeholder="Mitigation/Controls 3" type="text" name="Mitigation_x002f_Controls_x0020_1" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_1} maxLength={250}/>
+                                                            <div className="light-text mb-2">
+                                                                <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_1" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_1} maxLength={250}/>
                                                                 <label>Mitigation/Controls 3 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                         <div className="col-md-12">
-                                                            <div className="form-floating mb-2">
-                                                                 <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} placeholder="Description of Incident" value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title="Description of Incident" style={{height:"150px"}}></textarea>                                                      
+                                                            <div className="light-text mb-2">
+                                                                 <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title="Description of Incident" style={{height:"150px"}}></textarea>                                                      
                                                                 <label>Details<span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                        {/* <InputCheckBox 
-                                                            label="Is Active"
-                                                            name="IsActive" 
-                                                            checked={this.state.formData.IsActive} 
-                                                            onChange={this.handleChangeDynamic} 
-                                                            isdisable={false} 
-                                                            isRequired={false}   
-                                                            id="chckIsActiveLeadSource"                                                 
-                                                        /> */}
-                                                        <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                      
+                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
+                                               
                                             </div>
                                         }
                                     </div>

@@ -58,7 +58,7 @@ export default class CheckList3View extends React.Component<ActionsProps,Actions
   }
 
   public componentDidMount() {
-    document.title = "Mayco - Safety | Actions";
+    document.title = "Mayco - Safety | CHECK-LIST STEP 3 View";
     this.loadListData();
   }
 
@@ -154,9 +154,12 @@ export default class CheckList3View extends React.Component<ActionsProps,Actions
             <div className="title">CHECK-LIST STEP 3</div>
                   <div id="content" className="content p-2 pt-2">
                 <div className="col-md-3">
-                <div className="form-floating">
+                  <div className="light-text">
+                   <label htmlFor="">
+                    Year Filter <span className="mandatoryhastrick">*</span>
+                  </label>
                 <div className="custom-dropdown" id="divRootcauese">
-            <Serachbledropdown label={"Year Filter"} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+            <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
             </div>
             </div>
             </div>

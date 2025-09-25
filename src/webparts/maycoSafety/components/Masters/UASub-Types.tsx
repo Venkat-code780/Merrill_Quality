@@ -374,37 +374,41 @@ private handleChangeClient = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
                                     <div className="title">UA Sub-Types</div>
-                                    <div className="" id="">
+                                    <div className="">
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
                                             <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="" id="divNew">
+                                            <div className="divForm">
                                                 <div className="border-top mt-3 py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="SubCategory" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
                                                                 <label>UAMicro Type <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                          <div className="col-md-3">
-                                                              <div className="form-floating">
+                                                              <div className="light-text">
+                                                                <label htmlFor="UATypedd">
+                                                                        UAType<span className="mandatoryhastrick">*</span>
+                                                                     </label>
+                                                                
                                                             <div className="custom-dropdown" id="divCategory">
-                                                                <Dropdown label={"UAType"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
+                                                                <Dropdown label={""} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
                                                             </div>
                                                             </div>
                                                         </div>
                                                       
-                                                        <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
+                                               
                                             </div>
                                         }
                                     </div>

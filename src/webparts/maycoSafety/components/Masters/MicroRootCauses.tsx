@@ -450,45 +450,51 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
                                     <div className="title">Micro Root Causes</div>
-                                    <div className="" id="">
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
                                             <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="" id="divNew">
+                                            <div className="divForm">
                                                 <div className="border-top mt-3 py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="Micro Root Cause" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.MicroRootCause} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Title" title="Micro Root Cause" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.MicroRootCause} maxLength={250}/>
                                                                 <label>Micro Root Cause <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
+                                                                      <label htmlFor="ddlRootCause">
+                                                                        Root Cause<span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                                      <div className="custom-dropdown" id="divRootcause">
-                                                                    <SearchableDropdown label={"Root Cause"} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                    <SearchableDropdown label={""} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                                  </div>
                                                               </div>
                                                         </div>
                                                     
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
+                                                            <div className="light-text">
+                                                                    <label htmlFor="ddlSecondaryRootCause">
+                                                                        Secondary Root Cause<span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                                    <div className="custom-dropdown" id="divSecondaryRootcause">
-                                                                <SearchableDropdown label={"Secondary Root Cause"} Title={"SecondaryRootCause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                <SearchableDropdown label={""} Title={"SecondaryRootCause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
                                                              </div>
                                                         
                                                               </div>
                                                         </div>
-                                                        <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
+                                               
                                             </div>
                                         }
                                     </div>

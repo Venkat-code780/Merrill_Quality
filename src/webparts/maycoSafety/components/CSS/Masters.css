@@ -1,4 +1,9 @@
 .divForm{
- margin-top: 1rem;
-  clear: both;
+    margin: 5px;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+.buttonsdiv{
+  padding-top: 10px;
 }

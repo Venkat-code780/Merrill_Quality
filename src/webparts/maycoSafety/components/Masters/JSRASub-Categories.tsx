@@ -293,39 +293,6 @@ private handleChangeClient = (selected: any) => {
 };
 
 
-//    private handleChangeClient = (selectedOption: any, actionMeta?: any) => {
-//   let returnObj: any = {};
-//   let name: string | undefined;
-//   let value: any;
-
-
-//   if (selectedOption && selectedOption.target) {
-//     name = selectedOption.target.name;
-//     value =
-//       selectedOption.target.type === "checkbox"
-//         ? selectedOption.target.checked
-//         : selectedOption.target.value;
-//   }
-  
-//   else if (actionMeta && actionMeta.name) {
-//     name = actionMeta.name;
-
-//     if (actionMeta.action === "clear") {
-//       value = null; 
-//     } else {
-//       value = selectedOption?.value;
-
-//       if (name === "CategoryId" && value !== null && value !== undefined) {
-//         value = Number(value);
-//       }
-//     }
-//   }
-
-//   if (name !== undefined) {
-//     returnObj[name] = value;
-//     this.setState(returnObj);
-//   }
-// };
 
     private closeForm= () =>{
         var formData = {...this.state.formData};
@@ -405,45 +372,40 @@ private handleChangeClient = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="FormContent border-none">
                                     <div className="title">JSRA SubCategories</div>
-                                    <div className="" id="">
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end" id="">
                                             <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="" id="divNew">
+                                            <div className="divForm">
                                                 <div className="border-top mt-3 py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
-                                                            <div className="form-floating">
-                                                                <input className="form-control" required={true} placeholder="SubCategory" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Title" title="SubCategory" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
                                                                 <label>JSRASubCategory <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                          <div className="col-md-3">
-                                                              <div className="form-floating">
+                                                              <div className="light-text">
+                                                                 <label htmlFor="CategoryDropdown">
+                                                                        JSRA Category<span className="mandatoryhastrick">*</span>
+                                                                     </label>
                                                             <div className="custom-dropdown" id="divCategory">
-                                                                <Dropdown label={"JSRA Category"} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
+                                                                <Dropdown label={""} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
                                                             </div>
                                                             </div>
                                                         </div>
-                                                        {/* <InputCheckBox 
-                                                            label="Is Active"
-                                                            name="IsActive" 
-                                                            checked={this.state.formData.IsActive} 
-                                                            onChange={this.handleChangeDynamic} 
-                                                            isdisable={false} 
-                                                            isRequired={false}   
-                                                            id="chckIsActiveLeadSource"                                                 
-                                                        /> */}
-                                                        <div className="col-md-3 btnDiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>Submit</button>
+                                                       
+                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span id="spanErrorMessage" style={{display:"none", color:"red"}}></span>
+                                               
                                             </div>
                                         }
                                     </div>

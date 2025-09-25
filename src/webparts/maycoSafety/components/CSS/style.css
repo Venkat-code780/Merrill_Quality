@@ -199,7 +199,9 @@
 }
 
 .ViewTable {
-  display: grid;
+  display: block !important;
+  overflow-x: auto !important;
+  width: 100%;
 }
 
 .ViewTable .after-title {
@@ -314,14 +316,14 @@
   padding-left: 7px !important;
   padding-top: 4px;
   border-radius: .25rem;
-  font-size: 12px;
+  font-size: inherit;
 }
 
 .light-text select {
   padding-left: 3px;
   padding-top: 4px;
   border-radius: .25rem;
-  font-size: 12px;
+  font-size: inherit;
 }
 
 .custom-dropdown {

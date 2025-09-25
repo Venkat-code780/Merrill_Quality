@@ -884,7 +884,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                             </div>
 
                             <div className="mainContent row px-4 borderLine">
-                                <div className="row py-3">
+                                <div className="row py-2">
                                     <div className="col-md-3" title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">
                                             <SearchableDropdown
@@ -958,7 +958,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="row py-3">
+                                <div className="row pb-2">
 
                                     <div className="col-md-3" title={this.state.formData.Shift}>
                                         <div className="custom-dropdown" id="divShift">

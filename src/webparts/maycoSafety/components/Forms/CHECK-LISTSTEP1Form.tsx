@@ -584,7 +584,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                             </div>
 
                             <div className="mainContent row px-4 borderLine">
-                                <div className="row py-3">
+                                <div className="row py-2">
                                     <div className="col-md-3" id="divDate">
                                         <div className="light-text">
                                         <label className=""> Date <span className="mandatoryhastrick">*</span></label>
@@ -648,7 +648,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                                         </div>
                                     </div>
                                 </div>
-                                <div className="row py-3">
+                                <div className="row pb-3">
                                     <div className="col-md-3" title={this.state.formData.Machine}>
                                         <div className="custom-dropdown" id="divMachine">
                                             <SearchableDropdown

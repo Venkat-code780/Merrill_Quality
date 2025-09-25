@@ -1,60 +1,99 @@
-
 /* Required CSS */
+.DivTables {
+  border-radius: 5px;
+  background-color: #a7d9fb6e;
+}
+
 .divSection table {
   width: 100%;
   border-collapse: collapse;
 }
-.divSection{
-   background-color: #daeff7;
-   margin-bottom: 20px;
+
+.divSection {
+  background-color: #f4f9fd;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid gray;
 }
+
 .SectionHeader {
   background-color: #e0e0e0;
   padding: 10px;
   font-weight: bold;
   color: #333;
   font-size: 20px;
+  border-radius: 5px 5px 0px 0px;
 }
+
 .bluebg {
   background-color: #56c5f0;
   font-weight: bold;
 }
 
-.RiskLevel-0
-{
-background-color:#FFFFFF ;
+.RiskLevel-0 {
+  background-color: #FFFFFF;
 }
-.RiskLevel-1
-{
-background-color:#009900 ;
+
+.RiskLevel-1 {
+  background-color: #009900;
 }
-.RiskLevel-2
-{
-background-color:#FFFF00 ;
+
+.RiskLevel-2 {
+  background-color: #FFFF00;
 }
-.RiskLevel-3
-{
-background-color:#CC0000 ;
+
+.RiskLevel-3 {
+  background-color: #CC0000;
 }
-.TablejobSteps tbody tr:nth-child(odd)
-{
-background-color: #f6f7f8;
+
+.div-RL {
+  height: 45px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 11px;
+  text-align: center;
 }
-.TablejobSteps tbody tr:nth-child(even)
+.div-RL-Total
 {
-background-color: #bfe1f8;
+  height: 135px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding-top: 55px;
+  text-align: center;
 }
+
+.WPercent-4 {
+  width: 4%;
+}
+
+.WPercent-6 {
+  width: 6%;
+}
+
+.WPercent-20 {
+  width: 20%;
+}
+
+.TablejobSteps tbody tr:nth-child(odd) {
+  background-color: #f6f7f8;
+}
+
+.TablejobSteps tbody tr:nth-child(even) {
+  background-color: #bfe1f8;
+}
+
 /* add button css */
 .addbutton {
-    background-color: #629fe9;
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-    padding: 5px;
-    margin: 10px;
-    border: 2px solid gray;
+  background-color: #629fe9;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  padding: 5px;
+  margin: 10px;
+  border: 2px solid gray;
 }
-.addbutton:hover{
-      background-color: #3675c2;
+
+.addbutton:hover {
+  background-color: #3675c2;
 
 }

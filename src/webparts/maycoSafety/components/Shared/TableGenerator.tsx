@@ -78,7 +78,7 @@ const TableGenerator = ({ columns, data, fileName,showExportExcel, ExportExcelCu
 
     return(
       <div className="table-responsive dataTables_wrapper-overflow pt-2">
-          <div className="py-2 border">
+          <div className="py-2 border m-3">
             <div className={showExportExcel ? '' : 'float-right'}>
               <div className="p-1 pb-2">
                 { data.length > 0 &&

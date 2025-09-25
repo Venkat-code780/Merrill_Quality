@@ -351,13 +351,13 @@ private async checkDuplicate() {
                                     <div className="title">UA Types</div>
                                     <div className="" id="">
                                         { !this.state.isFormOpen && 
-                                        <div className="text-end" id="">
-                                            <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
+                                        <div className="text-end me-4" id="">
+                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm">
-                                                <div className="border-top mt-3 py-3">
+                                            <div className="divForm m-3">
+                                                <div className="py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">

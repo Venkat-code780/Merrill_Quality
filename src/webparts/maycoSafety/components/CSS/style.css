@@ -258,20 +258,13 @@
 }
 
 /* Masers styles */
-.SubmitButtons {
-  line-height: 1.5;
-  transition: all .15s ease-in-out;
-  margin-bottom: 25px;
+.NewButton {
   background: #0b3e50;
   color: white;
   border: 1px solid #0b3e50;
   padding: 6px 18px;
-  margin-top: 5px;
-  margin-left: inherit;
-  font-family: inherit;
-  font-size: inherit;
-  border-radius: 0px;
-  -webkit-border-radius: 0px;
+  margin-top: 15px;
+  font-weight: bold;
 }
 
 /* input controls css for lable on border itself*/

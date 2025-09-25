@@ -49,7 +49,7 @@ export interface ActionsState {
  export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
 
     private ActionsList = "Status";
-    private txtLeadSourceName;
+    private txtStatus;
     
 
     private sp = spfi().using(SPFx(this.props.context));
@@ -82,7 +82,7 @@ export interface ActionsState {
                RootCausesid:0,
         };
 
-        this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+        this.txtStatus = React.createRef<HTMLInputElement>();
    
 
 
@@ -152,6 +152,8 @@ export interface ActionsState {
                     hideLoader();
                     this.setState({ formData,   
                      
+                    },()=>{
+                        this.txtStatus.current?.focus();
                     });
                 }
             })
@@ -164,7 +166,9 @@ export interface ActionsState {
     }
     
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 });
+        this.setState({ isFormOpen: true, ItemId: 0 },()=>{
+            this.txtStatus.current?.focus();
+        });
     }
 
    
@@ -220,7 +224,7 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                Status: { val: (this.state.formData.Title.trim()), required: true, Name: "'Status'", Type: ControlType.string, Focusid: this.txtLeadSourceName },
+                Status: { val: (this.state.formData.Title.trim()), required: true, Name: "'Status'", Type: ControlType.string, Focusid: this.txtStatus },
 
                  
             }
@@ -360,17 +364,17 @@ private async checkDuplicate() {
                                     <div className="title">Status</div>
                                     <div className="" id="">
                                         { !this.state.isFormOpen && 
-                                        <div className="text-end" id="">
-                                            <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
+                                        <div className="text-end me-4" id="">
+                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm">
-                                                <div className="border-top mt-3 py-3">
+                                            <div className="divForm m-3">
+                                                <div className="py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtStatus} maxLength={250}/>
                                                                 <label>Status <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>

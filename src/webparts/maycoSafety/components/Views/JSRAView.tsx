@@ -181,23 +181,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
 };
 
 
-  //  private handleConfirmDelete = async () => {
-  //   try {
-  //     if (this.state.deleteItemId) {
-  //       showLoader();
-  //       await this.sp.web.lists.getByTitle("WCC").items.getById(this.state.deleteItemId).delete();
-  //       this.setState({
-  //         ActionsData: this.state.ActionsData.filter(item => item.Id !== this.state.deleteItemId),
-  //         showDeleteModal: false,
-  //         deleteItemId: null,
-  //       });
-  //     }
-  //   } catch (err) {
-  //     console.error("Delete failed:", err);
-  //   } finally {
-  //     hideLoader();
-  //   }
-  // };
+
    private handleCancelDelete = () => {
     this.setState({ showDeleteModal: false, deleteItemId: null });
   };
@@ -227,7 +211,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
           <div style={{ paddingLeft: "10px", cursor: "pointer" }}>
             <FontAwesomeIcon
               icon={faTrashCan}
-              onClick={() => this.openDeleteModal(record.Id)} // 🔥 CHANGED HERE
+              onClick={() => this.openDeleteModal(record.Id)} 
             />
           </div>
         ),

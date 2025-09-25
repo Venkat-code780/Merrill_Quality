@@ -49,7 +49,7 @@ export interface ActionsState {
  export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
 
     private ActionsList = "PPETypes";
-    private txtLeadSourceName;
+    private txtPPEType;
     
 
     private sp = spfi().using(SPFx(this.props.context));
@@ -82,7 +82,7 @@ export interface ActionsState {
                RootCausesid:0,
         };
 
-        this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+        this.txtPPEType = React.createRef<HTMLInputElement>();
    
 
 
@@ -152,6 +152,8 @@ export interface ActionsState {
                     hideLoader();
                     this.setState({ formData,   
                      
+                    },()=>{
+                        this.txtPPEType.current?.focus();
                     });
                 }
             })
@@ -164,40 +166,11 @@ export interface ActionsState {
     }
     
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 });
+        this.setState({ isFormOpen: true, ItemId: 0 },()=>{
+            this.txtPPEType.current?.focus();
+        });
     }
 
-    // private async checkDuplicate(){
-    //     try{
-    //         showLoader();
-    //         var formData = {...this.state.formData};
-    //         let isValid = true;
-    //         let escapedTitle = formData.Title.replace(/'/g, "''"); 
-    //         let filterQuery = "Title eq '"+ escapedTitle +"'";
-
-    //         if( this.state.ItemId > 0 ){
-    //             filterQuery += " and Id ne "+this.state.ItemId+"";
-    //         }
-
-    //         await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
-    //             if( !res.Error && res.length > 0){
-    //                 isValid = false;
-    //                 var message = "Action already exists";
-    //                 showToast( "error", message );
-    //                 hideLoader();
-    //             }
-    //             else{
-    //                 hideLoader();
-    //             }
-    //         })
-    //         return isValid;
-    //     }
-    //     catch(e){
-    //         this.onError();
-    //         hideLoader();
-    //         console.log(e);
-    //     }
-    // }
 
 private async checkDuplicate() {
     try {
@@ -250,7 +223,7 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                Status: { val: (this.state.formData.Title.trim()), required: true, Name: "'PPE Type'", Type: ControlType.string, Focusid: this.txtLeadSourceName },
+                Status: { val: (this.state.formData.Title.trim()), required: true, Name: "'PPE Type'", Type: ControlType.string, Focusid: this.txtPPEType },
 
                  
             }
@@ -337,16 +310,6 @@ private async checkDuplicate() {
         formData[name] = value;
         this.setState({formData});
     }
-//    private handleSecondary = (event: any) => {
-//   const formData = { ...this.state.formData };
-//   const name = event.target.name as keyof typeof formData;
-//   const value = event.target.value;
-
-// formData[name as keyof typeof formData] = value as never;
-//   this.setState({ formData });
-
-//   console.log("Selected:", name, value);
-// }
 
     private handleRowClicked = (row:any,Id?: any) => {
         let ID = row.Id? row.Id:Id;
@@ -399,17 +362,17 @@ private async checkDuplicate() {
                                     <div className="title">PPE Types</div>
                                     <div>
                                         { !this.state.isFormOpen && 
-                                        <div className="text-end" id="">
-                                            <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
+                                        <div className="text-end me-4" id="">
+                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm">
-                                                <div className="border-top mt-3 py-3">
+                                            <div className="divForm m-3">
+                                                <div className="py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="PPE Type" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Title" title="PPE Type" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtPPEType} maxLength={250}/>
                                                                 <label>PPE Type <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>

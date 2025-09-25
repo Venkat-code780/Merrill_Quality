@@ -48,7 +48,7 @@ export interface ActionsState {
  export default class JSRASubCategories extends React.Component<ActionsProps, ActionsState> {
 
     private ActionsList = "JSRASubCategories";
-    private txtLeadSourceName;
+    private txtJSRASubCategory;
     private sp = spfi().using(SPFx(this.props.context));
 
     constructor(props: ActionsProps){
@@ -78,7 +78,7 @@ export interface ActionsState {
        
         };
 
-        this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+        this.txtJSRASubCategory = React.createRef<HTMLInputElement>();
     
     }
 
@@ -149,7 +149,9 @@ export interface ActionsState {
                     formData.CategoryId=item.CategoryId;
                     //formData.IsActive = item.IsActive;
                     hideLoader();
-                    this.setState({ formData });
+                    this.setState({ formData },()=>{
+                        this.txtJSRASubCategory.current?.focus();
+                    });
                 }
             })
         }
@@ -161,7 +163,9 @@ export interface ActionsState {
     }
     
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 });
+        this.setState({ isFormOpen: true, ItemId: 0 },()=>{
+            this.txtJSRASubCategory.current?.focus();
+        });
     }
 
 private async checkDuplicate() {
@@ -206,7 +210,7 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                SubCategory: { val: (this.state.formData.Title.trim()), required: true, Name: "'JSRA SubCategory'", Type: ControlType.string, Focusid: this.txtLeadSourceName },
+                SubCategory: { val: (this.state.formData.Title.trim()), required: true, Name: "'JSRA SubCategory'", Type: ControlType.string, Focusid: this.txtJSRASubCategory },
                 Category: { val: (this.state.formData.CategoryId), required: true, Name: "'JSRA Category'", Type: ControlType.reactSelect, Focusid:"divCategory"}
             }
             let isValid = formValidation.FormValidation( data );
@@ -283,7 +287,7 @@ private handleChangeClient = (selected: any) => {
     formData: {
       ...prevState.formData,
       CategoryId: !selected
-        ? null // ❌ when cleared
+        ? null 
         : selected.value ??  // if { label, value }
           selected.key ??    // if { text, key }
           selected.Id ??     // if SharePoint object
@@ -374,17 +378,17 @@ private handleChangeClient = (selected: any) => {
                                     <div className="title">JSRA SubCategories</div>
                                     <div>
                                         { !this.state.isFormOpen && 
-                                        <div className="text-end" id="">
-                                            <button type="button" id="btnNew" className="SubmitButtons" title="New" onClick={this.addNew}>
+                                        <div className="text-end me-4" id="">
+                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm">
-                                                <div className="border-top mt-3 py-3">
+                                            <div className="divForm m-3">
+                                                <div className="py-3">
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="SubCategory" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Title" title="SubCategory" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRASubCategory} maxLength={250}/>
                                                                 <label>JSRASubCategory <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>

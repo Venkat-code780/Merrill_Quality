@@ -15,7 +15,7 @@ import formValidation from "../Utilities/FormValidator";
 import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
 import  Dropdown  from "../Shared/Dropdown";
-export interface ActionsProps {
+export interface UASubTypeProps {
     match:any;
     spContext:any;
     spHttpClient: SPHttpClient;
@@ -24,7 +24,7 @@ export interface ActionsProps {
     currentUser : any,
 }
 
-export interface ActionsState {
+export interface UASubTypeState {
     ActionsData: Array<Object>;
     loading: boolean;
     pageNumber: number;
@@ -45,13 +45,13 @@ export interface ActionsState {
 
 }
 
- export default class JSRASubCategories extends React.Component<ActionsProps, ActionsState> {
+ export default class UASubType extends React.Component<UASubTypeProps, UASubTypeState> {
 
     private ActionsList = "UAMicroTypes";
-    private txtLeadSourceName;
+    private txtUAMicroType;
     private sp = spfi().using(SPFx(this.props.context));
 
-    constructor(props: ActionsProps){
+    constructor(props: UASubTypeProps){
         super(props);
 
         var lsTableProps = localStorage.getItem('PrvData');
@@ -78,7 +78,7 @@ export interface ActionsState {
        
         };
 
-        this.txtLeadSourceName = React.createRef<HTMLInputElement>();
+        this.txtUAMicroType = React.createRef<HTMLInputElement>();
     
     }
 
@@ -149,7 +149,9 @@ export interface ActionsState {
                     formData.UAType0Id=item.UAType0Id;
                     //formData.IsActive = item.IsActive;
                     hideLoader();
-                    this.setState({ formData });
+                    this.setState({ formData },()=>{
+                        this.txtUAMicroType.current?.focus();
+                    } );
                 }
             })
         }
@@ -161,7 +163,9 @@ export interface ActionsState {
     }
     
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 });
+        this.setState({ isFormOpen: true, ItemId: 0 },()=>{
+            this.txtUAMicroType.current?.focus();
+        });
     }
 
     
@@ -207,7 +211,7 @@ export interface ActionsState {
         try{
             event.preventDefault();
             var data = {
-                UAMicroType: { val: (this.state.formData.Title.trim()), required: true, Name: "'UAMicro Type'", Type: ControlType.string, Focusid: this.txtLeadSourceName },
+                UAMicroType: { val: (this.state.formData.Title.trim()), required: true, Name: "'UAMicro Type'", Type: ControlType.string, Focusid: this.txtUAMicroType },
                 UAType: { val: (this.state.formData.UAType0Id), required: true, Name: "'UA Type'", Type: ControlType.reactSelect, Focusid:"divCategory"}
             }
             let isValid = formValidation.FormValidation( data );
@@ -278,7 +282,7 @@ export interface ActionsState {
     }
 private handleChangeClient = (selected: any) => {
    document.getElementById("divCategory")?.classList.remove("searchMandatory");
-  this.setState((prevState: Readonly<ActionsState>) => ({
+  this.setState((prevState: Readonly<UASubTypeState>) => ({
     formData: {
       ...prevState.formData,
       UAType0Id: !selected
@@ -370,11 +374,16 @@ private handleChangeClient = (selected: any) => {
             
             return(
                 <React.Fragment>
-                        <div id="content" className="content p-2 pt-2">
+               
                             <div className="container-fluid">
-                                <div className="FormContent border-none">
-                                    <div className="title">UA Sub-Types</div>
-                                    <div className="">
+                                <div className="light-box border-box-shadow">
+                                          <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">UA Sub-Types</h3>
+                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                            </div>
+                            <div className="mainContent px-4 borderLine">
+                                    
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end me-4" id="">
                                             <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
@@ -386,7 +395,7 @@ private handleChangeClient = (selected: any) => {
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtUAMicroType} maxLength={250}/>
                                                                 <label>UAMicro Type <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
@@ -413,9 +422,10 @@ private handleChangeClient = (selected: any) => {
                                         }
                                     </div>
                                     <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                               </div>
                                 </div>
                             </div>
-                        </div>
+    
                 </React.Fragment>
             )
         }

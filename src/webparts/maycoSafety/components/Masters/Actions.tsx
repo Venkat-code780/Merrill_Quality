@@ -17,12 +17,12 @@ import SearchableDropdown from "../Shared/Dropdown";
 import "../CSS/Masters.css";
 
 export interface ActionsProps {
-    match:any;
-    spContext:any;
+    match: any;
+    spContext: any;
     spHttpClient: SPHttpClient;
     context: any;
     history: any;
-    currentUser : any,
+    currentUser: any,
 }
 
 export interface ActionsState {
@@ -36,57 +36,57 @@ export interface ActionsState {
     ItemId: number;
     formData: {
         Title: string;
-        RootCauseId:number;
+        RootCauseId: number;
         SecondaryRootCauseId: number;
     },
     redirect: boolean,
     isEdit: boolean,
-    displayMessage:string,
+    displayMessage: string,
     isUnauthorized: Boolean,
-    RootCauses:any,
-    SecondaryRootCauses:any
-    RootCausesid:number,
-    SecondaryRootCauseid:number,
-    FilteredSecondaryrootCauses:any
-    
+    RootCauses: any,
+    SecondaryRootCauses: any
+    RootCausesid: number,
+    SecondaryRootCauseid: number,
+    FilteredSecondaryrootCauses: any
+
 }
 
- export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
+export default class Action extends React.Component<ActionsProps, ActionsState> {
 
     private ActionsList = "Actions";
     private Title;
 
     private sp = spfi().using(SPFx(this.props.context));
 
-    constructor(props: ActionsProps){
+    constructor(props: ActionsProps) {
         super(props);
 
         var lsTableProps = localStorage.getItem('PrvData');
-        let TablePropsJson =  lsTableProps != 'null' && lsTableProps != undefined && lsTableProps != null ? JSON.parse(lsTableProps):null;
+        let TablePropsJson = lsTableProps != 'null' && lsTableProps != undefined && lsTableProps != null ? JSON.parse(lsTableProps) : null;
 
         this.state = {
             ActionsData: [],
             loading: true,
             pageNumber: TablePropsJson != null ? TablePropsJson.pageNumber : 1,
-            sortBy: TablePropsJson != null ? TablePropsJson.sortBy: 1,
-            sortOrder: TablePropsJson != null ? TablePropsJson.sortOrder == 'asc'? true: false : false,
+            sortBy: TablePropsJson != null ? TablePropsJson.sortBy : 1,
+            sortOrder: TablePropsJson != null ? TablePropsJson.sortOrder == 'asc' ? true : false : false,
             searchText: TablePropsJson != null ? TablePropsJson.searchText : "",
             isFormOpen: false,
             ItemId: 0,
             formData: {
                 Title: '',
                 RootCauseId: 0,
-                SecondaryRootCauseId:0
+                SecondaryRootCauseId: 0
             },
             redirect: false,
             isEdit: false,
-            displayMessage:'',
+            displayMessage: '',
             isUnauthorized: false,
-            RootCauses:[],
-            SecondaryRootCauses:[],
-            FilteredSecondaryrootCauses:[],
-               RootCausesid:0,
-              SecondaryRootCauseid:0
+            RootCauses: [],
+            SecondaryRootCauses: [],
+            FilteredSecondaryrootCauses: [],
+            RootCausesid: 0,
+            SecondaryRootCauseid: 0
         };
 
         this.Title = React.createRef<HTMLInputElement>();
@@ -94,155 +94,156 @@ export interface ActionsState {
 
     }
 
-    public componentDidMount(){
+    public componentDidMount() {
         highlightCurrentNav("liActions");
-               document.title = "Mayco - Safety | Actions";
+        document.title = "Mayco - Safety | Actions";
         this.loadListData();
     }
 
-    public componentDidUpdate(){
-        if( this.state.redirect) {
+    public componentDidUpdate() {
+        if (this.state.redirect) {
             this.loadListData();
         }
     }
 
-    private async loadListData(){
-        try{
+    private async loadListData() {
+        try {
             showLoader();
-            this.setState({ redirect: false});
-             let lsTableProps = {'PageNumber':1,"sortOrder":false,"sortBy":1,'SearchKey':null};
+            this.setState({ redirect: false });
+            let lsTableProps = { 'PageNumber': 1, "sortOrder": false, "sortBy": 1, 'SearchKey': null };
             localStorage.setItem('PrvData', JSON.stringify(lsTableProps));
 
-           let  [Actions,RootCauses,SecondaryRootCauses]=await Promise.all([
-            this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Title,Modified,RootCause/Title,RootCause/Id,SecondaryRootCause/Title,SecondaryRootCause/Id,*').expand('RootCause,SecondaryRootCause').orderBy("Modified",false)(),
-            this.sp.web.lists.getByTitle('RootCauses').items.top(2000).orderBy("Title", true)(),
-            this.sp.web.lists.getByTitle('SecondaryRootCauses').items.top(2000).orderBy("Title", true)(),
-           ])
+            let [Actions, RootCauses, SecondaryRootCauses] = await Promise.all([
+                this.sp.web.lists.getByTitle(this.ActionsList).items.top(2000).select('Title,Modified,RootCause/Title,RootCause/Id,SecondaryRootCause/Title,SecondaryRootCause/Id,*').expand('RootCause,SecondaryRootCause').orderBy("Modified", false)(),
+                this.sp.web.lists.getByTitle('RootCauses').items.top(2000).orderBy("Title", true)(),
+                this.sp.web.lists.getByTitle('SecondaryRootCauses').items.top(2000).orderBy("Title", true)(),
+            ])
 
-           let tableData: { Id: any; Modified:any; Title: any; RootCauseId: any; SecondaryRootCauseId: any; RootCauseTitle: any; SecondaryRootCauseTitle: any; }[]=[];
-           Actions.forEach(Act=>{
-             let tableObj = {
-                                Id: Act.Id,
-                                Title: Act.Title,
-                                RootCauseId:Act.RootCause.Id,
-                                SecondaryRootCauseId:Act.SecondaryRootCause.Id,
-                                RootCauseTitle:Act.RootCause.Title,
-                                SecondaryRootCauseTitle:Act.SecondaryRootCause.Title,
-                                Modified: Act.Modified
-                            }
+            let tableData: { Id: any; Modified: any; Title: any; RootCauseId: any; SecondaryRootCauseId: any; RootCauseTitle: any; SecondaryRootCauseTitle: any; }[] = [];
+            Actions.forEach(Act => {
+                let tableObj = {
+                    Id: Act.Id,
+                    Title: Act.Title,
+                    RootCauseId: Act.RootCause.Id,
+                    SecondaryRootCauseId: Act.SecondaryRootCause.Id,
+                    RootCauseTitle: Act.RootCause.Title,
+                    SecondaryRootCauseTitle: Act.SecondaryRootCause.Title,
+                    Modified: Act.Modified
+                }
                 tableData.push(tableObj);
-           })
+            })
 
-             let RootCaueseOptions = RootCauses.map((item: any) => ({
-             label: item.Title,   
-             value: item.Id       
-             }));
-                let SecondaryRootCauseOptions = SecondaryRootCauses.map((item: any) => ({
-                            Id: item.Id,
-                          Title: item.Title,
-                         RootCauseId: item.RootCauseId ?? item.RootCause?.Id,  // ensure relation
-                   }));
+            let RootCaueseOptions = RootCauses.map((item: any) => ({
+                label: item.Title,
+                value: item.Id
+            }));
+            let SecondaryRootCauseOptions = SecondaryRootCauses.map((item: any) => ({
+                Id: item.Id,
+                Title: item.Title,
+                RootCauseId: item.RootCauseId ?? item.RootCause?.Id,  // ensure relation
+            }));
 
-           
-        this.setState({ ActionsData: tableData,RootCauses:RootCaueseOptions,SecondaryRootCauses:SecondaryRootCauseOptions,FilteredSecondaryrootCauses:[]});
+
+            this.setState({ ActionsData: tableData, RootCauses: RootCaueseOptions, SecondaryRootCauses: SecondaryRootCauseOptions, FilteredSecondaryrootCauses: [] });
         }
-        catch(e){
+        catch (e) {
             this.onError();
             console.log(e);
         }
-        finally{
+        finally {
             hideLoader();
         }
     }
 
-    private async editItem( Id: number ){
-        try{
-             var formData = {...this.state.formData};
+    private async editItem(Id: number) {
+        try {
+            var formData = { ...this.state.formData };
             formData.Title = '';
-          
+
             showLoader();
-            this.setState({ isFormOpen: true, ItemId: Id, formData});
-            await this.sp.web.lists.getByTitle(this.ActionsList).items.getById(Id)().then( (item:any) => {
-                if( item.Error ){
+            this.setState({ isFormOpen: true, ItemId: Id, formData });
+            await this.sp.web.lists.getByTitle(this.ActionsList).items.getById(Id)().then((item: any) => {
+                if (item.Error) {
                     hideLoader();
                     console.log(item.Error);
                 }
-                else{
+                else {
                     formData.Title = item.Title;
-                    formData.RootCauseId=item.RootCauseId;
-                    formData.SecondaryRootCauseId=item.SecondaryRootCauseId;
-                     const filteredSecondary = this.state.SecondaryRootCauses
-                     .filter((src: any) => src.RootCauseId === item.RootCauseId)
-                     .map((src: any) => ({
-                     label: src.Title,
-                      value: src.Id,
-                     }));
+                    formData.RootCauseId = item.RootCauseId;
+                    formData.SecondaryRootCauseId = item.SecondaryRootCauseId;
+                    const filteredSecondary = this.state.SecondaryRootCauses
+                        .filter((src: any) => src.RootCauseId === item.RootCauseId)
+                        .map((src: any) => ({
+                            label: src.Title,
+                            value: src.Id,
+                        }));
                     //formData.IsActive = item.IsActive;
                     hideLoader();
-                    this.setState({ formData,
+                    this.setState({
+                        formData,
                         RootCausesid: item.RootCauseId,
-                        FilteredSecondaryrootCauses: filteredSecondary 
-                    },() =>{
-            this.Title.current?.focus();
-        } );
+                        FilteredSecondaryrootCauses: filteredSecondary
+                    }, () => {
+                        this.Title.current?.focus();
+                    });
                 }
             })
         }
-        catch(e){
+        catch (e) {
             this.onError();
             hideLoader();
             console.log(e);
         }
     }
-    
+
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 },() =>{
+        this.setState({ isFormOpen: true, ItemId: 0 }, () => {
             this.Title.current?.focus();
-        } 
-         ); 
-    
-    
+        }
+        );
+
+
 
     }
 
 
-private async checkDuplicate() {
-    try {
-        showLoader();
-        const formData = { ...this.state.formData };
+    private async checkDuplicate() {
+        try {
+            showLoader();
+            const formData = { ...this.state.formData };
 
-        let isValid = true;
+            let isValid = true;
 
-        // Escape single quotes in Title
-        const escapedTitle = formData.Title.replace(/'/g, "''");
+            // Escape single quotes in Title
+            const escapedTitle = formData.Title.replace(/'/g, "''");
 
-        // Build OData filter for all three fields
-        // Note: Adjust property names according to your SharePoint list fields
-        let filterQuery = `Title eq '${escapedTitle}' and RootCauseId eq ${formData.RootCauseId} and SecondaryRootCauseId eq ${formData.SecondaryRootCauseId}`;
+            // Build OData filter for all three fields
+            // Note: Adjust property names according to your SharePoint list fields
+            let filterQuery = `Title eq '${escapedTitle}' and RootCauseId eq ${formData.RootCauseId} and SecondaryRootCauseId eq ${formData.SecondaryRootCauseId}`;
 
-        if (this.state.ItemId > 0) {
-            // Exclude the current item (for update scenario)
-            filterQuery += ` and Id ne ${this.state.ItemId}`;
+            if (this.state.ItemId > 0) {
+                // Exclude the current item (for update scenario)
+                filterQuery += ` and Id ne ${this.state.ItemId}`;
+            }
+
+            const results = await this.sp.web.lists
+                .getByTitle(this.ActionsList)
+                .items.filter(filterQuery)();
+
+            if (results && results.length > 0) {
+                isValid = false;
+                showToast("error", "Record already exists");
+            }
+
+            hideLoader();
+            return isValid;
+        } catch (e) {
+            this.onError();
+            hideLoader();
+            console.error(e);
+            return false;
         }
-
-        const results = await this.sp.web.lists
-            .getByTitle(this.ActionsList)
-            .items.filter(filterQuery)();
-
-        if (results && results.length > 0) {
-            isValid = false;
-            showToast("error", "Record already exists");
-        }
-
-        hideLoader();
-        return isValid;
-    } catch (e) {
-        this.onError();
-        hideLoader();
-        console.error(e);
-        return false;
     }
-}
 
 
 
@@ -252,32 +253,32 @@ private async checkDuplicate() {
 
 
 
-    private handleSubmit =async (event:any) =>{
+    private handleSubmit = async (event: any) => {
         showLoader();
-        try{
+        try {
             event.preventDefault();
             var data = {
                 Action: { val: (this.state.formData.Title.trim()), required: true, Name: "'Action'", Type: ControlType.string, Focusid: this.Title },
-                RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: "'Root Cause'", Type: ControlType.reactSelect, Focusid:'divRootcauese' },
-                SecondRootCause: { val: (this.state.formData.SecondaryRootCauseId), required: true, Name: "'Secondary Root Cause'", Type: ControlType.reactSelect, Focusid:'divSecondaryRootcause' },
+                RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: "'Root Cause'", Type: ControlType.reactSelect, Focusid: 'divRootcauese' },
+                SecondRootCause: { val: (this.state.formData.SecondaryRootCauseId), required: true, Name: "'Secondary Root Cause'", Type: ControlType.reactSelect, Focusid: 'divSecondaryRootcause' },
 
-                 
+
             }
-            let isValid = formValidation.FormValidation( data );
+            let isValid = formValidation.FormValidation(data);
 
-            if( isValid.status ){ 
+            if (isValid.status) {
                 let validDuplicate = await this.checkDuplicate();
-                
-                if( validDuplicate ){
+
+                if (validDuplicate) {
                     this.InsertOrUpdateDate();
                 }
 
-            }else{
-                showToast( "error", isValid.message  );
+            } else {
+                showToast("error", isValid.message);
                 hideLoader();
             }
         }
-        catch(e){
+        catch (e) {
             this.onError();
             hideLoader();
             console.log(e);
@@ -285,24 +286,24 @@ private async checkDuplicate() {
     }
 
     private InsertOrUpdateDate() {
-        try{
+        try {
             let itemId = this.state.ItemId;
-            let formData = {...this.state.formData};
+            let formData = { ...this.state.formData };
             formData.Title = formData.Title ? formData.Title.trim() : "";
-            if( itemId > 0 ){
-                this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
+            if (itemId > 0) {
+                this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update(formData).then((res) => {
                     let msg = "Action updated successfully";
-                    this.setState({displayMessage: msg, redirect:true});
+                    this.setState({ displayMessage: msg, redirect: true });
                     this.onSuccess();
                 }, (error) => {
                     console.log(error);
                     this.onError();
                 })
             }
-            else{
-                this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then( (res) => {
+            else {
+                this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then((res) => {
                     let msg = "Action submitted successfully";
-                    this.setState({displayMessage: msg, redirect:true});
+                    this.setState({ displayMessage: msg, redirect: true });
                     this.onSuccess();
                 }, (error) => {
                     console.log(error);
@@ -310,85 +311,85 @@ private async checkDuplicate() {
                 })
             }
         }
-        catch(e){
+        catch (e) {
             this.onError();
             hideLoader();
             console.log(e);
         }
     }
 
-    private onSuccess = ( ) =>{
+    private onSuccess = () => {
         this.closeForm();
-        showToast( "success", this.state.displayMessage );
+        showToast("success", this.state.displayMessage);
         hideLoader();
     }
 
-    private onError = () =>{
-        showToast( "error", ActionStatus.Error );
+    private onError = () => {
+        showToast("error", ActionStatus.Error);
         hideLoader();
     }
 
-    private closeForm= () =>{
-        var formData = {...this.state.formData};
+    private closeForm = () => {
+        var formData = { ...this.state.formData };
         formData.Title = '';
-        formData.RootCauseId=0;
-        formData.SecondaryRootCauseId=0;
-          //formData.IsActive = true;
-        this.setState({ isFormOpen: false, formData,FilteredSecondaryrootCauses:[] });
+        formData.RootCauseId = 0;
+        formData.SecondaryRootCauseId = 0;
+        //formData.IsActive = true;
+        this.setState({ isFormOpen: false, formData, FilteredSecondaryrootCauses: [] });
     }
 
-    private onPageChange =(pageIndex:any)=>{
-        this.setState({pageNumber: pageIndex});  
+    private onPageChange = (pageIndex: any) => {
+        this.setState({ pageNumber: pageIndex });
     }
 
     private handleChangeDynamic = (event: any) => {
-        const formData:any = {...this.state.formData};
+        const formData: any = { ...this.state.formData };
         const name = event.target.name;
         let value = event.target.type == 'checkbox' ? event.target.checked : event.target.value;
         formData[name] = value;
-        this.setState({formData});
+        this.setState({ formData });
     }
 
 
-private handleChangeClient = (selected: any) => {
-  const selectedRootCauseId = selected?.value ?? 0;
-    document.getElementById("divRootcauese")?.classList.remove("searchMandatory");
-  const filteredSecondaryCauses = this.state.SecondaryRootCauses
-    .filter((sub: any) => sub.RootCauseId === selectedRootCauseId) // ✅ filter correctly
-    .map((sub: any) => ({
-      label: sub.Title,
-      value: sub.Id,
-    }));
+    private handleChangeClient = (selected: any) => {
+        const selectedRootCauseId = selected?.value ?? 0;
+        document.getElementById("divRootcauese")?.classList.remove("searchMandatory");
+        const filteredSecondaryCauses = this.state.SecondaryRootCauses
+            .filter((sub: any) => sub.RootCauseId === selectedRootCauseId) // ✅ filter correctly
+            .map((sub: any) => ({
+                label: sub.Title,
+                value: sub.Id,
+            }));
 
-  this.setState((prevState) => ({
-    formData: {
-      ...prevState.formData,
-      RootCauseId: selectedRootCauseId,       // correct field
-      SecondaryRootCauseId: 0                 // reset when root cause changes
-    },
-    FilteredSecondaryrootCauses: filteredSecondaryCauses
-  }));
-};
+        this.setState((prevState) => ({
+            formData: {
+                ...prevState.formData,
+                RootCauseId: selectedRootCauseId,       // correct field
+                SecondaryRootCauseId: 0                 // reset when root cause changes
+            },
+            FilteredSecondaryrootCauses: filteredSecondaryCauses
+        }));
+    };
 
-private handleSecondaryRootCauseChange = (selected: any) => {
-  const selectedSecondaryId = selected?.value ?? 0;
-    document.getElementById("divSecondaryRootcause")?.classList.remove("searchMandatory");
+    private handleSecondaryRootCauseChange = (selected: any) => {
+        const selectedSecondaryId = selected?.value ?? 0;
+        document.getElementById("divSecondaryRootcause")?.classList.remove("searchMandatory");
 
-  this.setState((prevState) => ({
-    formData: {
-      ...prevState.formData,
-      SecondaryRootCauseId: selectedSecondaryId   // correct field
-    }
-  }));
-};
+        this.setState((prevState) => ({
+            formData: {
+                ...prevState.formData,
+                SecondaryRootCauseId: selectedSecondaryId   // correct field
+            }
+        }));
+    };
 
 
-    private handleRowClicked = (row:any,Id?: any) => {
-        let ID = row.Id? row.Id:Id;
+    private handleRowClicked = (row: any, Id?: any) => {
+        let ID = row.Id ? row.Id : Id;
         this.editItem(ID);
     }
 
-    public render(){
+    public render() {
         const columns = [
             {
                 name: "Edit",
@@ -399,7 +400,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                     return (
                         <React.Fragment>
                             <div>
-                                <button type="button" id="btnEdit" className="btn" title="Edit" onClick={ () =>this.editItem(record.Id)}>
+                                <button type="button" id="btnEdit" className="btn" title="Edit" onClick={() => this.editItem(record.Id)}>
                                     <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon>
                                 </button>
                             </div>
@@ -412,7 +413,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                 name: "Action",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
-                cell: (record: { Title:  any; }) => {
+                cell: (record: { Title: any; }) => {
                     return (
                         record.Title
                     );
@@ -422,7 +423,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                 name: "Root Cause",
                 selector: (row: { RootCauseTitle: any; }, i: any) => row.RootCauseTitle,
                 sortable: true,
-                cell: (record: { RootCauseTitle:  any; }) => {
+                cell: (record: { RootCauseTitle: any; }) => {
                     return (
                         record.RootCauseTitle
                     );
@@ -432,7 +433,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                 name: "Secondary Root Cause",
                 selector: (row: { SecondaryRootCauseTitle: any; }, i: any) => row.SecondaryRootCauseTitle,
                 sortable: true,
-                cell: (record: { SecondaryRootCauseTitle:  any; }) => {
+                cell: (record: { SecondaryRootCauseTitle: any; }) => {
                     return (
                         record.SecondaryRootCauseTitle
                     );
@@ -440,68 +441,74 @@ private handleSecondaryRootCauseChange = (selected: any) => {
             }
         ];
 
-        if(this.state.isUnauthorized){
+        if (this.state.isUnauthorized) {
             return <Navigate to="/UnAuthorized" />
         }
-        else{
-            
-            return(
+        else {
+
+            return (
                 <React.Fragment>
-                        <div id="content" className="content p-2 pt-2">
-                            <div className="container-fluid">
-                                <div className="FormContent border-none">
-                                    <div className="title">Actions</div>
-                                    <div>
-                                        { !this.state.isFormOpen && 
+                    <div className="container-fluid">
+                        <div className="light-box border-box-shadow">
+
+                            <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">Actions</h3>
+                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                            </div>
+                            <div className="mainContent px-4 borderLine">
+
+                                <div>
+                                    {!this.state.isFormOpen &&
                                         <div className="text-end me-4" id="">
                                             <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
-                                        </div> }
-                                        { this.state.isFormOpen &&
-                                            <div className="divForm m-3">
-                                                <div className="py-3">
-                                                    <div className="row">
-                                                        <div className="col-md-3">
-                                                            <div className="light-text">
-                                                                <input className="form-control" required={true} placeholder="" type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250}/>
-                                                                <label>Action <span className="mandatoryhastrick">*</span></label>
+                                        </div>}
+
+                                    {this.state.isFormOpen &&
+                                        <div className="divForm m-3">
+                                            <div className="py-3">
+                                                <div className="row">
+                                                    <div className="col-md-3">
+                                                        <div className="light-text">
+                                                            <input className="form-control" required={true} placeholder="" type="text" name="Title" title="LeadSource" value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250} />
+                                                            <label>Action <span className="mandatoryhastrick">*</span></label>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-3">
+                                                        <div className="light-text">
+                                                            <label htmlFor="ddlRootCause">
+                                                                Root Cause <span className="mandatoryhastrick">*</span>
+                                                            </label>
+                                                            <div className="custom-dropdown" id="divRootcauese">
+                                                                <SearchableDropdown label={"Root Cause"} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                             </div>
                                                         </div>
-                                                        <div className="col-md-3">
-                                                            <div className="light-text">
-                                                                     <label htmlFor="ddlRootCause">
-                                                                        Root Cause <span className="mandatoryhastrick">*</span>
-                                                                     </label>
-                                                                     <div className="custom-dropdown" id="divRootcauese">
-                                                                    <SearchableDropdown label={"Root Cause"} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
-                                                                 </div>
-                                                              </div>
-                                                        </div>
-                                                    
-                                                        <div className="col-md-3">
-                                                            <div className="light-text">
-                                                                  <label htmlFor="ddlSecondaryRootCause">
-                                                                        Secondary Root Cause <span className="mandatoryhastrick">*</span>
-                                                                     </label>
-                                                                   <div className="custom-dropdown" id="divSecondaryRootcause">
+                                                    </div>
+
+                                                    <div className="col-md-3">
+                                                        <div className="light-text">
+                                                            <label htmlFor="ddlSecondaryRootCause">
+                                                                Secondary Root Cause <span className="mandatoryhastrick">*</span>
+                                                            </label>
+                                                            <div className="custom-dropdown" id="divSecondaryRootcause">
                                                                 <SearchableDropdown label={""} Title={"SecondaryRootCause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
-                                                             </div>
-                                                        
-                                                              </div>
+                                                            </div>
+
                                                         </div>
-                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
-                                                            <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
-                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                        <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
+                                                        <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        }
-                                    </div>
-                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber}  prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                        </div>
+                                    }
                                 </div>
+                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>
+                    </div>
                 </React.Fragment>
             )
         }

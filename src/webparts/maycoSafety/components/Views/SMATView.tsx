@@ -12,11 +12,11 @@ import DateUtilities from "../Utilities/DateUtilities"
 import ModalApprovePopUp from "../Shared/ModalApprovePopUp";
 import Serachbledropdown from "../Shared/Dropdown";
 
-export interface ActionsProps {
+export interface SMATProps {
   context: any;
 }
 
-export interface ActionsState {
+export interface SMATState {
   ActionsData: Array<{
     Id: number;
     WCCDate:string;
@@ -50,10 +50,10 @@ export interface ActionsState {
   selectedYear: string | undefined;
 }
 
-export default class SMATView extends React.Component<ActionsProps,ActionsState> {
+export default class SMATView extends React.Component<SMATProps,SMATState> {
   private sp = spfi().using(SPFx(this.props.context));
 
-  constructor(props: ActionsProps) {
+  constructor(props: SMATProps) {
     super(props);
     this.state = {
       ActionsData: [],
@@ -85,7 +85,8 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
 
       const tableData = items.map((item: any) => ({
         Id: item.Id,
-        WCCDate:item.WCCDate,
+          WCCDate: DateUtilities.getDateMMDDYYYY(item.WCCDate), 
+        WCCDateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.WCCDate)}</span>${DateUtilities.getDateMMDDYYYY(item.WCCDate)}`, 
         Year:item.Year,
         ShiftType:item.ShiftType,
         AuditorName:item.AuditorName,
@@ -108,7 +109,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
         .filter((y) => !isNaN(y));
 
       let yearOptions: { label: string; value: string }[] = [
-        { label: "All", value: "All" }, // 🔹 Add "All" as first option
+        { label: "All", value: "All" }, //  Add "All" as first option
       ];
 
       if (yearList.length > 0) {
@@ -143,6 +144,7 @@ private handleConfirmDelete = async (id?: number | null) => {
   try {
     if (id != null) {
       showLoader();
+      this.setState({ showDeleteModal: false});
       const parentId = id;
 
       // Delete children
@@ -160,7 +162,6 @@ private handleConfirmDelete = async (id?: number | null) => {
       // Update UI
       this.setState(prev => ({
         ActionsData: prev.ActionsData.filter(item => item.Id !== parentId),
-        showDeleteModal: false,
         deleteItemId: null,
       }));
     }
@@ -200,13 +201,18 @@ private handleConfirmDelete = async (id?: number | null) => {
           <div style={{ paddingLeft: "10px", cursor: "pointer" }}>
             <FontAwesomeIcon
               icon={faTrashCan}
-              onClick={() => this.openDeleteModal(record.Id)} // 🔥 CHANGED HERE
+              onClick={() => this.openDeleteModal(record.Id)} // CHANGED HERE
             />
           </div>
         ),
       },,
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
-      { name: "Date ", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.WCCDate) , sortable: true },
+        {
+        name: "Date",
+        selector: (row: any) => row.WCCDateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.WCCDateForGrid }} />,
+        sortable: true
+      },
       { name: "Year", selector: (row: any) =>row.Year, sortable: true },
       { name: "Shifts", selector: (row: any) => row.ShiftType, sortable: true },
       { name: "Auditor's Name", selector: (row: any) => row.AuditorName, sortable: true },
@@ -231,13 +237,16 @@ private handleConfirmDelete = async (id?: number | null) => {
                  }
     return (
         <div className="container-fluid">
-          <div className="FormContent border-none">
-            <div className="title">SMAT</div>
+          <div className="light-box border-box-shadow">
+             <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">SMAT</h3>
+                            </div>
+                 <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">
               <div className="col-md-3">
                   <div className="light-text">
                    <label htmlFor="">
-                    Year Filter <span className="mandatoryhastrick">*</span>
+                    Year Filter
                   </label>
                 <div className="custom-dropdown" id="divRootcauese">
             <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
@@ -263,6 +272,7 @@ private handleConfirmDelete = async (id?: number | null) => {
           onConfirm={()=>this.handleConfirmDelete(this.state.deleteItemId)}
           onCancel={this.handleCancelDelete}
         />
+          </div>
           </div>
         </div>
       </div>

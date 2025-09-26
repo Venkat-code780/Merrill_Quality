@@ -12,11 +12,11 @@ import DateUtilities from "../Utilities/DateUtilities"
 import ModalApprovePopUp from "../Shared/ModalApprovePopUp";
 import Serachbledropdown from "../Shared/Dropdown";
 
-export interface ActionsProps {
+export interface JSRAProps {
   context: any;
 }
 
-export interface ActionsState {
+export interface JSRAState {
   ActionsData: Array<{
     Id: number;
     Date:string;
@@ -52,10 +52,10 @@ export interface ActionsState {
   selectedYear: string | undefined;
 }
 
-export default class SMATView extends React.Component<ActionsProps,ActionsState> {
+export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
   private sp = spfi().using(SPFx(this.props.context));
 
-  constructor(props: ActionsProps) {
+  constructor(props: JSRAProps) {
     super(props);
     this.state = {
       ActionsData: [],
@@ -87,7 +87,9 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
 
       const tableData = items.map((item: any) => ({
         Id: item.Id,
-        Date:item.Date,
+         Date: DateUtilities.getDateMMDDYYYY(item.Date), 
+      DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
+    
         Plant:item.Plant,
         Department:item.Department,
         Zone:item.Zone,
@@ -103,7 +105,8 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
         Confined_x0020_Space_x0020_Permi:item.Confined_x0020_Space_x0020_Permi,
         Confined_x0020_Space_x0020_Permi0:item.Confined_x0020_Space_x0020_Permi0,
         Supervisor_x0020_Name:item.Supervisor_x0020_Name,
-        Supervisor_x0020_Date:item.Supervisor_x0020_Date,
+          Supervisor_x0020_Date: DateUtilities.getDateMMDDYYYY(item.Supervisor_x0020_Date), 
+      Supervisor_x0020_DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Supervisor_x0020_Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Supervisor_x0020_Date)}`,
         Year:item.Year,
         Tool_x0020_Number:item.Tool_x0020_Number
    
@@ -146,8 +149,9 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
     try {
       if (id != null) {
         showLoader();
+        this.setState({ showDeleteModal: false });
         const parentId = id;
-  
+        
         // Delete children
         const childItems = await this.sp.web.lists
           .getByTitle("JSRA Line")
@@ -163,7 +167,6 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
         // Update UI
         this.setState(prev => ({
           ActionsData: prev.ActionsData.filter(item => item.Id !== parentId),
-          showDeleteModal: false,
           deleteItemId: null,
         }));
       }
@@ -217,7 +220,12 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
         ),
       },,
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
-      { name: "Date ", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Date) , sortable: true },
+       {
+        name: "Date",
+        selector: (row: any) => row.DateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        sortable: true
+      },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
       { name: "Department", selector: (row: any) => row.Department, sortable: true },
       { name: "Zone", selector: (row: any) => row.Zone, sortable: true },
@@ -234,7 +242,12 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
       { name: "Confined Space Permit Required", selector: (row: any) => row.Confined_x0020_Space_x0020_Permi? "Yes":"No", sortable: true },
       { name: "Confined Space Permit Acquired", selector: (row: any) => row.Confined_x0020_Space_x0020_Permi0? "Yes":"No", sortable: true },
       { name: "Supervisor Name", selector: (row: any) => row.Supervisor_x0020_Name, sortable: true },
-      { name: "Supervisor Date", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Supervisor_x0020_Date) , sortable: true },
+        {
+        name: "Supervisor Date",
+        selector: (row: any) => row.Supervisor_x0020_DateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Supervisor_x0020_DateForGrid }} />,
+        sortable: true
+      },
       { name: "Year", selector: (row: any) =>row.Year, sortable: true },
       
     ];
@@ -246,13 +259,16 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
                  }
     return (
         <div className="container-fluid">
-          <div className="FormContent border-none">
-            <div className="title">JSRA</div>
+          <div className="light-box border-box-shadow">
+              <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">JSRA</h3>
+                            </div>
+                            <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">
             <div className="col-md-3">
                   <div className="light-text">
                    <label htmlFor="">
-                    Year Filter <span className="mandatoryhastrick">*</span>
+                    Year Filter
                   </label>
                 <div className="custom-dropdown" id="divRootcauese">
             <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
@@ -278,6 +294,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
           onConfirm={()=>this.handleConfirmDelete(this.state.deleteItemId)}
           onCancel={this.handleCancelDelete}
         />
+          </div>
           </div>
         </div>
       </div>

@@ -11,11 +11,11 @@ import { faEdit,faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import DateUtilities from "../Utilities/DateUtilities"
 import ModalApprovePopUp from "../Shared/ModalApprovePopUp";
 import Serachbledropdown from "../Shared/Dropdown";
-export interface ActionsProps {
+export interface EHSProps {
   context: any;
 }
 
-export interface ActionsState {
+export interface EHSState {
   ActionsData: Array<{
     Id: number;
     Date:string;
@@ -48,10 +48,10 @@ export interface ActionsState {
   selectedYear: string | undefined;
 }
 
-export default class SMATView extends React.Component<ActionsProps,ActionsState> {
+export default class EHSView extends React.Component<EHSProps,EHSState> {
   private sp = spfi().using(SPFx(this.props.context));
 
-  constructor(props: ActionsProps) {
+  constructor(props: EHSProps) {
     super(props);
     this.state = {
       ActionsData: [],
@@ -83,7 +83,9 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
 
       const tableData = items.map((item: any) => ({
         Id: item.Id,
-        Date:item.Date,
+         Date: DateUtilities.getDateMMDDYYYY(item.Date), 
+      DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
+  
         Year:item.Year,
         Shifts:item.Shifts,
         AuditorName:item.AuditorName,
@@ -136,6 +138,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
     try {
       if (id != null) {
         showLoader();
+        this.setState({ showDeleteModal: false });
         const parentId = id;
         // Delete children
         const childItems = await this.sp.web.lists
@@ -156,7 +159,6 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
         // Update UI
         this.setState(prev => ({
           ActionsData: prev.ActionsData.filter(item => item.Id !== parentId),
-          showDeleteModal: false,
           deleteItemId: null,
         }));
       }
@@ -188,7 +190,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
                     return (
                       <React.Fragment>
                         <div style={{ paddingLeft: '10px' }}>
-                          <NavLink title="Edit" className="csrLink ms-draggable" to={`/SMATForm/${record.Id}`}>
+                          <NavLink title="Edit" className="csrLink ms-draggable" to={`/EHSForm/${record.Id}`}>
                             <FontAwesomeIcon icon={faEdit} ></FontAwesomeIcon>
                           </NavLink>
                         </div>
@@ -209,7 +211,12 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
         ),
       },,
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
-      { name: "Date ", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Date) , sortable: true },
+       {
+        name: "Date",
+        selector: (row: any) => row.DateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        sortable: true
+      },
       { name: "Year", selector: (row: any) =>row.Year, sortable: true },
       { name: "Shifts", selector: (row: any) => row.Shifts, sortable: true },
       { name: "Auditor's Name", selector: (row: any) => row.AuditorName, sortable: true },
@@ -228,18 +235,21 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
   const filteredData =this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter( (item) => item.Year === this.state.selectedYear ): this.state.ActionsData;
 
        if(this.state.redirect){
-                    let url = `/SMATForm/${this.state.ItemID}`;
+                    let url = `/EHSForm/${this.state.ItemID}`;
                 return (<Navigate to={url}/>);
                  }
     return (
         <div className="container-fluid">
-          <div className="FormContent border-none">
-            <div className="title">EHS</div>
+          <div className="light-box border-box-shadow">
+              <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">EHS</h3>
+                            </div>
+                    <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">
              <div className="col-md-3">
                   <div className="light-text">
                    <label htmlFor="">
-                    Year Filter <span className="mandatoryhastrick">*</span>
+                    Year Filter
                   </label>
                 <div className="custom-dropdown" id="divRootcauese">
             <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
@@ -265,6 +275,7 @@ export default class SMATView extends React.Component<ActionsProps,ActionsState>
           onConfirm={()=>this.handleConfirmDelete(this.state.deleteItemId)}
           onCancel={this.handleCancelDelete}
         />
+          </div>
           </div>
         </div>
       </div>

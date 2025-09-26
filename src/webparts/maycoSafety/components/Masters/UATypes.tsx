@@ -15,7 +15,7 @@ import formValidation from "../Utilities/FormValidator";
 import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
 
-export interface ActionsProps {
+export interface UATypeProps {
     match:any;
     spContext:any;
     spHttpClient: SPHttpClient;
@@ -24,7 +24,7 @@ export interface ActionsProps {
     currentUser : any,
 }
 
-export interface ActionsState {
+export interface UATypeState {
     ActionsData: Array<Object>;
     loading: boolean;
     pageNumber: number;
@@ -46,7 +46,7 @@ export interface ActionsState {
     
 }
 
- export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
+ export default class AuditCategories extends React.Component<UATypeProps, UATypeState> {
 
     private ActionsList = "UATypes";
     private txtLeadSourceName;
@@ -54,7 +54,7 @@ export interface ActionsState {
 
     private sp = spfi().using(SPFx(this.props.context));
 
-    constructor(props: ActionsProps){
+    constructor(props: UATypeProps){
         super(props);
 
         var lsTableProps = localStorage.getItem('PrvData');
@@ -152,6 +152,8 @@ export interface ActionsState {
                     hideLoader();
                     this.setState({ formData,   
                      
+                    },()=>{
+                        this.txtLeadSourceName.current?.focus();
                     });
                 }
             })
@@ -164,7 +166,9 @@ export interface ActionsState {
     }
     
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 });
+        this.setState({ isFormOpen: true, ItemId: 0 },()=>{
+            this.txtLeadSourceName.current?.focus();
+        });
     }
 
   
@@ -345,11 +349,15 @@ private async checkDuplicate() {
             
             return(
                 <React.Fragment>
-                        <div id="content" className="content p-2 pt-2">
+    
                             <div className="container-fluid">
-                                <div className="FormContent border-none">
-                                    <div className="title">UA Types</div>
-                                    <div className="" id="">
+                                <div className="light-box border-box-shadow">
+                                       <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">UA Types</h3>
+                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                            </div>
+                                  <div className="mainContent px-4 borderLine">
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end me-4" id="">
                                             <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
@@ -378,9 +386,10 @@ private async checkDuplicate() {
                                         }
                                     </div>
                                     <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                               </div>
                                 </div>
                             </div>
-                        </div>
+          
                 </React.Fragment>
             )
         }

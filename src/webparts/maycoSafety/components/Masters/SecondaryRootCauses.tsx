@@ -15,7 +15,7 @@ import formValidation from "../Utilities/FormValidator";
 import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
 import SearchableDropdown from "../Shared/Dropdown"; 
-export interface ActionsProps {
+export interface SecondaryRootCausesProps {
     match:any;
     spContext:any;
     spHttpClient: SPHttpClient;
@@ -24,7 +24,7 @@ export interface ActionsProps {
     currentUser : any,
 }
 
-export interface ActionsState {
+export interface SecondaryRootCausesState {
     ActionsData: Array<Object>;
     loading: boolean;
     pageNumber: number;
@@ -46,14 +46,14 @@ export interface ActionsState {
     
 }
 
- export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
+ export default class SecondaryRootCauses extends React.Component<SecondaryRootCausesProps, SecondaryRootCausesState> {
 
     private ActionsList = "SecondaryRootCauses";
     private txtsecondaryrootcause;
 
     private sp = spfi().using(SPFx(this.props.context));
 
-    constructor(props: ActionsProps){
+    constructor(props: SecondaryRootCausesProps){
         super(props);
 
         var lsTableProps = localStorage.getItem('PrvData');
@@ -299,7 +299,7 @@ private handleChangeClient = (selected: any) => {
     
         document.getElementById("divRootCause")?.classList.remove("searchMandatory");
 
-  this.setState((prevState: Readonly<ActionsState>) => ({
+  this.setState((prevState: Readonly<SecondaryRootCausesState>) => ({
     formData: {
       ...prevState.formData,
       RootCauseId: !selected
@@ -366,10 +366,15 @@ private handleChangeClient = (selected: any) => {
             
             return(
                 <React.Fragment>
-                        <div id="content" className="content p-2 pt-2">
+                      
                             <div className="container-fluid">
-                                <div className="FormContent border-none">
-                                    <div className="title">Secondary Root Causes</div>
+                                <div className="light-box border-box-shadow">
+                                    
+                            <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">Secondary Root Causes</h3>
+                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                            </div>
+                               <div className="mainContent px-4 borderLine">
                                     <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end me-4" id="">
@@ -409,8 +414,9 @@ private handleChangeClient = (selected: any) => {
                                     </div>
                                     <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                                 </div>
+                                </div>
                             </div>
-                        </div>
+                     
                 </React.Fragment>
             )
         }

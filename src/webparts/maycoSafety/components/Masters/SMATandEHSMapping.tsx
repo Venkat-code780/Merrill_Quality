@@ -16,7 +16,7 @@ import { showToast } from "../Shared/Toaster";
 import { Navigate } from "react-router-dom";
 import SearchableDropdown from "../Shared/Dropdown";
 
-export interface ActionsProps {
+export interface SMATandEHSMappingProps {
     match:any;
     spContext:any;
     spHttpClient: SPHttpClient;
@@ -25,7 +25,7 @@ export interface ActionsProps {
     currentUser : any,
 }
 
-export interface ActionsState {
+export interface SMATandEHSMappingState {
     ActionsData: Array<Object>;
     loading: boolean;
     pageNumber: number;
@@ -49,7 +49,7 @@ export interface ActionsState {
     
 }
 
- export default class AuditCategories extends React.Component<ActionsProps, ActionsState> {
+ export default class SMATandEHSMapping extends React.Component<SMATandEHSMappingProps, SMATandEHSMappingState> {
 
     private ActionsList = "WCC/EHS mapping screen";
     private Audit_SubCategory;
@@ -59,7 +59,7 @@ export interface ActionsState {
 
     private sp = spfi().using(SPFx(this.props.context));
 
-    constructor(props: ActionsProps){
+    constructor(props: SMATandEHSMappingProps){
         super(props);
 
         var lsTableProps = localStorage.getItem('PrvData');
@@ -229,8 +229,9 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: "'Audit Category'", Type: ControlType.reactSelect, Focusid:'divAuditCategory' },
                 AuditSubcategory: { val: (this.state.formData.Audit_SubCategory.trim()), required: true, Name: "Audit Subcategory", Type: ControlType.string, Focusid: this.Audit_SubCategory },
+                AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: "'Audit Category'", Type: ControlType.reactSelect, Focusid:'divAuditCategory' },
+                
                 FormType:{ val: (this.state.formData.Form_x0020_Type), required: true, Name: "FormType", Type: ControlType.string, Focusid: this.Form_x0020_Type },
                 IsActive:{ val: (this.state.formData.Is_x0020_Active), required: true, Name: "'Is Active'", Type: ControlType.string, Focusid: this.Is_x0020_Active },
                  
@@ -330,7 +331,7 @@ private async checkDuplicate() {
     private handleChangeClient = (selected: any) => {
             document.getElementById("divAuditCategory")?.classList.remove("searchMandatory");
 
-      this.setState((prevState: Readonly<ActionsState>) => ({
+      this.setState((prevState: Readonly<SMATandEHSMappingState>) => ({
         formData: {
           ...prevState.formData,
           Audit_categoriesId: !selected
@@ -425,11 +426,15 @@ formData[name as keyof typeof formData] = value as never;
             
             return(
                 <React.Fragment>
-                        <div id="content" className="content p-2 pt-2">
+                  
                             <div className="container-fluid">
-                                <div className="FormContent border-none">
-                                    <div className="title">SMAT and EHS Mapping</div>
-                                    <div className="" id="">
+                                <div className="light-box border-box-shadow">
+                                      <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">SMAT and EHS Mapping</h3>
+                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                            </div>
+                                 <div className="mainContent px-4 borderLine">
+                                    <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end me-4" id="">
                                             <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
@@ -439,6 +444,12 @@ formData[name as keyof typeof formData] = value as never;
                                             <div className="divForm m-3">
                                                 <div className="py-3">
                                                     <div className="row">
+                                                          <div className="col-md-3">
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Audit_SubCategory" title="LeadSource" value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
+                                                                <label>Audit SubCategory <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
+                                                        </div>
                                                          <div className="col-md-3">
                                                             <div className="light-text">
                                                                    <label htmlFor="ddAuditCategory">
@@ -449,12 +460,7 @@ formData[name as keyof typeof formData] = value as never;
                                                                 </div>
                                                               </div>
                                                         </div>
-                                                        <div className="col-md-3">
-                                                            <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Audit_SubCategory" title="LeadSource" value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
-                                                                <label>Audit SubCategory <span className="mandatoryhastrick">*</span></label>
-                                                            </div>
-                                                        </div>
+                                                      
                                                         
                                                            <div className="col-md-3">
                                                             <div className="light-text">
@@ -489,9 +495,10 @@ formData[name as keyof typeof formData] = value as never;
                                         }
                                     </div>
                                     <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                               </div>
                                 </div>
                             </div>
-                        </div>
+                
                 </React.Fragment>
             )
         }

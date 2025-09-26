@@ -11,11 +11,11 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import DateUtilities from "../Utilities/DateUtilities"
 import Serachbledropdown from "../Shared/Dropdown";
 
-export interface ActionsProps {
+export interface CheckList2Props {
   context: any;
 }
 
-export interface ActionsState {
+export interface CheckList2State {
   ActionsData: Array<{
     Id: number;
     Date: string;
@@ -38,10 +38,10 @@ export interface ActionsState {
   selectedYear: string | undefined;
 }
 
-export default class CheckList2View extends React.Component<ActionsProps,ActionsState> {
+export default class CheckList2View extends React.Component<CheckList2Props,CheckList2State> {
   private sp = spfi().using(SPFx(this.props.context));
 
-  constructor(props: ActionsProps) {
+  constructor(props: CheckList2Props) {
     super(props);
     this.state = {
       ActionsData: [],
@@ -71,7 +71,8 @@ export default class CheckList2View extends React.Component<ActionsProps,Actions
 
       const tableData = items.map((item: any) => ({
         Id: item.Id,
-        Date: item.Date,
+          Date: DateUtilities.getDateMMDDYYYY(item.Date), 
+        DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
         Plant: item.Plant,
         Department: item.Department,
         Zone: item.Zone,
@@ -133,7 +134,12 @@ export default class CheckList2View extends React.Component<ActionsProps,Actions
                   }
                 },
       { name: "ID", selector: (row: any) => row.Id, sortable: true },
-      { name: "Date", selector: (row: any) => DateUtilities.getDateMMDDYYYY(row.Date), sortable: true },
+         {
+        name: "Date",
+        selector: (row: any) => row.DateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        sortable: true
+      },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
       { name: "Department", selector: (row: any) => row.Department, sortable: true },
       { name: "Zone", selector: (row: any) => row.Zone, sortable: true },
@@ -153,13 +159,16 @@ export default class CheckList2View extends React.Component<ActionsProps,Actions
     return (
       
         <div className="container-fluid">
-          <div className="FormContent border-none">
-            <div className="title">CHECK-LIST STEP 2</div>
+          <div className="light-box border-box-shadow">
+            <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">CHECK-LIST STEP 2</h3>
+                            </div>
+                  <div className="mainContent px-4 borderLine">
             <div id="content" className="content p-2 pt-2">
                 <div className="col-md-3">
                  <div className="light-text">
                    <label htmlFor="">
-                    Year Filter <span className="mandatoryhastrick">*</span>
+                    Year Filter 
                   </label>
                 <div className="custom-dropdown" id="divRootcauese">
             <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
@@ -173,6 +182,7 @@ export default class CheckList2View extends React.Component<ActionsProps,Actions
               fileName={"Actions"}
               showPagination={true}
             />
+          </div>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ import { Navigate } from "react-router-dom";
 import Dropdown from "../Shared/Dropdown";
 // import Dropdown from "../Shared/Dropdown";
 
-export interface ActionsProps {
+export interface JSRAdetailsProps {
     match:any;
     spContext:any;
     spHttpClient: SPHttpClient;
@@ -26,7 +26,7 @@ export interface ActionsProps {
     currentUser : any,
 }
 
-export interface ActionsState {
+export interface JSRAdetailsState {
     ActionsData: Array<Object>;
     loading: boolean;
     pageNumber: number;
@@ -57,7 +57,7 @@ export interface ActionsState {
     FilteredSubCategories: any;
 }
 
-export default class JSRADetails extends React.Component<ActionsProps, ActionsState> {
+export default class JSRADetails extends React.Component<JSRAdetailsProps, JSRAdetailsState> {
 
     private ActionsList = "JSRA Details";
 
@@ -72,7 +72,7 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
 
     private sp = spfi().using(SPFx(this.props.context));
 
-    constructor(props: ActionsProps){
+    constructor(props: JSRAdetailsProps){
         super(props);
 
         var lsTableProps = localStorage.getItem('PrvData');
@@ -226,37 +226,6 @@ export default class JSRADetails extends React.Component<ActionsProps, ActionsSt
         this.setState({ isFormOpen: true, ItemId: 0 });
     }
 
-    // private async checkDuplicate(){
-    //     try{
-    //         showLoader();
-    //         var formData = {...this.state.formData};
-    //         let isValid = true;
-    //         let escapedTitle = formData.Details.replace(/'/g, "''"); 
-    //         let filterQuery = "Title eq '"+ escapedTitle +"'";
-
-    //         if( this.state.ItemId > 0 ){
-    //             filterQuery += " and Id ne "+this.state.ItemId+"";
-    //         }
-
-    //         await this.sp.web.lists.getByTitle(this.ActionsList).items.filter(filterQuery)().then( (res:any) =>{
-    //             if( !res.Error && res.length > 0){
-    //                 isValid = false;
-    //                 var message = "Action already exists";
-    //                 showToast( "error", message );
-    //                 hideLoader();
-    //             }
-    //             else{
-    //                 hideLoader();
-    //             }
-    //         })
-    //         return isValid;
-    //     }
-    //     catch(e){
-    //         this.onError();
-    //         hideLoader();
-    //         console.log(e);
-    //     }
-    // }
     private handleSubmit =async (event:any) =>{
         showLoader();
         try{
@@ -381,7 +350,7 @@ private handleChangeClient = (selected: any) => {
       value: sub.Id,
     }));
 
-  this.setState((prevState: Readonly<ActionsState>) => ({
+  this.setState((prevState: Readonly<JSRAdetailsState>) => ({
     formData: {
       ...prevState.formData,
       CategoryId: selectedCategoryId,
@@ -395,7 +364,7 @@ private handleChangeClient = (selected: any) => {
 private handleSubCategoryChange = (selected: any) => {
         document.getElementById("divSubCategory")?.classList.remove("searchMandatory");
 
-  this.setState((prevState: Readonly<ActionsState>) => ({
+  this.setState((prevState: Readonly<JSRAdetailsState>) => ({
     formData: {
       ...prevState.formData,
       Sub_x0020_CategoryId: !selected
@@ -544,10 +513,14 @@ private handleSubCategoryChange = (selected: any) => {
             
             return(
                 <React.Fragment>
-                        <div id="content" className="content p-2 pt-2">
+                    
                             <div className="container-fluid">
-                                <div className="FormContent border-none">
-                                    <div className="title">JSRA Details</div>
+                                <div className="light-box border-box-shadow">
+                                         <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">JSRA Details</h3>
+                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                            </div>
+                                    <div className="mainContent px-4 borderLine">
                                     <div>
                                         { !this.state.isFormOpen && 
                                         <div className="text-end me-4" id="">
@@ -632,9 +605,10 @@ private handleSubCategoryChange = (selected: any) => {
                                         }
                                     </div>
                                     <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                               </div>
                                 </div>
                             </div>
-                        </div>
+                  
                 </React.Fragment>
             )
         }

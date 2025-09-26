@@ -11,11 +11,11 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import DateUtilities from "../Utilities/DateUtilities";
 import Serachbledropdown from "../Shared/Dropdown";
 
-export interface ActionsProps {
+export interface TAGProps {
   context: any;
 }
 
-export interface ActionsState {
+export interface TAGState {
   ActionsData: Array<{
     Id: number;
     Plant:string;
@@ -43,10 +43,10 @@ export interface ActionsState {
   selectedYear: string | undefined;
 }
 
-export default class UCANView extends React.Component<ActionsProps,ActionsState> {
+export default class TAGView extends React.Component<TAGProps,TAGState> {
   private sp = spfi().using(SPFx(this.props.context));
 
-  constructor(props: ActionsProps) {
+  constructor(props: TAGProps) {
     super(props);
     this.state = {
       ActionsData: [],
@@ -81,8 +81,10 @@ export default class UCANView extends React.Component<ActionsProps,ActionsState>
         Machine:item.Machine,
         Shifts:item.Shifts,
         Name:item.Name,
-        Date:item.Date,
-        Completed_x0020_Date:item.Completed_x0020_Date,
+        Date: DateUtilities.getDateMMDDYYYY(item.Date), 
+        DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
+        Completed_x0020_Date: DateUtilities.getDateMMDDYYYY(item.Completed_x0020_Date), 
+        Completed_x0020_DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Completed_x0020_Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Completed_x0020_Date)}`,
         Completed_x0020_By:item.Completed_x0020_By,
         TAG_x0023_:item.TAG_x0023_,
         Year:item.Year,
@@ -150,8 +152,18 @@ export default class UCANView extends React.Component<ActionsProps,ActionsState>
       { name: "Machine", selector: (row: any) => row.Machine, sortable: true },
       { name: "Shifts", selector: (row: any) => row.Shifts, sortable: true },
       { name: "Name", selector: (row: any) => row.Name, sortable: true },
-      { name: "Date ", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Date) , sortable: true },
-      { name: "Completed Date", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Completed_x0020_Date) , sortable: true },
+        {
+        name: "Date",
+        selector: (row: any) => row.DateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        sortable: true
+      },
+        {
+        name: "Completed Date",
+        selector: (row: any) => row.Completed_x0020_DateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Completed_x0020_DateForGrid }} />,
+        sortable: true
+      },
       { name: "CompletedBy", selector: (row: any) => row.Completed_x0020_By, sortable: true },
       { name: "TAG#", selector: (row: any) =>(row.TAG_x0023_) , sortable: true },
       { name: "Year", selector: (row: any) =>row.Year, sortable: true },
@@ -165,13 +177,16 @@ export default class UCANView extends React.Component<ActionsProps,ActionsState>
                  }
     return (
         <div className="container-fluid">
-          <div className="FormContent border-none">
-            <div className="title">TAG</div>
+          <div className="light-box border-box-shadow">
+               <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">TAG</h3>
+                            </div>
+                      <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">
              <div className="col-md-3">
                   <div className="light-text">
                    <label htmlFor="">
-                    Year Filter <span className="mandatoryhastrick">*</span>
+                    Year Filter
                   </label>
                 <div className="custom-dropdown" id="divRootcauese">
             <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
@@ -185,6 +200,7 @@ export default class UCANView extends React.Component<ActionsProps,ActionsState>
               fileName={"Actions"}
               showPagination={true}
             />
+          </div>
           </div>
         </div>
       </div>

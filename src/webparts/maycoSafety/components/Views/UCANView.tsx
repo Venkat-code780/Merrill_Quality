@@ -11,11 +11,11 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import DateUtilities from "../Utilities/DateUtilities"
 import Serachbledropdown from "../Shared/Dropdown";
 
-export interface ActionsProps {
+export interface UCANProps {
   context: any;
 }
 
-export interface ActionsState {
+export interface UCANState {
   ActionsData: Array<{
     Id: number;
     UCAN_x0020_Type:string;
@@ -46,10 +46,10 @@ export interface ActionsState {
   selectedYear: string | undefined;
 }
 
-export default class UCANView extends React.Component<ActionsProps,ActionsState> {
+export default class UCANView extends React.Component<UCANProps,UCANState> {
   private sp = spfi().using(SPFx(this.props.context));
 
-  constructor(props: ActionsProps) {
+  constructor(props: UCANProps) {
     super(props);
     this.state = {
       ActionsData: [],
@@ -110,11 +110,15 @@ private async loadListData() {
       Reported_x0020_By: item.Reported_x0020_By,
       Location_x002f_Persons: item.Location_x002f_Persons,
       Safety_x0020_Tag: item.Safety_x0020_Tag,
-      Date: item.Date,
+      Date: DateUtilities.getDateMMDDYYYY(item.Date), 
+      DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`, 
+      
       Original_x0020_Tag_x0020_No_x002: item.Original_x0020_Tag_x0020_No_x002,
-      Date_x0020_Completed: item.Date_x0020_Completed,
+        Date_x0020_Completed: DateUtilities.getDateMMDDYYYY(item.Date_x0020_Completed), 
+     Date_x0020_CompletedForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date_x0020_Completed)}</span>${DateUtilities.getDateMMDDYYYY(item.Date_x0020_Completed)}`, 
       Action_x0020_Completed: item.Action_x0020_Completed,
-      Modified: item.Modified,
+       Modified: DateUtilities.getDateMMDDYYYY(item.Modified), 
+      ModifiedForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Modified)}</span>${DateUtilities.getDateMMDDYYYY(item.Modified)}`, 
       Year: item.Year,
     }));
 
@@ -143,58 +147,7 @@ private async loadListData() {
   }
 }
 
-  // private async loadListData() {
-  //   try {
-  //     showLoader();
-  //     const items = await this.sp.web.lists
-  //       .getByTitle("UCAN")
-  //       .items.select("UAType/Title,UAType/Id,Sub_x002d_Type/Id,Sub_x002d_Type/Title,*").expand("UAType,Sub_x002d_Type").top(2000)
-  //       .orderBy("Modified", false)();
-
-  //     const tableData = items.map((item: any) => ({
-  //       Id: item.Id,
-  //       UCAN_x0020_Type:item.UCAN_x0020_Type,
-  //       Plant:item.Plant,
-  //       Department:item.Department,
-  //       Zone:item.Zone,
-  //       Machine:item.Machine,
-  //       UAType:item.UAType?.Title ||"",
-  //       Sub_x002d_Type:item.Sub_x002d_Type?.Title ||"",
-  //       Shift:item.Shift,
-  //       Reported_x0020_By:item.Reported_x0020_By,
-  //       Location_x002f_Persons:item.Location_x002f_Persons,
-  //       Safety_x0020_Tag:item.Safety_x0020_Tag,
-  //       Date:item.Date,
-  //       Original_x0020_Tag_x0020_No_x002:item.Original_x0020_Tag_x0020_No_x002,
-  //       Date_x0020_Completed:item.Date_x0020_Completed,
-  //       Action_x0020_Completed:item.Action_x0020_Completed,
-  //       Modified:item.Modified,
-  //        Year:item.Year,
-  //     }));
-  //       const yearList = tableData
-  //       .map((i) => parseInt(i.Year, 10))
-  //       .filter((y) => !isNaN(y));
-
-  //     let yearOptions: { label: string; value: string }[] = [
-  //       { label: "All", value: "All" }, // 🔹 Add "All" as first option
-  //     ];
-
-  //     if (yearList.length > 0) {
-  //       const minYear = Math.min(...yearList);
-  //       const currentYear = new Date().getFullYear();
-
-  //       for (let y = minYear; y <= currentYear; y++) {
-  //         yearOptions.push({ label: y.toString(), value: y.toString() });
-  //       }
-  //     }
-
-  //     this.setState({ ActionsData: tableData,yearOptions });
-  //   } catch (e) {
-  //     console.error(e);
-  //   } finally {
-  //     hideLoader();
-  //   }
-  // }
+  
    private  handleRowClicked = (row:any,Id?:any) => {
         let ID = row.Id?row.Id:Id;
         this.setState({ItemID:ID,redirect:true});
@@ -234,14 +187,27 @@ private async loadListData() {
       { name: "Reported By", selector: (row: any) => row.Reported_x0020_By, sortable: true },
       { name: "Location/Persons", selector: (row: any) => row.Location_x002f_Persons, sortable: true },
       { name: "Safety Tag", selector: (row: any) => row.Safety_x0020_Tag ? "Yes":"No", sortable: true },
-      { name: "Date ", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Date) , sortable: true },
+        {
+        name: "Date",
+        selector: (row: any) => row.DateForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        sortable: true
+      },
       { name: "Original Tag No.", selector: (row: any) => row.Original_x0020_Tag_x0020_No_x002, sortable: true },
-      { name: "Date Completed", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Date_x0020_Completed) , sortable: true },
+         {
+        name: "Date Completed",
+        selector: (row: any) => row.Date_x0020_CompletedForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Date_x0020_CompletedForGrid }} />,
+        sortable: true
+      },
       { name: "Action Completed", selector: (row: any) => row.Action_x0020_Completed, sortable: true },
-      { name: "Modified", selector: (row: any) =>DateUtilities.getDateMMDDYYYY(row.Modified) , sortable: true },
+         {
+        name: "Modified",
+        selector: (row: any) => row.ModifiedForGrid,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.ModifiedForGrid }} />,
+        sortable: true
+      },
       { name: "Year", selector: (row: any) =>row.Year, sortable: true },
-
-
       
     ];
               const filteredData =this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter( (item) => item.Year === this.state.selectedYear ): this.state.ActionsData;
@@ -252,13 +218,16 @@ private async loadListData() {
                  }
     return (
         <div className="container-fluid">
-          <div className="FormContent border-none">
-            <div className="title">UCAN</div>
+          <div className="light-box border-box-shadow">
+               <div className="m-0 titlebg">
+                                <h3 className="mb-0 pt-2 text-center">UCAN</h3>
+                            </div>
+                   <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">
                 <div className="col-md-3">
                   <div className="light-text">
                    <label htmlFor="">
-                    Year Filter <span className="mandatoryhastrick">*</span>
+                    Year Filter
                   </label>
                 <div className="custom-dropdown" id="divRootcauese">
             <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
@@ -272,6 +241,7 @@ private async loadListData() {
               fileName={"Actions"}
               showPagination={true}
             />
+          </div>
           </div>
         </div>
       </div>

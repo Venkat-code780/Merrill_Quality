@@ -101,11 +101,12 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         ],
         activeAuditCategoriesData: [],
         auditCategoryStatusData: [],
-        Homeredirect: false,
+        Redirect: false,
+        RedirectTo: '',
         isEditForm: false,
         ItemId: 0,
         isInputDisabled: false,
-        displayMessage:'',
+        displayMessage: '',
         showSubmit: false
     }
 
@@ -128,7 +129,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             showLoader();
             var formData = { ...this.state.formData };
             let itemId = this.props.match.params.id;
-            let showSubmit = false
+            let showSubmit = true;
 
             let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
             let PlantList = 'Plant', PlantSelQuery = 'Title,*', plantFiltQuery = '', PlantExpFields = '';
@@ -184,54 +185,60 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
             let allMappingData;
 
-            if (itemId != undefined) {
-                let [editSMATItem, editSMATChildItems] = await Promise.all([this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")(), this.sp.web.lists.getByTitle(this.SMATChildList).items.top(2000).filter("WCCID eq "+itemId+"")() ]);
-                if (editSMATItem != Error) {
-                    formData.Plant = editSMATItem.Plant ?? '',
-                    formData.Department = editSMATItem.Department ?? '',
-                    formData.Zone = editSMATItem.Zone ?? '',
-                    formData.Machine = editSMATItem.Machine ?? '',
-                    formData.ShiftType = editSMATItem.ShiftType ?? '',
-                    formData.ToolNumber = editSMATItem.ToolNumber ?? '',
-                    formData.Comments = editSMATItem.Comments ?? '',
-                    formData.AuditorName = editSMATItem.AuditorName ?? '',
-                    formData.Supervisor = editSMATItem.Supervisor ?? '',
-                    formData.WorkCell = editSMATItem.WorkCell ?? '',
-                    formData.unsafeactCount = editSMATItem.unsafeactCount ?? '',
-                    formData.unsafeconditionCount = editSMATItem.unsafeconditionCount ?? '',
-                    formData.ActionCompleted = editSMATItem.ActionCompleted ?? '',
-                    formData.WCCDate = editSMATItem.WCCDate ?? '',
-                    formData.CompletedDate = editSMATItem.CompletedDate ?? '',
-                    formData.Year = editSMATItem.Year ?? '',
-                    formData.YearMonth = editSMATItem.YearMonth ?? ''
+            if (itemId > 0) {
+                let SMATRes: any, editSMATChildItems: any;
+                [SMATRes, editSMATChildItems] = await Promise.all([
+                    getListItems(this.SMATList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`),
+                    this.sp.web.lists.getByTitle(this.SMATChildList).items.top(2000).filter("WCCID eq " + itemId + "")()]);
 
-                    zoneOptions = zoneData.filter((option: any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editSMATItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                if (!SMATRes.isHttpRequestError) {
+                    if (SMATRes.length) {
+                        let editSMATItem = SMATRes[0];
+                        formData.Plant = editSMATItem.Plant ?? '',
+                            formData.Department = editSMATItem.Department ?? '',
+                            formData.Zone = editSMATItem.Zone ?? '',
+                            formData.Machine = editSMATItem.Machine ?? '',
+                            formData.ShiftType = editSMATItem.ShiftType ?? '',
+                            formData.ToolNumber = editSMATItem.ToolNumber ?? '',
+                            formData.Comments = editSMATItem.Comments ?? '',
+                            formData.AuditorName = editSMATItem.AuditorName ?? '',
+                            formData.Supervisor = editSMATItem.Supervisor ?? '',
+                            formData.WorkCell = editSMATItem.WorkCell ?? '',
+                            formData.unsafeactCount = editSMATItem.unsafeactCount ?? '',
+                            formData.unsafeconditionCount = editSMATItem.unsafeconditionCount ?? '',
+                            formData.ActionCompleted = editSMATItem.ActionCompleted ?? '',
+                            formData.WCCDate = editSMATItem.WCCDate ?? '',
+                            formData.CompletedDate = editSMATItem.CompletedDate ?? '',
+                            formData.Year = editSMATItem.Year ?? '',
+                            formData.YearMonth = editSMATItem.YearMonth ?? ''
 
-                    machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editSMATItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                    toolNumbersOptions = toolNumbersData.filter((option: any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                    workCellOptions = workCellData.filter((option: any) => ( option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        toolNumbersOptions = toolNumbersData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                    if( editSMATChildItems.length > 0){
-                        allMappingData = editSMATChildItems.map((item: any) => {
-                            return (
-                            {
-                                Id: item.Id,
-                                WCCID: item.WCCID  ?? '',
-                                WccCategory: item.WccCategory ?? '',
-                                WccSubCategory: item.WccSubCategory ?? '',
-                                Attachment: item.Attachment ?? '',
-                                SubCategoryStatus: item.SubCategoryStatus ?? '',
-                                SubCategoryComments: item.SubCategoryComments ?? ''
+                        workCellOptions = workCellData.filter((option: any) => (option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == editSMATItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+
+                        if (editSMATChildItems.length > 0) {
+                            allMappingData = editSMATChildItems.map((item: any) => {
+                                return (
+                                    {
+                                        Id: item.Id,
+                                        WCCID: item.WCCID ?? '',
+                                        WccCategory: item.WccCategory ?? '',
+                                        WccSubCategory: item.WccSubCategory ?? '',
+                                        Attachment: item.Attachment ?? '',
+                                        SubCategoryStatus: item.SubCategoryStatus ?? '',
+                                        SubCategoryComments: item.SubCategoryComments ?? ''
+                                    })
                             })
-                        })
+                        }
+                        showSubmit = (editSMATItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                     }
-
-                    
-
-                    if( editSMATItem.Author == this.props.userDisplayName || this.props.isSuperAdmin ){
-                        showSubmit = true;
+                    else {
+                        showToast("error", "No SMAT found");
+                        this.setState({ Redirect: true, RedirectTo: 'Home' });
                     }
                 }
             }
@@ -252,16 +259,15 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                         return null;
                     }
                 }).filter(mapItem => mapItem != null);
-
-                showSubmit = true;
             }
 
             this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId });
-
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+        finally {
+            hideLoader();
         }
     }
 
@@ -309,7 +315,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         const value = actionMeta.action == "clear" ? '' : event.value;
         formData[name] = value;
 
-        if( name == "Plant" ){
+        if (name == "Plant") {
             formData.Department = "";
             formData.Zone = "";
             formData.Machine = "";
@@ -351,8 +357,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
                 workCellOptions = workCellData.filter((option: any) => (option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == event.value)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
-            else { 
-                machineOptions = []; 
+            else {
+                machineOptions = [];
                 toolNumbersOptions = [];
                 workCellOptions = [];
             }
@@ -403,55 +409,55 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             var formData: any = { ...this.state.formData };
             // let itemId = this.props.match.params.id;
             let data = {
-                date: {val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtWCCDate"},
-                dateToday: {val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtWCCDate"},
-                shift: {val: formData.ShiftType, required: true, Name: "ShiftType", Type: ControlType.reactSelect, Focusid: "ddlShift"},
-                auditorsName: {val: formData.AuditorName, required: true, Name: "Auditor's Name", Type: ControlType.reactSelect, Focusid: "ddlAuditorName"},
-                plant: {val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant"},
-                department: {val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment"},
-                zone: {val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone"},
-                machine: {val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine"},
-                workCell: {val: formData.WorkCell, required: true, Name: "Work Cell", Type: ControlType.reactSelect, Focusid: "ddlWorkCell"},
-                toolNumber: {val: formData.ToolNumber, required: (formData.Department == "Molding"), Name: "Tool Number", Type: ControlType.reactSelect, Focusid: "ddlToolNumber"},
-                supervisor: {val: formData.Supervisor, required: true, Name: "Supervisor", Type: ControlType.reactSelect, Focusid: "ddlSupervisor"},
-                completedDate: {startDate: formData.WCCDate, endDate: formData.CompletedDate, required: (formData.CompletedDate != ''), startDateName: "Date", endDateName:"Date Completed", Type: ControlType.compareDates, Focusid: "dtCompletedDate"}
+                date: { val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtWCCDate" },
+                dateToday: { val: formData.WCCDate, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtWCCDate" },
+                shift: { val: formData.ShiftType, required: true, Name: "ShiftType", Type: ControlType.reactSelect, Focusid: "ddlShift" },
+                auditorsName: { val: formData.AuditorName, required: true, Name: "Auditor's Name", Type: ControlType.reactSelect, Focusid: "ddlAuditorName" },
+                plant: { val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant" },
+                department: { val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment" },
+                zone: { val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone" },
+                machine: { val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine" },
+                workCell: { val: formData.WorkCell, required: true, Name: "Work Cell", Type: ControlType.reactSelect, Focusid: "ddlWorkCell" },
+                toolNumber: { val: formData.ToolNumber, required: (formData.Department == "Molding"), Name: "Tool Number", Type: ControlType.reactSelect, Focusid: "ddlToolNumber" },
+                supervisor: { val: formData.Supervisor, required: true, Name: "Supervisor", Type: ControlType.reactSelect, Focusid: "ddlSupervisor" },
+                completedDate: { startDate: formData.WCCDate, endDate: formData.CompletedDate, required: (formData.CompletedDate != ''), startDateName: "Date", endDateName: "Date Completed", Type: ControlType.compareDates, Focusid: "dtCompletedDate" }
             }
 
             let isValid = formValidation.FormValidation(data);
-            
-            if( isValid.status ){
+
+            if (isValid.status) {
                 // console.log("Valid Data");
                 let isValidDynamicComments = this.validateDynamicSubCategoryComments();
-                if( isValidDynamicComments ){
+                if (isValidDynamicComments) {
 
                     //Date formatting, Year and YearMonth
-                    formData.WCCDate = DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData.WCCDate)), this.props.spContext.webTimeZoneData ).toISOString();
+                    formData.WCCDate = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(formData.WCCDate)), this.props.spContext.webTimeZoneData).toISOString();
                     let mmddyyyyDate = format(formData.WCCDate, "MM/dd/yyyy");
                     // console.log(mmddyyyyDate);
                     formData.Year = mmddyyyyDate.split("/")[2];
                     formData.YearMonth = mmddyyyyDate.split("/")[0];
-                    if( formData.CompletedDate != "" ){
-                        formData.CompletedDate = DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData.CompletedDate)), this.props.spContext.webTimeZoneData ).toISOString();
+                    if (formData.CompletedDate != "") {
+                        formData.CompletedDate = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(formData.CompletedDate)), this.props.spContext.webTimeZoneData).toISOString();
                     }
-                    else{
+                    else {
                         delete formData.CompletedDate;
                     }
 
                     //Get Status Count
-                    let allMappingData = {...this.state.allMappingData}
+                    let allMappingData = { ...this.state.allMappingData }
                     let unsafeact = 0;
                     let unsafeConddition = 0;
-                    for (let  i=0; i< Object.keys(allMappingData).length; i++) {
+                    for (let i = 0; i < Object.keys(allMappingData).length; i++) {
                         var subCategory = allMappingData[i];
                         var status = subCategory.SubCategoryStatus;
 
-                        if( status.toLowerCase() == "unsafe act" ){
+                        if (status.toLowerCase() == "unsafe act") {
                             unsafeact += 1;
                         }
-                        if( status.toLowerCase() == "unsafe condition" ){
+                        if (status.toLowerCase() == "unsafe condition") {
                             unsafeConddition += 1;
                         }
-                        if( status.toLowerCase() == "both" ){
+                        if (status.toLowerCase() == "both") {
                             unsafeact += 1;
                             unsafeConddition += 1;
                         }
@@ -467,31 +473,31 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                     await this.InsertOrUpdateData(formData);
                 }
             }
-            else{
+            else {
                 showToast("error", isValid.message);
             }
             hideLoader();
         } catch (e) {
-           console.log(e);
-           this.onError(); 
+            console.log(e);
+            this.onError();
         }
     }
 
     private InsertOrUpdateData = async (formData: any) => {
         try {
             let itemId = this.props.match.params.id;
-            if( itemId > 0 ){
-                await this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).update(formData).then((res:any) =>{
+            if (itemId > 0) {
+                await this.sp.web.lists.getByTitle(this.SMATList).items.getById(itemId).update(formData).then((res: any) => {
                     this.UpdateLineItems();
                 }, (error) => {
                     console.log(error);
                     this.onError();
                 })
             }
-            else{
-                await this.sp.web.lists.getByTitle(this.SMATList).items.add(formData).then( (res:any) => {
+            else {
+                await this.sp.web.lists.getByTitle(this.SMATList).items.add(formData).then((res: any) => {
                     let childObjects = this.updateWCCId(res.Id.toString());
-                    this.InsertLineItems( childObjects );
+                    this.InsertLineItems(childObjects);
                 }, (error) => {
                     console.log(error);
                     this.onError();
@@ -503,17 +509,17 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         }
     }
 
-    private InsertLineItems = async ( childPostObjects :any) => {
+    private InsertLineItems = async (childPostObjects: any) => {
         try {
-            const[batchedPipe, execute] = createBatch(this.sp.web);
+            const [batchedPipe, execute] = createBatch(this.sp.web);
             for (const item of childPostObjects) {
                 this.sp.web.lists.getByTitle(this.SMATChildList).items.using(batchedPipe).add(item);
             }
-            await execute().then( async () =>{
+            await execute().then(async () => {
                 let msg = "SMAT Submitted Successfully";
-                this.setState({displayMessage: msg});
+                this.setState({ displayMessage: msg });
                 this.onSuccess();
-                
+
             }, (error: any) => {
                 console.log(error);
                 this.onError();
@@ -527,15 +533,15 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
     private UpdateLineItems = async () => {
         try {
             let childPostObjects = this.createUpdateObjects();
-            const[batchedPipe, execute] = createBatch(this.sp.web);
+            const [batchedPipe, execute] = createBatch(this.sp.web);
             for (const item of childPostObjects) {
                 this.sp.web.lists.getByTitle(this.SMATChildList).items.getById(item.id).using(batchedPipe).update(item.Obj);
             }
-            await execute().then( async () =>{
+            await execute().then(async () => {
                 let msg = "SMAT Updated Successfully";
-                this.setState({displayMessage: msg});
+                this.setState({ displayMessage: msg });
                 this.onSuccess();
-                
+
             }, (error: any) => {
                 console.log(error);
                 this.onError();
@@ -546,11 +552,11 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         }
     }
 
-    private createUpdateObjects(){
-        const allMappingData:any = [...this.state.allMappingData];
+    private createUpdateObjects() {
+        const allMappingData: any = [...this.state.allMappingData];
         let postObjects = [];
 
-        for( let i=0; i< allMappingData.length; i++){
+        for (let i = 0; i < allMappingData.length; i++) {
             let mappingItem = allMappingData[i];
 
             let postObj = {
@@ -561,7 +567,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                     WccSubCategory: mappingItem.WccSubCategory,
                     Attachment: mappingItem.Attachment,
                     SubCategoryStatus: mappingItem.SubCategoryStatus,
-                    SubCategoryComments: mappingItem.SubCategoryStatus == "Satisfactory"? '' : mappingItem.SubCategoryComments
+                    SubCategoryComments: mappingItem.SubCategoryStatus == "Satisfactory" ? '' : mappingItem.SubCategoryComments
                 }
             }
             postObjects.push(postObj);
@@ -569,10 +575,10 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         return postObjects;
     }
 
-    private updateWCCId = (ParentId:string) => {
+    private updateWCCId = (ParentId: string) => {
         let allMappingData = [...this.state.allMappingData];
 
-        let updatedMappingData = allMappingData.map( item => ({
+        let updatedMappingData = allMappingData.map(item => ({
             ...item,
             WCCID: ParentId
         }));
@@ -586,11 +592,11 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         for (var i = 0; i < allMappingData.length; i++) {
             if (allMappingData[i].SubCategoryStatus != "Satisfactory" && ([null, undefined, ''].includes(allMappingData[i].SubCategoryComments))) {
                 isValid = false;
-                let txtAreaId = "txtSubCategory"+ i;
+                let txtAreaId = "txtSubCategory" + i;
                 let element = document.getElementById(txtAreaId);
                 element?.classList.add("mandatory-FormContent-focus");
                 element?.focus();
-                showToast("error", "Comments cannot be blank for Status-"+ allMappingData[i].SubCategoryStatus );
+                showToast("error", "Comments cannot be blank for Status-" + allMappingData[i].SubCategoryStatus);
                 break;
             }
         }
@@ -598,18 +604,18 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
     }
 
     private onSuccess = () => {
-            hideLoader();
-            this.setState({ Homeredirect: true, ItemID: 0  });
-            showToast("success", this.state.displayMessage );
-        }
+        hideLoader();
+        this.setState({ Redirect: true, RedirectTo: 'SMATView', ItemID: 0 });
+        showToast("success", this.state.displayMessage);
+    }
 
     private onError = () => {
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
 
-    private handlefullClose = () => {
-        this.setState({ Homeredirect: true, ItemID: 0 });
+    private handleCancel = () => {
+        this.setState({ Redirect: true, RedirectTo: 'SMATView', ItemID: 0 });
     }
 
     private bindDynamicTable = () => {
@@ -623,7 +629,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
         const tBody = uniqueCategories.map((category, categoryIndex) => {
             // Filter subcategories that match the current category
-            const categoryRows = allMappingData.filter(subCategory => subCategory.WccCategory === category).sort( (a:any, b:any) => a.WccSubCategory.localeCompare(b.WccSubCategory));
+            const categoryRows = allMappingData.filter(subCategory => subCategory.WccCategory === category).sort((a: any, b: any) => a.WccSubCategory.localeCompare(b.WccSubCategory));
 
             return (
                 <React.Fragment key={categoryIndex}>
@@ -707,8 +713,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
     private handleSubCategoryCommentsChange = (event: any, CategoryIndex: number) => {
         var element = document.getElementsByClassName("mandatory-FormContent-focus");
-        if( element.length > 0 ){
-            for( let i=0;i<element.length;i++){
+        if (element.length > 0) {
+            for (let i = 0; i < element.length; i++) {
                 element[i].classList.remove("mandatory-FormContent-focus");
             }
         }
@@ -733,8 +739,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
     };
 
     public render() {
-        if (this.state.Homeredirect) {
-            let url = "/Home";
+        if (this.state.Redirect) {
+            let url = `/${this.state.RedirectTo}`;
             return (<Navigate to={url} />)
         }
         else {
@@ -743,18 +749,23 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" SMAT " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <h3 className="mb-0 pt-2 text-center">{" SMAT " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
-                            <div className="mainContent row col-lg-12 col-md-12 col-sm-12 col-xs-12 borderLine">
+                            <div className="mainContent px-4 borderLine">
+                                <div className="row py-2">
                                 {/* Date */}
-                                <div className="col-md-3 greybg c-date-picker" id="divWCCDate">
-                                    <label className="label-datePicker" htmlFor="dtWCCDate"> Date <span className="text-danger">*</span></label>
-                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WCCDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
+                                <div className="col-md-3">
+                                <div className="light-text">
+                                    <label className="" htmlFor="dtWCCDate"> Date <span className="mandatoryhastrick">*</span></label>
+                                    <div className="custom-datepicker" id="divWCCDate">
+                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WCCDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
+                                    </div>
+                                    </div>
                                 </div>
                                 {/* Shift */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown" id="divShift">
                                         <SearchableDropdown
                                             label={"Shift"}
@@ -773,7 +784,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     </div>
                                 </div>
                                 {/* Auditor's Name */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown active" id="divAuditorName" title={this.state.formData.AuditorName}>
                                         <SearchableDropdown
                                             label={"Auditor's Name"}
@@ -792,7 +803,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     </div>
                                 </div>
                                 {/* Plant */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown active" id="divPlant" title={this.state.formData.Plant}>
                                         <SearchableDropdown
                                             label={"Plant"}
@@ -810,8 +821,10 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         />
                                     </div>
                                 </div>
+                                </div>
+                                <div className="row pb-2">
                                 {/* Department */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown" id="divDepartment">
                                         <SearchableDropdown
                                             label={"Department"}
@@ -830,7 +843,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     </div>
                                 </div>
                                 {/* Zone */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown" id="divZone">
                                         <SearchableDropdown
                                             label={"Zone"}
@@ -849,7 +862,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     </div>
                                 </div>
                                 {/* Machine */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown" id="divMachine">
                                         <SearchableDropdown
                                             label={"Machine"}
@@ -868,7 +881,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     </div>
                                 </div>
                                 {/* Work Cell */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown" id="divWorkCell" title={this.state.formData.WorkCell}>
                                         <SearchableDropdown
                                             label={"Work Cell"}
@@ -886,8 +899,10 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         />
                                     </div>
                                 </div>
+                                </div>
+                                <div className="row py-2">
                                 {/* Tool No. */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown" id="divToolNumber" title={this.state.formData.ToolNumber}>
                                         <SearchableDropdown
                                             label={"Tool No."}
@@ -906,7 +921,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     </div>
                                 </div>
                                 {/* Supervisor */}
-                                <div className="col-md-3 greybg form-floating">
+                                <div className="col-md-3">
                                     <div className="custom-dropdown" id="divSupervisor" title={this.state.formData.Supervisor}>
                                         <SearchableDropdown
                                             label={"Supervisor"}
@@ -924,7 +939,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         />
                                     </div>
                                 </div>
-
+                                </div>
+                                <div className="divSection">
                                 <table>
                                     <thead className="darkgreybg">
                                         <tr>
@@ -937,35 +953,40 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         {this.bindDynamicTable()}
                                     </tbody>
                                 </table>
+                                </div>
                                 {/* Comments */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
-                                    <div className="col-md-12 greybg">
-                                        <div className={this.state.isInputDisabled ? "textarea-disabled form-floating" : "form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
+                                <div className="col-md-12" style={{ padding: "0px" }}>
+                                    <div className="col-md-12">
+                                        <div className="light-text" >
                                             <label className=" col-form-label" htmlFor="txtComments">Comments </label>
+                                            <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} title="Comments" style={{ height: "80px" }}></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                {/* Supervisor Action Completed */}
-                                <div className="col-lg-9 col-md-9 col-sm-9 col-xs-9" style={{ padding: "0px" }}>
-                                    <div className="col-md-12 greybg">
-                                        <div className={this.state.isInputDisabled ? "textarea-disabled form-floating" : "form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtActionCompleted" name="ActionCompleted" ref={this.txtActionCompleted} placeholder="ActionCompleted" value={this.state.formData.ActionCompleted} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Completed" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
+                                <div className="row pb-2">
+                                {/* Supervisor Action Completed */}    
+                                <div className="col-md-9">
+                                    <div className="col-md-12">
+                                        <div className="light-text" >
                                             <label className=" col-form-label" htmlFor="txtActionCompleted">Action Completed </label>
+                                            <textarea className="form-control bs-textarea" rows={3} id="txtActionCompleted" name="ActionCompleted" ref={this.txtActionCompleted} placeholder="Action Completed" value={this.state.formData.ActionCompleted} onChange={this.handleChange} title="Action Completed" style={{ height: "80px" }}></textarea>
                                         </div>
                                     </div>
                                 </div>
                                 {/* Completed Date */}
-                                <div className="col-md-3 greybg c-date-picker" id="divCompletedDate">
-                                    <label className="label-datePicker" htmlFor="dtCompletedDate"> Completed Date </label>
-                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.CompletedDate} id='dtCompletedDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate", dateProps)} highlightDate={new Date()} showIcon />
+                                <div className="col-md-3">
+                                <div className="light-text">
+                                    <label className="" htmlFor="dtCompletedDate"> Completed Date </label>
+                                    <div className="custom-datepicker" id="divCompletedDate">
+                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.CompletedDate} id='dtCompletedDate' startDate={undefined} endDate={undefined} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate", dateProps)} highlightDate={new Date()} showIcon />
+                                    </div>
+                                    </div>
+                                </div>
                                 </div>
 
-                                <div className="col-sm-12 text-center py-3 greybg" id="">
-                                    {this.state.showSubmit &&<button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} >Submit</button>}
-                                    <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlefullClose} >Cancel</button>
+                                <div className="col-sm-12 text-center py-3" id="">
+                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
+                                    <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} >Cancel</button>
                                 </div>
                             </div>
                         </div>

@@ -97,7 +97,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
         isInputDisabled: false,
         isEditForm: false,
         ItemId: 0,
-        Homeredirect: false,
+        Redirect: false,
+        RedirectTo: '',
         displayMessage: '',
         image: [],
         imageBase64: '',
@@ -131,7 +132,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             showLoader();
             var formData = { ...this.state.formData };
             let itemId = this.props.match.params.id;
-            let showSubmit = false;
+            let showSubmit = true;
 
             let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
             let PlantList = 'Plant', PlantSelQuery = 'Title,*', plantFiltQuery = '', PlantExpFields = '';
@@ -169,9 +170,11 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             let subTypeOptions: any = [];
             let shiftData = shifts.map((item: any) => ({ label: item.Title, value: item.Title }));
 
-            if (itemId != undefined) {
-                await this.sp.web.lists.getByTitle(this.ucanList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")().then((editUCANItem: any) => {
-                    if (editUCANItem != Error) {
+            if (itemId > 0) {
+                let UCANRes: any = await getListItems(this.ucanList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`);
+                if (!UCANRes.isHttpRequestError) {
+                    if (UCANRes.length) {
+                        let editUCANItem = UCANRes[0];
                         formData.UCAN_x0020_Type = [null, undefined, ""].includes(editUCANItem.UCAN_x0020_Type) ? "" : editUCANItem.UCAN_x0020_Type;
                         formData.Plant = [null, undefined, ""].includes(editUCANItem.Plant) ? "" : editUCANItem.Plant;
                         formData.Department = [null, undefined, ""].includes(editUCANItem.Department) ? "" : editUCANItem.Department;
@@ -200,22 +203,22 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                         subTypeOptions = subTypeData.filter((option: any) => option.UAType0.Id == editUCANItem.UATypeId).map((item: any) => ({ label: item.Title, value: item.Id, }));
 
                         //Super Admin
-                        if (editUCANItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) {
-                            showSubmit = true;
-                        }
+                        showSubmit = (editUCANItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                     }
-                })
-            }
-            else {
-                showSubmit = true;
+                    else {
+                        showToast("error", "No UCAN found");
+                        this.setState({ Redirect: true, RedirectTo: 'Home' });
+                    }
+                }
             }
 
             this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, uaTypeData, subTypeData, subTypeOptions, shiftData, showSubmit, ItemId: itemId });
-
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+        finally {
+            hideLoader();
         }
     }
 
@@ -330,7 +333,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
 
     private onSuccess = () => {
         hideLoader();
-        this.setState({ Homeredirect: true, ItemID: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'UCANView', ItemID: 0 });
         showToast("success", this.state.displayMessage);
     }
 
@@ -419,8 +422,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
         }
     }
 
-    private handlefullClose = () => {
-        this.setState({ Homeredirect: true, ItemID: 0 });
+    private handlCancel = () => {
+        this.setState({ Redirect: true, RedirectTo: 'UCANView', ItemID: 0 });
     }
 
     // private imageChanged = (selectedFiles: any) => {
@@ -441,8 +444,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
     }
 
     public render() {
-        if (this.state.Homeredirect) {
-            let url = "/Home";
+        if (this.state.Redirect) {
+            let url = `/${this.state.RedirectTo}`;
             return (<Navigate to={url} />)
         }
         else {
@@ -452,14 +455,14 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" Unsafe Conditions And Acts Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
+                                <h3 className="mb-0 pt-2 text-center">{" Unsafe Conditions And Acts Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
+                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="mainContent row col-lg-12 col-md-12 col-sm-12 col-xs-12 borderLine">
                                 <div className="col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left row">
                                     {/* Near miss, Unsafe act, Unsafe condition */}
-                                    <div className="col-md-6 greybg ">
+                                    <div className="col-md-6  ">
                                         <div className="custom-dropdown" id="divUCANType">
                                             <SearchableDropdown
                                                 label={"Near miss, Unsafe act, Unsafe condition"}
@@ -478,7 +481,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                         </div>
                                     </div>
                                     {/* Plant */}
-                                    <div className="col-md-3 greybg ">
+                                    <div className="col-md-3  ">
                                         <div className="custom-dropdown active" id="divPlant" title={this.state.formData.Plant}>
                                             <SearchableDropdown
                                                 label={"Plant"}
@@ -497,7 +500,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                         </div>
                                     </div>
                                     {/* Department */}
-                                    <div className="col-md-3 greybg ">
+                                    <div className="col-md-3  ">
                                         <div className="custom-dropdown" id="divDepartment">
                                             <SearchableDropdown
                                                 label={"Department"}
@@ -516,7 +519,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                         </div>
                                     </div>
                                     {/* Zone */}
-                                    <div className="col-md-3 greybg ">
+                                    <div className="col-md-3  ">
                                         <div className="custom-dropdown" id="divZone">
                                             <SearchableDropdown
                                                 label={"Zone"}
@@ -535,7 +538,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                         </div>
                                     </div>
                                     {/* Machine */}
-                                    <div className="col-md-3 greybg ">
+                                    <div className="col-md-3  ">
                                         <div className="custom-dropdown" id="divMachine">
                                             <SearchableDropdown
                                                 label={"Machine"}
@@ -554,7 +557,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                         </div>
                                     </div>
                                     {/*UA Type */}
-                                    <div className="col-md-3 greybg ">
+                                    <div className="col-md-3  ">
                                         <div className="custom-dropdown" id="divType">
                                             <SearchableDropdown
                                                 label={"Type"}
@@ -573,7 +576,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                         </div>
                                     </div>
                                     {/* Sub-Type */}
-                                    <div className="col-md-3 greybg ">
+                                    <div className="col-md-3  ">
                                         <div className="custom-dropdown" id="divSubType">
                                             <SearchableDropdown
                                                 label={"Sub-Type"}
@@ -594,35 +597,35 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
                                         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left">
                                             {/* Reported By */}
-                                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greybg">
+                                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
                                                 <div className="light-text">
                                                     <label className="" htmlFor="txtReportedBy">Reported By </label>
                                                     <input className="form-control" placeholder="Reported By" name="Reported_x0020_By" type="text" id="txtReportedBy" ref={this.txtReportedBy} value={this.state.formData.Reported_x0020_By} onChange={this.handleChange} title="Reported By" />
                                                 </div>
                                             </div>
                                             {/* Original Tag No. */}
-                                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greybg">
+                                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
                                                 <div className="light-text">
                                                     <label className="" htmlFor="txtOriginialTagNo">Original Tag No. </label>
                                                     <input className="form-control" placeholder="Original Tag No." name="Original_x0020_Tag_x0020_No_x002" type="text" id="txtOriginialTagNo" ref={this.txtOriginialTagNo} value={this.state.formData.Original_x0020_Tag_x0020_No_x002} onChange={this.handleChange} title="Original Tag No." />
                                                 </div>
                                             </div>
                                             {/* Safety Tag */}
-                                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greybg" style={{ textAlign: "center", height: "64px" }}>
+                                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style={{ textAlign: "center", height: "64px" }}>
                                                 <input className="" placeholder="Safety Tag" name="Safety_x0020_Tag" type="checkbox" id="rdSafetyTag" ref={this.rdSafetyTag} checked={this.state.formData.Safety_x0020_Tag} onChange={this.handleChange} title="Safety Tag" />
                                                 <label className="" htmlFor="rdSafetyTag">Safety Tag </label>
                                             </div>
                                         </div>
                                         <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left">
                                             {/* Location/Persons */}
-                                            <div className="col-md-12 greybg">
+                                            <div className="col-md-12 ">
                                                 <div className="light-text" >
                                                     <label className="" htmlFor="txtLocationPersons">Location/Persons </label>
-                                                    <textarea className="form-control bs-textarea" rows={3} id="txtLocationPersons" name="Location_x002f_Persons" ref={this.txtLocationPersons} placeholder="Location/Persons" value={this.state.formData.Location_x002f_Persons} onChange={this.handleChange} title="Location/Persons" style={{ height: "186px" }}></textarea>
+                                                    <textarea className="form-control" rows={3} id="txtLocationPersons" name="Location_x002f_Persons" ref={this.txtLocationPersons} placeholder="Location/Persons" value={this.state.formData.Location_x002f_Persons} onChange={this.handleChange} title="Location/Persons" style={{ height: "186px" }}></textarea>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 greybg pull-left">
+                                        <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3  pull-left">
                                             {/* Shift */}
                                             <div className="">
                                                 <div className="custom-dropdown" id="divShift">
@@ -644,7 +647,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                             </div>
                                             {/* Date */}
                                             <div className="light-text">
-                                                <label className="z-in-9" htmlFor="dtDate"> Date <span className="text-danger">*</span></label>
+                                                <label className="z-in-9" htmlFor="dtDate"> Date <span className="mandatoryhastrick">*</span></label>
                                                 <div className="custom-datepicker" id="divDate">
                                                     <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate", dateProps)} ref={this.txtDate} highlightDate={new Date()} showIcon />
                                                 </div>
@@ -655,36 +658,36 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                 <div className="custom-datepicker" id="divDateCompleted">
                                                     <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date_x0020_Completed} id='dtDateCompleted' startDate={undefined} endDate={new Date()} name="Date_x0020_Completed" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDateCompleted", dateProps)} ref={this.txtDateCompleted} highlightDate={new Date()} showIcon />
                                                 </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 pull-right" style={{ padding: "0px" }}>
-                                        <div className="col-md-12 greybg">
-                                            <div className="light-text" >
-                                                <label className="" htmlFor="txtDescriptionOfIncident">Description of Incident </label>
-                                                <textarea className="form-control bs-textarea" rows={3} id="txtDescriptionOfIncident" name="Description_x0020_of_x0020_Incid" ref={this.txtDescriptionOfIncident} placeholder="Description of Incident" value={this.state.formData.Description_x0020_of_x0020_Incid} onChange={this.handleChange} title="Description of Incident" style={{ height: "312px" }}></textarea>
-                                            </div>
+                                </div>
+                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 pull-right" style={{ padding: "0px" }}>
+                                    <div className="col-md-12 ">
+                                        <div className="light-text" >
+                                            <label className="" htmlFor="txtDescriptionOfIncident">Description of Incident </label>
+                                            <textarea className="form-control" rows={3} id="txtDescriptionOfIncident" name="Description_x0020_of_x0020_Incid" ref={this.txtDescriptionOfIncident} placeholder="Description of Incident" value={this.state.formData.Description_x0020_of_x0020_Incid} onChange={this.handleChange} title="Description of Incident" style={{ height: "312px" }}></textarea>
                                         </div>
                                     </div>
-                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
-                                        <div className="col-md-12 greybg">
-                                            <div className="light-text" >
-                                                <label className="" htmlFor="txtActionPlan">Action Plan </label>
-                                                <textarea className="form-control bs-textarea" rows={3} id="txtActionPlan" name="Action_x0020_Plan" ref={this.txtActionPlan} placeholder="Action Plan" value={this.state.formData.Action_x0020_Plan} onChange={this.handleChange} title="Action Plan" style={{ height: "80px" }}></textarea>
-                                            </div>
+                                </div>
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
+                                    <div className="col-md-12 ">
+                                        <div className="light-text" >
+                                            <label className="" htmlFor="txtActionPlan">Action Plan </label>
+                                            <textarea className="form-control" rows={3} id="txtActionPlan" name="Action_x0020_Plan" ref={this.txtActionPlan} placeholder="Action Plan" value={this.state.formData.Action_x0020_Plan} onChange={this.handleChange} title="Action Plan" style={{ height: "80px" }}></textarea>
                                         </div>
                                     </div>
-                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
-                                        <div className="col-md-12 greybg">
-                                            <div className="light-text" >
-                                                <label className="" htmlFor="txtActionCompleted">Action Completed {this.state.formData.Date_x0020_Completed && <span className="text-danger">*</span>}</label>
-                                                <textarea className="form-control bs-textarea" rows={3} id="txtActionCompleted" name="Action_x0020_Completed" ref={this.txtActionCompleted} placeholder="Action Completed" value={this.state.formData.Action_x0020_Completed} onChange={this.handleChange} title="Action Completed" style={{ height: "80px" }}></textarea>
-                                            </div>
+                                </div>
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
+                                    <div className="col-md-12 ">
+                                        <div className="light-text" >
+                                            <label className="" htmlFor="txtActionCompleted">Action Completed {this.state.formData.Date_x0020_Completed && <span className="mandatoryhastrick">*</span>}</label>
+                                            <textarea className="form-control" rows={3} id="txtActionCompleted" name="Action_x0020_Completed" ref={this.txtActionCompleted} placeholder="Action Completed" value={this.state.formData.Action_x0020_Completed} onChange={this.handleChange} title="Action Completed" style={{ height: "80px" }}></textarea>
                                         </div>
                                     </div>
+                                </div>
 
-                                    {/* <SingleImageUpload
+                                {/* <SingleImageUpload
                                     fileLabel="Upload Image"
                                     files={this.state.image}
                                     onChange={this.imageChanged}
@@ -693,21 +696,21 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                     disabled={false}
                                 /> */}
 
-                                    <ImageUploader
-                                        onImageUpload={this.onImageChange}
-                                        onRemoveImage={this.onRemoveImage}
-                                        initialImageSrc={this.state.formData.Attachment}
-                                    />
+                                <ImageUploader
+                                    onImageUpload={this.onImageChange}
+                                    onRemoveImage={this.onRemoveImage}
+                                    initialImageSrc={this.state.formData.Attachment}
+                                />
 
 
-                                    <div className="col-sm-12 text-center py-3 greybg" id="">
-                                        {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} >Submit</button>}
-                                        <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlefullClose} >Cancel</button>
-                                    </div>
-
+                                <div className="col-sm-12 text-center py-3 " id="">
+                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId>0?'Update':'Submit'}>{this.state.ItemId>0?'Update':'Submit'}</button>}
+                                    <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlCancel} >Cancel</button>
                                 </div>
+
                             </div>
                         </div>
+                    </div>
                 </React.Fragment>
             )
         }

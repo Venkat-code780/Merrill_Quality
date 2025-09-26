@@ -11,3 +11,15 @@
     overflow: hidden;
     padding: 0 0 0 5px;
 }
+
+.divSection table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.divSection {
+  background-color: #f4f9fd;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid gray;
+}

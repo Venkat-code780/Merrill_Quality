@@ -1,67 +1,13 @@
-// import * as React from "react";
-// import { SPHttpClient } from "@microsoft/sp-http";
-// import { SPFI, spfi, SPFx } from "@pnp/sp";
-// import { hideLoader } from "../Shared/Loader";
-// import { showToast } from "../Shared/Toaster";
-// import { ActionStatus } from "../Constants/Contants";
-
-
-// export interface CommonFunctionsProps {
-//     match: any;
-//     spContext: any;
-//     spHttpClient: SPHttpClient;
-//     context: any;
-//     history: any;
-//     isSupplierTeam: boolean;
-//     isDTETeam: boolean;
-//     isProcurementTeam: boolean;
-// }
-// export interface JSRAFormState {
-// }
-// export default class CommonFunctions extends React.Component<CommonFunctionsProps> {
-//     private siteURL: string; 
-//     private MaycoSP:SPFI;
-//     constructor(props: CommonFunctionsProps) {
-//              super(props);
-//             this.siteURL = this.props.spContext.siteAbsoluteUrl;
-//             this.MaycoSP = spfi(`${this.siteURL}/mayco`).using(SPFx(this.props.context));
-//             console.log(this.siteURL);      //sites/wcm
-//         }
-//         public state = {
-//         //Cascaded dropdowns
-//         Plants:[],Departments:[], Zones:[], WorkCells:[], Machines:[],Shifts:[], Supervisors:[],
-//     }
-// public componentDidMount() {
-//                 this.getOnLoad();
-//             }
-        
-// public  getOnLoad= async()=>
-//     {
-//         try
-//         {
-//       let  [Plants]=await Promise.all([
-//             this.MaycoSP.web.lists.getByTitle('Plant').items.top(2000).select('Title,*').expand('').orderBy("Title", true)()
-//            ])
-//         }
-//         catch(error){
-//             console.log('Eroor while getting common data' ,error);
-//           this.onError();
-//         }
-//     }
-// private onError = () => {
-//             showToast("error", ActionStatus.Error);
-//             hideLoader();
-// }
-
-//  }
-
-
-import { SPFI, spfi, SPFx } from "@pnp/sp";
+import { SPFI, spfi} from "@pnp/sp";
 import "@pnp/sp/batching";
 // import { SPHttpClient } from "@microsoft/sp-http";
 import { hideLoader } from "../Shared/Loader";
 import { showToast } from "../Shared/Toaster";
 import { ActionStatus } from "../Constants/Contants";
+import { SPFx } from "@pnp/sp/presets/all";
+import { ISPHttpClientOptions, SPHttpClient } from "@microsoft/sp-http";
+
+
 
 // Initialize SPFI instance for mayco site
 export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
@@ -180,14 +126,75 @@ export const initCommonFunctions = (context: any,siteAbsoluteURL:string)=> {
             return error;
         }
     };
+    // Send Email using SharePoint REST API
+   
+// const sendEmail = async ( URL:string,to: string[],subject: string,body: string,cc?: string[]): Promise<void> => {
+//   const sp: SPFI = spfi(URL).using(SPFx(context));
+
+//   try {
+//     let EmailRes=await sp.utility.sendEmail({
+//       To: to,
+//       Subject: subject,
+//       Body: body,
+//       CC: cc || []
+//     });
+//     return EmailRes;
+//   } catch (error) {
+//     console.error("Error sending email:", error);
+//       return error;
+//   }
+// };
+
+const sendEmail = async (URL:string,to: string[],subject: string,body: string,cc?: string[]): Promise<void> => {
+  const emailProps = {
+    properties: {
+    //   To: { results: to },
+    //   CC: { results: cc || [] },
+      To:to,
+      CC:cc || [],
+      Subject: subject,
+      Body: body
+    }
+  };
+
+  const requestOptions: ISPHttpClientOptions = {
+    body: JSON.stringify(emailProps),
+    headers: {
+      "Accept": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose"
+    }
+  };
+
+  try {
+    const response = await context.spHttpClient.post(
+      `${URL}/_api/SP.Utilities.Utility.SendEmail`,
+      SPHttpClient.configurations.v1,
+      requestOptions
+    );
+
+    if (response.ok) {
+      console.log("Email sent successfully");
+    } else {
+      const errorText = await response.text();
+      console.error("Failed to send email:", errorText);
+      throw new Error(errorText);
+    }
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
+}
 
    return {
+        //CRUD Functions
         getListItems,
         getListItemById,
         addListItem,
         updateListItem,
         batchAddItems,
-        batchUpdateItems
+        batchUpdateItems,
+        //Email Functions
+        sendEmail
     };
 
 };

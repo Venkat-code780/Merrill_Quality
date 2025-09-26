@@ -581,7 +581,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" Mayco International - WCM Safety Pillar Step Audits - Level 3 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
+                                <h3 className="mb-0 pt-2 text-center">{" Mayco International - WCM Safety Pillar Step Audits - Level 3 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
                                 <h6 className="mb-0 pt-2 text-center">AUDIT CHECK-LIST</h6>
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
@@ -720,7 +720,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                 </div>
                                 {/* Buttons */}
                                 <div className="col-sm-12 text-center py-3" id="divButtons" >
-                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit} >Submit</button>}
+                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId>0?'Update':'Submit'} onClick={this.handleSubmit} >{this.state.ItemId>0?'Update':'Submit'}</button>}
                                     <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                 </div>
                             </div>

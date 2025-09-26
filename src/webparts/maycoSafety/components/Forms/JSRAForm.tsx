@@ -128,7 +128,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         showLoader();
         let ItemId = this.props.match.params.id;
         let showSubmit = true;
-        let { getListItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { getListItems,sendEmail } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let PlantList = 'Plant';
         let DepartmentList = 'Department', DepartmentSelQuery = 'Title,Plant/Title,Plant/Id,*', DepartmentExpFields = 'Plant';
         let ZoneList = 'Zones', ZoneSelQuery = 'Title,Plant/Title,Plant/Id,Department/Title,Department/Id,*', ZoneExpFields = 'Plant,Department';
@@ -160,6 +160,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 getListItems(SeverityList, this.currentSiteURL, '', '', filterIsActive),
                 getListItems(PPETypesList, this.currentSiteURL),
             ])
+            let EmailRes= await sendEmail(this.rootSiteURL,["challa@njt-na.com"],"New JSRA","Test JSRA body");
+            console.log(EmailRes);
             let PlantsOpt = this.getMapedOptions(Plants, 'Title', 'Title');
             let ShiftsOpt = this.getMapedOptions(Shifts, 'Title', 'Title');
             // RiskFamily=Category(lookup) and Risk(Title) depends on JSRASubCategories list 
@@ -710,38 +712,38 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 </td>
                 <td>
                     <div className="" id={`divRiskFamily_${jobStep.id}`} title={jobStep.RiskFamily}>
-                    <SearchableDropdown
-                        label={""}
-                        Title={jobStep.RiskFamily}
-                        name={""}
-                        id={`RiskFamily_${jobStep.id}`}
-                        placeholderText={""}
-                        className={""}
-                        selectedValue={jobStep.RiskFamily}
-                        OptionsList={this.state.RiskFamilyOpt}
-                        OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'RiskFamily', selectedOption ? selectedOption.value : '')}
-                        isRequired={false}
-                        disabled={(!jobStep.Required) || this.state.isEditForm}
-                        noOptionsMessage="No Risk Family"
-                    />
+                        <SearchableDropdown
+                            label={""}
+                            Title={jobStep.RiskFamily}
+                            name={""}
+                            id={`RiskFamily_${jobStep.id}`}
+                            placeholderText={""}
+                            className={""}
+                            selectedValue={jobStep.RiskFamily}
+                            OptionsList={this.state.RiskFamilyOpt}
+                            OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'RiskFamily', selectedOption ? selectedOption.value : '')}
+                            isRequired={false}
+                            disabled={(!jobStep.Required) || this.state.isEditForm}
+                            noOptionsMessage="No Risk Family"
+                        />
                     </div>
                 </td>
                 <td>
                     <div className="" id={`divRisk_${jobStep.id}`} title={jobStep.Risk}>
-                    <SearchableDropdown
-                        label={""}
-                        Title={jobStep.Risk}
-                        name={""}
-                        id={`Risk_${jobStep.id}`}
-                        placeholderText={""}
-                        className={""}
-                        selectedValue={jobStep.Risk}
-                        OptionsList={jobStep.RiskOpt}
-                        OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Risk', selectedOption ? selectedOption.value : '')}
-                        isRequired={false}
-                        disabled={(!jobStep.Required) || this.state.isEditForm}
-                        noOptionsMessage="No Risk"
-                    />
+                        <SearchableDropdown
+                            label={""}
+                            Title={jobStep.Risk}
+                            name={""}
+                            id={`Risk_${jobStep.id}`}
+                            placeholderText={""}
+                            className={""}
+                            selectedValue={jobStep.Risk}
+                            OptionsList={jobStep.RiskOpt}
+                            OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Risk', selectedOption ? selectedOption.value : '')}
+                            isRequired={false}
+                            disabled={(!jobStep.Required) || this.state.isEditForm}
+                            noOptionsMessage="No Risk"
+                        />
                     </div>
                 </td>
                 <td>
@@ -930,7 +932,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         DynamicHTML = PPETypes.map((PPE, index) => (
 
             <tr key={PPE.id}>
-                <td>
+                <td className="p-1">
                     {/* <div className="custom-dropdown" id={`divPPE_${PPE.id}`} title={PPE.PPEType}> */}
                     <SearchableDropdown
                         label={""}
@@ -948,7 +950,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                     />
                     {/* </div> */}
                 </td>
-                <td>{PPETypes.length > 1 ? <button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePPEType(index)} title="Delete PPE Type"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
+                {PPETypes.length > 1 ? <td className="text-center"><button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePPEType(index)} title="Delete PPE Type"><FontAwesomeIcon icon={faTrash} /></button></td> : ''}
             </tr>
 
         ))
@@ -1014,16 +1016,16 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
 
         DynamicHTML = Persons.map((Person, index) => (
             <tr key={Person.id}>
-                <td>
+                <td className="p-1">
                     <input className="form-control" placeholder={``} name={`PersonName_${Person.id}`} type="text" id={`PersonName_${Person.id}`} value={Person.PersonName} title={Person.PersonName} onChange={(e) => this.handlePersonsChange(index, 'PersonName', e.target.value)} disabled={false} />
 
                 </td>
-                <td>
+                <td className="p-1">
                     {/* <div className="c-date-picker"> */}
                     <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
                     {/* </div> */}
                 </td>
-                <td>{Persons.length > 1 ? <button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePerson(index)} title="Delete Person"><FontAwesomeIcon icon={faTrash} /></button> : ''}</td>
+                {Persons.length > 1 ? <td className="text-center"><button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePerson(index)} title="Delete Person"><FontAwesomeIcon icon={faTrash} /></button></td> : ''}
             </tr>
 
         ))
@@ -1095,7 +1097,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({ Redirect: true, RedirectTo: 'Home', ItemId: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'JSRAView', ItemId: 0 });
     }
     public render() {
         if (this.state.Redirect) {
@@ -1108,7 +1110,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" JSRA " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
+                                <h3 className="mb-0 pt-2 text-center">{" JSRA " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
@@ -1272,8 +1274,9 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                     </div>
                                 </div>
 
-                                {/* Job Steps Table */}
+
                                 <div className="DivTables p-4">
+                                    {/* Job Steps Table */}
                                     <div className={'divSection'}>
                                         <div className="SectionHeader">Job Steps</div>
                                         <table id="jobStepsTable" className="TablejobSteps">
@@ -1295,87 +1298,86 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                         </table>
                                         {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} />Add Job Step</button>}
                                     </div>
-                                    <div className="d-flex">
-                                        {/* PPE Requirements */}
-                                        <div className={'divSection'} style={{ width: '30%' }}>
-                                            <div className="SectionHeader">PPE Requirements</div>
-                                            <table id="PPEREquirementsTable">
-                                                <thead>
-                                                    <tr className="bluebg">
-                                                        <th >PPE Type</th>
-                                                        <th >{this.state.PPETypes.length > 1 ? "Delete" : ""}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {this.bindPPETypes()}
-                                                </tbody>
-                                            </table>
-                                            <button type="button" value="Add PPE" title="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" ><FontAwesomeIcon icon={faAdd} /> Add PPE</button>
-                                        </div>
-                                        {/* Persons Involved */}
-                                        <div className={'divSection ms-2'} style={{ width: '69%' }}>
-                                            <div className="SectionHeader">Persons Involved</div>
-                                            <table id="PersonsInvolvedTable">
-                                                <thead>
-                                                    <tr className="bluebg">
-                                                        <th >Name</th>
-                                                        <th >Date</th>
-                                                        <td >{this.state.Persons.length > 1 ? "Delete" : ""}</td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {this.bindPersons()}
-                                                </tbody>
-                                            </table>
-                                            <button type="button" value="Add Person" title="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson"><FontAwesomeIcon icon={faAdd} /> Add Person</button>
-                                        </div>
+                                    {/* Permits Section */}
+                                    <div className={'divSection'}>
+                                        <div className="SectionHeader">Permits</div>
+                                        <table id="PermitsTable">
+                                            <thead>
+                                                <tr className="bluebg">
+                                                    <th>Type</th>
+                                                    <th>Required</th>
+                                                    <th>Acquired</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.state.Permits.map(p => (
+                                                    <tr><td>{`${p.type}`}</td>
+                                                        <td><input id={`Required_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Required_${p.id}`} onChange={this.handleChange} checked={p.Required} /></td>
+                                                        <td><input id={`Acquired_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Acquired_${p.id}`} onChange={this.handleChange} checked={p.Acquired} /></td>
+                                                    </tr>))}
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div className="d-flex">
-                                        {/* Permits Section */}
-                                        <div className={'divSection'} style={{ width: '50%' }}>
-                                            <div className="SectionHeader">Permits</div>
-                                            <table id="PermitsTable">
-                                                <thead>
-                                                    <tr className="bluebg">
-                                                        <th>Type</th>
-                                                        <th>Required</th>
-                                                        <th>Acquired</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {this.state.Permits.map(p => (
-                                                        <tr><td>{`${p.type}`}</td>
-                                                            <td><input id={`Required_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Required_${p.id}`} onChange={this.handleChange} checked={p.Required} /></td>
-                                                            <td><input id={`Acquired_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Acquired_${p.id}`} onChange={this.handleChange} checked={p.Acquired} /></td>
-                                                        </tr>))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        {/* Supervisor Info */}
-                                        <div className={'divSection ms-2'} style={{ width: '49%' }}>
-                                            <div className="SectionHeader">Supervisor</div>
-                                            <div className="row">
-                                                <div className="col-md-4 p-2">
-                                                    <div className="light-text">
-                                                        <label className="">Supervisor Name </label>
+                                    {/* PPE Requirements */}
+                                    <div className={'divSection'}>
+                                        <div className="SectionHeader">PPE Requirements</div>
+                                        <table id="PPEREquirementsTable">
+                                            <thead>
+                                                <tr className="bluebg">
+                                                    <th className="ps-3">PPE Type</th>
+                                                    {this.state.PPETypes.length > 1 ? <th className="text-center">Delete</th> : ""}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.bindPPETypes()}
+                                            </tbody>
+                                        </table>
+                                        <button type="button" value="Add PPE" title="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" ><FontAwesomeIcon icon={faAdd} /> Add PPE</button>
+                                    </div>
+                                    {/* Persons Involved */}
+                                    <div className={'divSection'}>
+                                        <div className="SectionHeader">Persons Involved</div>
+                                        <table id="PersonsInvolvedTable">
+                                            <thead>
+                                                <tr className="bluebg">
+                                                    <th className="ps-3">Name</th>
+                                                    <th className="ps-3">Date</th>
+                                                    {this.state.Persons.length > 1 ? <th className="text-center">Delete</th> : ""}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.bindPersons()}
+                                            </tbody>
+                                        </table>
+                                        <button type="button" value="Add Person" title="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson"><FontAwesomeIcon icon={faAdd} /> Add Person</button>
+                                    </div>
+                                    {/* Supervisor Info */}
+                                    <div className={'divSection'}>
+                                        <div className="SectionHeader">Supervisor</div>
+                                        <table id="SupervisorTable">
+                                            <thead>
+                                                <tr className="bluebg">
+                                                    <th className="ps-3">Name</th>
+                                                    <th className="ps-3">Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td className="p-1">
                                                         <input className="form-control" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-4 p-2" id="divDate">
-                                                    <div className="light-text">
-                                                        <label className="z-in-9"> Date</label>
-                                                        <div className="custom-datepicker" id="divSupervisorDate">
-                                                            <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+
+                                                    </td>
+                                                    <td className="p-1">
+                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                                 {/* Buttons */}
                                 <div className="col-sm-12 text-center py-3" id="divButtons" >
-                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit} >Submit</button>}
+                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                     <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                 </div>
                             </div>

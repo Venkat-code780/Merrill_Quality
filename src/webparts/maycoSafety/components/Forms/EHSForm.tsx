@@ -48,7 +48,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
     private txtComments: any;
     public state = {
         formData: {
-            Date:'',
+            Date: '',
             Plant: '',
             Department: '',
             Zone: '',
@@ -96,11 +96,12 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         ],
         activeAuditCategoriesData: [],
         auditCategoryStatusData: [],
-        Homeredirect: false,
+        Redirect: false,
+        RedirectTo: '',
         isEditForm: false,
         ItemId: 0,
         isInputDisabled: false,
-        displayMessage:'',
+        displayMessage: '',
         showSubmit: false
     }
 
@@ -122,7 +123,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             showLoader();
             var formData = { ...this.state.formData };
             let itemId = this.props.match.params.id;
-            let showSubmit = false
+            let showSubmit = true;
 
             let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
             let PlantList = 'Plant', PlantSelQuery = 'Title,*', plantFiltQuery = '', PlantExpFields = '';
@@ -178,68 +179,74 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
             let allMappingData;
 
-            if (itemId != undefined) {
-                let [editEHSItem, editEHSChildItems] = await Promise.all([this.sp.web.lists.getByTitle(this.EHSList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")(), this.sp.web.lists.getByTitle(this.EHSChildList).items.top(2000).filter("EHSID eq "+itemId+"")() ]);
-                if (editEHSItem != Error) {
-                    formData.Date = editEHSItem.Date ?? '',
-                    formData.Plant = editEHSItem.Plant ?? '',
-                    formData.Department = editEHSItem.Department ?? '',
-                    formData.Zone = editEHSItem.Zone ?? '',
-                    formData.Machine = editEHSItem.Machine ?? '',
-                    formData.Shifts = editEHSItem.Shifts ?? '',
-                    formData.ToolNo = editEHSItem.ToolNo ?? '',
-                    formData.Comments = editEHSItem.Comments ?? '',
-                    formData.AuditorName = editEHSItem.AuditorName ?? '',
-                    formData.Supervisor = editEHSItem.Supervisor ?? '',
-                    formData.WorkCell = editEHSItem.WorkCell ?? '',
-                    formData.unsafeactCount = editEHSItem.unsafeactCount ?? '',
-                    formData.unsafeconditionCount = editEHSItem.unsafeconditionCount ?? '',
-                    formData.Year = editEHSItem.Year ?? '',
-                    formData.YearMonth = editEHSItem.YearMonth ?? ''
+            if (itemId > 0) {
+                let EHSRes: any, editEHSChildItems: any;
+                [EHSRes, editEHSChildItems] = await Promise.all([
+                    getListItems(this.EHSList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`),
+                    this.sp.web.lists.getByTitle(this.EHSChildList).items.top(2000).filter("EHSID eq " + itemId + "")()
+                ]);
+                if (!EHSRes.isHttpRequestError) {
+                    if (EHSRes.length) {
+                        let editEHSItem = EHSRes[0];
+                        formData.Date = editEHSItem.Date ?? '',
+                            formData.Plant = editEHSItem.Plant ?? '',
+                            formData.Department = editEHSItem.Department ?? '',
+                            formData.Zone = editEHSItem.Zone ?? '',
+                            formData.Machine = editEHSItem.Machine ?? '',
+                            formData.Shifts = editEHSItem.Shifts ?? '',
+                            formData.ToolNo = editEHSItem.ToolNo ?? '',
+                            formData.Comments = editEHSItem.Comments ?? '',
+                            formData.AuditorName = editEHSItem.AuditorName ?? '',
+                            formData.Supervisor = editEHSItem.Supervisor ?? '',
+                            formData.WorkCell = editEHSItem.WorkCell ?? '',
+                            formData.unsafeactCount = editEHSItem.unsafeactCount ?? '',
+                            formData.unsafeconditionCount = editEHSItem.unsafeconditionCount ?? '',
+                            formData.Year = editEHSItem.Year ?? '',
+                            formData.YearMonth = editEHSItem.YearMonth ?? ''
 
-                    zoneOptions = zoneData.filter((option: any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editEHSItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editEHSItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                    machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editEHSItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        machineOptions = machineData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editEHSItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                    ToolNosOptions = ToolNosData.filter((option: any) => ( option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editEHSItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        ToolNosOptions = ToolNosData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == formData.Department && option.Zone && option.Zone.Title == editEHSItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                    workCellOptions = workCellData.filter((option: any) => ( option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == editEHSItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                        workCellOptions = workCellData.filter((option: any) => (option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == editEHSItem.Zone)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
-                    if( editEHSChildItems.length > 0){
-                        allMappingData = editEHSChildItems.map((item: any) => {
-                            return (
-                            {
-                                Id: item.Id,
-                                EHSID: item.EHSID  ?? '',
-                                EHSCategory: item.EHSCategory ?? '',
-                                EHSSubCategory: item.EHSSubCategory ?? '',
-                                ImageAttachement: item.ImageAttachement ?? '',
-                                Status: item.Status ?? '',
-                            })
-                        })
-                    }
-                    else{
-                        allMappingData = mappingData.map((item: any) => {
-                    if (item.Audit_categories && item.Audit_SubCategory && this.checkAuditCategory(activeAuditCategoriesData, item.Audit_categories.Title)) {
+                        if (editEHSChildItems.length > 0) {
+                            allMappingData = editEHSChildItems.map((item: any) => {
                                 return (
                                     {
-                                        EHSID: '',
-                                        EHSCategory: item.Audit_categories.Title,
-                                        EHSSubCategory: item.Audit_SubCategory,
-                                        ImageAttachement: '',
-                                        Status: 'Satisfactory'
+                                        Id: item.Id,
+                                        EHSID: item.EHSID ?? '',
+                                        EHSCategory: item.EHSCategory ?? '',
+                                        EHSSubCategory: item.EHSSubCategory ?? '',
+                                        ImageAttachement: item.ImageAttachement ?? '',
+                                        Status: item.Status ?? '',
                                     })
-                            }
-                            else {
-                                return null;
-                            }
-                        }).filter(mapItem => mapItem != null);
+                            })
+                        }
+                        else {
+                            allMappingData = mappingData.map((item: any) => {
+                                if (item.Audit_categories && item.Audit_SubCategory && this.checkAuditCategory(activeAuditCategoriesData, item.Audit_categories.Title)) {
+                                    return (
+                                        {
+                                            EHSID: '',
+                                            EHSCategory: item.Audit_categories.Title,
+                                            EHSSubCategory: item.Audit_SubCategory,
+                                            ImageAttachement: '',
+                                            Status: 'Satisfactory'
+                                        })
+                                }
+                                else {
+                                    return null;
+                                }
+                            }).filter(mapItem => mapItem != null);
+                        }
+                       showSubmit= (editEHSItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                     }
-
-                    
-
-                    if( editEHSItem.Author == this.props.userDisplayName || this.props.isSuperAdmin ){
-                        showSubmit = true;
+                    else {
+                        showToast("error", "No EHS found");
+                        this.setState({ Redirect: true, RedirectTo: 'Home' });
                     }
                 }
             }
@@ -259,16 +266,15 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                         return null;
                     }
                 }).filter(mapItem => mapItem != null);
-
-                showSubmit = true;
             }
 
             this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, ToolNosData, ToolNosOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId });
-
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+        finally {
+            hideLoader();
         }
     }
 
@@ -316,7 +322,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         const value = actionMeta.action == "clear" ? '' : event.value;
         formData[name] = value;
 
-        if( name == "Plant" ){
+        if (name == "Plant") {
             formData.Department = "";
             formData.Zone = "";
             formData.Machine = "";
@@ -325,7 +331,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             zoneOptions = [];
 
             if (actionMeta.action != "clear") {
-                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department )).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
+                departmentOptions = departmentData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
         }
         else if (name == "Department") {
@@ -358,8 +364,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
                 workCellOptions = workCellData.filter((option: any) => (option.h7kc == formData.Plant && option.Department == formData.Department && option.Zone == event.value)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
             }
-            else { 
-                machineOptions = []; 
+            else {
+                machineOptions = [];
                 ToolNosOptions = [];
                 workCellOptions = [];
             }
@@ -410,46 +416,46 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             var formData: any = { ...this.state.formData };
             // let itemId = this.props.match.params.id;
             let data = {
-                date: {val: formData.Date, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtDate"},
-                dateToday: {val: formData.Date, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtDate"},
-                shift: {val: formData.Shifts, required: true, Name: "Shifts", Type: ControlType.reactSelect, Focusid: "ddlShift"},
-                auditorsName: {val: formData.AuditorName, required: true, Name: "Auditor's Name", Type: ControlType.reactSelect, Focusid: "ddlAuditorName"},
-                plant: {val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant"},
-                department: {val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment"},
-                zone: {val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone"},
-                machine: {val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine"},
-                workCell: {val: formData.WorkCell, required: true, Name: "Work Cell", Type: ControlType.reactSelect, Focusid: "ddlWorkCell"},
-                ToolNo: {val: formData.ToolNo, required: (formData.Department == "Molding"), Name: "Tool Number", Type: ControlType.reactSelect, Focusid: "ddlToolNo"},
-                supervisor: {val: formData.Supervisor, required: true, Name: "Supervisor", Type: ControlType.reactSelect, Focusid: "ddlSupervisor"}
+                date: { val: formData.Date, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtDate" },
+                dateToday: { val: formData.Date, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtDate" },
+                shift: { val: formData.Shifts, required: true, Name: "Shifts", Type: ControlType.reactSelect, Focusid: "ddlShift" },
+                auditorsName: { val: formData.AuditorName, required: true, Name: "Auditor's Name", Type: ControlType.reactSelect, Focusid: "ddlAuditorName" },
+                plant: { val: formData.Plant, required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: "ddlPlant" },
+                department: { val: formData.Department, required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: "ddlDepartment" },
+                zone: { val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone" },
+                machine: { val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine" },
+                workCell: { val: formData.WorkCell, required: true, Name: "Work Cell", Type: ControlType.reactSelect, Focusid: "ddlWorkCell" },
+                ToolNo: { val: formData.ToolNo, required: (formData.Department == "Molding"), Name: "Tool Number", Type: ControlType.reactSelect, Focusid: "ddlToolNo" },
+                supervisor: { val: formData.Supervisor, required: true, Name: "Supervisor", Type: ControlType.reactSelect, Focusid: "ddlSupervisor" }
             }
 
             let isValid = formValidation.FormValidation(data);
-            
-            if( isValid.status ){
+
+            if (isValid.status) {
                 // console.log("Valid Data");
 
                 //Date formatting, Year and YearMonth
-                formData.Date = DateUtilities.addBrowserwrtServer( new Date(DateUtilities.getDateMMDDYYYY(formData.Date)), this.props.spContext.webTimeZoneData ).toISOString();
+                formData.Date = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(formData.Date)), this.props.spContext.webTimeZoneData).toISOString();
                 let mmddyyyyDate = format(formData.Date, "MM/dd/yyyy");
                 // console.log(mmddyyyyDate);
                 formData.Year = mmddyyyyDate.split("/")[2];
                 formData.YearMonth = mmddyyyyDate.split("/")[0];
 
                 //Get Status Count
-                let allMappingData = {...this.state.allMappingData}
+                let allMappingData = { ...this.state.allMappingData }
                 let unsafeact = 0;
                 let unsafeConddition = 0;
-                for (let  i=0; i< Object.keys(allMappingData).length; i++) {
+                for (let i = 0; i < Object.keys(allMappingData).length; i++) {
                     var subCategory = allMappingData[i];
                     var status = subCategory.Status;
 
-                    if( status.toLowerCase() == "unsafe act" ){
+                    if (status.toLowerCase() == "unsafe act") {
                         unsafeact += 1;
                     }
-                    if( status.toLowerCase() == "unsafe condition" ){
+                    if (status.toLowerCase() == "unsafe condition") {
                         unsafeConddition += 1;
                     }
-                    if( status.toLowerCase() == "both" ){
+                    if (status.toLowerCase() == "both") {
                         unsafeact += 1;
                         unsafeConddition += 1;
                     }
@@ -464,31 +470,31 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
                 await this.InsertOrUpdateData(formData);
             }
-            else{
+            else {
                 showToast("error", isValid.message);
             }
             hideLoader();
         } catch (e) {
-           console.log(e);
-           this.onError(); 
+            console.log(e);
+            this.onError();
         }
     }
 
     private InsertOrUpdateData = async (formData: any) => {
         try {
             let itemId = this.props.match.params.id;
-            if( itemId > 0 ){
-                await this.sp.web.lists.getByTitle(this.EHSList).items.getById(itemId).update(formData).then((res:any) =>{
+            if (itemId > 0) {
+                await this.sp.web.lists.getByTitle(this.EHSList).items.getById(itemId).update(formData).then((res: any) => {
                     this.UpdateLineItems();
                 }, (error) => {
                     console.log(error);
                     this.onError();
                 })
             }
-            else{
-                await this.sp.web.lists.getByTitle(this.EHSList).items.add(formData).then( (res:any) => {
+            else {
+                await this.sp.web.lists.getByTitle(this.EHSList).items.add(formData).then((res: any) => {
                     let childObjects = this.updateEHSId(res.Id.toString());
-                    this.InsertLineItems( childObjects );
+                    this.InsertLineItems(childObjects);
                 }, (error) => {
                     console.log(error);
                     this.onError();
@@ -500,17 +506,17 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         }
     }
 
-    private InsertLineItems = async ( childPostObjects :any) => {
+    private InsertLineItems = async (childPostObjects: any) => {
         try {
-            const[batchedPipe, execute] = createBatch(this.sp.web);
+            const [batchedPipe, execute] = createBatch(this.sp.web);
             for (const item of childPostObjects) {
                 this.sp.web.lists.getByTitle(this.EHSChildList).items.using(batchedPipe).add(item);
             }
-            await execute().then( async () =>{
+            await execute().then(async () => {
                 let msg = "EHS Submitted Successfully";
-                this.setState({displayMessage: msg});
+                this.setState({ displayMessage: msg });
                 this.onSuccess();
-                
+
             }, (error: any) => {
                 console.log(error);
                 this.onError();
@@ -524,15 +530,15 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
     private UpdateLineItems = async () => {
         try {
             let childPostObjects = this.createUpdateObjects();
-            const[batchedPipe, execute] = createBatch(this.sp.web);
+            const [batchedPipe, execute] = createBatch(this.sp.web);
             for (const item of childPostObjects) {
                 this.sp.web.lists.getByTitle(this.EHSChildList).items.getById(item.id).using(batchedPipe).update(item.Obj);
             }
-            await execute().then( async () =>{
+            await execute().then(async () => {
                 let msg = "EHS Updated Successfully";
-                this.setState({displayMessage: msg});
+                this.setState({ displayMessage: msg });
                 this.onSuccess();
-                
+
             }, (error: any) => {
                 console.log(error);
                 this.onError();
@@ -543,11 +549,11 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         }
     }
 
-    private createUpdateObjects(){
-        const allMappingData:any = [...this.state.allMappingData];
+    private createUpdateObjects() {
+        const allMappingData: any = [...this.state.allMappingData];
         let postObjects = [];
 
-        for( let i=0; i< allMappingData.length; i++){
+        for (let i = 0; i < allMappingData.length; i++) {
             let mappingItem = allMappingData[i];
 
             let postObj = {
@@ -565,10 +571,10 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         return postObjects;
     }
 
-    private updateEHSId = (ParentId:string) => {
+    private updateEHSId = (ParentId: string) => {
         let allMappingData = [...this.state.allMappingData];
 
-        let updatedMappingData = allMappingData.map( item => ({
+        let updatedMappingData = allMappingData.map(item => ({
             ...item,
             EHSID: ParentId
         }));
@@ -578,8 +584,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
     private onSuccess = () => {
         hideLoader();
-        this.setState({ Homeredirect: true, ItemID: 0  });
-        showToast("success", this.state.displayMessage );
+        this.setState({ Redirect: true, RedirectTo: 'EHSView', ItemID: 0 });
+        showToast("success", this.state.displayMessage);
     }
 
     private onError = () => {
@@ -587,8 +593,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         hideLoader();
     }
 
-    private handlefullClose = () => {
-        this.setState({ Homeredirect: true, ItemID: 0 });
+    private handleCancel = () => {
+        this.setState({ Redirect: true, RedirectTo: 'EHSView', ItemID: 0 });
     }
 
     private bindDynamicTable = () => {
@@ -602,7 +608,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
         const tBody = uniqueCategories.map((category, categoryIndex) => {
             // Filter subcategories that match the current category
-            const categoryRows = allMappingData.filter(subCategory => subCategory.EHSCategory === category).sort( (a:any, b:any) => a.EHSSubCategory.localeCompare(b.EHSSubCategory));
+            const categoryRows = allMappingData.filter(subCategory => subCategory.EHSCategory === category).sort((a: any, b: any) => a.EHSSubCategory.localeCompare(b.EHSSubCategory));
 
             return (
                 <React.Fragment key={categoryIndex}>
@@ -679,8 +685,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
     };
 
     public render() {
-        if (this.state.Homeredirect) {
-            let url = "/Home";
+        if (this.state.Redirect) {
+            let url = `/${this.state.RedirectTo}`;
             return (<Navigate to={url} />)
         }
         else {
@@ -689,213 +695,223 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" EHS " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
+                                <h3 className="mb-0 pt-2 text-center">{" EHS " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
                             </div>
 
-                            <div className="mainContent row col-lg-12 col-md-12 col-sm-12 col-xs-12 borderLine">
-                                {/* Date */}
-                                <div className="col-md-3 greybg c-date-picker" id="divDate">
-                                    <label className="label-datePicker" htmlFor="dtDate"> Date <span className="text-danger">*</span></label>
-                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate", dateProps)} highlightDate={new Date()} showIcon />
-                                </div>
-                                {/* Shift */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown" id="divShift">
-                                        <SearchableDropdown
-                                            label={"Shift"}
-                                            Title={"Shift"}
-                                            name={"Shifts"}
-                                            id="ddlShift"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.Shifts}
-                                            OptionsList={this.state.shiftData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift") }}
-                                            isRequired={true}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No Shifts"
-                                        />
+                            <div className="mainContent px-4 borderLine">
+                                <div className="row py-2">
+                                    {/* Date */}
+                                    <div className="col-md-3">
+                                        <div className="light-text">
+                                            <label className="" htmlFor="dtDate"> Date <span className="text-danger">*</span></label>
+                                            <div className="custom-datepicker" id="divDate">
+                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate", dateProps)} highlightDate={new Date()} showIcon />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Shift */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown" id="divShift">
+                                            <SearchableDropdown
+                                                label={"Shift"}
+                                                Title={"Shift"}
+                                                name={"Shifts"}
+                                                id="ddlShift"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.Shifts}
+                                                OptionsList={this.state.shiftData}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift") }}
+                                                isRequired={true}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No Shifts"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Auditor's Name */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown active" id="divAuditorName" title={this.state.formData.AuditorName}>
+                                            <SearchableDropdown
+                                                label={"Auditor's Name"}
+                                                Title={"AuditorName"}
+                                                name={"AuditorName"}
+                                                id="ddlAuditorName"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.AuditorName}
+                                                OptionsList={this.state.auditorNameData}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAuditorName") }}
+                                                isRequired={true}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No Auditor's Names"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Plant */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown active" id="divPlant" title={this.state.formData.Plant}>
+                                            <SearchableDropdown
+                                                label={"Plant"}
+                                                Title={"Plant"}
+                                                name={"Plant"}
+                                                id="ddlPlant"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.Plant}
+                                                OptionsList={this.state.plantsData}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPlant") }}
+                                                isRequired={true}
+                                                disabled={true}
+                                                noOptionsMessage="No Plants available"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                {/* Auditor's Name */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown active" id="divAuditorName" title={this.state.formData.AuditorName}>
-                                        <SearchableDropdown
-                                            label={"Auditor's Name"}
-                                            Title={"AuditorName"}
-                                            name={"AuditorName"}
-                                            id="ddlAuditorName"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.AuditorName}
-                                            OptionsList={this.state.auditorNameData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAuditorName") }}
-                                            isRequired={true}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No Auditor's Names"
-                                        />
+                                <div className="row pb-2">
+                                    {/* Department */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown" id="divDepartment">
+                                            <SearchableDropdown
+                                                label={"Department"}
+                                                Title={"Department"}
+                                                name={"Department"}
+                                                id="ddlDepartment"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.Department}
+                                                OptionsList={this.state.departmentOptions}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment") }}
+                                                isRequired={true}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No Departments"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Zone */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown" id="divZone">
+                                            <SearchableDropdown
+                                                label={"Zone"}
+                                                Title={"Zone"}
+                                                name={"Zone"}
+                                                id="ddlZone"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.Zone}
+                                                OptionsList={this.state.zoneOptions}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone") }}
+                                                isRequired={true}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No Zones"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Machine */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown" id="divMachine">
+                                            <SearchableDropdown
+                                                label={"Machine"}
+                                                Title={"Machine"}
+                                                name={"Machine"}
+                                                id="ddlMachine"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.Machine}
+                                                OptionsList={this.state.machineOptions}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine") }}
+                                                isRequired={true}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No Machines"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Work Cell */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown" id="divWorkCell" title={this.state.formData.WorkCell}>
+                                            <SearchableDropdown
+                                                label={"Work Cell"}
+                                                Title={"WorkCell"}
+                                                name={"WorkCell"}
+                                                id="ddlWorkCell"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.WorkCell}
+                                                OptionsList={this.state.workCellOptions}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divWorkCell") }}
+                                                isRequired={true}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No WorkCell"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                {/* Plant */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown active" id="divPlant" title={this.state.formData.Plant}>
-                                        <SearchableDropdown
-                                            label={"Plant"}
-                                            Title={"Plant"}
-                                            name={"Plant"}
-                                            id="ddlPlant"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.Plant}
-                                            OptionsList={this.state.plantsData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPlant") }}
-                                            isRequired={true}
-                                            disabled={true}
-                                            noOptionsMessage="No Plants available"
-                                        />
+                                <div className="row pb-2">
+                                    {/* Tool No. */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown" id="divToolNo" title={this.state.formData.ToolNo}>
+                                            <SearchableDropdown
+                                                label={"Tool No."}
+                                                Title={"ToolNo"}
+                                                name={"ToolNo"}
+                                                id="ddlToolNo"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.ToolNo}
+                                                OptionsList={this.state.ToolNosOptions}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divToolNo") }}
+                                                isRequired={this.state.formData.Department == "Molding"}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No ToolNo's"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Supervisor */}
+                                    <div className="col-md-3">
+                                        <div className="custom-dropdown" id="divSupervisor" title={this.state.formData.Supervisor}>
+                                            <SearchableDropdown
+                                                label={"Supervisor"}
+                                                Title={"Supervisor"}
+                                                name={"Supervisor"}
+                                                id="ddlSupervisor"
+                                                placeholderText={""}
+                                                className={""}
+                                                selectedValue={this.state.formData.Supervisor}
+                                                OptionsList={this.state.supervisorsData}
+                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSupervisor") }}
+                                                isRequired={true}
+                                                disabled={this.state.isInputDisabled}
+                                                noOptionsMessage="No Supervisor's"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                {/* Department */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown" id="divDepartment">
-                                        <SearchableDropdown
-                                            label={"Department"}
-                                            Title={"Department"}
-                                            name={"Department"}
-                                            id="ddlDepartment"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.Department}
-                                            OptionsList={this.state.departmentOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment") }}
-                                            isRequired={true}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No Departments"
-                                        />
-                                    </div>
+                                <div className="divSection">
+                                    <table>
+                                        <thead className="darkgreybg">
+                                            <tr>
+                                                <th>Requirement</th>
+                                                <th>Select</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {this.bindDynamicTable()}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                {/* Zone */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown" id="divZone">
-                                        <SearchableDropdown
-                                            label={"Zone"}
-                                            Title={"Zone"}
-                                            name={"Zone"}
-                                            id="ddlZone"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.Zone}
-                                            OptionsList={this.state.zoneOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone") }}
-                                            isRequired={true}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No Zones"
-                                        />
-                                    </div>
-                                </div>
-                                {/* Machine */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown" id="divMachine">
-                                        <SearchableDropdown
-                                            label={"Machine"}
-                                            Title={"Machine"}
-                                            name={"Machine"}
-                                            id="ddlMachine"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.Machine}
-                                            OptionsList={this.state.machineOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine") }}
-                                            isRequired={true}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No Machines"
-                                        />
-                                    </div>
-                                </div>
-                                {/* Work Cell */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown" id="divWorkCell" title={this.state.formData.WorkCell}>
-                                        <SearchableDropdown
-                                            label={"Work Cell"}
-                                            Title={"WorkCell"}
-                                            name={"WorkCell"}
-                                            id="ddlWorkCell"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.WorkCell}
-                                            OptionsList={this.state.workCellOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divWorkCell") }}
-                                            isRequired={true}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No WorkCell"
-                                        />
-                                    </div>
-                                </div>
-                                {/* Tool No. */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown" id="divToolNo" title={this.state.formData.ToolNo}>
-                                        <SearchableDropdown
-                                            label={"Tool No."}
-                                            Title={"ToolNo"}
-                                            name={"ToolNo"}
-                                            id="ddlToolNo"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.ToolNo}
-                                            OptionsList={this.state.ToolNosOptions}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divToolNo") }}
-                                            isRequired={this.state.formData.Department == "Molding"}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No ToolNo's"
-                                        />
-                                    </div>
-                                </div>
-                                {/* Supervisor */}
-                                <div className="col-md-3 greybg form-floating">
-                                    <div className="custom-dropdown" id="divSupervisor" title={this.state.formData.Supervisor}>
-                                        <SearchableDropdown
-                                            label={"Supervisor"}
-                                            Title={"Supervisor"}
-                                            name={"Supervisor"}
-                                            id="ddlSupervisor"
-                                            placeholderText={""}
-                                            className={""}
-                                            selectedValue={this.state.formData.Supervisor}
-                                            OptionsList={this.state.supervisorsData}
-                                            OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSupervisor") }}
-                                            isRequired={true}
-                                            disabled={this.state.isInputDisabled}
-                                            noOptionsMessage="No Supervisor's"
-                                        />
-                                    </div>
-                                </div>
-
-                                <table>
-                                    <thead className="darkgreybg">
-                                        <tr>
-                                            <th>Requirement</th>
-                                            <th>Select</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {this.bindDynamicTable()}
-                                    </tbody>
-                                </table>
                                 {/* Comments */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" style={{ padding: "0px" }}>
-                                    <div className="col-md-12 greybg">
-                                        <div className={this.state.isInputDisabled ? "textarea-disabled form-floating" : "form-floating"} >
+                                <div className="col-md-12">
+                                    <div className="col-md-12">
+                                        <div className="light-text" >
+                                            <label className="" htmlFor="txtComments">Comments </label>
                                             <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
-                                            <label className=" col-form-label" htmlFor="txtComments">Comments </label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="col-sm-12 text-center py-3 greybg" id="">
-                                    {this.state.showSubmit &&<button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} >Submit</button>}
-                                    <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlefullClose} >Cancel</button>
+                                <div className="col-sm-12 text-center py-3" id="">
+                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
+                                    <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} >Cancel</button>
                                 </div>
                             </div>
                         </div>

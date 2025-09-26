@@ -855,7 +855,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({ Redirect: true, RedirectTo: 'Home', ItemId: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'TagView', ItemId: 0 });
     }
     private onTabClick = (TAGName: String, e?: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         showLoader();
@@ -879,7 +879,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" TAG " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
+                                <h3 className="mb-0 pt-2 text-center">{" TAG " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
@@ -1033,7 +1033,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
 
                                     {/* Buttons */}
                                     <div className="col-sm-12 text-center py-3" id="divButtons" >
-                                        {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit} >Submit</button>}
+                                        {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId>0?'Update':'Submit'} onClick={this.handleSubmit} >{this.state.ItemId>0?'Update':'Submit'}</button>}
                                         <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                     </div>
                                 </div>

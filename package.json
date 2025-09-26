@@ -25,6 +25,7 @@
     "@microsoft/sp-property-pane": "1.21.1",
     "@microsoft/sp-webpart-base": "1.21.1",
     "@mjcdev/react-body-highlighter": "^0.0.4",
+    "@pnp/graph": "^4.16.0",
     "@pnp/sp": "^4.16.0",
     "@pnp/spfx-controls-react": "^3.22.0",
     "bootstrap": "^5.3.8",

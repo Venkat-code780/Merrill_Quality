@@ -136,7 +136,6 @@ export interface UASubTypeState {
         try{
              var formData = {...this.state.formData};
             formData.Title = '';
-            //formData.IsActive = false;
             showLoader();
             this.setState({ isFormOpen: true, ItemId: Id, formData});
             await this.sp.web.lists.getByTitle(this.ActionsList).items.getById(Id)().then( (item:any) => {
@@ -147,7 +146,6 @@ export interface UASubTypeState {
                 else{
                     formData.Title = item.Title;
                     formData.UAType0Id=item.UAType0Id;
-                    //formData.IsActive = item.IsActive;
                     hideLoader();
                     this.setState({ formData },()=>{
                         this.txtUAMicroType.current?.focus();
@@ -411,7 +409,7 @@ private handleChangeClient = (selected: any) => {
                                                             </div>
                                                         </div>
                                                       
-                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                        <div className="col-md-3 py-2" id="">
                                                             <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>

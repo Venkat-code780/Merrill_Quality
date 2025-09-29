@@ -496,7 +496,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
 
                                                         </div>
                                                     </div>
-                                                    <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                    <div className="col-md-3 py-2" id="">
                                                         <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
                                                         <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                     </div>

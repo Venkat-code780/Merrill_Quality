@@ -464,7 +464,7 @@ formData[name as keyof typeof formData] = value as never;
                                                         
                                                            <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <select className="form-select"  name="Form_x0020_Type" title="Form_x0020_Type" value={ this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
+                                                                <select className="form-control"  name="Form_x0020_Type" title="Form_x0020_Type" value={ this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
                                                                     <option value={""}>--Select One--</option>
                                                                     <option value={'WCC'}>WCC</option>
                                                                     <option value={'EHS'}>EHS</option>
@@ -475,7 +475,7 @@ formData[name as keyof typeof formData] = value as never;
                                                         </div>
                                                             <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <select className="form-select"  name="Is_x0020_Active" title="Is_x0020_Active" value={ this.state.formData.Is_x0020_Active === null?"":String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
+                                                                <select className="form-control"  name="Is_x0020_Active" title="Is_x0020_Active" value={ this.state.formData.Is_x0020_Active === null?"":String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
                                                                     <option value={0}>--Select One--</option>
                                                                     <option value={'true'}>Yes</option>
                                                                     <option value={'false'}>No</option>
@@ -486,7 +486,7 @@ formData[name as keyof typeof formData] = value as never;
                                                          </div>
                                                         </div>
 
-                                                        <div className="col-md-3 btnDiv buttonsdiv" id="">
+                                                        <div className="col-sm-12 text-center py-3" id="">
                                                             <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>                                                  
                                                 </div>

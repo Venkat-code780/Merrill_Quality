@@ -128,7 +128,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         showLoader();
         let ItemId = this.props.match.params.id;
         let showSubmit = true;
-        let { getListItems,sendEmail } = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { getListItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let PlantList = 'Plant';
         let DepartmentList = 'Department', DepartmentSelQuery = 'Title,Plant/Title,Plant/Id,*', DepartmentExpFields = 'Plant';
         let ZoneList = 'Zones', ZoneSelQuery = 'Title,Plant/Title,Plant/Id,Department/Title,Department/Id,*', ZoneExpFields = 'Plant,Department';
@@ -160,8 +160,6 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 getListItems(SeverityList, this.currentSiteURL, '', '', filterIsActive),
                 getListItems(PPETypesList, this.currentSiteURL),
             ])
-            let EmailRes= await sendEmail(this.rootSiteURL,["challa@njt-na.com"],"New JSRA","Test JSRA body");
-            console.log(EmailRes);
             let PlantsOpt = this.getMapedOptions(Plants, 'Title', 'Title');
             let ShiftsOpt = this.getMapedOptions(Shifts, 'Title', 'Title');
             // RiskFamily=Category(lookup) and Risk(Title) depends on JSRASubCategories list 
@@ -335,7 +333,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         }
     }
     private InsertOrUpdateData = async (postObjectJSRA: any) => {
-        let { addListItem, updateListItem, batchAddItems, batchUpdateItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { addListItem, updateListItem, batchAddItems, batchUpdateItems, getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let ItemId = this.props.match.params.id;
         if (ItemId > 0) {
             await updateListItem('JSRA', this.currentSiteURL, postObjectJSRA, ItemId).then(async (res: any) => {
@@ -358,7 +356,16 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 let adedItemId = res.Id;
                 // JSRA Line Items insertion
                 let postObjectJSRALineItems: any[] = this.getJSRALinepostObject(adedItemId, this.state.jobSteps, this.state.isEditForm);
-                await batchAddItems('JSRA Line', this.currentSiteURL, postObjectJSRALineItems).then((res: any) => {
+                await batchAddItems('JSRA Line', this.currentSiteURL, postObjectJSRALineItems).then(async (res: any) => {
+                    let GroupName = this.getGroupName();
+                    if (GroupName != '') {
+                        let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.currentSiteURL);
+                        if (GroupMemberEmails.length) {
+                            let link=this.currentSiteURL + '/SitePages/Home.aspx#/JSRAForm/' + adedItemId
+                            let body = "<p>Hi,</p>" + "<p>New 'JSRA-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards</p>";
+                            await sendEmail(this.rootSiteURL, GroupMemberEmails, "New 'JSRA' Submitted", body);
+                        }
+                    }
                     let msg = "JSRA submitted successfully";
                     this.onSuccess(msg);
                 }, (error: any) => {
@@ -479,9 +486,29 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         });
         return isEditForm ? postEditObjectJSRALineItems : postObjectJSRALineItems;
     }
+    private getGroupName() {
+        var selectedDept = this.state.formData.Department;
+        var selectedZone = this.state.formData.Zone;
+        let group = '';
 
-
-
+        if (selectedDept == "IP Assembly")
+            group = "WCM Safety IP Assy";
+        else if (selectedDept == "Sequencing")
+            group = "WCM Safety Seq";
+        else if (selectedDept == "Thermoforming")
+            group = "WCM Safety IPM Thermo";
+        else if (selectedDept == "Deco")
+            group = "WCM Safety Deco";
+        else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+            group = "WCM Safety Molding Zone 1";
+        else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+            group = "WCM Safety Molding Zone 2";
+        else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+            group = "WCM Safety Molding Zone 3";
+        else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+            group = "WCM Safety Molding Zone 4";
+        return group;
+    }
 
     // on change functions
     private handleChange = (event: any) => {
@@ -1017,7 +1044,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         DynamicHTML = Persons.map((Person, index) => (
             <tr key={Person.id}>
                 <td className="p-1">
-                    <input className="form-control" placeholder={``} name={`PersonName_${Person.id}`} type="text" id={`PersonName_${Person.id}`} value={Person.PersonName} title={Person.PersonName} onChange={(e) => this.handlePersonsChange(index, 'PersonName', e.target.value)} disabled={false} />
+                    <input className="form-control p-1" placeholder={``} name={`PersonName_${Person.id}`} type="text" id={`PersonName_${Person.id}`} value={Person.PersonName} title={Person.PersonName} onChange={(e) => this.handlePersonsChange(index, 'PersonName', e.target.value)} disabled={false} />
 
                 </td>
                 <td className="p-1">
@@ -1114,7 +1141,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
-                            <div className="mainContent px-4 borderLine">
+                            <div className="mainContent borderLine">
                                 <div className="row py-2">
                                     <div className="col-md-3" id="divDate">
                                         <div className="light-text">
@@ -1275,7 +1302,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 </div>
 
 
-                                <div className="DivTables p-4">
+                                {/* <div className="DivTables p-4"> */}
+                                <div className="p-3">
                                     {/* Job Steps Table */}
                                     <div className={'divSection'}>
                                         <div className="SectionHeader">Job Steps</div>
@@ -1364,7 +1392,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             <tbody>
                                                 <tr>
                                                     <td className="p-1">
-                                                        <input className="form-control" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
+                                                        <input className="form-control p-1" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
 
                                                     </td>
                                                     <td className="p-1">

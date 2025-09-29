@@ -82,7 +82,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({ onImageUpload, onRemoveI
   }
 
   return (
-    <div className="imageUploader">
+    <div className="imageUploader light-text">
       <label className="label">Upload Image</label>
       <div className="uploadContainer">
         <div onClick={triggerFileSelect} style={{cursor:"pointer"}}>

@@ -883,7 +883,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
-                            <div className="mainContent row px-4 borderLine">
+                            <div className="mainContent row borderLine">
                                 <div className="row py-2">
                                     <div className="col-md-3" title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">

@@ -384,3 +384,6 @@
 .lblPeoplepicker{
 z-index: 2 !important;
 }
+.mainContent tbody, thead, td, th {
+    padding: 5px;
+}

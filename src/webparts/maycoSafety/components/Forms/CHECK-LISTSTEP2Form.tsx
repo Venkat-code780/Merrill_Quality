@@ -588,7 +588,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
                             </div>
 
-                            <div className="mainContent row px-4 borderLine">
+                            <div className="mainContent row borderLine">
                                 <div className="row py-2">
                                     <div className="col-md-3" id="divDate">
                                         <div className="light-text">

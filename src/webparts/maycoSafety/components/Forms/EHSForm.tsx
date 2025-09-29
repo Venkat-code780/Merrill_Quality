@@ -242,7 +242,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                 }
                             }).filter(mapItem => mapItem != null);
                         }
-                       showSubmit= (editEHSItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        showSubmit = (editEHSItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                     }
                     else {
                         showToast("error", "No EHS found");
@@ -494,7 +494,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             else {
                 await this.sp.web.lists.getByTitle(this.EHSList).items.add(formData).then((res: any) => {
                     let childObjects = this.updateEHSId(res.Id.toString());
-                    this.InsertLineItems(childObjects);
+                    this.InsertLineItems(childObjects,res.Id);
                 }, (error) => {
                     console.log(error);
                     this.onError();
@@ -506,13 +506,24 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         }
     }
 
-    private InsertLineItems = async (childPostObjects: any) => {
+    private InsertLineItems = async (childPostObjects: any, adedItemId: any) => {
         try {
+            let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
+
             const [batchedPipe, execute] = createBatch(this.sp.web);
             for (const item of childPostObjects) {
                 this.sp.web.lists.getByTitle(this.EHSChildList).items.using(batchedPipe).add(item);
             }
             await execute().then(async () => {
+                let GroupName = this.getGroupName();
+                if (GroupName != '') {
+                    let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
+                    if (GroupMemberEmails.length) {
+                        let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/EHSForm/' + adedItemId
+                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards</p>";
+                        await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'EHS' Submitted", body);
+                    }
+                }
                 let msg = "EHS Submitted Successfully";
                 this.setState({ displayMessage: msg });
                 this.onSuccess();
@@ -592,7 +603,30 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
-
+private getGroupName()
+{
+	var selectedDept= this.state.formData.Department;
+	var selectedZone= this.state.formData.Zone;	
+    let group='';
+	
+	if(selectedDept =="IP Assembly")
+		group="WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+	else if(selectedDept =="Sequencing")
+		group="WCM Merrill Safety Seq";//group="WCM Safety Seq";
+	else if(selectedDept =="Thermoforming")
+		group="WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+	else if(selectedDept =="Deco")
+		group="WCM Merrill Safety Deco";//group="WCM Safety Deco";
+	else if(selectedDept =="Molding"  && selectedZone=="Zone 1")
+		group="WCM Safety Molding Zone 1";
+	else if(selectedDept =="Molding" && selectedZone=="Zone 2")
+		group="WCM Safety Molding Zone 2";
+	else if(selectedDept =="Molding" && selectedZone=="Zone 3")
+		group="WCM Safety Molding Zone 3"; 	
+	else if(selectedDept =="Molding" && selectedZone=="Zone 4")
+		group="WCM Safety Molding Zone 4";			
+	return group; 
+}
     private handleCancel = () => {
         this.setState({ Redirect: true, RedirectTo: 'EHSView', ItemID: 0 });
     }
@@ -613,7 +647,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             return (
                 <React.Fragment key={categoryIndex}>
                     {/* Category Row */}
-                    <tr className="lightgreybg">
+                    <tr className="lightgreybg fs-6">
                         <td colSpan={3}><b>{category}</b></td>
                     </tr>
 
@@ -636,7 +670,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                     </div>
                                 </td>
                                 <td>
-                                    <div className="form-floating">
+                                    <div className="">
                                         <select
                                             className="form-select"
                                             id={"SubCategory" + rowIndex + "Select"}
@@ -649,7 +683,6 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                 </option>
                                             ))}
                                         </select>
-                                        <label htmlFor="floatingSelect"> Status </label>
                                     </div>
                                 </td>
                             </tr>
@@ -699,7 +732,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
                             </div>
 
-                            <div className="mainContent px-4 borderLine">
+                            <div className="mainContent borderLine">
                                 <div className="row py-2">
                                     {/* Date */}
                                     <div className="col-md-3">
@@ -886,10 +919,10 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="divSection">
+                                <div className="divSection mx-3">
                                     <table>
                                         <thead className="darkgreybg">
-                                            <tr>
+                                            <tr className="fs-5">
                                                 <th>Requirement</th>
                                                 <th>Select</th>
                                             </tr>
@@ -900,14 +933,12 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                     </table>
                                 </div>
                                 {/* Comments */}
-                                <div className="col-md-12">
                                     <div className="col-md-12">
                                         <div className="light-text" >
                                             <label className="" htmlFor="txtComments">Comments </label>
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" style={{ height: "80px" }}></textarea>
+                                            <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments"></textarea>
                                         </div>
                                     </div>
-                                </div>
 
                                 <div className="col-sm-12 text-center py-3" id="">
                                     {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}

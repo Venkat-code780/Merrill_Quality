@@ -219,12 +219,13 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         isInputDisabled: false,
         isEditForm: false,
         ItemId: 0,
-        Homeredirect: false,
+        Redirect: false,
+        RedirectTo: '',
         displayMessage: '',
         showSubmit: false,
         isAdmin: false,
         statusText: '',
-        selBodyPart:[]
+        selBodyPart: []
     }
 
     constructor(props: SEWOFormProps) {
@@ -355,10 +356,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             let statusData = status.map((item: any) => ({ label: item.Title, value: item.Id }));
 
             if (itemId != undefined) {
-                await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).expand("Author").select("*,Author/Title,Author/Id")().then((editSEWOItem: any) => {
-                    console.log(editSEWOItem);
-                    if (editSEWOItem != Error) {
-
+                let SEWORes: any = await getListItems(this.SEWOList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`);
+                if (!SEWORes.isHttpRequestError) {
+                    if (SEWORes.length) {
+                        let editSEWOItem = SEWORes[0];
                         formData.AccidentCauseId = editSEWOItem.AccidentCauseId ?? '';
                         formData.AccidentTypeId = editSEWOItem.AccidentTypeId ?? '';
                         formData.Act = editSEWOItem.Act ?? '';
@@ -461,10 +462,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             showSubmit = true;
                         }
 
-                        let bodyPartValue = bodyPartsData.find( (part:any) => (part.value == formData.BodyPartId))?.label;
+                        let bodyPartValue = bodyPartsData.find((part: any) => (part.value == formData.BodyPartId))?.label;
                         selBodyPart = this.handleBodyPartChange(bodyPartValue);
                     }
-                })
+                    else {
+                        showToast("error", "No SEWO found");
+                        this.setState({ Redirect: true, RedirectTo: 'Home' });
+                    }
+                }
             }
             else {
                 showSubmit = true;
@@ -472,11 +477,13 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             }
 
             this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, showSubmit, ItemId: itemId, accidentTypeData, accidentCauseData, injuryTypeData, bodyPartsData, rootCausesData, secondaryRootCausesData, microRootCausesData, actionsData, yesNoData, statusData, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, selBodyPart });
-
-            hideLoader();
-        } catch (e) {
+        }
+        catch (e) {
             console.log(e);
             this.onError();
+        }
+        finally {
+            hideLoader();
         }
     }
 
@@ -584,14 +591,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 formData.CloseDate = '';
             }
         }
-        else if(name == "BodyPartId"){
-            if( actionMeta.action != "clear"){
+        else if (name == "BodyPartId") {
+            if (actionMeta.action != "clear") {
                 selBodyPart = this.handleBodyPartChange(event.label)
             }
-            else{
+            else {
                 selBodyPart = [];
             }
-        } 
+        }
 
         if (!([null, undefined, ''].includes(id))) {
             var ddlElement = document.getElementById(id);
@@ -767,12 +774,12 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         }
     };
 
-    private handlefullClose = () => {
-        this.setState({ Homeredirect: true, ItemID: 0 });
+    private handleCancel = () => {
+        this.setState({ Redirect: true, RedirectTo: 'SEWOView', ItemID: 0 });
     }
     private onSuccess = () => {
         hideLoader();
-        this.setState({ Homeredirect: true, ItemID: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'SEWOView', ItemID: 0 });
         showToast("success", this.state.displayMessage);
     }
 
@@ -781,10 +788,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         hideLoader();
     }
 
-    private handleBodyPartChange = (bodyPart:string) => {
+    private handleBodyPartChange = (bodyPart: string) => {
         const selValue = bodyPart;
-        let selBodyPart:any = [];
-        if (selValue === "None" || selValue === "NA" || selValue === "Other") { selBodyPart = [{slug: undefined, intensity:0}]; return selBodyPart; }
+        let selBodyPart: any = [];
+        if (selValue === "None" || selValue === "NA" || selValue === "Other") { selBodyPart = [{ slug: undefined, intensity: 0 }]; return selBodyPart; }
         switch (selValue) {
             case "Back":
                 selBodyPart = [
@@ -868,15 +875,15 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 break;
 
             default:
-                [{slug: undefined, intensity:0}];
+                [{ slug: undefined, intensity: 0 }];
 
-            }
+        }
         return selBodyPart;
     };
 
     public render() {
-        if (this.state.Homeredirect) {
-            let url = "/Home";
+        if (this.state.Redirect) {
+            let url = `/${this.state.RedirectTo}`;
             return (<Navigate to={url} />)
         }
         else {
@@ -885,16 +892,16 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="m-0 titlebg">
-                                <h4 className="mb-0 pt-2 text-center">{" SEWO " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h4>
+                                <h3 className="mb-0 pt-2 text-center">{" SEWO " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
                                 <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
                             </div>
 
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greenborder">
                                 {/* PLAN */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greybg row">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
                                     <h6 className="greenbg">PLAN</h6>
                                     {/* Plant */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown active" id="divPlant" title={this.state.formData.Plant}>
                                             <SearchableDropdown
                                                 label={"Plant"}
@@ -913,7 +920,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Department */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divDepartment" title={this.state.formData.Department}>
                                             <SearchableDropdown
                                                 label={"Department"}
@@ -932,7 +939,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Zone */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divZone" title={this.state.formData.Zone}>
                                             <SearchableDropdown
                                                 label={"Zone"}
@@ -951,7 +958,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Machine */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divMachine" title={this.state.formData.Machine}>
                                             <SearchableDropdown
                                                 label={"Machine"}
@@ -970,7 +977,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Accident Type */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divAccidentType">
                                             <SearchableDropdown
                                                 label={"Accident Type"}
@@ -989,7 +996,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Accident Cause */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divAccidentCause">
                                             <SearchableDropdown
                                                 label={"Accident Cause"}
@@ -1008,14 +1015,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Name of Injured */}
-                                    <div className="col-md-3 greybg">
-                                        <div className="form-floating">
-                                            <input className="form-control" placeholder="Name of Injured" name="InjuredName" type="text" id="txtNameofInjured" ref={this.txtNameofInjured} value={this.state.formData.InjuredName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Name of Injured" />
+                                    <div className="col-md-3">
+                                        <div className="light-text">
                                             <label className=" col-form-label" htmlFor="txtNameofInjured">Name of Injured  <span className="mandatoryhastrick"> *</span></label>
+                                            <input className="form-control" placeholder="Name of Injured" name="InjuredName" type="text" id="txtNameofInjured" ref={this.txtNameofInjured} value={this.state.formData.InjuredName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Name of Injured" />
                                         </div>
                                     </div>
                                     {/* Sex */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divSex">
                                             <SearchableDropdown
                                                 label={"Sex"}
@@ -1034,21 +1041,21 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Injured Job */}
-                                    <div className="col-md-3 greybg">
-                                        <div className="form-floating">
-                                            <input className="form-control" placeholder="Injured Job" name="InjuredJob" type="text" id="txtInjuredJob" ref={this.txtInjuredJob} value={this.state.formData.InjuredJob} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Injured Job" />
+                                    <div className="col-md-3">
+                                        <div className="light-text">
                                             <label className=" col-form-label" htmlFor="txtInjuredJob">Injured Job </label>
+                                            <input className="form-control" placeholder="Injured Job" name="InjuredJob" type="text" id="txtInjuredJob" ref={this.txtInjuredJob} value={this.state.formData.InjuredJob} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Injured Job" />
                                         </div>
                                     </div>
                                     {/* Reported By */}
-                                    <div className="col-md-3 greybg">
-                                        <div className="form-floating">
-                                            <input className="form-control" placeholder="Reported By" name="ReportedBy" type="text" id="txtReportedBy" ref={this.txtReportedBy} value={this.state.formData.ReportedBy} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Reported By" />
+                                    <div className="col-md-3">
+                                        <div className="light-text">
                                             <label className=" col-form-label" htmlFor="txtReportedBy">Reported By </label>
+                                            <input className="form-control" placeholder="Reported By" name="ReportedBy" type="text" id="txtReportedBy" ref={this.txtReportedBy} value={this.state.formData.ReportedBy} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Reported By" />
                                         </div>
                                     </div>
                                     {/* Injury Type */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divInjuryType">
                                             <SearchableDropdown
                                                 label={"Injury Type"}
@@ -1067,14 +1074,18 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Injury Date Time*/}
-                                    <div className="col-md-3 greybg c-date-picker" id="divInjuryDateTime">
-                                        <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showIcon showTime={true} />
+                                    <div className="col-md-3">
+                                        <div className="light-text">
+                                            <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
+                                            <div className="custom-datepicker" id="divInjuryDateTime">
+                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showIcon showTime={true} />
+                                            </div>
+                                        </div>
                                     </div>
                                     {/* Usual Work & Shift */}
-                                    <div className="col-md-3 form-floating row">
+                                    <div className="col-md-3 row">
                                         {/* Usual Work */}
-                                        <div className="col-md-6 greybg custom-dropdown" id="divUsualWork">
+                                        <div className="col-md-6 custom-dropdown" id="divUsualWork">
                                             <SearchableDropdown
                                                 label={"Usual Work"}
                                                 Title={"Usual Work"}
@@ -1092,7 +1103,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
 
                                         {/* Shift */}
-                                        <div className="col-md-6 greybg custom-dropdown" id="divShift">
+                                        <div className="col-md-6 custom-dropdown" id="divShift">
                                             <SearchableDropdown
                                                 label={"Shift"}
                                                 Title={"Shift"}
@@ -1110,12 +1121,16 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Reported Date */}
-                                    <div className="col-md-3 greybg c-date-picker" id="divReportedDate">
-                                        <label className="label-datePicker" htmlFor="dtReportedDate"> Reported Date  <span className="mandatoryhastrick"> *</span></label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Reported_x0020_Date} id='dtReportedDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Reported_x0020_Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divReportedDate", dateProps)} highlightDate={new Date()} showIcon />
+                                    <div className="col-md-3">
+                                        <div className="light-text">
+                                            <label className="label-datePicker" htmlFor="dtReportedDate"> Reported Date  <span className="mandatoryhastrick"> *</span></label>
+                                            <div className="custom-datepicker" id="divReportedDate">
+                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.Reported_x0020_Date} id='dtReportedDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Reported_x0020_Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divReportedDate", dateProps)} highlightDate={new Date()} showIcon />
+                                            </div>
+                                        </div>
                                     </div>
                                     {/* Position Type */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divPositionType">
                                             <SearchableDropdown
                                                 label={"Position Type"}
@@ -1134,7 +1149,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* PPE in Use */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divPPEinUse">
                                             <SearchableDropdown
                                                 label={"PPE in Use"}
@@ -1153,7 +1168,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* PPE Supplied */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divPPESupplied">
                                             <SearchableDropdown
                                                 label={"PPE Supplied"}
@@ -1172,72 +1187,71 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Is Hopital/Clinic Refused */}
-                                    <div className="col-md-3 greybg" style={{ textAlign: "center", height: "73px" }}>
-                                        <label className=" col-form-label" htmlFor="rdIsHospitalRefused">Is Hospital/Clinic Refused </label>
+                                    <div className="col-md-3" style={{ textAlign: "center", height: "73px" }}>
                                         <input className="" placeholder="Is Hospital/Clinic Refused" name="IsHospitalRefused" type="checkbox" id="rdIsHospitalRefused" ref={this.rdIsHospitalRefused} checked={this.state.formData.IsHospitalRefused} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Is Hospital/Clinic Refused" />
+                                        <label className=" col-form-label" htmlFor="rdIsHospitalRefused">Is Hospital/Clinic Refused </label>
                                     </div>
                                     {/* Name of the Clinic/Hospital */}
-                                    {!this.state.formData.IsHospitalRefused && <div className="col-md-6 greybg">
-                                        <div className="form-floating">
-                                            <input className="form-control" placeholder="Name of the Clinic/Hospital" name="NameoftheHospital" type="text" id="txtNameoftheHospital" ref={this.txtNameoftheHospital} value={this.state.formData.NameoftheHospital} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Name of the Clinic/Hospital" />
+                                    {!this.state.formData.IsHospitalRefused && <div className="col-md-6">
+                                        <div className="light-text">
                                             <label className=" col-form-label" htmlFor="txtNameoftheHospital">Name of the Clinic/Hospital <span className="mandatoryhastrick"> *</span></label>
+                                            <input className="form-control" placeholder="Name of the Clinic/Hospital" name="NameoftheHospital" type="text" id="txtNameoftheHospital" ref={this.txtNameoftheHospital} value={this.state.formData.NameoftheHospital} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Name of the Clinic/Hospital" />
                                         </div>
                                     </div>}
                                 </div>
                                 {/* 5W+1H Analysis, BODY CHART, SKETCH */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greybg row">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
                                     {/* 5W+1H Analysis */}
-                                    <div className="col-md-3 greybg padding0">
+                                    <div className="col-md-3 px-0">
                                         <h6 className="greenbg">5W+1H Analysis</h6>
                                         {/* What */}
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="WWhat" name="WWhat" type="text" id="txtWhat" ref={this.txtWhat} value={this.state.formData.WWhat} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="What" />
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <label className=" col-form-label" htmlFor="txtWhat">What </label>
+                                                <input className="form-control" placeholder="WWhat" name="WWhat" type="text" id="txtWhat" ref={this.txtWhat} value={this.state.formData.WWhat} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="What" />
                                             </div>
                                         </div>
                                         {/* When */}
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="WWhen" name="WWhen" type="text" id="txtWhen" ref={this.txtWhen} value={this.state.formData.WWhen} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="When" />
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <label className=" col-form-label" htmlFor="txtWhen">When </label>
+                                                <input className="form-control" placeholder="WWhen" name="WWhen" type="text" id="txtWhen" ref={this.txtWhen} value={this.state.formData.WWhen} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="When" />
                                             </div>
                                         </div>
                                         {/* Where */}
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="WWhere" name="WWhere" type="text" id="txtWhere" ref={this.txtWhere} value={this.state.formData.WWhere} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Where" />
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <label className=" col-form-label" htmlFor="txtWhere">Where </label>
+                                                <input className="form-control" placeholder="WWhere" name="WWhere" type="text" id="txtWhere" ref={this.txtWhere} value={this.state.formData.WWhere} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Where" />
                                             </div>
                                         </div>
                                         {/* Who */}
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="WWho" name="WWho" type="text" id="txtWho" ref={this.txtWho} value={this.state.formData.WWho} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Who" />
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <label className=" col-form-label" htmlFor="txtWho">Who </label>
+                                                <input className="form-control" placeholder="WWho" name="WWho" type="text" id="txtWho" ref={this.txtWho} value={this.state.formData.WWho} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Who" />
                                             </div>
                                         </div>
                                         {/* Which */}
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="WWhich" name="WWhich" type="text" id="txtWhich" ref={this.txtWhich} value={this.state.formData.WWhich} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Which" />
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <label className=" col-form-label" htmlFor="txtWhich">Which </label>
+                                                <input className="form-control" placeholder="WWhich" name="WWhich" type="text" id="txtWhich" ref={this.txtWhich} value={this.state.formData.WWhich} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Which" />
                                             </div>
                                         </div>
                                         {/* How */}
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="HHow" name="HHow" type="text" id="txtHow" ref={this.txtHow} value={this.state.formData.HHow} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="How" />
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <label className=" col-form-label" htmlFor="txtHow">How </label>
+                                                <input className="form-control" placeholder="HHow" name="HHow" type="text" id="txtHow" ref={this.txtHow} value={this.state.formData.HHow} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="How" />
                                             </div>
                                         </div>
                                     </div>
                                     {/* BODY CHART */}
-                                    <div className="col-md-3 greybg padding0">
+                                    <div className="col-md-3 px-0">
                                         <h6 className="greenbg">BODY CHART</h6>
                                         {/* Body Part */}
-                                        <div className="col-md-12 greybg form-floating">
-                                            <BodyPart selectedBodyPart={this.state.selBodyPart}/>
+                                        <div className="col-md-12">
                                             <div className="custom-dropdown" id="divBodyPart">
                                                 <SearchableDropdown
                                                     label={"Body Part"}
@@ -1254,23 +1268,23 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     noOptionsMessage="No BodyParts available"
                                                 />
                                             </div>
+                                            <BodyPart selectedBodyPart={this.state.selBodyPart} />
                                         </div>
                                     </div>
                                     {/* SKETCH */}
-                                    <div className="col-md-6 greybg padding0">
+                                    <div className="col-md-6 px-0">
                                         <h6 className="greenbg">SKETCH</h6>
                                         <Sketch ref={this.sketchRef} initialImage={this.state.formData.Sketch} />
                                     </div>
                                 </div>
                                 {/* CORRECTIVE ACTION */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greenbg">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <h6 className="greenbg">CORRECTIVE ACTION</h6>
                                     {/* Action Description */}
-                                    {/* <div className="col-md-12 greybg"> */}
-                                    <div className={this.state.isInputDisabled ? "textarea-disabled form-floating" : "form-floating"} >
-                                        <textarea className="form-control bs-textarea" rows={3} id="txtActionDescription" name="ActionDescription" ref={this.txtActionDescription} placeholder="Action Description" value={this.state.formData.ActionDescription} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Description" style={{ height: "80px" }}></textarea>
-                                        <span className="span-floating-textarea"></span>
+                                    {/* <div className="col-md-12"> */}
+                                    <div className="light-text" >
                                         <label className=" col-form-label" htmlFor="txtActionDescription">Action Description </label>
+                                        <textarea className="form-control" rows={3} id="txtActionDescription" name="ActionDescription" ref={this.txtActionDescription} placeholder="Action Description" value={this.state.formData.ActionDescription} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Description" ></textarea>
                                     </div>
                                     {/* </div> */}
                                 </div>
@@ -1280,69 +1294,63 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     {/* FiveWhy1 */}
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">1</div>
                                     <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <input className="form-control" placeholder="FiveWhy1" name="FiveWhy1" type="text" id="txtFiveWhy1" ref={this.txtFiveWhy1} value={this.state.formData.FiveWhy1} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy1" />
-                                                <label className=" col-form-label" htmlFor="txtFiveWhy1">FiveWhy1 </label>
                                             </div>
                                         </div>
                                     </div>
                                     {/* FiveWhy2 */}
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">..2</div>
                                     <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <input className="form-control" placeholder="FiveWhy2" name="FiveWhy2" type="text" id="txtFiveWhy2" ref={this.txtFiveWhy2} value={this.state.formData.FiveWhy2} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy2" />
-                                                <label className=" col-form-label" htmlFor="txtFiveWhy2">FiveWhy2 </label>
                                             </div>
                                         </div>
                                     </div>
                                     {/* FiveWhy3 */}
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">....3</div>
                                     <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <input className="form-control" placeholder="FiveWhy3" name="FiveWhy3" type="text" id="txtFiveWhy3" ref={this.txtFiveWhy3} value={this.state.formData.FiveWhy3} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy3" />
-                                                <label className=" col-form-label" htmlFor="txtFiveWhy3">FiveWhy3 </label>
                                             </div>
                                         </div>
                                     </div>
                                     {/* FiveWhy4 */}
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">......4</div>
                                     <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <input className="form-control" placeholder="FiveWhy4" name="FiveWhy4" type="text" id="txtFiveWhy4" ref={this.txtFiveWhy4} value={this.state.formData.FiveWhy4} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy4" />
-                                                <label className=" col-form-label" htmlFor="txtFiveWhy4">FiveWhy4 </label>
                                             </div>
                                         </div>
                                     </div>
                                     {/* FiveWhy5 */}
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">........5</div>
                                     <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <input className="form-control" placeholder="FiveWhy5" name="FiveWhy5" type="text" id="txtFiveWhy5" ref={this.txtFiveWhy5} value={this.state.formData.FiveWhy5} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy5" />
-                                                <label className=" col-form-label" htmlFor="txtFiveWhy5">FiveWhy5 </label>
                                             </div>
                                         </div>
                                     </div>
                                     {/* RootCause */}
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">Root Cause</div>
                                     <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                        <div className="col-md-12 greybg">
-                                            <div className="form-floating">
+                                        <div className="col-md-12">
+                                            <div className="light-text">
                                                 <input className="form-control" placeholder="FiveWhyRootCause" name="FiveWhyRootCause" type="text" id="FiveWhyRootCause" ref={this.txtFiveWhyRootCause} value={this.state.formData.FiveWhyRootCause} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhyRootCause" />
-                                                <label className=" col-form-label" htmlFor="FiveWhyRootCause">FiveWhyRootCause </label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 {/* Categorize Root Cause */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greenbg row">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
                                     <h6 className="greenbg">Categorize Root Cause</h6>
                                     {/* Root Cause */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divRootCause">
                                             <SearchableDropdown
                                                 label={"Root Cause"}
@@ -1361,7 +1369,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Secondary Root Cause */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divSecondaryRootCause">
                                             <SearchableDropdown
                                                 label={"Secondary Root Cause"}
@@ -1380,7 +1388,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Micro Root Cause */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divMicroRootCause">
                                             <SearchableDropdown
                                                 label={"Micro Root Cause"}
@@ -1399,7 +1407,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Actions */}
-                                    <div className="col-md-3 greybg form-floating">
+                                    <div className="col-md-3">
                                         <div className="custom-dropdown" id="divAction">
                                             <SearchableDropdown
                                                 label={"Action"}
@@ -1422,299 +1430,314 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
                                     <h6 className="greenbg">Do</h6>
                                     {/* Action Plan */}
-                                    <div className={this.state.isInputDisabled ? "col-md-6 textarea-disabled greybg form-floating" : "col-md-6 greybg form-floating"} >
-                                        <textarea className="form-control bs-textarea" rows={3} id="txtActionPlan" name="ActionPlan" ref={this.txtActionPlan} placeholder="Action Plan" value={this.state.formData.ActionPlan} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Plan" style={{ height: "202px" }}></textarea>
-                                        <span className="span-floating-textarea"></span>
-                                        <label className=" col-form-label" htmlFor="txtActionPlan">Action Plan </label>
-                                    </div>
-                                    {/* Responsible, Due Date, Close Date */}
-                                    <div className="col-md-6 greybg">
-                                        {/* Responsible */}
-                                        <div className={this.state.isInputDisabled ? "textarea-disabled greybg form-floating" : "greybg form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtResponsible" name="Responsible" ref={this.txtResponsible} placeholder="Responsible" value={this.state.formData.Responsible} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Responsible" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
-                                            <label className=" col-form-label" htmlFor="txtResponsible">Responsible </label>
+                                    <div className="col-md-6">
+                                        <div className="light-text" >
+
+                                            <label className=" col-form-label" htmlFor="txtActionPlan">Action Plan </label>
+                                            <textarea className="form-control bs-textarea" rows={7} id="txtActionPlan" name="ActionPlan" ref={this.txtActionPlan} placeholder="Action Plan" value={this.state.formData.ActionPlan} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Plan" ></textarea>
                                         </div>
-                                        {/* Due Date */}
-                                        <div className="greybg c-date-picker" id="divDueDate">
-                                            <label className="label-datePicker" htmlFor="dtDueDate"> Due Date </label>
-                                            <DatePickercontrol placeholder="" selectedDate={this.state.formData.DueDate} id='dtDueDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="DueDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDueDate", dateProps)} highlightDate={new Date()} showIcon />
                                         </div>
-                                        {/* Close Date */}
-                                        <div className="greybg c-date-picker" id="divCloseDate">
-                                            <label className="label-datePicker" htmlFor="dtCloseDate"> Close Date {this.state.statusText == "Closed" && <span className="mandatoryhastrick"> *</span>}</label>
-                                            <DatePickercontrol placeholder="" selectedDate={this.state.formData.CloseDate} id='dtCloseDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="CloseDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCloseDate", dateProps)} highlightDate={new Date()} showIcon />
+                                        {/* Responsible, Due Date, Close Date */}
+                                        <div className="col-md-6">
+                                            {/* Responsible */}
+                                            <div className="light-text" >
+                                                <label className=" col-form-label" htmlFor="txtResponsible">Responsible </label>
+                                                <textarea className="form-control bs-textarea" rows={3} id="txtResponsible" name="Responsible" ref={this.txtResponsible} placeholder="Responsible" value={this.state.formData.Responsible} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Responsible" ></textarea>
+                                            </div>
+                                            {/* Due Date */}
+                                            <div className="">
+                                                <div className="light-text">
+                                                    <label className="label-datePicker" htmlFor="dtDueDate"> Due Date </label>
+                                                    <div className="custom-datepicker" id="divDueDate">
+                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.DueDate} id='dtDueDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="DueDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDueDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Close Date */}
+                                            <div className="" >
+                                                <div className="light-text">
+                                                    <label className="label-datePicker" htmlFor="dtCloseDate"> Close Date {this.state.statusText == "Closed" && <span className="mandatoryhastrick"> *</span>}</label>
+                                                    <div className="custom-datepicker" id="divCloseDate">
+                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.CloseDate} id='dtCloseDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="CloseDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCloseDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    {/* Notes */}
-                                    <div className={this.state.isInputDisabled ? "col-md-12 textarea-disabled greybg form-floating" : "col-md-12 greybg form-floating"} >
-                                        <textarea className="form-control bs-textarea" rows={3} id="txtNotes" name="Notes" ref={this.txtNotes} placeholder="Notes" value={this.state.formData.Notes} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Notes" style={{ height: "80px" }}></textarea>
-                                        <span className="span-floating-textarea"></span>
-                                        <label className="col-form-label" htmlFor="txtNotes">Notes </label>
-                                    </div>
-                                </div>
-                                {/* Check, ACT/ */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greybg row">
-                                    {/* Check */}
-                                    <div className="col-md-6 greybg padding0">
-                                        <h6 className="redbg">Check</h6>
-                                        {/* Comments */}
-                                        <div className={this.state.isInputDisabled ? "col-md-12 textarea-disabled greybg form-floating" : "col-md-12 greybg form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" style={{ height: "230px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
-                                            <label className="col-form-label" htmlFor="txtComments">Comments </label>
+                                        {/* Notes */}
+                                        <div className="light-text" >
+                                            <label className="col-form-label" htmlFor="txtNotes">Notes </label>
+                                            <textarea className="form-control bs-textarea" rows={3} id="txtNotes" name="Notes" ref={this.txtNotes} placeholder="Notes" value={this.state.formData.Notes} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Notes" ></textarea>
                                         </div>
                                     </div>
-                                    {/* ACT */}
-                                    <div className="col-md-6 greybg padding0">
-                                        <h6 className="yellowbg">ACT</h6>
-                                        {/* Expansion Plan */}
-                                        <div className="col-md-12 greybg form-floating">
-                                            <div className="custom-dropdown" id="divExpansionPlan">
+                                    {/* Check, ACT/ */}
+                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
+                                        {/* Check */}
+                                        <div className="col-md-6 px-0">
+                                            <h6 className="redbg">Check</h6>
+                                            {/* Comments */}
+                                            <div className="light-text" >
+                                                <label className="col-form-label" htmlFor="txtComments">Comments </label>
+                                                <textarea className="form-control bs-textarea" rows={9} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" ></textarea>
+                                            </div>
+                                        </div>
+                                        {/* ACT */}
+                                        <div className="col-md-6 px-0">
+                                            <h6 className="yellowbg">ACT</h6>
+                                            {/* Expansion Plan */}
+                                            <div className="col-md-12">
+                                                <div className="custom-dropdown" id="divExpansionPlan">
+                                                    <SearchableDropdown
+                                                        label={"Expansion Plan"}
+                                                        Title={"Expansion Plan"}
+                                                        name={"ExpansionPlanId"}
+                                                        id="ddlExpansionPlan"
+                                                        placeholderText={""}
+                                                        className={""}
+                                                        selectedValue={this.state.formData.ExpansionPlanId}
+                                                        OptionsList={this.state.yesNoData}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divExpansionPlan") }}
+                                                        isRequired={false}
+                                                        disabled={this.state.isInputDisabled}
+                                                        noOptionsMessage="No Expansion Plan Available"
+                                                    />
+                                                </div>
+                                            </div>
+                                            {/* Location */}
+                                            <div className="col-md-12 light-text" >
+                                                <label className="col-form-label" htmlFor="txtLocation">Location </label>
+                                                <textarea className="form-control bs-textarea" rows={3} id="txtLocation" name="Location" ref={this.txtLocation} placeholder="Location" value={this.state.formData.Location} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Location" ></textarea>
+                                            </div>
+                                            {/* Act */}
+                                            <div className="col-md-12 light-text">
+                                                <label className="col-form-label" htmlFor="txtAct">Act </label>
+                                                <textarea className="form-control bs-textarea" rows={3} id="txtAct" name="Act" ref={this.txtAct} placeholder="Act" value={this.state.formData.Act} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Act" ></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
+                                        {/* Status */}
+                                        <div className="col-md-4">
+                                            <div className="custom-dropdown" id="divStatus">
                                                 <SearchableDropdown
-                                                    label={"Expansion Plan"}
-                                                    Title={"Expansion Plan"}
-                                                    name={"ExpansionPlanId"}
-                                                    id="ddlExpansionPlan"
+                                                    label={"Status"}
+                                                    Title={"Status"}
+                                                    name={"StatusId"}
+                                                    id="ddlStatus"
                                                     placeholderText={""}
                                                     className={""}
-                                                    selectedValue={this.state.formData.ExpansionPlanId}
-                                                    OptionsList={this.state.yesNoData}
-                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divExpansionPlan") }}
+                                                    selectedValue={this.state.formData.StatusId}
+                                                    OptionsList={this.state.statusData}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divStatus") }}
                                                     isRequired={false}
                                                     disabled={this.state.isInputDisabled}
-                                                    noOptionsMessage="No Expansion Plan Available"
+                                                    noOptionsMessage="No Status Available"
                                                 />
                                             </div>
                                         </div>
-                                        {/* Location */}
-                                        <div className={this.state.isInputDisabled ? "col-md-12 greybg textarea-disabled form-floating" : "col-md-12 greybg form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtLocation" name="Location" ref={this.txtLocation} placeholder="Location" value={this.state.formData.Location} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Location" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
-                                            <label className="col-form-label" htmlFor="txtLocation">Location </label>
-                                        </div>
-                                        {/* Act */}
-                                        <div className={this.state.isInputDisabled ? "col-md-12 greybg textarea-disabled form-floating" : "col-md-12 greybg form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtAct" name="Act" ref={this.txtAct} placeholder="Act" value={this.state.formData.Act} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Act" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
-                                            <label className="col-form-label" htmlFor="txtAct">Act </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
-                                    {/* Status */}
-                                    <div className="col-md-4 greybg form-floating">
-                                        <div className="custom-dropdown" id="divStatus">
-                                            <SearchableDropdown
-                                                label={"Status"}
-                                                Title={"Status"}
-                                                name={"StatusId"}
-                                                id="ddlStatus"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.StatusId}
-                                                OptionsList={this.state.statusData}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divStatus") }}
-                                                isRequired={false}
-                                                disabled={this.state.isInputDisabled}
-                                                noOptionsMessage="No Status Available"
-                                            />
-                                        </div>
-                                    </div>
-                                    {/* Days Off */}
-                                    <div className="col-md-4 greybg">
-                                        <div className="form-floating">
-                                            <input className="form-control onlyNum" placeholder="Days Off" name="DaysOff" type="text" id="txtDaysOff" ref={this.txtDaysOff} value={this.state.formData.DaysOff} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="DaysOff" maxLength={3} />
-                                            <label className=" col-form-label" htmlFor="txtDaysOff">Days Off </label>
-                                        </div>
-                                    </div>
-                                    {/* Back To Work */}
-                                    <div className="col-md-4 greybg c-date-picker" id="divBackToWork">
-                                        <label className="label-datePicker" htmlFor="dtBackToWork"> Back To Work </label>
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.BackToWork} id='dtBackToWork' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="BackToWork" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divBackToWork", dateProps)} highlightDate={new Date()} showIcon />
-                                    </div>
-                                    <table className="table table-condensed table-bordered col-xs-12 col-md-12 col-lg-12 col-sm-12">
-                                        <tr>
-                                            <th scope="col">&nbsp;</th>
-                                            <th scope="col">Employee</th>
-                                            <th scope="col">Team Leader</th>
-                                            <th scope="col">Supervisor <span className="mandatoryhastrick"> *</span></th>
-                                            <th scope="col">Depart Mgr.</th>
-                                            <th scope="col">Safety Mgr.</th>
-                                            <th scope="col">Plant Mgr.</th>
-                                        </tr>
-                                        {/* Name */}
-                                        <tr>
-                                            <th scope="row">Name</th>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Employee Name" name="EmployeeName" type="text" id="txtEmployeeName" ref={this.txtEmployeeName} value={this.state.formData.EmployeeName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Employee Name" />
-                                                    <label className=" col-form-label" htmlFor="txtEmployeeName">Employee Name </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Team Lead Name" name="TeamLeadName" type="text" id="txtTeamLeadName" ref={this.txtTeamLeadName} value={this.state.formData.TeamLeadName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Team Lead Name" />
-                                                    <label className=" col-form-label" htmlFor="txtTeamLeadName">Team Lead Name </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Supervisor Name" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.txtSupervisorName} value={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Name" />
-                                                    <label className=" col-form-label" htmlFor="txtSupervisorName">Supervisor Name </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Dept Mgr Name" name="DeptManagerName" type="text" id="txtDeptManagerName" ref={this.txtDeptManagerName} value={this.state.formData.DeptManagerName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Department Manager Name" />
-                                                    <label className=" col-form-label" htmlFor="txtDeptManagerName">Dept Mgr Name </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Safety Mgr Name" name="SafetyMgrName" type="text" id="txtSafetyManagerName" ref={this.txtSafetyManagerName} value={this.state.formData.SafetyMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Safety Manager Name" />
-                                                    <label className=" col-form-label" htmlFor="txtSafetyManagerName">Safety Mgr Name </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Plant Mgr Name" name="PlantMgrName" type="text" id="txtPlantManagerName" ref={this.txtPlantManagerName} value={this.state.formData.PlantMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Plant Manager Name" />
-                                                    <label className=" col-form-label" htmlFor="txtPlantManagerName">Plant Mgr Name </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {/* Date */}
-                                        <tr>
-                                            <th scope="row">Date</th>
-                                            <td>
-                                                <div className="c-date-picker" id="divEmployeeName">
-                                                    <label className="label-datePicker" htmlFor="dtEmployeeName"> Employee Date </label>
-                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.EmployeeDate} id='dtEmployeeName' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="EmployeeDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divEmployeeName", dateProps)} highlightDate={new Date()} showIcon />
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="c-date-picker" id="divTeamLeadDate">
-                                                    <label className="label-datePicker" htmlFor="dtTeamLeadDate"> Team Lead Date </label>
-                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.TeamLeadDate} id='dtTeamLeadDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="TeamLeadDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divTeamLeadDate", dateProps)} highlightDate={new Date()} showIcon />
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="c-date-picker" id="divSupervisorDate">
-                                                    <label className="label-datePicker" htmlFor="dtSupervisorDate"> Supervisor Date </label>
-                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate", dateProps)} highlightDate={new Date()} showIcon />
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="c-date-picker" id="divDeptMgrDate">
-                                                    <label className="label-datePicker" htmlFor="dtDeptMgrDate"> Dept Mgr Date </label>
-                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.DeptManagerDate} id='dtDeptMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="DeptManagerDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDeptMgrDate", dateProps)} highlightDate={new Date()} showIcon />
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="c-date-picker" id="divSafetyMgrDate">
-                                                    <label className="label-datePicker" htmlFor="dtSafetyMgrDate"> Safety Mgr Date </label>
-                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.SafetyMgrDate} id='dtSafetyMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SafetyMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSafetyMgrDate", dateProps)} highlightDate={new Date()} showIcon />
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="c-date-picker" id="divPlantMgrDate">
-                                                    <label className="label-datePicker" htmlFor="dtPlantMgrDate"> Plant Mgr Date </label>
-                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.PlantMgrDate} id='dtPlantMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="PlantMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPlantMgrDate", dateProps)} highlightDate={new Date()} showIcon />
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {/* Signature */}
-                                        <tr>
-                                            <th scope="row">Signature</th>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Employee Signature" name="EmployeeSignature" type="text" id="txtEmployeeSignature" ref={this.txtEmployeeSignature} value={this.state.formData.EmployeeSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Employee Signature" />
-                                                    <label className="col-form-label" htmlFor="txtEmployeeSignature">Employee Signature </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Team Lead Signature" name="TeamLeadSignature" type="text" id="txtTeamLeadSignature" ref={this.txtTeamLeadSignature} value={this.state.formData.TeamLeadSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Team Lead Signature" />
-                                                    <label className="col-form-label" htmlFor="txtTeamLeadSignature">Team Lead Signature </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Supervisor Signature" name="SuperVisorSignature" type="text" id="txtSupervisorSignature" ref={this.txtSupervisorSignature} value={this.state.formData.SuperVisorSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Signature" />
-                                                    <label className=" col-form-label" htmlFor="txtSupervisorSignature">Supervisor Signature </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Dept Mgr Signature" name="DeptManagerSignature" type="text" id="txtDeptManagerSignature" ref={this.txtDeptManagerSignature} value={this.state.formData.DeptManagerSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Dept Mgr Signature" />
-                                                    <label className=" col-form-label" htmlFor="txtDeptManagerSignature">Dept Mgr Signature </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Safety Mgr Signature" name="SafetyMgrSignature" type="text" id="txtSafetyManagerSignature" ref={this.txtSafetyManagerSignature} value={this.state.formData.SafetyMgrSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Safety Mgr Signature" />
-                                                    <label className=" col-form-label" htmlFor="txtSafetyManagerSignature">Safety Mgr Signature </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-floating">
-                                                    <input className="form-control" placeholder="Plant Mgr Signature" name="PlantMgrSignature" type="text" id="txtPlantManagerSignature" ref={this.txtPlantManagerSignature} value={this.state.formData.PlantMgrSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Plant Mgr Signature" />
-                                                    <label className=" col-form-label" htmlFor="txtPlantManagerSignature">Plant Mgr Signature </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    {/* Injured */}
-                                    <div className="col-md-6 row">
-                                        {/* Injured Statement */}
-                                        <div className={this.state.isInputDisabled ? "col-md-12 greybg textarea-disabled form-floating" : "col-md-12 greybg form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtInjuredStatement" name="InjuredStatement" ref={this.txtInjuredStatement} placeholder="Injured Statement" value={this.state.formData.InjuredStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Statement" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
-                                            <label className="col-form-label" htmlFor="txtInjuredStatement">Injured Statement </label>
-                                        </div>
-                                        {/* Injured Signature */}
-                                        <div className="col-md-6 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="Injured Signature" name="InjuredSignature" type="text" id="txtInjuredSignature" ref={this.txtInjuredSignature} value={this.state.formData.InjuredSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Signature" />
-                                                <label className=" col-form-label" htmlFor="txtInjuredSignature">Injured Signature </label>
+                                        {/* Days Off */}
+                                        <div className="col-md-4">
+                                            <div className="light-text">
+                                                <input className="form-control onlyNum" placeholder="Days Off" name="DaysOff" type="text" id="txtDaysOff" ref={this.txtDaysOff} value={this.state.formData.DaysOff} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="DaysOff" maxLength={3} />
+                                                <label className=" col-form-label" htmlFor="txtDaysOff">Days Off </label>
                                             </div>
                                         </div>
-                                        {/* Injured Date */}
-                                        <div className="col-md-6 greybg c-date-picker" id="divInjuredDate">
-                                            <label className="label-datePicker" htmlFor="dtInjuredDate"> Injured Date </label>
-                                            <DatePickercontrol placeholder="" selectedDate={this.state.formData.InjuredDate} id='dtInjuredDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="InjuredDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuredDate", dateProps)} highlightDate={new Date()} showIcon />
-                                        </div>
-                                    </div>
-                                    {/* Witness */}
-                                    <div className="col-md-6 row">
-                                        {/* Witness Statement */}
-                                        <div className={this.state.isInputDisabled ? "textarea-disabled greybg form-floating" : "greybg form-floating"} >
-                                            <textarea className="form-control bs-textarea" rows={3} id="txtWitnessStatement" name="WitnessStatement" ref={this.txtWitnessStatement} placeholder="WitnessStatement" value={this.state.formData.WitnessStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="WitnessStatement" style={{ height: "80px" }}></textarea>
-                                            <span className="span-floating-textarea"></span>
-                                            <label className="col-form-label" htmlFor="txtWitnessStatement">Witness Statement </label>
-                                        </div>
-                                        {/* Witness Signature */}
-                                        <div className="col-md-6 greybg">
-                                            <div className="form-floating">
-                                                <input className="form-control" placeholder="Witness Signature" name="WitnessSignature" type="text" id="txtWitnessSignature" ref={this.txtWitnessSignature} value={this.state.formData.WitnessSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Witness Signature" />
-                                                <label className=" col-form-label" htmlFor="txtWitnessSignature">Witness Signature </label>
+                                        {/* Back To Work */}
+                                        <div className="col-md-4">
+                                            <div className="light-text">
+                                                <label className="label-datePicker" htmlFor="dtBackToWork"> Back To Work </label>
+                                                <div className="custom-datepicker" id="divBackToWork">
+                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.BackToWork} id='dtBackToWork' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="BackToWork" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divBackToWork", dateProps)} highlightDate={new Date()} showIcon />
+                                                </div>
                                             </div>
                                         </div>
-                                        {/* Witness Date */}
-                                        <div className="col-md-6 greybg c-date-picker" id="divWitnessDate">
-                                            <label className="label-datePicker" htmlFor="dtWitnessDate"> Witness Date </label>
-                                            <DatePickercontrol placeholder="" selectedDate={this.state.formData.WitnessDate} id='dtWitnessDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WitnessDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWitnessDate", dateProps)} highlightDate={new Date()} showIcon />
+                                        <table className="table table-condensed table-bordered col-xs-12 col-md-12 col-lg-12 col-sm-12">
+                                            <tr>
+                                                <th scope="col">&nbsp;</th>
+                                                <th scope="col">Employee</th>
+                                                <th scope="col">Team Leader</th>
+                                                <th scope="col">Supervisor <span className="mandatoryhastrick"> *</span></th>
+                                                <th scope="col">Depart Mgr.</th>
+                                                <th scope="col">Safety Mgr.</th>
+                                                <th scope="col">Plant Mgr.</th>
+                                            </tr>
+                                            {/* Name */}
+                                            <tr>
+                                                <th scope="row">Name</th>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Employee Name" name="EmployeeName" type="text" id="txtEmployeeName" ref={this.txtEmployeeName} value={this.state.formData.EmployeeName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Employee Name" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Team Lead Name" name="TeamLeadName" type="text" id="txtTeamLeadName" ref={this.txtTeamLeadName} value={this.state.formData.TeamLeadName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Team Lead Name" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Supervisor Name" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.txtSupervisorName} value={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Name" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Dept Mgr Name" name="DeptManagerName" type="text" id="txtDeptManagerName" ref={this.txtDeptManagerName} value={this.state.formData.DeptManagerName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Department Manager Name" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Safety Mgr Name" name="SafetyMgrName" type="text" id="txtSafetyManagerName" ref={this.txtSafetyManagerName} value={this.state.formData.SafetyMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Safety Manager Name" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Plant Mgr Name" name="PlantMgrName" type="text" id="txtPlantManagerName" ref={this.txtPlantManagerName} value={this.state.formData.PlantMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Plant Manager Name" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {/* Date */}
+                                            <tr>
+                                                <th scope="row">Date</th>
+                                                <td>
+                                                    <div className="">
+                                                        <div className="light-text">
+                                                            <div className="custom-datepicker" id="divEmployeeName">
+                                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.EmployeeDate} id='dtEmployeeName' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="EmployeeDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divEmployeeName", dateProps)} highlightDate={new Date()} showIcon />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="" >
+                                                        <div className="light-text">
+                                                            <div className="custom-datepicker" id="divTeamLeadDate">                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.TeamLeadDate} id='dtTeamLeadDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="TeamLeadDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divTeamLeadDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="" >
+                                                        <div className="light-text">
+                                                            <div className="custom-datepicker" id="divSupervisorDate">                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="" id="divDeptMgrDate">
+                                                        <div className="light-text">
+                                                            <div className="custom-datepicker" id="divDeptMgrDate">                                                             <DatePickercontrol placeholder="" selectedDate={this.state.formData.DeptManagerDate} id='dtDeptMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="DeptManagerDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDeptMgrDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="" >
+                                                        <div className="light-text">
+                                                            <div className="custom-datepicker" id="divSafetyMgrDate">                                                             <DatePickercontrol placeholder="" selectedDate={this.state.formData.SafetyMgrDate} id='dtSafetyMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SafetyMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSafetyMgrDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="" >
+                                                        <div className="light-text">
+                                                            <div className="custom-datepicker" id="divPlantMgrDate">                                                           <DatePickercontrol placeholder="" selectedDate={this.state.formData.PlantMgrDate} id='dtPlantMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="PlantMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPlantMgrDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {/* Signature */}
+                                            <tr>
+                                                <th scope="row">Signature</th>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Employee Signature" name="EmployeeSignature" type="text" id="txtEmployeeSignature" ref={this.txtEmployeeSignature} value={this.state.formData.EmployeeSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Employee Signature" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Team Lead Signature" name="TeamLeadSignature" type="text" id="txtTeamLeadSignature" ref={this.txtTeamLeadSignature} value={this.state.formData.TeamLeadSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Team Lead Signature" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Supervisor Signature" name="SuperVisorSignature" type="text" id="txtSupervisorSignature" ref={this.txtSupervisorSignature} value={this.state.formData.SuperVisorSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Signature" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Dept Mgr Signature" name="DeptManagerSignature" type="text" id="txtDeptManagerSignature" ref={this.txtDeptManagerSignature} value={this.state.formData.DeptManagerSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Dept Mgr Signature" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Safety Mgr Signature" name="SafetyMgrSignature" type="text" id="txtSafetyManagerSignature" ref={this.txtSafetyManagerSignature} value={this.state.formData.SafetyMgrSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Safety Mgr Signature" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="Plant Mgr Signature" name="PlantMgrSignature" type="text" id="txtPlantManagerSignature" ref={this.txtPlantManagerSignature} value={this.state.formData.PlantMgrSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Plant Mgr Signature" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        {/* Injured */}
+                                        <div className="col-md-6 row">
+                                            {/* Injured Statement */}
+                                            <div className="col-md-12 light-text" >
+                                                <label className="col-form-label" htmlFor="txtInjuredStatement">Injured Statement </label>
+                                                <textarea className="form-control bs-textarea" rows={3} id="txtInjuredStatement" name="InjuredStatement" ref={this.txtInjuredStatement} placeholder="Injured Statement" value={this.state.formData.InjuredStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Statement" ></textarea>
+                                            </div>
+                                            {/* Injured Signature */}
+                                            <div className="col-md-6">
+                                                <div className="light-text">
+                                                    <label className=" col-form-label" htmlFor="txtInjuredSignature">Injured Signature </label>
+                                                    <input className="form-control" placeholder="Injured Signature" name="InjuredSignature" type="text" id="txtInjuredSignature" ref={this.txtInjuredSignature} value={this.state.formData.InjuredSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Signature" />
+                                                </div>
+                                            </div>
+                                            {/* Injured Date */}
+                                            <div className="col-md-6" >
+                                                <div className="light-text">
+                                                    <label className="label-datePicker" htmlFor="dtInjuredDate"> Injured Date </label>
+                                                    <div className="custom-datepicker" id="divInjuredDate">
+                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.InjuredDate} id='dtInjuredDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="InjuredDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuredDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* Witness */}
+                                        <div className="col-md-6 row">
+                                            {/* Witness Statement */}
+                                            <div className="light-text" >
+                                                <label className="col-form-label" htmlFor="txtWitnessStatement">Witness Statement </label>
+                                                <textarea className="form-control bs-textarea" rows={3} id="txtWitnessStatement" name="WitnessStatement" ref={this.txtWitnessStatement} placeholder="Witness Statement" value={this.state.formData.WitnessStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Witness Statement" ></textarea>
+                                            </div>
+                                            {/* Witness Signature */}
+                                            <div className="col-md-6">
+                                                <div className="light-text">
+                                                    <label className=" col-form-label" htmlFor="txtWitnessSignature">Witness Signature </label>
+                                                    <input className="form-control" placeholder="Witness Signature" name="WitnessSignature" type="text" id="txtWitnessSignature" ref={this.txtWitnessSignature} value={this.state.formData.WitnessSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Witness Signature" />
+                                                </div>
+                                            </div>
+                                            {/* Witness Date */}
+                                            <div className="col-md-6">
+                                                <div className="light-text">
+                                                    <label className="label-datePicker" htmlFor="dtWitnessDate"> Witness Date </label>
+                                                    <div className="custom-datepicker" id="divWitnessDate"></div>
+                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.WitnessDate} id='dtWitnessDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WitnessDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWitnessDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                {/* Buttons */}
-                                <div className="col-sm-12 text-center py-3 greybg" id="">
-                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} >Submit</button>}
-                                    <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlefullClose} >Cancel</button>
+                                    {/* Buttons */}
+                                    <div className="col-sm-12 text-center py-3" id="">
+                                        {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
+                                        <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} >Cancel</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </React.Fragment>
             )
         }

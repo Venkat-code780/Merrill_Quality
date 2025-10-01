@@ -1,0 +1,27 @@
+.div-form-title {
+    background: #2c627e;
+    color: white;
+    position: relative;
+}
+.div-form-title .form-title {
+    padding: 10px 10px;
+    font-size: 1.5rem;
+}
+span.span-mandatory-text {
+    position: absolute;
+    right: 3px;
+    bottom: 10px;
+}
+/* .css-t3ipsp-control{
+
+} */
+.css-13cymwt-control {
+    border-color: #d7d7d7 !important;
+}
+.light-text .form-control {
+    border: 1px solid #d7d7d7 !important;
+}
+.form-border-box {
+    border: 1px solid lightgray;
+    border-radius: 11px;
+}

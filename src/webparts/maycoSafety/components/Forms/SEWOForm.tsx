@@ -8,7 +8,7 @@ import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
-import "../CSS/SEWOForm.css";
+import "../CSS/form-input-style.css";
 import { ActionStatus, ControlType } from "../Constants/Contants";
 import { showToast } from "../Shared/Toaster";
 import { highlightCurrentNav } from "../Utilities/HighlightCurrentComponent";
@@ -891,13 +891,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 <React.Fragment>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
-                            <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">{" SEWO " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="text-danger">* </span> are mandatory fields</label>
+                            <div className="div-form-title">
+                                <div className="form-title">{" SEWO " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
 
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greenborder">
                                 {/* PLAN */}
+                                    <div className="form-border-box p-2 m-3">
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
                                     <h6 className="greenbg">PLAN</h6>
                                     {/* Plant */}
@@ -1085,7 +1086,8 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     {/* Usual Work & Shift */}
                                     <div className="col-md-3 row">
                                         {/* Usual Work */}
-                                        <div className="col-md-6 custom-dropdown" id="divUsualWork">
+                                        <div className="col-md-6" id="divUsualWork">
+                                            <div className="custom-dropdown">
                                             <SearchableDropdown
                                                 label={"Usual Work"}
                                                 Title={"Usual Work"}
@@ -1100,10 +1102,12 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 disabled={this.state.isInputDisabled}
                                                 noOptionsMessage="No Usual Works available"
                                             />
+                                            </div>
                                         </div>
 
                                         {/* Shift */}
-                                        <div className="col-md-6 custom-dropdown" id="divShift">
+                                        <div className="col-md-6" id="divShift">
+                                            <div className="custom-dropdown">
                                             <SearchableDropdown
                                                 label={"Shift"}
                                                 Title={"Shift"}
@@ -1118,6 +1122,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 disabled={this.state.isInputDisabled}
                                                 noOptionsMessage="No Shifts available"
                                             />
+                                            </div>
                                         </div>
                                     </div>
                                     {/* Reported Date */}
@@ -1187,9 +1192,9 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Is Hopital/Clinic Refused */}
-                                    <div className="col-md-3" style={{ textAlign: "center", height: "73px" }}>
+                                    <div className="col-md-3" style={{marginTop: "10px;"}}>
                                         <input className="" placeholder="Is Hospital/Clinic Refused" name="IsHospitalRefused" type="checkbox" id="rdIsHospitalRefused" ref={this.rdIsHospitalRefused} checked={this.state.formData.IsHospitalRefused} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Is Hospital/Clinic Refused" />
-                                        <label className=" col-form-label" htmlFor="rdIsHospitalRefused">Is Hospital/Clinic Refused </label>
+                                        <label className="ps-1 col-form-label" htmlFor="rdIsHospitalRefused"> Is Hospital/Clinic Refused </label>
                                     </div>
                                     {/* Name of the Clinic/Hospital */}
                                     {!this.state.formData.IsHospitalRefused && <div className="col-md-6">
@@ -1199,10 +1204,11 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>}
                                 </div>
+                                </div>
                                 {/* 5W+1H Analysis, BODY CHART, SKETCH */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row mt-2">
                                     {/* 5W+1H Analysis */}
-                                    <div className="col-md-3 px-0">
+                                    <div className="col-md-3">
                                         <h6 className="greenbg">5W+1H Analysis</h6>
                                         {/* What */}
                                         <div className="col-md-12">
@@ -1248,7 +1254,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* BODY CHART */}
-                                    <div className="col-md-3 px-0">
+                                    <div className="col-md-3">
                                         <h6 className="greenbg">BODY CHART</h6>
                                         {/* Body Part */}
                                         <div className="col-md-12">
@@ -1347,7 +1353,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     </div>
                                 </div>
                                 {/* Categorize Root Cause */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row mt-2">
                                     <h6 className="greenbg">Categorize Root Cause</h6>
                                     {/* Root Cause */}
                                     <div className="col-md-3">
@@ -1427,7 +1433,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     </div>
                                 </div>
                                 {/* Do */}
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row mt-2">
                                     <h6 className="greenbg">Do</h6>
                                     {/* Action Plan */}
                                     <div className="col-md-6">
@@ -1470,7 +1476,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Check, ACT/ */}
-                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
+                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row mt-2">
                                         {/* Check */}
                                         <div className="col-md-6 px-0">
                                             <h6 className="redbg">Check</h6>
@@ -1514,7 +1520,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
+                                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 row mt-2">
                                         {/* Status */}
                                         <div className="col-md-4">
                                             <div className="custom-dropdown" id="divStatus">

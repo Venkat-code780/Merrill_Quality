@@ -296,7 +296,7 @@
 
 .light-text .form-control {
   width: 100%;
-  border: 1px solid #a19f9d !important;
+  /* border: 1px solid #a19f9d !important; */
 }
 
 .form-control-box input,

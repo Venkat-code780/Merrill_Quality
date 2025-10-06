@@ -27,7 +27,7 @@ span.span-mandatory-text {
     background: #f9f9f9;
 }
 .label-inactive{
-    background: #f2f2f2;
+    background: #f2f2f2 !important;
 }
 canvas.sketchCanvas {
     width: 100%;
@@ -37,4 +37,14 @@ canvas.sketchCanvas {
 }
 .sketch-container .toolbar {
     margin-bottom: 5px;
+}
+.div-root-cause {
+    background: green;
+    height: 95%;
+    padding: 5px;
+    border-radius: 3px;
+    color: white;
+}
+.insider-m-0 .light-text{
+margin-top: 0!important
 }

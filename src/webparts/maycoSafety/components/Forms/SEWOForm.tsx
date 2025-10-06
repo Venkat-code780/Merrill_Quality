@@ -900,7 +900,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             <div className="">
                                 <div className="greenborder">
                                     {/* PLAN */}
-                                    <div className="form-border-box p-2 m-3">
+                                    <div className="form-border-box p-2 mx-3 my-2">
                                         <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> PLAN</h6>
                                         <div className="row">
                                             {/* Plant */}
@@ -1210,7 +1210,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 </div>
                             </div>
                             {/* 5W+1H Analysis, BODY CHART, SKETCH */}
-                            <div className="form-border-box p-2 m-3">
+                            <div className="form-border-box p-2 mx-3 mt-2">
                                 <div className="row mt-2">
                                     {/* 5W+1H Analysis */}
                                     <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> 5W+1H Analysis</h6>
@@ -1261,7 +1261,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             {/* BODY CHART */}
                             <div className="row">
                                 <div className="col-md-6">
-                                    <div className="form-border-box p-2 mx-1">
+                                    <div className="form-border-box p-2 mx-1 mt-2">
                                         <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> BODY CHART</h6>
                                         {/* Body Part */}
                                         <div className="col-md-12">
@@ -1287,7 +1287,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 </div>
                                 {/* SKETCH */}
                                 <div className="col-md-6 px-0">
-                                    <div className="form-border-box p-2 mx-1">
+                                    <div className="form-border-box p-2 mx-1 mt-2">
                                         <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> SKETCH</h6>
                                         <Sketch ref={this.sketchRef} initialImage={this.state.formData.Sketch} />
                                     </div>
@@ -1310,60 +1310,60 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     <div className="form-border-box p-2 mx-1">
                                         <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> Analysis Root Cause: write "5 Why's" for the most probable cause</h6>
                                         {/* FiveWhy1 */}
-                                        <div className="row">
-                                        <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">1</div>
-                                        <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                            <div className="col-md-12">
-                                                <div className="light-text">
-                                                    <input className="form-control" placeholder="FiveWhy1" name="FiveWhy1" type="text" id="txtFiveWhy1" ref={this.txtFiveWhy1} value={this.state.formData.FiveWhy1} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy1" />
+                                        <div className="row g-0 insider-m-0">
+                                            <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">1</div></div>
+                                            <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+                                                <div className="col-md-12">
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="FiveWhy1" name="FiveWhy1" type="text" id="txtFiveWhy1" ref={this.txtFiveWhy1} value={this.state.formData.FiveWhy1} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy1" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* FiveWhy2 */}
-                                        <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">..2</div>
-                                        <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                            <div className="col-md-12">
-                                                <div className="light-text">
-                                                    <input className="form-control" placeholder="FiveWhy2" name="FiveWhy2" type="text" id="txtFiveWhy2" ref={this.txtFiveWhy2} value={this.state.formData.FiveWhy2} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy2" />
+                                            {/* FiveWhy2 */}
+                                            <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">..2</div></div>
+                                            <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+                                                <div className="col-md-12">
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="FiveWhy2" name="FiveWhy2" type="text" id="txtFiveWhy2" ref={this.txtFiveWhy2} value={this.state.formData.FiveWhy2} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy2" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* FiveWhy3 */}
-                                        <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">....3</div>
-                                        <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                            <div className="col-md-12">
-                                                <div className="light-text">
-                                                    <input className="form-control" placeholder="FiveWhy3" name="FiveWhy3" type="text" id="txtFiveWhy3" ref={this.txtFiveWhy3} value={this.state.formData.FiveWhy3} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy3" />
+                                            {/* FiveWhy3 */}
+                                            <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">....3</div></div>
+                                            <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+                                                <div className="col-md-12">
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="FiveWhy3" name="FiveWhy3" type="text" id="txtFiveWhy3" ref={this.txtFiveWhy3} value={this.state.formData.FiveWhy3} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy3" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* FiveWhy4 */}
-                                        <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">......4</div>
-                                        <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                            <div className="col-md-12">
-                                                <div className="light-text">
-                                                    <input className="form-control" placeholder="FiveWhy4" name="FiveWhy4" type="text" id="txtFiveWhy4" ref={this.txtFiveWhy4} value={this.state.formData.FiveWhy4} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy4" />
+                                            {/* FiveWhy4 */}
+                                            <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">......4</div></div>
+                                            <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+                                                <div className="col-md-12">
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="FiveWhy4" name="FiveWhy4" type="text" id="txtFiveWhy4" ref={this.txtFiveWhy4} value={this.state.formData.FiveWhy4} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy4" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* FiveWhy5 */}
-                                        <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">........5</div>
-                                        <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                            <div className="col-md-12">
-                                                <div className="light-text">
-                                                    <input className="form-control" placeholder="FiveWhy5" name="FiveWhy5" type="text" id="txtFiveWhy5" ref={this.txtFiveWhy5} value={this.state.formData.FiveWhy5} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy5" />
+                                            {/* FiveWhy5 */}
+                                            <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">........5</div></div>
+                                            <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+                                                <div className="col-md-12">
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="FiveWhy5" name="FiveWhy5" type="text" id="txtFiveWhy5" ref={this.txtFiveWhy5} value={this.state.formData.FiveWhy5} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhy5" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* RootCause */}
-                                        <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1">Root Cause</div>
-                                        <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
-                                            <div className="col-md-12">
-                                                <div className="light-text">
-                                                    <input className="form-control" placeholder="FiveWhyRootCause" name="FiveWhyRootCause" type="text" id="FiveWhyRootCause" ref={this.txtFiveWhyRootCause} value={this.state.formData.FiveWhyRootCause} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhyRootCause" />
+                                            {/* RootCause */}
+                                            <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">Root Cause</div></div>
+                                            <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+                                                <div className="col-md-12">
+                                                    <div className="light-text">
+                                                        <input className="form-control" placeholder="FiveWhyRootCause" name="FiveWhyRootCause" type="text" id="FiveWhyRootCause" ref={this.txtFiveWhyRootCause} value={this.state.formData.FiveWhyRootCause} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="FiveWhyRootCause" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         </div>
                                     </div>
                                     {/* Categorize Root Cause */}
@@ -1722,64 +1722,64 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             {/* Injured */}
                                         </div>
                                         <div className="row g-0">
-                                        <div className="col-md-6 mt-2">
-                                            <div className="form-border-box p-2 mx-1">
-                                                <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} />Injured Statement</h6>
-                                                {/* Injured Statement */}
-                                                <div className="row">
-                                                    <div className="col-md-12 light-text" >
-                                                        <label className="col-form-label" htmlFor="txtInjuredStatement">Statement </label>
-                                                        <textarea className="form-control bs-textarea" rows={3} id="txtInjuredStatement" name="InjuredStatement" ref={this.txtInjuredStatement} placeholder="Injured Statement" value={this.state.formData.InjuredStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Statement" ></textarea>
-                                                    </div>
-                                                    {/* Injured Signature */}
-                                                    <div className="col-md-6">
-                                                        <div className="light-text">
-                                                            <label className=" col-form-label" htmlFor="txtInjuredSignature">Signature </label>
-                                                            <input className="form-control" placeholder="Injured Signature" name="InjuredSignature" type="text" id="txtInjuredSignature" ref={this.txtInjuredSignature} value={this.state.formData.InjuredSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Signature" />
+                                            <div className="col-md-6 mt-2">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} />Injured Statement</h6>
+                                                    {/* Injured Statement */}
+                                                    <div className="row">
+                                                        <div className="col-md-12 light-text" >
+                                                            <label className="col-form-label" htmlFor="txtInjuredStatement">Statement </label>
+                                                            <textarea className="form-control bs-textarea" rows={3} id="txtInjuredStatement" name="InjuredStatement" ref={this.txtInjuredStatement} placeholder="Injured Statement" value={this.state.formData.InjuredStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Statement" ></textarea>
                                                         </div>
-                                                    </div>
-                                                    {/* Injured Date */}
-                                                    <div className="col-md-6" >
-                                                        <div className="light-text">
-                                                            <label className="label-datePicker" htmlFor="dtInjuredDate"> Date </label>
-                                                            <div className="custom-datepicker" id="divInjuredDate">
-                                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.InjuredDate} id='dtInjuredDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="InjuredDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuredDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                        {/* Injured Signature */}
+                                                        <div className="col-md-6">
+                                                            <div className="light-text">
+                                                                <label className=" col-form-label" htmlFor="txtInjuredSignature">Signature </label>
+                                                                <input className="form-control" placeholder="Injured Signature" name="InjuredSignature" type="text" id="txtInjuredSignature" ref={this.txtInjuredSignature} value={this.state.formData.InjuredSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Signature" />
+                                                            </div>
+                                                        </div>
+                                                        {/* Injured Date */}
+                                                        <div className="col-md-6" >
+                                                            <div className="light-text">
+                                                                <label className="label-datePicker" htmlFor="dtInjuredDate"> Date </label>
+                                                                <div className="custom-datepicker" id="divInjuredDate">
+                                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.InjuredDate} id='dtInjuredDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="InjuredDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuredDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* Witness */}
-                                        <div className="col-md-6 mt-2">
-                                            <div className="form-border-box p-2 mx-1">
-                                                <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} />Witness Statement</h6>
-                                                {/* Witness Statement */}
-                                                <div className="row">
-                                                    <div className="col-12">
-                                                        <div className="light-text" >
-                                                            <label className="col-form-label" htmlFor="txtWitnessStatement"> Statement </label>
-                                                            <textarea className="form-control bs-textarea" rows={3} id="txtWitnessStatement" name="WitnessStatement" ref={this.txtWitnessStatement} placeholder="Witness Statement" value={this.state.formData.WitnessStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Witness Statement" ></textarea>
+                                            {/* Witness */}
+                                            <div className="col-md-6 mt-2">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} />Witness Statement</h6>
+                                                    {/* Witness Statement */}
+                                                    <div className="row">
+                                                        <div className="col-12">
+                                                            <div className="light-text" >
+                                                                <label className="col-form-label" htmlFor="txtWitnessStatement"> Statement </label>
+                                                                <textarea className="form-control bs-textarea" rows={3} id="txtWitnessStatement" name="WitnessStatement" ref={this.txtWitnessStatement} placeholder="Witness Statement" value={this.state.formData.WitnessStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Witness Statement" ></textarea>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    {/* Witness Signature */}
-                                                    <div className="col-md-6">
-                                                        <div className="light-text">
-                                                            <label className=" col-form-label" htmlFor="txtWitnessSignature">Signature </label>
-                                                            <input className="form-control" placeholder="Witness Signature" name="WitnessSignature" type="text" id="txtWitnessSignature" ref={this.txtWitnessSignature} value={this.state.formData.WitnessSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Witness Signature" />
+                                                        {/* Witness Signature */}
+                                                        <div className="col-md-6">
+                                                            <div className="light-text">
+                                                                <label className=" col-form-label" htmlFor="txtWitnessSignature">Signature </label>
+                                                                <input className="form-control" placeholder="Witness Signature" name="WitnessSignature" type="text" id="txtWitnessSignature" ref={this.txtWitnessSignature} value={this.state.formData.WitnessSignature} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Witness Signature" />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    {/* Witness Date */}
-                                                    <div className="col-md-6">
-                                                        <div className="light-text">
-                                                            <label className="label-datePicker" htmlFor="dtWitnessDate"> Date </label>
-                                                            <div className="custom-datepicker" id="divWitnessDate"></div>
-                                                            <DatePickercontrol placeholder="" selectedDate={this.state.formData.WitnessDate} id='dtWitnessDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WitnessDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWitnessDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                        {/* Witness Date */}
+                                                        <div className="col-md-6">
+                                                            <div className="light-text">
+                                                                <label className="label-datePicker" htmlFor="dtWitnessDate"> Date </label>
+                                                                <div className="custom-datepicker" id="divWitnessDate"></div>
+                                                                <DatePickercontrol placeholder="" selectedDate={this.state.formData.WitnessDate} id='dtWitnessDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WitnessDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWitnessDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         </div>
                                     </div>
                                     {/* Buttons */}

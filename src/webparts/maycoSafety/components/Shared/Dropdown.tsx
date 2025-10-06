@@ -25,7 +25,7 @@ const SearchableDropdown = ({ label, Title, name, id, placeholderText, className
     }
     return(
         <React.Fragment>
-            {![null,""].includes(label)?<label>{label}
+            {![null,""].includes(label)?<label className="label-inactive">{label}
                 { isRequired && <span className="mandatoryhastrick"> *</span>}
             </label>:''}
             <Select

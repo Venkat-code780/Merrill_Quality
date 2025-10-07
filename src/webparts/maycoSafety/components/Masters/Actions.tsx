@@ -459,14 +459,14 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
 
                                 <div>
                                     {!this.state.isFormOpen &&
-                                        <div className="text-end me-4" id="">
+                                        <div className="text-end me-2" id="">
                                             <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div>}
 
                                     {this.state.isFormOpen &&
-                                        <div className="divForm m-3">
-                                            <div className="py-3">
+                                        <div className="">
+                                            <div className="form-border-box p-2 mx-1 mt-2">
                                                 <div className="row">
                                                     <div className="col-md-3">
                                                         <div className="light-text">
@@ -496,7 +496,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
 
                                                         </div>
                                                     </div>
-                                                    <div className="col-md-3 py-2" id="">
+                                                    <div className="col-md-3 py-2 text-center" id="">
                                                         <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
                                                         <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                     </div>

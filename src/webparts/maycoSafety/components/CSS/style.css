@@ -274,7 +274,7 @@
 }
 .light-text label{
   position: absolute;
-  top: -9px;
+  top: -10px;
   left: 5px;
   padding: 0 5px;
   background-color: #fff;
@@ -326,7 +326,7 @@
 
 .custom-dropdown label {
   position: absolute;
-  top: -9px;
+  top: -10px;
   left: 5px;
   padding: 0 5px;
   background-color: #f9f9f9;

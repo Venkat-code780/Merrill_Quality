@@ -1299,7 +1299,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         {/* Action Description */}
                                         {/* <div className="col-md-12"> */}
                                         <div className="light-text" >
-                                            <label className=" col-form-label" htmlFor="txtActionDescription">Action Description </label>
+                                            {/* <label className=" col-form-label" htmlFor="txtActionDescription">Action Description </label> */}
                                             <textarea className="form-control" rows={3} id="txtActionDescription" name="ActionDescription" ref={this.txtActionDescription} placeholder="Action Description" value={this.state.formData.ActionDescription} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Description" ></textarea>
                                         </div>
                                     </div>

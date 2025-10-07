@@ -253,11 +253,11 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
                 <button type='button' onClick={() => changeTool('line')} title='Line'><FontAwesomeIcon icon={faSlash} /></button>
                 <button type='button' onClick={() => changeTool('pen')} title='Pen'><FontAwesomeIcon icon={faPen} /></button>
                 <button type='button' onClick={() => changeTool('eraser')} title='Eraser'><FontAwesomeIcon icon={faEraser} /></button>
-                <select onChange={handleFontSizeChange} value={fontSize} style={{ height: "29px" }}>
+                <select onChange={handleFontSizeChange} value={fontSize}>
                     {/* <option value={5}>5px</option> */}
                     {numArr.map((num) => (<option value={num}>{num + "px"}</option>))}
                 </select>
-                <input type="color" onChange={(e) => changeColor(e.target.value)} style={{ position: "relative", top: "6px", height: "29px" }} />
+                <input type="color" onChange={(e) => changeColor(e.target.value)} style={{ position: "relative", top: "6px"}} />
                 <button type='button' onClick={getImage} className='d-none'>Get Image</button>
             </div>
 

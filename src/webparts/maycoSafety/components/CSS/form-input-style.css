@@ -48,3 +48,22 @@ canvas.sketchCanvas {
 .insider-m-0 .light-text{
 margin-top: 0!important
 }
+.sketch-container .toolbar button {
+    width: 34px;
+    height: 31px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    margin: 0 1px;
+}
+.sketch-container .toolbar select{
+        height: 31px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    margin: 0 1px;
+}
+.sketch-container .toolbar input{
+        height: 31px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    margin: 0 1px;
+}

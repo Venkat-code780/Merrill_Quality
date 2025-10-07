@@ -1286,7 +1286,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     </div>
                                 </div>
                                 {/* SKETCH */}
-                                <div className="col-md-6 px-0">
+                                <div className="col-md-6 ps-0">
                                     <div className="form-border-box p-2 mx-1 mt-2">
                                         <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> SKETCH</h6>
                                         <Sketch ref={this.sketchRef} initialImage={this.state.formData.Sketch} />
@@ -1506,7 +1506,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 {/* Comments */}
                                                 <div className="light-text" >
                                                     <label className="col-form-label" htmlFor="txtComments">Comments </label>
-                                                    <textarea className="form-control bs-textarea" rows={4} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" ></textarea>
+                                                    <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" ></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -1515,9 +1515,9 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             <div className="form-border-box p-2 mx-1">
                                                 <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} /> ACT</h6>
                                                 {/* Expansion Plan */}
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <div className="custom-dropdown" id="divExpansionPlan">
+                                                <div className="row mt-3">
+                                                    <div className="col-md-4">
+                                                        <div className="custom-dropdown mt-0" id="divExpansionPlan">
                                                             <SearchableDropdown
                                                                 label={"Expansion Plan"}
                                                                 Title={"Expansion Plan"}
@@ -1535,12 +1535,12 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                         </div>
                                                     </div>
                                                     {/* Location */}
-                                                    <div className="col-md-6 light-text" >
+                                                    <div className="col-md-4 light-text" >
                                                         <label className="col-form-label" htmlFor="txtLocation">Location </label>
                                                         <textarea className="form-control bs-textarea" rows={3} id="txtLocation" name="Location" ref={this.txtLocation} placeholder="Location" value={this.state.formData.Location} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Location" ></textarea>
                                                     </div>
                                                     {/* Act */}
-                                                    <div className="col-md-12 light-text mt-2">
+                                                    <div className="col-md-4 light-text">
                                                         <label className="col-form-label" htmlFor="txtAct">Act </label>
                                                         <textarea className="form-control bs-textarea" rows={3} id="txtAct" name="Act" ref={this.txtAct} placeholder="Act" value={this.state.formData.Act} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Act" ></textarea>
                                                     </div>

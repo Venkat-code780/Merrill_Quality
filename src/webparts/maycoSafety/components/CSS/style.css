@@ -75,6 +75,7 @@
 .mandatoryhastrick {
   color: red !important;
   font-size: 1rem !important;
+  background-color: transparent !important;
 }
 
 .bs-field {

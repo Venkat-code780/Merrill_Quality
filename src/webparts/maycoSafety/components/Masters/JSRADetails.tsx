@@ -563,32 +563,32 @@ private handleSubCategoryChange = (selected: any) => {
                                                                 <label>Probability 2 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                                      <div className="col-md-3">
-                                                            <div className="light-text mb-2">
+                                                                      <div className="col-md-3 mt-2">
+                                                            <div className="light-text ">
                                                                 <input className="form-control" required={true} type="text" name="Probability_x0020_3" title="LeadSource" value={ this.state.formData.Probability_x0020_3} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_3} maxLength={250}/>
                                                                 <label>Probability 3 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                                  <div className="col-md-3">
-                                                            <div className="light-text mb-2">
+                                                                  <div className="col-md-3 mt-2">
+                                                            <div className="light-text">
                                                                 <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_} maxLength={250}/>
                                                                 <label>Mitigation/Controls 1 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                             <div className="col-md-3">
-                                                            <div className="light-text mb-2">
+                                                             <div className="col-md-3 mt-2">
+                                                            <div className="light-text">
                                                                 <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_0" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_0} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_0} maxLength={250}/>
                                                                 <label>Mitigation/Controls 2 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                          <div className="col-md-3">
-                                                            <div className="light-text mb-2">
+                                                          <div className="col-md-3 mt-2">
+                                                            <div className="light-text">
                                                                 <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_1" title="LeadSource" value={ this.state.formData.Mitigation_x002f_Controls_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_1} maxLength={250}/>
                                                                 <label>Mitigation/Controls 3 <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
-                                                        <div className="col-md-12">
-                                                            <div className="light-text mb-2">
+                                                        <div className="col-md-12 mt-2">
+                                                            <div className="light-text">
                                                                  <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title="Description of Incident" style={{height:"150px"}}></textarea>                                                      
                                                                 <label>Details<span className="mandatoryhastrick">*</span></label>
                                                             </div>

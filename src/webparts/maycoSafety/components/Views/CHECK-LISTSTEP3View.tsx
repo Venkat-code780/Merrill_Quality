@@ -157,8 +157,8 @@ export default class CheckList3View extends React.Component<CheckList3Props,Chec
     return (
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
-              <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">CHECK-LIST STEP 3</h3>
+              <div className="div-form-title">
+                                <div className="form-title">CHECK-LIST STEP 3</div>
                             </div>
                          <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">

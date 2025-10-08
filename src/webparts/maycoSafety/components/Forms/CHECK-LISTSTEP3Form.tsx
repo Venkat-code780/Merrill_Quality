@@ -580,13 +580,13 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                 <React.Fragment>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
-                            <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">{" Mayco International - WCM Safety Pillar Step Audits - Level 3 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
-                                <h6 className="mb-0 pt-2 text-center">AUDIT CHECK-LIST</h6>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
+                            <div className="div-form-title">
+                                <div className="form-title">{" Mayco International - WCM Safety Pillar Step Audits - Level 3 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
-
-                            <div className="mainContent row borderLine">
+                             <div className="">
+                                  <div className="greenborder">
+                                  <div className="form-border-box p-2 mx-3 my-2">
                                 <div className="row py-2">
                                     <div className="col-md-3" id="divDate">
                                         <div className="light-text">
@@ -723,6 +723,9 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                     {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId>0?'Update':'Submit'} onClick={this.handleSubmit} >{this.state.ItemId>0?'Update':'Submit'}</button>}
                                     <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                 </div>
+                          
+                            </div>
+                            </div>
                             </div>
                         </div>
                     </div>

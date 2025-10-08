@@ -12,6 +12,8 @@ import { format } from "date-fns";
 import DateUtilities from "../Utilities/DateUtilities";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import formValidation from "../Utilities/FormValidator";
+import "../CSS/form-input-style.css";
+
 // import FileUpload from "../Shared/FileUpload";
 // import InputCheckBox from "../Shared/InputCheckBox";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -454,12 +456,13 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 <React.Fragment>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
-                            <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">{" Unsafe Conditions And Acts Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
+                            <div className="div-form-title">
+                                <div className="form-title">{" Unsafe Conditions And Acts Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
-
-                            <div className="mainContent row col-lg-12 col-md-12 col-sm-12 col-xs-12 borderLine">
+                             <div className="">
+                                <div className="greenborder">
+                            <div className="form-border-box p-2 mx-3 my-2">
                                 <div className="col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left row">
                                     {/* Near miss, Unsafe act, Unsafe condition */}
                                     <div className="col-md-6  ">
@@ -709,6 +712,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                     <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlCancel} >Cancel</button>
                                 </div>
 
+                            </div>
+                            </div>
                             </div>
                         </div>
                     </div>

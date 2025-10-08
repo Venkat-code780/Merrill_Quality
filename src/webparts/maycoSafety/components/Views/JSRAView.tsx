@@ -260,8 +260,8 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
     return (
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
-              <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">JSRA</h3>
+              <div className="div-form-title">
+                                <div className="form-title">JSRA</div>
                             </div>
                             <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">

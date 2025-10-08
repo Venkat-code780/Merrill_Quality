@@ -878,12 +878,13 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 <React.Fragment>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
-                            <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">{" TAG " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
+                            <div className="div-form-title">
+                                <div className="form-title">{" TAG " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
-
-                            <div className="mainContent row borderLine">
+                            <div className="">
+                                <div className="greenborder">
+                            <div className="form-border-box p-2 mx-3 my-2">
                                 <div className="row py-2">
                                     <div className="col-md-3" title={this.state.formData.Plant}>
                                         <div className="custom-dropdown" id="divPlant">
@@ -1038,6 +1039,8 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                     </div>
                                 </div>
 
+                            </div>
+                            </div>
                             </div>
                         </div>
                     </div>

@@ -207,8 +207,8 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                Action: { val: (this.state.formData.Title.trim()), required: true, Name: "'Secondary Root Cause'", Type: ControlType.string, Focusid: this.txtsecondaryrootcause},
-                RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: "Root Cause", Type: ControlType.reactSelect, Focusid: 'divRootCause' },
+                Action: { val: (this.state.formData.Title.trim()), required: true, Name: 'Secondary Root Cause', Type: ControlType.string, Focusid: this.txtsecondaryrootcause},
+                RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: 'Root Cause', Type: ControlType.reactSelect, Focusid: 'divRootCause' },
 
                  
             }
@@ -370,9 +370,9 @@ private handleChangeClient = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="light-box border-box-shadow">
                                     
-                            <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">Secondary Root Causes</h3>
-                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                            <div className="div-form-title">
+                                <div className="form-title">Secondary Root Causes</div>
+                                {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                                <div className="mainContent px-4 borderLine">
                                     <div>
@@ -382,8 +382,8 @@ private handleChangeClient = (selected: any) => {
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm m-3">
-                                                <div className="py-3">
+                                            <div className="">
+                                                <div className="form-border-box p-2 mx-1 mt-2">
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">

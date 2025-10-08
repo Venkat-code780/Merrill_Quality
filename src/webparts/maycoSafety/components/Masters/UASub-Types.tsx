@@ -209,8 +209,8 @@ export interface UASubTypeState {
         try{
             event.preventDefault();
             var data = {
-                UAMicroType: { val: (this.state.formData.Title.trim()), required: true, Name: "'UAMicro Type'", Type: ControlType.string, Focusid: this.txtUAMicroType },
-                UAType: { val: (this.state.formData.UAType0Id), required: true, Name: "'UA Type'", Type: ControlType.reactSelect, Focusid:"divCategory"}
+                UAMicroType: { val: (this.state.formData.Title.trim()), required: true, Name: 'UAMicro Type', Type: ControlType.string, Focusid: this.txtUAMicroType },
+                UAType: { val: (this.state.formData.UAType0Id), required: true, Name: 'UA Type', Type: ControlType.reactSelect, Focusid:"divCategory"}
             }
             let isValid = formValidation.FormValidation( data );
 
@@ -375,9 +375,9 @@ private handleChangeClient = (selected: any) => {
                
                             <div className="container-fluid">
                                 <div className="light-box border-box-shadow">
-                                          <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">UA Sub-Types</h3>
-                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                                        <div className="div-form-title">
+                                <div className="form-title">UA Sub-Types</div>
+                                {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                             <div className="mainContent px-4 borderLine">
                                     
@@ -388,8 +388,8 @@ private handleChangeClient = (selected: any) => {
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm m-3">
-                                                <div className="py-3">
+                                            <div className="">
+                                                <div className="form-border-box p-2 mx-1 mt-2">
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">

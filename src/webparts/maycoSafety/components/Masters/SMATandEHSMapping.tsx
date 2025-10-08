@@ -229,11 +229,11 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                AuditSubcategory: { val: (this.state.formData.Audit_SubCategory.trim()), required: true, Name: "Audit Subcategory", Type: ControlType.string, Focusid: this.Audit_SubCategory },
-                AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: "'Audit Category'", Type: ControlType.reactSelect, Focusid:'divAuditCategory' },
+                AuditSubcategory: { val: (this.state.formData.Audit_SubCategory.trim()), required: true, Name: 'Audit Subcategory', Type: ControlType.string, Focusid: this.Audit_SubCategory },
+                AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: 'Audit Category', Type: ControlType.reactSelect, Focusid:'divAuditCategory' },
                 
-                FormType:{ val: (this.state.formData.Form_x0020_Type), required: true, Name: "FormType", Type: ControlType.string, Focusid: this.Form_x0020_Type },
-                IsActive:{ val: (this.state.formData.Is_x0020_Active), required: true, Name: "'Is Active'", Type: ControlType.string, Focusid: this.Is_x0020_Active },
+                FormType:{ val: (this.state.formData.Form_x0020_Type), required: true, Name: 'FormType', Type: ControlType.string, Focusid: this.Form_x0020_Type },
+                IsActive:{ val: (this.state.formData.Is_x0020_Active), required: true, Name: 'Is Active', Type: ControlType.string, Focusid: this.Is_x0020_Active },
                  
             }
             let isValid = formValidation.FormValidation( data );
@@ -429,9 +429,9 @@ formData[name as keyof typeof formData] = value as never;
                   
                             <div className="container-fluid">
                                 <div className="light-box border-box-shadow">
-                                      <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">SMAT and EHS Mapping</h3>
-                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                                      <div className="div-form-title">
+                                <div className="form-title">SMAT and EHS Mapping</div>
+                                {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                                  <div className="mainContent px-4 borderLine">
                                     <div>
@@ -441,8 +441,8 @@ formData[name as keyof typeof formData] = value as never;
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm m-3">
-                                                <div className="py-3">
+                                            <div className="">
+                                                <div className="form-border-box p-2 mx-1 mt-2">
                                                     <div className="row">
                                                           <div className="col-md-3">
                                                             <div className="light-text">
@@ -484,12 +484,13 @@ formData[name as keyof typeof formData] = value as never;
                                                               </div>
                                                         </div>
                                                          </div>
-                                                        </div>
+                                                       
 
                                                         <div className="col-sm-12 text-center py-3" id="">
                                                             <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>                                                  
                                                 </div>
+                                                 </div>
                                                
                                             </div>
                                         }

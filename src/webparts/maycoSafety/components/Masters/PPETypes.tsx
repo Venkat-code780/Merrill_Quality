@@ -223,7 +223,7 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                Status: { val: (this.state.formData.Title.trim()), required: true, Name: "'PPE Type'", Type: ControlType.string, Focusid: this.txtPPEType },
+                Status: { val: (this.state.formData.Title.trim()), required: true, Name: 'PPE Type', Type: ControlType.string, Focusid: this.txtPPEType },
 
                  
             }
@@ -358,9 +358,9 @@ private async checkDuplicate() {
                 <React.Fragment>
                             <div className="container-fluid">
                                 <div className="light-box border-box-shadow">
-                                     <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">PPE Types</h3>
-                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                                     <div className="div-form-title">
+                                <div className="form-title">PPE Types</div>
+                                {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                                 <div className="mainContent px-4 borderLine">
                                     <div>
@@ -370,8 +370,8 @@ private async checkDuplicate() {
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm m-3">
-                                                <div className="py-3">
+                                            <div className="">
+                                                <div className="form-border-box p-2 mx-1 mt-2">
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">

@@ -165,8 +165,8 @@ export default class CheckListStep1View extends React.Component<CheckListStep1Pr
       
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
-              <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">CHECK-LIST STEP 1</h3>
+              <div className="div-form-title">
+                                <div className="form-title">CHECK-LIST STEP 1</div>
                             </div>
                              <div className="mainContent px-4 borderLine">
             <div>

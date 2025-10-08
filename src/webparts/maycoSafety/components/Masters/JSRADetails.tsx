@@ -231,15 +231,15 @@ export default class JSRADetails extends React.Component<JSRAdetailsProps, JSRAd
         try{
             event.preventDefault();
             var data = {
-                Category: {val: this.state.formData.CategoryId, required: true, Name: "Category", Type: ControlType.reactSelect, Focusid: "divCategory"},
-                SubCategory:{val: this.state.formData.Sub_x0020_CategoryId, required: true, Name: "Sub Category", Type: ControlType.reactSelect, Focusid: "divSubCategory"},
-                Probability1: { val: (this.state.formData.Probability_x0020_1.trim()), required: true, Name: "'Probability 1'", Type: ControlType.string, Focusid: this.Probability_x0020_1 },
-                 Probability2: { val: (this.state.formData.Probability_x0020_2.trim()), required: true, Name: "'Probability 2'", Type: ControlType.string, Focusid: this.Probability_x0020_2 },
-                 Probability3: { val: (this.state.formData.Probability_x0020_3.trim()), required: true, Name: "'Probability 3'", Type: ControlType.string, Focusid: this.Probability_x0020_3 },
-                 MigrationControls1: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_.trim()), required: true, Name: "'Mitigation/Controls 1'", Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_ },
-                  MigrationControls2: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_0.trim()), required: true, Name: "'Mitigation/Controls 2'", Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_0 },
-                   MigrationControls3: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_1.trim()), required: true, Name: "'Mitigation/Controls 3'", Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_1 },
-                          Details: { val: (this.state.formData.Details.trim()), required: true, Name: "'Details'", Type: ControlType.string, Focusid: this.Details },
+                Category: {val: this.state.formData.CategoryId, required: true, Name: 'Category', Type: ControlType.reactSelect, Focusid: "divCategory"},
+                SubCategory:{val: this.state.formData.Sub_x0020_CategoryId, required: true, Name: 'Sub Category', Type: ControlType.reactSelect, Focusid: "divSubCategory"},
+                Probability1: { val: (this.state.formData.Probability_x0020_1.trim()), required: true, Name: 'Probability 1', Type: ControlType.string, Focusid: this.Probability_x0020_1 },
+                 Probability2: { val: (this.state.formData.Probability_x0020_2.trim()), required: true, Name: 'Probability 2', Type: ControlType.string, Focusid: this.Probability_x0020_2 },
+                 Probability3: { val: (this.state.formData.Probability_x0020_3.trim()), required: true, Name: 'Probability 3', Type: ControlType.string, Focusid: this.Probability_x0020_3 },
+                 MigrationControls1: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_.trim()), required: true, Name: 'Mitigation/Controls 1', Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_ },
+                  MigrationControls2: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_0.trim()), required: true, Name: 'Mitigation/Controls 2', Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_0 },
+                   MigrationControls3: { val: (this.state.formData.Mitigation_x002f_Controls_x0020_1.trim()), required: true, Name: 'Mitigation/Controls 3', Type: ControlType.string, Focusid: this.Mitigation_x002f_Controls_x0020_1 },
+                          Details: { val: (this.state.formData.Details.trim()), required: true, Name: 'Details', Type: ControlType.string, Focusid: this.Details },
 
             }
             let isValid = formValidation.FormValidation( data );
@@ -516,9 +516,9 @@ private handleSubCategoryChange = (selected: any) => {
                     
                             <div className="container-fluid">
                                 <div className="light-box border-box-shadow">
-                                         <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">JSRA Details</h3>
-                                {this.state.isFormOpen && <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>}
+                                        <div className="div-form-title">
+                                <div className="form-title">JSRA Details</div>
+                                {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                                     <div className="mainContent px-4 borderLine">
                                     <div>
@@ -528,8 +528,8 @@ private handleSubCategoryChange = (selected: any) => {
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }
                                         { this.state.isFormOpen && 
-                                            <div className="divForm m-3">
-                                                <div className="py-3">
+                                            <div className="">
+                                                <div className="form-border-box p-2 mx-1 mt-2">
                                                     <div className="row pt-2 px-2">
                                                         <div className="col-md-3">
                                                             <div className="light-text">

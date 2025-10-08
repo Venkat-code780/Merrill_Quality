@@ -238,8 +238,8 @@ private handleConfirmDelete = async (id?: number | null) => {
     return (
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
-             <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">SMAT</h3>
+             <div className="div-form-title">
+                                <div className="form-title">SMAT</div>
                             </div>
                  <div className="mainContent px-4 borderLine">
                   <div id="content" className="content p-2 pt-2">

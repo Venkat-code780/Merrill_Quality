@@ -785,12 +785,13 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 <React.Fragment>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
-                            <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">{" SMAT " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </h3>
-                                <label className="text-end px-1" style={{ width: "100%" }}> <span className="mandatoryhastrick">* </span> are mandatory fields</label>
+                            <div className="div-form-title">
+                                <div className="form-title">{" SMAT " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
-
-                            <div className="mainContent borderLine">
+                             <div className="">
+                                <div className="greenborder">
+                                    <div className="form-border-box p-2 mx-3 my-2">
                                 <div className="row py-2">
                                     {/* Date */}
                                     <div className="col-md-3">
@@ -1023,6 +1024,9 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                     {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                     <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} >Cancel</button>
                                 </div>
+                          
+                            </div>
+                            </div>
                             </div>
                         </div>
                     </div>

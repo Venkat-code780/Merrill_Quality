@@ -160,8 +160,8 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
     return (
       <div className="container-fluid">
         <div className="light-box border-box-shadow">
-             <div className="m-0 titlebg">
-                                <h3 className="mb-0 pt-2 text-center">SEWO</h3>
+             <div className="div-form-title">
+                                <div className="form-title">SEWO</div>
                             </div>
                             <div className="mainContent px-4 borderLine">
 

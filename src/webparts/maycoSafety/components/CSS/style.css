@@ -388,3 +388,6 @@ z-index: 2 !important;
 .mainContent tbody, thead, td, th {
     padding: 5px;
 }
+.custom-dropdown .css-13cymwt-control {
+    height: 42px;
+}

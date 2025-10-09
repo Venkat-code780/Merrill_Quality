@@ -1459,7 +1459,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 <div className="col-md-6">
                                                     <div className="light-text" >
                                                         <label className=" col-form-label" htmlFor="txtActionPlan">Action Plan </label>
-                                                        <textarea className="form-control bs-textarea" rows={4} id="txtActionPlan" name="ActionPlan" ref={this.txtActionPlan} placeholder="Action Plan" value={this.state.formData.ActionPlan} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Plan" ></textarea>
+                                                        <textarea className="form-control bs-textarea" rows={3} id="txtActionPlan" name="ActionPlan" ref={this.txtActionPlan} placeholder="Action Plan" value={this.state.formData.ActionPlan} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Plan" ></textarea>
                                                     </div>
                                                     <div className="light-text" >
                                                         <label className=" col-form-label" htmlFor="txtResponsible">Responsible </label>
@@ -1727,9 +1727,11 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} />Injured Statement</h6>
                                                     {/* Injured Statement */}
                                                     <div className="row">
-                                                        <div className="col-md-12 light-text" >
+                                                        <div className="col-md-12">
+                                                            <div className="light-text">
                                                             <label className="col-form-label" htmlFor="txtInjuredStatement">Statement </label>
                                                             <textarea className="form-control bs-textarea" rows={3} id="txtInjuredStatement" name="InjuredStatement" ref={this.txtInjuredStatement} placeholder="Injured Statement" value={this.state.formData.InjuredStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Statement" ></textarea>
+                                                        </div>
                                                         </div>
                                                         {/* Injured Signature */}
                                                         <div className="col-md-6">

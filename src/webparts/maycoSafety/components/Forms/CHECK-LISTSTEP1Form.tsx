@@ -96,7 +96,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
         showSubmit: false,
         ItemId: 0,
         Redirect: false,
-        RedirectTo:'',
+        RedirectTo: '',
     }
 
     constructor(props: CHECKLISTSTEP1FormProps) {
@@ -148,12 +148,12 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
             //Edit mode starts here
             let stateData: any = { ...this.state };
             if (ItemId > 0) {
-                let CheckListRes:any = await getListItems('CheckListStep1', this.currentSiteURL, 'Author/Title,Author/Id,*', 'Author',`Id eq ${ItemId}`);
+                let CheckListRes: any = await getListItems('CheckListStep1', this.currentSiteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${ItemId}`);
 
-               
+
                 if (!CheckListRes.isHttpRequestError) {
                     if (CheckListRes.length) {
-                    let CheckListData=CheckListRes[0];
+                        let CheckListData = CheckListRes[0];
                         formData.Date = [null, undefined, '', 'None'].includes(CheckListData.Date) ? '' : CheckListData.Date;
                         formData.Plant = [null, undefined, '', 'None'].includes(CheckListData.Plant) ? '' : CheckListData.Plant;
                         formData.Department = [null, undefined, '', 'None'].includes(CheckListData.Department) ? '' : CheckListData.Department;
@@ -197,7 +197,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                     }
                     else {
                         showToast("error", "No Check List found");
-                        this.setState({ Redirect: true,RedirectTo:'Home' });
+                        this.setState({ Redirect: true, RedirectTo: 'Home' });
                     }
                 }
             }
@@ -205,8 +205,8 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
             console.log(e);
             this.onError();
         }
-        finally{
-        hideLoader();
+        finally {
+            hideLoader();
         }
     }
     //common functions
@@ -278,7 +278,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
     }
     private onSuccess = (successMessage: string) => {
         hideLoader();
-        this.setState({ Redirect: true,RedirectTo:'CHECK-LISTSTEP1View', ItemID: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'CHECK-LISTSTEP1View', ItemID: 0 });
         showToast("success", successMessage);
     }
     private getCheckListPostData = () => {
@@ -467,7 +467,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
             bodyStructure[topicKey].forEach((row, index) => {
                 // Dynamically create table row
                 BodyRows.push(
-                    <tr key={`BodyRow${row.No + 1}`} className="BodyRows fw-bold">
+                    <tr key={`BodyRow${row.No + 1}`} className="BodyRows">
                         {index == 0 ? <td rowSpan={bodyStructure[topicKey].length} className="TopicCell text-center">{topicKey}</td> : ''}
                         <td className="text-center">{row.No + 1}</td>
                         <td >{row.Checks}</td>
@@ -485,7 +485,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                             </select>
                         </td>
                         <td>
-                            <textarea className="form-control bs-textarea" rows={3} id={`${row.No}_Comments`} name="Comments" placeholder="Comments" value={row.Comments} onChange={(e) => this.handleTableChange(topicKey, index, 'Comments', e.target.value)} disabled={false} title={row.Comments}></textarea>
+                            <textarea className="form-control bs-textarea" rows={2} id={`${row.No}_Comments`} name="Comments" placeholder="Comments" value={row.Comments} onChange={(e) => this.handleTableChange(topicKey, index, 'Comments', e.target.value)} disabled={false} title={row.Comments}></textarea>
 
                         </td>
                     </tr>
@@ -565,7 +565,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
         hideLoader();
     }
     private handlCancel = () => {
-        this.setState({ Redirect: true,RedirectTo:'CHECK-LISTSTEP1View', ItemId: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'CHECK-LISTSTEP1View', ItemId: 0 });
     }
     public render() {
         if (this.state.Redirect) {
@@ -578,150 +578,152 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="div-form-title">
-                                <div className="form-title">{" Mayco International - WCM Safety Pillar Step Audits - Level 1 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>                             
+                                <div className="form-title">{" Mayco International - WCM Safety Pillar Step Audits - Level 1 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
                                 <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
                             <div className="">
-                                 <div className="greenborder">
-                            <div className="form-border-box p-2 mx-3 my-2">
-                                <div className="row py-2">
-                                    <div className="col-md-3" id="divDate">
-                                        <div className="light-text">
-                                        <label className=""> Date <span className="mandatoryhastrick">*</span></label>
-                                        <div className="custom-datepicker" id="divDate">
-                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
-                                    </div>
-                                    </div>
-                                    </div>
-                                    <div className="col-md-3" title={this.state.formData.Plant}>
-                                        <div className="custom-dropdown" id="divPlant">
-                                            <SearchableDropdown
-                                                label={"Plant"}
-                                                Title={"Plant"}
-                                                name={"Plant"}
-                                                id="ddlPlant"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.Plant}
-                                                OptionsList={this.state.PlantsOpt}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                isRequired={true}
-                                                disabled={false}
-                                                noOptionsMessage="No Plant"
-                                            />
+                                <div className="greenborder">
+                                    <div className="form-border-box p-2 mx-3 my-2">
+                                        <div className="row py-2">
+                                            <div className="col-md-3" id="divDate">
+                                                <div className="light-text">
+                                                    <label className=""> Date <span className="mandatoryhastrick">*</span></label>
+                                                    <div className="custom-datepicker" id="divDate">
+                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-3" title={this.state.formData.Plant}>
+                                                <div className="custom-dropdown" id="divPlant">
+                                                    <SearchableDropdown
+                                                        label={"Plant"}
+                                                        Title={"Plant"}
+                                                        name={"Plant"}
+                                                        id="ddlPlant"
+                                                        placeholderText={""}
+                                                        className={""}
+                                                        selectedValue={this.state.formData.Plant}
+                                                        OptionsList={this.state.PlantsOpt}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                        isRequired={true}
+                                                        disabled={false}
+                                                        noOptionsMessage="No Plant"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-3" title={this.state.formData.Department}>
+                                                <div className="custom-dropdown" id="divDepartment">
+                                                    <SearchableDropdown
+                                                        label={"Department"}
+                                                        Title={"Department"}
+                                                        name={"Department"}
+                                                        id="ddlDepartment"
+                                                        placeholderText={""}
+                                                        className={""}
+                                                        selectedValue={this.state.formData.Department}
+                                                        OptionsList={this.state.DepartmentsOpt}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                        isRequired={true}
+                                                        disabled={false}
+                                                        noOptionsMessage="No Department"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-3" title={this.state.formData.Zone}>
+                                                <div className="custom-dropdown" id="divZone">
+                                                    <SearchableDropdown
+                                                        label={"Zone"}
+                                                        Title={"Zone"}
+                                                        name={"Zone"}
+                                                        id="ddlZone"
+                                                        placeholderText={""}
+                                                        className={""}
+                                                        selectedValue={this.state.formData.Zone}
+                                                        OptionsList={this.state.ZonesOpt}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                        isRequired={true}
+                                                        disabled={false}
+                                                        noOptionsMessage="No Zone"
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-3" title={this.state.formData.Department}>
-                                        <div className="custom-dropdown" id="divDepartment">
-                                            <SearchableDropdown
-                                                label={"Department"}
-                                                Title={"Department"}
-                                                name={"Department"}
-                                                id="ddlDepartment"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.Department}
-                                                OptionsList={this.state.DepartmentsOpt}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                isRequired={true}
-                                                disabled={false}
-                                                noOptionsMessage="No Department"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3" title={this.state.formData.Zone}>
-                                        <div className="custom-dropdown" id="divZone">
-                                            <SearchableDropdown
-                                                label={"Zone"}
-                                                Title={"Zone"}
-                                                name={"Zone"}
-                                                id="ddlZone"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.Zone}
-                                                OptionsList={this.state.ZonesOpt}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                isRequired={true}
-                                                disabled={false}
-                                                noOptionsMessage="No Zone"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row pb-3">
-                                    <div className="col-md-3" title={this.state.formData.Machine}>
-                                        <div className="custom-dropdown" id="divMachine">
-                                            <SearchableDropdown
-                                                label={"Machine"}
-                                                Title={"Machine"}
-                                                name={"Machine"}
-                                                id="ddlMachine"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.Machine}
-                                                OptionsList={this.state.MachinesOpt}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                isRequired={true}
-                                                disabled={false}
-                                                noOptionsMessage="No Machine"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3" title={this.state.formData.Shift}>
-                                        <div className="custom-dropdown" id="divShift">
-                                            <SearchableDropdown
-                                                label={"Shift"}
-                                                Title={"Shift"}
-                                                name={"Shift"}
-                                                id="ddlShift"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.Shift}
-                                                OptionsList={this.state.ShiftsOpt}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                isRequired={true}
-                                                disabled={false}
-                                                noOptionsMessage="No Shift"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3" title={this.state.formData.Auditor}>
-                                        <div className="custom-dropdown" id="divAuditor">
-                                            <SearchableDropdown
-                                                label={"Auditor"}
-                                                Title={"Auditor"}
-                                                name={"Auditor"}
-                                                id="ddlAuditor"
-                                                placeholderText={""}
-                                                className={""}
-                                                selectedValue={this.state.formData.Auditor}
-                                                OptionsList={this.state.AuditorsOpt}
-                                                OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                isRequired={true}
-                                                disabled={false}
-                                                noOptionsMessage="No Auditor"
-                                            />
-                                        </div>
-                                    </div>
+                                        <div className="row pb-3">
+                                            <div className="col-md-3" title={this.state.formData.Machine}>
+                                                <div className="custom-dropdown" id="divMachine">
+                                                    <SearchableDropdown
+                                                        label={"Machine"}
+                                                        Title={"Machine"}
+                                                        name={"Machine"}
+                                                        id="ddlMachine"
+                                                        placeholderText={""}
+                                                        className={""}
+                                                        selectedValue={this.state.formData.Machine}
+                                                        OptionsList={this.state.MachinesOpt}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                        isRequired={true}
+                                                        disabled={false}
+                                                        noOptionsMessage="No Machine"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-3" title={this.state.formData.Shift}>
+                                                <div className="custom-dropdown" id="divShift">
+                                                    <SearchableDropdown
+                                                        label={"Shift"}
+                                                        Title={"Shift"}
+                                                        name={"Shift"}
+                                                        id="ddlShift"
+                                                        placeholderText={""}
+                                                        className={""}
+                                                        selectedValue={this.state.formData.Shift}
+                                                        OptionsList={this.state.ShiftsOpt}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                        isRequired={true}
+                                                        disabled={false}
+                                                        noOptionsMessage="No Shift"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-3" title={this.state.formData.Auditor}>
+                                                <div className="custom-dropdown" id="divAuditor">
+                                                    <SearchableDropdown
+                                                        label={"Auditor"}
+                                                        Title={"Auditor"}
+                                                        name={"Auditor"}
+                                                        id="ddlAuditor"
+                                                        placeholderText={""}
+                                                        className={""}
+                                                        selectedValue={this.state.formData.Auditor}
+                                                        OptionsList={this.state.AuditorsOpt}
+                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                        isRequired={true}
+                                                        disabled={false}
+                                                        noOptionsMessage="No Auditor"
+                                                    />
+                                                </div>
+                                            </div>
 
-                                </div>
 
-                                {/* Check List Table */}
-                                <div className="divCheckListTable">
-                                    <table className="CheckListTable" id="tblCheckList">
-                                        {this.bindCheckListTableHeader()}
-                                        <tbody>
-                                            {this.bindCheckListTableBody()}
-                                        </tbody>
-                                    </table>
+                                        {/* Check List Table */}
+                                        <div className="col-12 mt-2">
+                                            <div className="divCheckListTable">
+                                                <table className="CheckListTable" id="tblCheckList">
+                                                    {this.bindCheckListTableHeader()}
+                                                    <tbody>
+                                                        {this.bindCheckListTableBody()}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        {/* Buttons */}
+                                        <div className="col-sm-12 text-center py-3" id="divButtons" >
+                                            {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
+                                            <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                {/* Buttons */}
-                                <div className="col-sm-12 text-center py-3" id="divButtons" >
-                                    {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId>0?'Update':'Submit'} onClick={this.handleSubmit} >{this.state.ItemId>0?'Update':'Submit'}</button>}
-                                    <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
-                                </div>
-                            </div>
-                            </div>
                             </div>
                         </div>
                     </div>

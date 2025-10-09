@@ -369,7 +369,7 @@ private async checkDuplicate() {
                                 
                                     <div>
                                         { !this.state.isFormOpen && 
-                                        <div className="text-end me-4" id="">
+                                        <div className="text-end me-1" id="">
                                             <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
                                                 <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
                                         </div> }

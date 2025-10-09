@@ -377,10 +377,13 @@
   position: relative;
   top: -3.55px;
 }
-
-.custom-peoplepicker{
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;    
+/* .custom-peoplepicker {
+    border: 1px solid #d7d7d7 !important;
+    border-radius: 0.57px;  
+} */
+.custom-peoplepicker .ms-BasePicker-text{
+    border: 1px solid #d7d7d7 !important;
+    border-radius: .27rem;  
 }
 .lblPeoplepicker{
 z-index: 2 !important;

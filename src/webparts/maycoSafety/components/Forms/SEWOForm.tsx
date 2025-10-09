@@ -21,7 +21,8 @@ import formValidation from "../Utilities/FormValidator";
 import BodyPart from "../Utilities/BodyChart";
 import Sketch, { SketchHandle } from "../Utilities/Sketch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearchDollar, faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faSearchDollar, faWarning } from "@fortawesome/free-solid-svg-icons";
+import FileUpload from "../Shared/FileUpload";
 
 export interface SEWOFormProps {
     match: any;
@@ -227,7 +228,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         showSubmit: false,
         isAdmin: false,
         statusText: '',
-        selBodyPart: []
+        selBodyPart: [],
+        fileArr: [],
+        delfileArr: [],
+        isFileCloseShow: true,
     }
 
     constructor(props: SEWOFormProps) {
@@ -356,11 +360,22 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             let rootCausesData = rootCauses.map((item: any) => ({ label: item.Title, value: item.Id }));
             let yesNoData = yesNo.map((item: any) => ({ label: item.Title, value: item.Id }));
             let statusData = status.map((item: any) => ({ label: item.Title, value: item.Id }));
+            let filesArry: any[] = [];
 
             if (itemId != undefined) {
-                let SEWORes: any = await getListItems(this.SEWOList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`);
+                let SEWORes: any, SEWOAttach: any;
+                [SEWORes, SEWOAttach] = await Promise.all([getListItems(this.SEWOList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`), this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles()]);
                 if (!SEWORes.isHttpRequestError) {
                     if (SEWORes.length) {
+
+                        console.log(SEWOAttach);
+                        SEWOAttach.map(async (selItem: any) => {
+                            let name = selItem.FileName;
+                            var fileUrl = selItem.ServerRelativeUrl;
+                            let obj = { URL: fileUrl, IsDeleted: false, IsNew: false, name: name, FileID: selItem.Id };
+                            filesArry.push(obj);
+                        });
+
                         let editSEWOItem = SEWORes[0];
                         formData.AccidentCauseId = editSEWOItem.AccidentCauseId ?? '';
                         formData.AccidentTypeId = editSEWOItem.AccidentTypeId ?? '';
@@ -478,7 +493,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 selBodyPart = this.handleBodyPartChange("None");
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, showSubmit, ItemId: itemId, accidentTypeData, accidentCauseData, injuryTypeData, bodyPartsData, rootCausesData, secondaryRootCausesData, microRootCausesData, actionsData, yesNoData, statusData, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, selBodyPart });
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, showSubmit, ItemId: itemId, accidentTypeData, accidentCauseData, injuryTypeData, bodyPartsData, rootCausesData, secondaryRootCausesData, microRootCausesData, actionsData, yesNoData, statusData, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, selBodyPart, fileArr: filesArry });
         }
         catch (e) {
             console.log(e);
@@ -664,7 +679,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         this.setState({ formData, statusText });
     }
 
-    private handleSubmit = () => {
+    private handleSubmit = async () => {
         try {
             showLoader();
             var formData: any = { ...this.state.formData };
@@ -694,26 +709,34 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             let isValid = formValidation.FormValidation(data);
             if (isValid.status) {
 
-                let mmddyyyyDate = format(formData.Injury_x0020_Date_x0020_Time, "MM/dd/yyyy");
-                formData.Year = mmddyyyyDate.split("/")[2];
-                formData.YearMonth = mmddyyyyDate.split("/")[0];
-                formData.Injury_x0020_Date_x0020_Time = DateUtilities.addBrowserwrtServer(new Date(formData.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString();
-                formData.DaysOff = Number(formData.DaysOff);
-                formData.Sketch = this.sketchRef.current?.getImageData();
-                console.log(formData.Sketch);
-                //To handle optional Date fields
-                this.processOptionalDateFields(formData);
-                //To handle optional LookUp Fields
-                this.processOptionalLookUpFields(formData);
-                console.clear();
-                console.log(formData);
-                this.InsertOrUpdateData(formData);
+                let fileArr = this.state.fileArr;
+                isValid = formValidation.FilesValidation(fileArr, false);
+
+                if (isValid.status) {
+                    let mmddyyyyDate = format(formData.Injury_x0020_Date_x0020_Time, "MM/dd/yyyy");
+                    formData.Year = mmddyyyyDate.split("/")[2];
+                    formData.YearMonth = mmddyyyyDate.split("/")[0];
+                    formData.Injury_x0020_Date_x0020_Time = DateUtilities.addBrowserwrtServer(new Date(formData.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString();
+                    formData.DaysOff = Number(formData.DaysOff);
+                    formData.Sketch = this.sketchRef.current?.getImageData();
+                    console.log(formData.Sketch);
+                    //To handle optional Date fields
+                    this.processOptionalDateFields(formData);
+                    //To handle optional LookUp Fields
+                    this.processOptionalLookUpFields(formData);
+                    console.clear();
+                    console.log(formData);
+                    await this.InsertOrUpdateData(formData);
+                }
+                else {
+                    showToast("error", isValid.message);
+                    hideLoader();
+                }
             }
             else {
                 showToast("error", isValid.message);
                 hideLoader();
             }
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
@@ -724,21 +747,32 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         try {
 
             let itemId = this.props.match.params.id;
+            let newFileArry = this.state.fileArr.filter((file: any) => {
+                return file.IsNew == true;
+            });
             if (itemId > 0) {
-                await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).update(formData).then((res: any) => {
-                    let msg = "SEWO updated successfully";
-                    this.setState({ displayMessage: msg });
-                    this.onSuccess();
+                await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).update(formData).then(async (res: any) => {
+                    if (newFileArry.length > 0 || this.state.delfileArr.length > 0 ) {
+                        await this.handleAttachmentUpload(itemId.toString(), newFileArry);
+                    }
+                    else {
+                        let msg = "SEWO updated successfully";
+                        this.onSuccess(msg);
+                    }
                 }, (error) => {
                     console.log(error);
                     this.onError();
                 })
             }
             else {
-                await this.sp.web.lists.getByTitle(this.SEWOList).items.add(formData).then((res: any) => {
-                    let msg = "SEWO submitted successfully";
-                    this.setState({ displayMessage: msg });
-                    this.onSuccess();
+                await this.sp.web.lists.getByTitle(this.SEWOList).items.add(formData).then(async (res: any) => {
+                    if (newFileArry.length > 0 || this.state.delfileArr.length > 0 ) {
+                        await this.handleAttachmentUpload(res.Id.toString(), newFileArry);
+                    }
+                    else {
+                        let msg = "SEWO submitted successfully";
+                        this.onSuccess(msg);
+                    }
                 }, (error) => {
                     console.log(error);
                     this.onError();
@@ -746,6 +780,34 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             }
         }
         catch (e) {
+            console.log(e);
+            this.onError();
+        }
+    }
+
+    private handleAttachmentUpload = async (SEWOId: any, fileArr: any) => {
+        try {
+            if(this.props.match.params.id > 0 && this.state.delfileArr.length > 0){
+                await this.handleAttachmentDelete(SEWOId, this.state.delfileArr);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+            for (const file of fileArr) {
+                await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(SEWOId).attachmentFiles.add(file.name, file);
+            }
+            let msg = this.state.ItemId > 0 ? "SEWO updated successfully" : "SEWO submitted successfully";
+            this.onSuccess(msg);
+        } catch (e) {
+            console.log(e);
+            this.onError();
+        }
+    }
+
+    private handleAttachmentDelete = async (SEWOId: any, delFileArr: any) => {
+         try {
+            for (const file of delFileArr) {
+                await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(SEWOId).attachmentFiles.getByName(file.name).delete();
+            }
+        } catch (e) {
             console.log(e);
             this.onError();
         }
@@ -777,12 +839,12 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     };
 
     private handleCancel = () => {
-        this.setState({ Redirect: true, RedirectTo: 'SEWOView', ItemID: 0 });
+        this.setState({ Redirect: true, RedirectTo: 'SEWOView', ItemId: 0 });
     }
-    private onSuccess = () => {
+    private onSuccess = (displayMessage: string) => {
         hideLoader();
-        this.setState({ Redirect: true, RedirectTo: 'SEWOView', ItemID: 0 });
-        showToast("success", this.state.displayMessage);
+        this.setState({ Redirect: true, RedirectTo: 'SEWOView', ItemId: 0 });
+        showToast("success", displayMessage);
     }
 
     private onError = () => {
@@ -882,6 +944,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         }
         return selBodyPart;
     };
+
+    private filesChanged = (selectedFiles: any) => {
+        this.setState({ fileArr: selectedFiles[0], delfileArr: selectedFiles[1] });
+    }
 
     public render() {
         if (this.state.Redirect) {
@@ -1020,7 +1086,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             {/* Name of Injured */}
                                             <div className="col-md-3">
                                                 <div className="light-text">
-                                                    <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtNameofInjured">Name of Injured  <span className="mandatoryhastrick"> *</span></label>
+                                                    <label className=" col-form-label" htmlFor="txtNameofInjured">Name of Injured  <span className="mandatoryhastrick"> *</span></label>
                                                     <input className="form-control" placeholder="Name of Injured" name="InjuredName" type="text" id="txtNameofInjured" ref={this.txtNameofInjured} value={this.state.formData.InjuredName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Name of Injured" />
                                                 </div>
                                             </div>
@@ -1046,14 +1112,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             {/* Injured Job */}
                                             <div className="col-md-3">
                                                 <div className="light-text">
-                                                    <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtInjuredJob">Injured Job </label>
+                                                    <label className=" col-form-label" htmlFor="txtInjuredJob">Injured Job </label>
                                                     <input className="form-control" placeholder="Injured Job" name="InjuredJob" type="text" id="txtInjuredJob" ref={this.txtInjuredJob} value={this.state.formData.InjuredJob} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Injured Job" />
                                                 </div>
                                             </div>
                                             {/* Reported By */}
                                             <div className="col-md-3">
                                                 <div className="light-text">
-                                                    <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtReportedBy">Reported By </label>
+                                                    <label className=" col-form-label" htmlFor="txtReportedBy">Reported By </label>
                                                     <input className="form-control" placeholder="Reported By" name="ReportedBy" type="text" id="txtReportedBy" ref={this.txtReportedBy} value={this.state.formData.ReportedBy} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Reported By" />
                                                 </div>
                                             </div>
@@ -1195,13 +1261,13 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             </div>
                                             {/* Is Hopital/Clinic Refused */}
                                             <div className="col-md-3" style={{ marginTop: "10px;" }}>
-                                                <input className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} placeholder="Is Hospital/Clinic Refused" name="IsHospitalRefused" type="checkbox" id="rdIsHospitalRefused" ref={this.rdIsHospitalRefused} checked={this.state.formData.IsHospitalRefused} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Is Hospital/Clinic Refused" />
+                                                <input className="" placeholder="Is Hospital/Clinic Refused" name="IsHospitalRefused" type="checkbox" id="rdIsHospitalRefused" ref={this.rdIsHospitalRefused} checked={this.state.formData.IsHospitalRefused} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Is Hospital/Clinic Refused" />
                                                 <label className="ps-1 col-form-label" htmlFor="rdIsHospitalRefused"> Is Hospital/Clinic Refused </label>
                                             </div>
                                             {/* Name of the Clinic/Hospital */}
                                             {!this.state.formData.IsHospitalRefused && <div className="col-md-6">
                                                 <div className="light-text">
-                                                    <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtNameoftheHospital">Name of the Clinic/Hospital <span className="mandatoryhastrick"> *</span></label>
+                                                    <label className=" col-form-label" htmlFor="txtNameoftheHospital">Name of the Clinic/Hospital <span className="mandatoryhastrick"> *</span></label>
                                                     <input className="form-control" placeholder="Name of the Clinic/Hospital" name="NameoftheHospital" type="text" id="txtNameoftheHospital" ref={this.txtNameoftheHospital} value={this.state.formData.NameoftheHospital} onChange={this.handleChange} disabled={this.state.isInputDisabled} title=" Name of the Clinic/Hospital" />
                                                 </div>
                                             </div>}
@@ -1213,46 +1279,46 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             <div className="form-border-box p-2 mx-3 mt-2">
                                 <div className="row mt-2">
                                     {/* 5W+1H Analysis */}
-                                    <h6 className="greenbg"><FontAwesomeIcon icon={faSearchDollar} /> 5W+1H Analysis</h6>
+                                    <h6 className="greenbg"><FontAwesomeIcon icon={faSearch} /> 5W+1H Analysis</h6>
                                     {/* What */}
                                     <div className="col-md-6">
                                         <div className="light-text">
-                                            <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtWhat">What </label>
+                                            <label className=" col-form-label" htmlFor="txtWhat">What </label>
                                             <input className="form-control" placeholder="WWhat" name="WWhat" type="text" id="txtWhat" ref={this.txtWhat} value={this.state.formData.WWhat} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="What" />
                                         </div>
                                     </div>
                                     {/* When */}
                                     <div className="col-md-6">
                                         <div className="light-text">
-                                            <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtWhen">When </label>
+                                            <label className=" col-form-label" htmlFor="txtWhen">When </label>
                                             <input className="form-control" placeholder="WWhen" name="WWhen" type="text" id="txtWhen" ref={this.txtWhen} value={this.state.formData.WWhen} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="When" />
                                         </div>
                                     </div>
                                     {/* Where */}
                                     <div className="col-md-6">
                                         <div className="light-text">
-                                            <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtWhere">Where </label>
+                                            <label className=" col-form-label" htmlFor="txtWhere">Where </label>
                                             <input className="form-control" placeholder="WWhere" name="WWhere" type="text" id="txtWhere" ref={this.txtWhere} value={this.state.formData.WWhere} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Where" />
                                         </div>
                                     </div>
                                     {/* Who */}
                                     <div className="col-md-6">
                                         <div className="light-text">
-                                            <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtWho">Who </label>
+                                            <label className=" col-form-label" htmlFor="txtWho">Who </label>
                                             <input className="form-control" placeholder="WWho" name="WWho" type="text" id="txtWho" ref={this.txtWho} value={this.state.formData.WWho} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Who" />
                                         </div>
                                     </div>
                                     {/* Which */}
                                     <div className="col-md-6">
                                         <div className="light-text">
-                                            <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtWhich">Which </label>
+                                            <label className=" col-form-label" htmlFor="txtWhich">Which </label>
                                             <input className="form-control" placeholder="WWhich" name="WWhich" type="text" id="txtWhich" ref={this.txtWhich} value={this.state.formData.WWhich} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Which" />
                                         </div>
                                     </div>
                                     {/* How */}
                                     <div className="col-md-6">
                                         <div className="light-text">
-                                            <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtHow">How </label>
+                                            <label className=" col-form-label" htmlFor="txtHow">How </label>
                                             <input className="form-control" placeholder="HHow" name="HHow" type="text" id="txtHow" ref={this.txtHow} value={this.state.formData.HHow} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="How" />
                                         </div>
                                     </div>
@@ -1262,7 +1328,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-border-box p-2 mx-1 mt-2">
-                                        <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> BODY CHART</h6>
+                                        <h6 className="greenbg"><FontAwesomeIcon icon={faUser} /> BODY CHART</h6>
                                         {/* Body Part */}
                                         <div className="col-md-12">
                                             <div className="custom-dropdown" id="divBodyPart">
@@ -1288,14 +1354,15 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {/* SKETCH */}
                                 <div className="col-md-6 ps-0">
                                     <div className="form-border-box p-2 mx-1 mt-2">
-                                        <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> SKETCH</h6>
+                                        <h6 className="greenbg"><FontAwesomeIcon icon={faPencil} /> SKETCH</h6>
                                         <Sketch ref={this.sketchRef} initialImage={this.state.formData.Sketch} />
+                                        <FileUpload ismultiAllowed={true} onFileChanges={this.filesChanged} isFileCloseShow={!this.state.isFileCloseShow} files={[this.state.fileArr, this.state.delfileArr]} isRequired={false} disabled={!this.state.isFileCloseShow} />
                                     </div>
                                 </div>
                                 {/* CORRECTIVE ACTION */}
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-2">
                                     <div className="form-border-box p-2 mx-1">
-                                        <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> CORRECTIVE ACTION</h6>
+                                        <h6 className="greenbg"><FontAwesomeIcon icon={faFileSignature} /> CORRECTIVE ACTION</h6>
                                         {/* Action Description */}
                                         {/* <div className="col-md-12"> */}
                                         <div className="light-text" >
@@ -1308,7 +1375,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {/* Analysis Root Cause: write "5 Why's" for the most probable cause */}
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 greenbg mt-2">
                                     <div className="form-border-box p-2 mx-1">
-                                        <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> Analysis Root Cause: write "5 Why's" for the most probable cause</h6>
+                                        <h6 className="greenbg"><FontAwesomeIcon icon={faChartLine} /> Analysis Root Cause: write "5 Why's" for the most probable cause</h6>
                                         {/* FiveWhy1 */}
                                         <div className="row g-0 insider-m-0">
                                             <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">1</div></div>
@@ -1369,7 +1436,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     {/* Categorize Root Cause */}
                                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-2">
                                         <div className="form-border-box p-2 mx-1">
-                                            <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> Categorize Root Cause</h6>
+                                            <h6 className="greenbg"><FontAwesomeIcon icon={faChartArea} /> Categorize Root Cause</h6>
                                             <div className="row">
                                                 {/* Root Cause */}
                                                 <div className="col-md-3">
@@ -1453,16 +1520,16 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     {/* Do */}
                                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-2">
                                         <div className="form-border-box p-2 mx-1">
-                                            <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> Do</h6>
+                                            <h6 className="greenbg"><FontAwesomeIcon icon={faCheckCircle} /> Do</h6>
                                             {/* Action Plan */}
                                             <div className="row">
                                                 <div className="col-md-6">
                                                     <div className="light-text" >
-                                                        <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtActionPlan">Action Plan </label>
+                                                        <label className=" col-form-label" htmlFor="txtActionPlan">Action Plan </label>
                                                         <textarea className="form-control bs-textarea" rows={3} id="txtActionPlan" name="ActionPlan" ref={this.txtActionPlan} placeholder="Action Plan" value={this.state.formData.ActionPlan} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Action Plan" ></textarea>
                                                     </div>
                                                     <div className="light-text" >
-                                                        <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtResponsible">Responsible </label>
+                                                        <label className=" col-form-label" htmlFor="txtResponsible">Responsible </label>
                                                         <textarea className="form-control bs-textarea" rows={3} id="txtResponsible" name="Responsible" ref={this.txtResponsible} placeholder="Responsible" value={this.state.formData.Responsible} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Responsible" ></textarea>
                                                     </div>
                                                 </div>
@@ -1487,7 +1554,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                             </div>
                                                         </div>
                                                         <div className="light-text" >
-                                                            <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtNotes">Notes </label>
+                                                            <label className="col-form-label" htmlFor="txtNotes">Notes </label>
                                                             <textarea className="form-control bs-textarea" rows={3} id="txtNotes" name="Notes" ref={this.txtNotes} placeholder="Notes" value={this.state.formData.Notes} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Notes" ></textarea>
                                                         </div>
                                                     </div>
@@ -1502,10 +1569,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         <div className="col-md-6">
                                             <div className="form-border-box p-2 mx-1">
                                                 {/* Check */}
-                                                <h6 className="redbg"><FontAwesomeIcon icon={faWarning} /> Check</h6>
+                                                <h6 className="redbg"><FontAwesomeIcon icon={faCheck} /> Check</h6>
                                                 {/* Comments */}
                                                 <div className="light-text" >
-                                                    <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtComments">Comments </label>
+                                                    <label className="col-form-label" htmlFor="txtComments">Comments </label>
                                                     <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments" ></textarea>
                                                 </div>
                                             </div>
@@ -1513,7 +1580,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         {/* ACT */}
                                         <div className="col-md-6">
                                             <div className="form-border-box p-2 mx-1">
-                                                <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} /> ACT</h6>
+                                                <h6 className="yellowbg"><FontAwesomeIcon icon={faCheckDouble} /> ACT</h6>
                                                 {/* Expansion Plan */}
                                                 <div className="row mt-3">
                                                     <div className="col-md-4">
@@ -1536,12 +1603,12 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     </div>
                                                     {/* Location */}
                                                     <div className="col-md-4 light-text" >
-                                                        <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtLocation">Location </label>
+                                                        <label className="col-form-label" htmlFor="txtLocation">Location </label>
                                                         <textarea className="form-control bs-textarea" rows={3} id="txtLocation" name="Location" ref={this.txtLocation} placeholder="Location" value={this.state.formData.Location} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Location" ></textarea>
                                                     </div>
                                                     {/* Act */}
                                                     <div className="col-md-4 light-text">
-                                                        <label className={this.state.isInputDisabled ? "label-inactive col-form-label": "col-form-label"} htmlFor="txtAct">Act </label>
+                                                        <label className="col-form-label" htmlFor="txtAct">Act </label>
                                                         <textarea className="form-control bs-textarea" rows={3} id="txtAct" name="Act" ref={this.txtAct} placeholder="Act" value={this.state.formData.Act} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Act" ></textarea>
                                                     </div>
                                                 </div>
@@ -1602,32 +1669,32 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     <th scope="row">Name</th>
                                                     <td>
                                                         <div className="light-text">
-                                                            <input className="form-control" placeholder="Employee Name" name="EmployeeName" type="text" id="txtEmployeeName" ref={this.txtEmployeeName} value={this.state.formData.EmployeeName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Employee Name" />
+                                                            <input className="form-control" name="EmployeeName" type="text" id="txtEmployeeName" ref={this.txtEmployeeName} value={this.state.formData.EmployeeName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Employee Name" />
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div className="light-text">
-                                                            <input className="form-control" placeholder="Team Lead Name" name="TeamLeadName" type="text" id="txtTeamLeadName" ref={this.txtTeamLeadName} value={this.state.formData.TeamLeadName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Team Lead Name" />
+                                                            <input className="form-control" name="TeamLeadName" type="text" id="txtTeamLeadName" ref={this.txtTeamLeadName} value={this.state.formData.TeamLeadName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Team Lead Name" />
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div className="light-text">
-                                                            <input className="form-control" placeholder="Supervisor Name" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.txtSupervisorName} value={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Name" />
+                                                            <input className="form-control" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.txtSupervisorName} value={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Supervisor Name" />
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div className="light-text">
-                                                            <input className="form-control" placeholder="Dept Mgr Name" name="DeptManagerName" type="text" id="txtDeptManagerName" ref={this.txtDeptManagerName} value={this.state.formData.DeptManagerName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Department Manager Name" />
+                                                            <input className="form-control" name="DeptManagerName" type="text" id="txtDeptManagerName" ref={this.txtDeptManagerName} value={this.state.formData.DeptManagerName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Department Manager Name" />
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div className="light-text">
-                                                            <input className="form-control" placeholder="Safety Mgr Name" name="SafetyMgrName" type="text" id="txtSafetyManagerName" ref={this.txtSafetyManagerName} value={this.state.formData.SafetyMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Safety Manager Name" />
+                                                            <input className="form-control" name="SafetyMgrName" type="text" id="txtSafetyManagerName" ref={this.txtSafetyManagerName} value={this.state.formData.SafetyMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Safety Manager Name" />
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div className="light-text">
-                                                            <input className="form-control" placeholder="Plant Mgr Name" name="PlantMgrName" type="text" id="txtPlantManagerName" ref={this.txtPlantManagerName} value={this.state.formData.PlantMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Plant Manager Name" />
+                                                            <input className="form-control" name="PlantMgrName" type="text" id="txtPlantManagerName" ref={this.txtPlantManagerName} value={this.state.formData.PlantMgrName} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Plant Manager Name" />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -1646,7 +1713,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     <td>
                                                         <div className="" >
                                                             <div className="light-text">
-                                                                <div className="custom-datepicker" id="divTeamLeadDate"> <DatePickercontrol placeholder="" selectedDate={this.state.formData.TeamLeadDate} id='dtTeamLeadDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="TeamLeadDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divTeamLeadDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                                <div className="custom-datepicker" id="divTeamLeadDate">                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.TeamLeadDate} id='dtTeamLeadDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="TeamLeadDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divTeamLeadDate", dateProps)} highlightDate={new Date()} showIcon />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1654,7 +1721,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     <td>
                                                         <div className="" >
                                                             <div className="light-text">
-                                                                <div className="custom-datepicker" id="divSupervisorDate"><DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                                <div className="custom-datepicker" id="divSupervisorDate">                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate", dateProps)} highlightDate={new Date()} showIcon />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1662,7 +1729,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     <td>
                                                         <div className="" id="divDeptMgrDate">
                                                             <div className="light-text">
-                                                                <div className="custom-datepicker" id="divDeptMgrDate"><DatePickercontrol placeholder="" selectedDate={this.state.formData.DeptManagerDate} id='dtDeptMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="DeptManagerDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDeptMgrDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                                <div className="custom-datepicker" id="divDeptMgrDate">                                                             <DatePickercontrol placeholder="" selectedDate={this.state.formData.DeptManagerDate} id='dtDeptMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="DeptManagerDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDeptMgrDate", dateProps)} highlightDate={new Date()} showIcon />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1670,7 +1737,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     <td>
                                                         <div className="" >
                                                             <div className="light-text">
-                                                                <div className="custom-datepicker" id="divSafetyMgrDate"><DatePickercontrol placeholder="" selectedDate={this.state.formData.SafetyMgrDate} id='dtSafetyMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SafetyMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSafetyMgrDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                                <div className="custom-datepicker" id="divSafetyMgrDate">                                                             <DatePickercontrol placeholder="" selectedDate={this.state.formData.SafetyMgrDate} id='dtSafetyMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="SafetyMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSafetyMgrDate", dateProps)} highlightDate={new Date()} showIcon />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1678,7 +1745,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     <td>
                                                         <div className="" >
                                                             <div className="light-text">
-                                                                <div className="custom-datepicker" id="divPlantMgrDate">  <DatePickercontrol placeholder="" selectedDate={this.state.formData.PlantMgrDate} id='dtPlantMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="PlantMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPlantMgrDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                                <div className="custom-datepicker" id="divPlantMgrDate">                                                           <DatePickercontrol placeholder="" selectedDate={this.state.formData.PlantMgrDate} id='dtPlantMgrDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="PlantMgrDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPlantMgrDate", dateProps)} highlightDate={new Date()} showIcon />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1724,14 +1791,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         <div className="row g-0">
                                             <div className="col-md-6 mt-2">
                                                 <div className="form-border-box p-2 mx-1">
-                                                    <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} />Injured Statement</h6>
+                                                    <h6 className="yellowbg"><FontAwesomeIcon icon={faUserInjured} />Injured Statement</h6>
                                                     {/* Injured Statement */}
                                                     <div className="row">
                                                         <div className="col-md-12">
                                                             <div className="light-text">
-                                                            <label className="col-form-label" htmlFor="txtInjuredStatement">Statement </label>
-                                                            <textarea className="form-control bs-textarea" rows={3} id="txtInjuredStatement" name="InjuredStatement" ref={this.txtInjuredStatement} placeholder="Injured Statement" value={this.state.formData.InjuredStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Statement" ></textarea>
-                                                        </div>
+                                                                <label className="col-form-label" htmlFor="txtInjuredStatement">Statement </label>
+                                                                <textarea className="form-control bs-textarea" rows={3} id="txtInjuredStatement" name="InjuredStatement" ref={this.txtInjuredStatement} placeholder="Injured Statement" value={this.state.formData.InjuredStatement} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Injured Statement" ></textarea>
+                                                            </div>
                                                         </div>
                                                         {/* Injured Signature */}
                                                         <div className="col-md-6">
@@ -1755,7 +1822,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                             {/* Witness */}
                                             <div className="col-md-6 mt-2">
                                                 <div className="form-border-box p-2 mx-1">
-                                                    <h6 className="yellowbg"><FontAwesomeIcon icon={faWarning} />Witness Statement</h6>
+                                                    <h6 className="yellowbg"><FontAwesomeIcon icon={faUserTie} />Witness Statement</h6>
                                                     {/* Witness Statement */}
                                                     <div className="row">
                                                         <div className="col-12">

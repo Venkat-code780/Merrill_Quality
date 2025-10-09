@@ -394,3 +394,67 @@ z-index: 2 !important;
 .custom-dropdown .css-13cymwt-control {
     height: 42px;
 }
+
+/* Attachment */
+.attachment-list li:nth-child(odd) {
+  background: #f9f9f9;
+}
+.attachment-list li {
+  list-style: none;
+  padding: 5px;
+  background-color: #f3f3f3;
+  position: relative;
+}
+
+.attachment-list span.close{
+position: absolute;
+right: 8px;
+}
+.attachment-list span.close:hover{
+  color: #b93636;
+}
+.attachment-list a {
+    color: inherit;
+    text-decoration: none;
+    width: 90%;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attachment-list .attachName {
+    color: inherit;
+    text-decoration: none;
+    width: 86%;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.attachment-list a:hover{
+  color: #363ce3;
+  cursor: pointer;
+}
+
+/* popup modal css */
+    .modal .btn{
+  font-size: 14px;
+  padding: 5px 8px;
+  min-width: 68px;
+  width: inherit;
+}
+  .modal-header-reject {
+    background-color: #efdfdf;
+    padding: .5rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: calc(.3rem - 1px);
+    border-top-right-radius: calc(.3rem - 1px);
+    color: #cb2726;
+}
+.modal{
+  background: #0000008a;
+  padding: 30px;
+  overflow: auto !important;
+}
+ 

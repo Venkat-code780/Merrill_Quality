@@ -21,7 +21,7 @@ import formValidation from "../Utilities/FormValidator";
 import BodyPart from "../Utilities/BodyChart";
 import Sketch, { SketchHandle } from "../Utilities/Sketch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faSearchDollar, faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faWarning } from "@fortawesome/free-solid-svg-icons";
 import FileUpload from "../Shared/FileUpload";
 
 export interface SEWOFormProps {

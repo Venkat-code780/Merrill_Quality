@@ -693,8 +693,8 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         return <div className="tab-pane active" id="AMWOTab">
 
             <div className="row mb-3">
-                <div className="col-md-6"><h1 className="text-left">AM/WO</h1></div>
-                <div className="col-md-6">
+                <div className="col-md-4"><h1 className="text-left">AM/WO</h1></div>
+                <div className="col-md-8">
                     <div className="light-text">
                         <label className=" col-form-label">TAG# </label>
                         <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.AMWOformData.TAG} title={this.state.AMWOformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
@@ -702,7 +702,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 </div>
             </div>
             <div className="row mb-3">
-                <div className="col-md-9">
+                <div className="col-md-12">
                     <div className="light-text">
                         <label className=" col-form-label">Tag Type<span className="mandatoryhastrick">* </span></label>
                         <select className="form-control" placeholder="" name="TagType" id="txtTagType" ref={this.TagType} value={this.state.AMWOformData.TagType} title={this.state.AMWOformData.TagType} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={this.state.ItemId > 0}>
@@ -751,13 +751,14 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                         </div>
                     </div>
                 </div>
-            </div>
+            
             <div className="col-md-12">
                 <div className={"light-text"} >
                     <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.AMWOformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.AMWOformData.Comments}></textarea>
                     <label className=" col-form-label" htmlFor="txtComments">Comments</label>
                 </div>
             </div>
+        </div>
         </div>
     }
     // PM Tag functions
@@ -766,14 +767,13 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
 
             <div className="col-md-12"><h1 className="text-left">Professional Maintenance</h1></div>
             <div className="row mb-3">
-                <div className="col-md-9 ms-auto">
+                <div className="col-md-12 ms-auto">
                     <div className="light-text">
                         <label className=" col-form-label">TAG# </label>
                         <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.PMformData.TAG} title={this.state.PMformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
                     </div>
                 </div>
-            </div>
-            <div className="row mb-3">
+           
                 <div className="col-md-4" id="divDate">
                     <div className="light-text">
                         <label className="" >Completed Date{this.state.PMformData.CompletedByIds.length > 0 ? <span className="mandatoryhastrick">* </span> : ''}</label>
@@ -803,13 +803,14 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                         </div>
                     </div>
                 </div>
-            </div>
+            
             <div className="col-md-12">
                 <div className={"light-text"} >
                     <label className=" col-form-label" htmlFor="txtComments">Comments</label>
                     <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.PMformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.PMformData.Comments}></textarea>
                 </div>
             </div>
+        </div>
         </div>
     }
     //common validation for all tags Safety/AMWO/PM

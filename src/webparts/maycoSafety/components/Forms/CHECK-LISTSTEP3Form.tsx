@@ -470,7 +470,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
             bodyStructure[topicKey].forEach((row, index) => {
                 // Dynamically create table row
                 BodyRows.push(
-                    <tr key={`BodyRow${row.No + 1}`} className="BodyRows fw-bold">
+                    <tr key={`BodyRow${row.No + 1}`} className="BodyRows">
                         {index == 0 ? <td rowSpan={bodyStructure[topicKey].length} className="TopicCell text-center">{topicKey}</td> : ''}
                         <td className="text-center">{row.No + 1}</td>
                         <td >{row.Checks}</td>
@@ -488,7 +488,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                             </select>
                         </td>
                         <td>
-                            <textarea className="form-control bs-textarea" rows={3} id={`${row.No}_Comments`} name="Comments" placeholder="Comments" value={row.Comments} onChange={(e) => this.handleTableChange(topicKey, index, 'Comments', e.target.value)} disabled={false} title={row.Comments}></textarea>
+                            <textarea className="form-control bs-textarea" rows={2} id={`${row.No}_Comments`} name="Comments" placeholder="Comments" value={row.Comments} onChange={(e) => this.handleTableChange(topicKey, index, 'Comments', e.target.value)} disabled={false} title={row.Comments}></textarea>
 
                         </td>
                     </tr>
@@ -707,9 +707,10 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                         </div>
                                     </div>
 
-                                </div>
+                                
 
                                 {/* Check List Table */}
+                                <div className="col-12 mt-2"></div>
                                 <div className="divCheckListTable">
                                     <table className="CheckListTable" id="tblCheckList">
                                         {this.bindCheckListTableHeader()}
@@ -717,6 +718,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                             {this.bindCheckListTableBody()}
                                         </tbody>
                                     </table>
+                                </div>
                                 </div>
                                 {/* Buttons */}
                                 <div className="col-sm-12 text-center py-3" id="divButtons" >

@@ -920,7 +920,9 @@ private getGroupName()
                                         </div>
                                     </div>
                                 </div>
-                                <div className="divSection mx-3">
+                                <div className="row mt-2">
+                                    <div className="col-md-12">
+                                        <div className="divSection mb-2">
                                     <table>
                                         <thead className="darkgreybg">
                                             <tr className="fs-5">
@@ -932,14 +934,18 @@ private getGroupName()
                                             {this.bindDynamicTable()}
                                         </tbody>
                                     </table>
+                                    </div>
+                                    </div>
                                 </div>
                                 {/* Comments */}
+                                    <div className="row pb-2">
                                     <div className="col-md-12">
                                         <div className="light-text" >
-                                            <label className="" htmlFor="txtComments">Comments </label>
+                                            <label className="col-form-label" htmlFor="txtComments">Comments </label>
                                             <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} disabled={this.state.isInputDisabled} title="Comments"></textarea>
                                         </div>
                                     </div>
+                                </div>
 
                                 <div className="col-sm-12 text-center py-3" id="">
                                     {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}

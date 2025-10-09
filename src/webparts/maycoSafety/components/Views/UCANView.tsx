@@ -173,7 +173,8 @@ private async loadListData() {
                         </div>
                       </React.Fragment>
                     );
-                  }
+                  },
+                  width:'60px',
                 },
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
       { name: "Near miss, Unsafe condition", selector: (row: any) => row.UCAN_x0020_Type, sortable: true },

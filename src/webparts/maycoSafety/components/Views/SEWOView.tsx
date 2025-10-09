@@ -133,7 +133,8 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
               </div>
             </React.Fragment>
           );
-        }
+        },
+        width:'60px'
       },
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
       { name: "Year", selector: (row: any) => row.Year, sortable: true },

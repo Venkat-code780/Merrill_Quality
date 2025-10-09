@@ -21,7 +21,7 @@ import formValidation from "../Utilities/FormValidator";
 import BodyPart from "../Utilities/BodyChart";
 import Sketch, { SketchHandle } from "../Utilities/Sketch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faSearchDollar, faWarning } from "@fortawesome/free-solid-svg-icons";
 
 export interface SEWOFormProps {
     match: any;
@@ -1213,7 +1213,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             <div className="form-border-box p-2 mx-3 mt-2">
                                 <div className="row mt-2">
                                     {/* 5W+1H Analysis */}
-                                    <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> 5W+1H Analysis</h6>
+                                    <h6 className="greenbg"><FontAwesomeIcon icon={faSearchDollar} /> 5W+1H Analysis</h6>
                                     {/* What */}
                                     <div className="col-md-6">
                                         <div className="light-text">

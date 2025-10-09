@@ -408,7 +408,7 @@ private handleSubCategoryChange = (selected: any) => {
                 name: "Edit",
                 selector: (row: { Id: any; }, i: any) => row.Id,
                 export: false,
-                width: '100px',
+                width: '60px',
                 cell: (record: { Id: any; }) => {
                     return (
                         <React.Fragment>

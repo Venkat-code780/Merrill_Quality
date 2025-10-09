@@ -131,7 +131,8 @@ export default class CheckList3View extends React.Component<CheckList3Props,Chec
                         </div>
                       </React.Fragment>
                     );
-                  }
+                  },
+                  width:'60px',
                 },
       { name: "ID", selector: (row: any) => row.Id, sortable: true },
          {

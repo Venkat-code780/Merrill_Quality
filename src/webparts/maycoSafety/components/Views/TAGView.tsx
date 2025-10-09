@@ -143,7 +143,8 @@ export default class TAGView extends React.Component<TAGProps,TAGState> {
                         </div>
                       </React.Fragment>
                     );
-                  }
+                  },
+                  width:'60px',
                 },
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },

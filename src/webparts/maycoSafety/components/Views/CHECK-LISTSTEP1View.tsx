@@ -133,7 +133,8 @@ export default class CheckListStep1View extends React.Component<CheckListStep1Pr
                         </div>
                       </React.Fragment>
                     );
-                  }
+                  },
+                  width:'60px',
                 },
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
         {

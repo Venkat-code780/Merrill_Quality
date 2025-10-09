@@ -395,7 +395,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                 name: "Edit",
                 selector: (row: { Id: any; }, i: any) => row.Id,
                 export: false,
-                width: '100px',
+                width: '60px',
                 cell: (record: { Id: any; }) => {
                     return (
                         <React.Fragment>
@@ -407,7 +407,8 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                         </React.Fragment>
                     );
                 },
-                sortable: false
+               
+                sortable: false,
             },
             {
                 name: "Action",

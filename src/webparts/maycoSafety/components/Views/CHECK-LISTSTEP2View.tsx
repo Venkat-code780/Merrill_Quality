@@ -131,7 +131,8 @@ export default class CheckList2View extends React.Component<CheckList2Props,Chec
                         </div>
                       </React.Fragment>
                     );
-                  }
+                  },
+                  width:'60px',
                 },
       { name: "ID", selector: (row: any) => row.Id, sortable: true },
          {

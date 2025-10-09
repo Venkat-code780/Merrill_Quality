@@ -192,7 +192,8 @@ private handleConfirmDelete = async (id?: number | null) => {
                         </div>
                       </React.Fragment>
                     );
-                  }
+                  },
+                  width:'60px',
                 },
                     {
         name: "Delete",
@@ -205,6 +206,7 @@ private handleConfirmDelete = async (id?: number | null) => {
             />
           </div>
         ),
+        width: "70px",
       },,
       { name: "ID", selector: (row: any) => row.Id, sortable: false },
         {
@@ -261,11 +263,11 @@ private handleConfirmDelete = async (id?: number | null) => {
               showPagination={true}
             />
              <ModalApprovePopUp
-          message="Are you sure you want to delete this record?"
-          modalHeader="modal-header"
+          message="Are you sure you want to Delete?"
+          modalHeader="modal-header-reject"
           title="Delete"
           isVisible={this.state.showDeleteModal}
-          isSuccess={true}
+          isSuccess={false}
           errorMessage=""
           comments={() => {}}
           commentsValue=""

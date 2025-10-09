@@ -263,8 +263,8 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
 
             <canvas
                 ref={canvasRef}
-                // width={400}
-                // height={340}
+                width={400}
+                height={340}
                 style={{ border: '1px solid #000' }}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}

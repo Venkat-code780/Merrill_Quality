@@ -187,7 +187,7 @@ function ValidateForm(data:any){
 function ValidateInputFiles( fileArray: any, isRequired: boolean ){
     let status = true;
     let message ="";
-    var regex = /^[A-Za-z0-9_\- ()#]+$/;
+    var regex = /^[A-Za-z0-9_\- ()]+$/;
 
     if( fileArray.length  == 0 && isRequired ){
         message = "Please upload any document";

@@ -134,7 +134,7 @@
     top: 15px;
     width: 6px;
 }
-.left-nav-active .sidebar-title {
+.left-nav-active.sidebar-title {
     background: #2c627e !important;
     color: white;
 }

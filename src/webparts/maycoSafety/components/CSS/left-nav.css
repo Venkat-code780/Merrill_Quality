@@ -116,15 +116,15 @@
     margin: 4px 2px;
     border-radius: 4px;
 }
-.ul-leftnav .liViews  .ul-leftnav li{
+.ul-leftnav .ul-leftnav li{
     position: relative;
         padding: 3px 5px 3px 12px;
     border: 1px solid #dbdbdb;
 }
-.ul-leftnav .liViews  .ul-leftnav li.nav-click:after{
+.ul-leftnav .ul-leftnav li.nav-click:after{
     background-color: #106379;
 }
-.ul-leftnav .liViews  .ul-leftnav li:after{
+.ul-leftnav .ul-leftnav li:after{
     background-color: #606060;
     border-radius: 100%;
     content: "";

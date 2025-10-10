@@ -200,10 +200,12 @@ private handleConfirmDelete = async (id?: number | null) => {
         selector: (row: { Id: any }) => row.Id,
         cell: (record: { Id: number }) => (
           <div style={{ paddingLeft: "10px", cursor: "pointer" }}>
-            <FontAwesomeIcon
+                  <span className="spn-del" title="Delete" onClick={() => this.openDeleteModal(record.Id)}>
+                      <FontAwesomeIcon
               icon={faTrashCan}
-              onClick={() => this.openDeleteModal(record.Id)} // CHANGED HERE
             />
+                  </span>
+          
           </div>
         ),
         width: "70px",

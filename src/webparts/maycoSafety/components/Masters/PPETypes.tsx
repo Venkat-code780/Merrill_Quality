@@ -13,7 +13,7 @@ import { ActionStatus, ControlType } from "../Constants/Contants";
 import formValidation from "../Utilities/FormValidator";
 // import InputCheckBox from "../Shared/InputCheckBox";
 import { showToast } from "../Shared/Toaster";
-import { Navigate } from "react-router-dom";
+import { Navigate, NavLink } from "react-router-dom";
 
 export interface PPETypesProps {
     match:any;
@@ -322,19 +322,19 @@ private async checkDuplicate() {
                 name: "Edit",
                 selector: (row: { Id: any; }, i: any) => row.Id,
                 export: false,
-                width: '60px',
                 cell: (record: { Id: any; }) => {
                     return (
                         <React.Fragment>
                             <div>
-                                <button type="button" id="btnEdit" className="btn" title="Edit" onClick={ () =>this.editItem(record.Id)}>
+                                <NavLink id="btnEdit" className="csrLink ms-draggable" title="Edit" onClick={() => this.editItem(record.Id)} to={""}>
                                     <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon>
-                                </button>
+                                </NavLink>
                             </div>
                         </React.Fragment>
                     );
                 },
-                sortable: false
+                sortable: false,
+                 width: '60px',
             },
             {
                 name: "PPE Type",

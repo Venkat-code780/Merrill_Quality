@@ -36,8 +36,8 @@ const ModalApprovePopUp = ({ message, modalHeader, title, isVisible, isSuccess,i
             </div>
           </div>}
           <div className="modal-footer">
-            {<button type="button" onClick={onConfirm} id="btnSubmit" className="NewButton btn" data-dismiss="modal" title='Ok'>Ok</button>}
-            <button type="button" onClick={onCancel} id="btnCancel" className="CancelButtons btn btn-secondary" data-dismiss="modal" title='Cancel'>Cancel</button>
+            {<button type="button" onClick={onConfirm} id="btnSubmit" className="btn btn-primary" data-dismiss="modal" title='Ok'>Ok</button>}
+            <button type="button" onClick={onCancel} id="btnCancel" className="btn btn-secondary" data-dismiss="modal" title='Cancel'>Cancel</button>
           </div>
         </div>
       </div>

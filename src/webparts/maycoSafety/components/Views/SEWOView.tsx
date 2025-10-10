@@ -136,7 +136,7 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
         },
         width:'60px'
       },
-      { name: "ID", selector: (row: any) => row.Id, sortable: false },
+      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
       { name: "Year", selector: (row: any) => row.Year, sortable: true },
       { name: "Name of injured", selector: (row: any) => row.InjuredName, sortable: true },
       { name: "Injury Type", selector: (row: any) => row.InjuryType, sortable: true },

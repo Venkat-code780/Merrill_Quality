@@ -219,14 +219,14 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
             />
           </div>
         ),
-        width: "50px",
+        width: "70px",
       },,
-      { name: "ID", selector: (row: any) => row.Id, sortable: false },
+      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
        {
         name: "Date",
         selector: (row: any) => row.DateForGrid,
         cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
-        sortable: true
+        sortable: true,
       },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
       { name: "Department", selector: (row: any) => row.Department, sortable: true },

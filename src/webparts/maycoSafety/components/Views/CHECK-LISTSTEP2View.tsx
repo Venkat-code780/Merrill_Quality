@@ -134,7 +134,7 @@ export default class CheckList2View extends React.Component<CheckList2Props,Chec
                   },
                   width:'60px',
                 },
-      { name: "ID", selector: (row: any) => row.Id, sortable: true },
+      { name: "ID", selector: (row: any) => row.Id, sortable: true,width:'60px' },
          {
         name: "Date",
         selector: (row: any) => row.DateForGrid,

@@ -212,7 +212,7 @@ export default class EHSView extends React.Component<EHSProps,EHSState> {
         ),
         width: "70px",
       },,
-      { name: "ID", selector: (row: any) => row.Id, sortable: false },
+      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
        {
         name: "Date",
         selector: (row: any) => row.DateForGrid,

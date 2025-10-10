@@ -136,7 +136,7 @@ export default class CheckListStep1View extends React.Component<CheckListStep1Pr
                   },
                   width:'60px',
                 },
-      { name: "ID", selector: (row: any) => row.Id, sortable: false },
+      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
         {
         name: "Date",
         selector: (row: any) => row.DateForGrid,

@@ -176,7 +176,7 @@ private async loadListData() {
                   },
                   width:'60px',
                 },
-      { name: "ID", selector: (row: any) => row.Id, sortable: false },
+      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
       { name: "Near miss, Unsafe condition", selector: (row: any) => row.UCAN_x0020_Type, sortable: true },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
       { name: "Department", selector: (row: any) => row.Department, sortable: true },

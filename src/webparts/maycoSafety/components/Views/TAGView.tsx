@@ -146,7 +146,7 @@ export default class TAGView extends React.Component<TAGProps,TAGState> {
                   },
                   width:'60px',
                 },
-      { name: "ID", selector: (row: any) => row.Id, sortable: false },
+      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
       { name: "Department", selector: (row: any) => row.Department, sortable: true },
       { name: "Zone", selector: (row: any) => row.Zone, sortable: true },

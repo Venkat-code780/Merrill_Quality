@@ -213,10 +213,11 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
         selector: (row: { Id: any }) => row.Id,
         cell: (record: { Id: number }) => (
           <div style={{ paddingLeft: "10px", cursor: "pointer" }}>
+            <span className="spn-del" title="Delete" onClick={() => this.openDeleteModal(record.Id)}>
             <FontAwesomeIcon
               icon={faTrashCan}
-              onClick={() => this.openDeleteModal(record.Id)} 
             />
+            </span>
           </div>
         ),
         width: "70px",

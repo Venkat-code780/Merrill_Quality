@@ -457,4 +457,6 @@ right: 8px;
   padding: 30px;
   overflow: auto !important;
 }
- 
+.spn-del:hover{
+    color: red;
+} 

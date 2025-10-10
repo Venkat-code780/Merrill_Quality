@@ -20,7 +20,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
     public state: NavBarState = {
         currentUserLinks: [],
-        showSidebar: true,
+        showSidebar: false,
         openSideBars: {},
         openMasters: {}
     };
@@ -39,7 +39,15 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
         this.setState({ showSidebar: !prevShowSidebar })
     }
 
-    private toggleSideBarItem = (title: string) => {
+    private toggleSideBarItem = (event:any,title: string) => {
+        event.preventDefault();
+        let navLinks = document.querySelectorAll('.sidebar-title');
+        if (navLinks.length > 0) {
+            navLinks.forEach(item => {
+                item.className = 'sidebar-title';
+            });
+        }
+        event.currentTarget.className = 'sidebar-title left-nav-active';
         this.setState((prevState: any) => ({
             openSideBars: {
                 ...prevState.openSideBars,
@@ -86,7 +94,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                     </li>
                                     {/* Masters Section */}
                                     <li className="liMasters mb-2">
-                                        <div className="sidebar-title" onClick={() => this.toggleSideBarItem('Masters')}>
+                                        <div className="sidebar-title" onClick={(e) => this.toggleSideBarItem(e,'Masters')}>
                                             <span><FontAwesomeIcon icon={faCogs}></FontAwesomeIcon>
                                             Masters
                                             </span>
@@ -124,7 +132,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
                                     {/* Forms Section */}
                                     <li className="liForms mb-1">
-                                        <div className="sidebar-title" onClick={() => this.toggleSideBarItem('Forms')}>
+                                        <div className="sidebar-title" onClick={(e) => this.toggleSideBarItem(e,'Forms')}>
                                             <span><FontAwesomeIcon icon={faFileAlt}></FontAwesomeIcon>
                                             Forms
                                             </span>
@@ -146,7 +154,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                     </li>
                                     {/* Views Section */}
                                     <li className="liViews mb-2">
-                                        <div className="sidebar-title" onClick={() => this.toggleSideBarItem('Views')}>
+                                        <div className="sidebar-title" onClick={(e) => this.toggleSideBarItem(e,'Views')}>
                                             <span><FontAwesomeIcon icon={faEye}></FontAwesomeIcon>
                                             Views
                                             </span>

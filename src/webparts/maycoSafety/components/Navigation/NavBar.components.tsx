@@ -79,7 +79,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                         <div className="sidebar">
                             <div>
                                 <ul className="list-unstyled ul-leftnav components mb-5">
-                                    <li id="liHome" onClick={(event) => this.onNavItemClick(event)}>
+                                    <li id="liHome" className="mb-1" onClick={(event) => this.onNavItemClick(event)}>
                                         <div className="sidebar-title a-home">
                                             <NavLink to={"/Home"}><span><FontAwesomeIcon icon={faHome} /> Home</span></NavLink>
                                         </div>
@@ -123,7 +123,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                                     </li>
 
                                     {/* Forms Section */}
-                                    <li className="liForms mb-2">
+                                    <li className="liForms mb-1">
                                         <div className="sidebar-title" onClick={() => this.toggleSideBarItem('Forms')}>
                                             <span><FontAwesomeIcon icon={faFileAlt}></FontAwesomeIcon>
                                             Forms

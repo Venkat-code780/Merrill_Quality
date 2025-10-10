@@ -36,6 +36,7 @@
 
 .RiskLevel-1 {
   background-color: #009900;
+  color: white;
 }
 
 .RiskLevel-2 {
@@ -44,6 +45,7 @@
 
 .RiskLevel-3 {
   background-color: #CC0000;
+  color: white;
 }
 
 .div-RL {
@@ -79,7 +81,7 @@
 }
 
 .TablejobSteps tbody tr:nth-child(even) {
-  background-color: #bfe1f8;
+  background-color: #ffffff;
 }
 
 /* add button css */

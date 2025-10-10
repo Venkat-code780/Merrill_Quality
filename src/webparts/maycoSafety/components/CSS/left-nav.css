@@ -5,13 +5,13 @@
 }
 
 .sidebar-title {
-  font-weight: bold;
+  /* font-weight: bold; */
   cursor: pointer;
 }
 
 /* Added by Ganesh on 06-09-2025 :Start*/
 .master-sidebar-title {
-  font-weight: bold;
+  /* font-weight: bold; */
   cursor: pointer;
   color: #106379;
   padding-left: 20px;
@@ -38,17 +38,12 @@
   border-bottom: 2px solid transparent;
 }
 
-.nav-click a {
+/* .nav-click a {
   border-bottom: 2px solid #1e3473 !important;
   background-image: linear-gradient(1deg, #e6ecff, #ffffff);
   color: #1d3371 !important;
-}
+} */
 
-.ul-leftnav li a:hover {
-  border-bottom: 2px solid transparent;
-  background-image: linear-gradient(1deg, #e6ecff, #ffffff);
-  color: #1d3371 !important;
-}
 
 .icon-down {
   float: right;
@@ -103,10 +98,12 @@
   padding-left: 10px;
 }
 
-.ul-leftnav li {
-  list-style-type: none;
-  padding: 0 6px;
-  line-height: 1.8;
+.ul-leftnav li .sidebar-title{
+    line-height: 1.8;
+    list-style-type: none;
+    padding: 9px 5px;
+    background-color: #f3f3f3;
+    border-radius: 6px;
 }
 
 .ul-leftnav li a:hover {
@@ -114,14 +111,49 @@
   color: white;
   text-decoration: none;
 }
-
+.ul-leftnav li{
+    list-style-type: none;
+    margin: 4px 2px;
+    border-radius: 4px;
+}
+.ul-leftnav .liViews  .ul-leftnav li{
+    position: relative;
+        padding: 3px 5px 3px 12px;
+    border: 1px solid #dbdbdb;
+}
+.ul-leftnav .liViews  .ul-leftnav li.nav-click:after{
+    background-color: #106379;
+}
+.ul-leftnav .liViews  .ul-leftnav li:after{
+    background-color: #606060;
+    border-radius: 100%;
+    content: "";
+    height: 6px;
+    left: 6px;
+    position: absolute;
+    top: 15px;
+    width: 6px;
+}
+.left-nav-active .sidebar-title {
+    background: #2c627e !important;
+    color: white;
+}
+.ul-leftnav li.liViews .sidebar-title {
+    padding-left: 10px;
+}
 .ul-leftnav li a {
   color: #6f6969;
-  padding: 5px;
-  text-decoration: none;
-  font-weight: normal;
+}
+.ul-leftnav li.nav-click {
+    background-color: #effaff;
+    border: 1px solid #c1dbe9;
 }
 
+.ul-leftnav li a:hover {
+    background-color: #effaff;
+    border-color: #c1dbe9;
+    color: #000;
+}
 #sidebar .h6 {
   color: #fff;
 }
@@ -262,7 +294,7 @@
 
 .brd-left-nav {
   border-right: 1px solid lightgray;
-  background-color: #e1e1e1;
+  /* background-color: #e1e1e1; */
 }
 
 .menu-icon-outer {

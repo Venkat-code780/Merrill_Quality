@@ -1303,7 +1303,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                         </div>
                                         {/* Five Sections */}
                                         {/* Job Steps Table */}
-                                        <div className={'form-border-box p-2 m-2'}>
+                                        <div className={'form-border-box p-2 my-2'}>
                                             <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
                                             <table id="jobStepsTable" className="TablejobSteps">
                                                 <thead>
@@ -1327,7 +1327,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                         <div className="row">
                                             {/* Permits Section */}
                                             <div className="col-md-6">
-                                                <div className={'form-border-box p-2 m-2'}>
+                                                <div className={'form-border-box p-2 my-2'}>
                                                     <h6 className=""> <FontAwesomeIcon icon={faFileSignature} />Permits</h6>
                                                     <table id="PermitsTable" className="col-md-12">
                                                         <thead>
@@ -1349,7 +1349,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             </div>
                                             {/* PPE Requirements */}
                                             <div className="col-md-6">
-                                                <div className={'form-border-box p-2 m-2'}>
+                                                <div className={'form-border-box p-2 my-2'}>
                                                     <h6 className=""> <FontAwesomeIcon icon={faHardHat} />PPE Requirements</h6>
                                                     <table id="PPEREquirementsTable" className="col-md-12">
                                                         <thead>
@@ -1367,7 +1367,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             </div>
                                             {/* Persons Involved */}
                                             <div className="col-md-6">
-                                                <div className={'form-border-box p-2 m-2'}>
+                                                <div className={'form-border-box p-2 my-2'}>
                                                     <h6 className=""> <FontAwesomeIcon icon={faUsers} />Persons Involved</h6>
                                                     <table id="PersonsInvolvedTable" className="col-md-12">
                                                         <thead>
@@ -1386,7 +1386,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             </div>
                                             {/* Supervisor Info */}
                                             <div className="col-md-6">
-                                                <div className={'form-border-box p-2 m-2'}>
+                                                <div className={'form-border-box p-2 my-2'}>
                                                     <h6 className=""> <FontAwesomeIcon icon={faUserTie} />Supervisor</h6>
                                                     <table id="SupervisorTable" className="col-md-12">
                                                         <thead>

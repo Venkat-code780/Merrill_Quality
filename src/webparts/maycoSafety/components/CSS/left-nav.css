@@ -11,10 +11,9 @@
 
 /* Added by Ganesh on 06-09-2025 :Start*/
 .master-sidebar-title {
-  /* font-weight: bold; */
-  cursor: pointer;
-  color: #106379;
-  padding-left: 20px;
+    color: #106379;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 6px 5px 6px 12px;
 }
 
 .master-sidebar-title a {

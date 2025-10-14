@@ -532,7 +532,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
     }
     private onPlantChange = (state: any, PlantVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-        let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant?.Title == PlantVal && dept.IsActiveMRO);// Note:in ventureglobal IsActive column exists , in WCM  IsActiveMRO column exists
+        let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant?.Title == PlantVal);
         let DepartmentsOpt = filteredDepts.map((item: any) => ({
             label: item.Title,
             value: item.Title,

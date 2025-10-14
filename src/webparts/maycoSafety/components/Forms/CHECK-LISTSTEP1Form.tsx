@@ -371,7 +371,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
     }
     private onPlantChange = (state: any, PlantVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-        let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant?.Title == PlantVal && dept.IsActiveMRO);// Note:in ventureglobal IsActive column exists , in WCM  IsActiveMRO column exists
+        let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant?.Title == PlantVal);
         let filteredAuditors = stateData.Auditors.filter((audit: any) => audit.Plant?.Title == PlantVal && audit.Is_x0020_Active);
         let DepartmentsOpt = filteredDepts.map((item: any) => ({
             label: item.Title,

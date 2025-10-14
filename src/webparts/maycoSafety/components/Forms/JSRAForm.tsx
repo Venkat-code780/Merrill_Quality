@@ -1303,6 +1303,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                         </div>
                                         {/* Five Sections */}
                                         {/* Job Steps Table */}
+                                        <div className="row">
+                                            <div className="col-12">
                                         <div className={'form-border-box p-2 my-2'}>
                                             <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
                                             <table id="jobStepsTable" className="TablejobSteps">
@@ -1324,7 +1326,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             </table>
                                             {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} />Add Job Step</button>}
                                         </div>
-                                        <div className="row">
+
+                                            </div>
                                             {/* Permits Section */}
                                             <div className="col-md-6">
                                                 <div className={'form-border-box p-2 my-2'}>

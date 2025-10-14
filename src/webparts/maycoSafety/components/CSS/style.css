@@ -3,12 +3,15 @@
 #sideNavBox {
   display: none !important;
 }
-#sidenav{
+
+#sidenav {
   display: none !important;
 }
-#site_content{
+
+#site_content {
   margin: 0px !important;
 }
+
 .ms-webpart-titleText {
   display: none;
 }
@@ -269,11 +272,12 @@
 }
 
 /* input controls css for lable on border itself*/
-.light-text{
+.light-text {
   position: relative;
-   margin-top: 10px;
+  margin-top: 10px;
 }
-.light-text label{
+
+.light-text label {
   position: absolute;
   top: -10px;
   left: 5px;
@@ -283,6 +287,7 @@
   font-size: 12px;
   font-weight: bold;
 }
+
 .light-text input.form-control {
   height: calc(2em + .75rem + 2px) !important;
 }
@@ -335,26 +340,32 @@
   font-size: 12px;
   font-weight: bold;
 }
-.searchMandatory .css-t3ipsp-control, .searchMandatory .css-13cymwt-control {
-  box-shadow: 0 0 0 0.2rem rgba(223,43,42,.75) !important;
+
+.searchMandatory .css-t3ipsp-control,
+.searchMandatory .css-13cymwt-control {
+  box-shadow: 0 0 0 0.2rem rgba(223, 43, 42, .75) !important;
   border-color: transparent !important;
 }
+
 /* separator */
-.css-1u9des2-indicatorSeparator{
+.css-1u9des2-indicatorSeparator {
   display: none;
 }
-.css-894a34-indicatorSeparator{
+
+.css-894a34-indicatorSeparator {
   display: none;
 }
+
 .css-1nmdiq5-menu {
   z-index: 100 !important;
 }
-.ms-BasePicker-text
-{
+
+.ms-BasePicker-text {
   padding-top: 15px;
 }
 
-.custom-datepicker, .custom-datepicker-disabled-dates {
+.custom-datepicker,
+.custom-datepicker-disabled-dates {
   position: relative;
 }
 
@@ -366,7 +377,8 @@
 .custom-datepicker-disabled-dates .react-datepicker-wrapper {
   display: block !important;
 }
-.custom-peoplepicker input{
+
+.custom-peoplepicker input {
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   font-weight: 400;
@@ -377,28 +389,36 @@
   position: relative;
   top: -3.55px;
 }
+
 /* .custom-peoplepicker {
     border: 1px solid #d7d7d7 !important;
     border-radius: 0.57px;  
 } */
-.custom-peoplepicker .ms-BasePicker-text{
-    border: 1px solid #d7d7d7 !important;
-    border-radius: .27rem;  
+.custom-peoplepicker .ms-BasePicker-text {
+  border: 1px solid #d7d7d7 !important;
+  border-radius: .27rem;
 }
-.lblPeoplepicker{
-z-index: 2 !important;
+
+.lblPeoplepicker {
+  z-index: 2 !important;
 }
-.mainContent tbody, thead, td, th {
-    padding: 5px;
+
+.mainContent tbody,
+thead,
+td,
+th {
+  padding: 5px;
 }
+
 .custom-dropdown .css-13cymwt-control {
-    height: 42px;
+  height: 42px;
 }
 
 /* Attachment */
 .attachment-list li:nth-child(odd) {
   background: #f9f9f9;
 }
+
 .attachment-list li {
   list-style: none;
   padding: 5px;
@@ -406,84 +426,92 @@ z-index: 2 !important;
   position: relative;
 }
 
-.attachment-list span.close{
-position: absolute;
-right: 8px;
+.attachment-list span.close {
+  position: absolute;
+  right: 8px;
 }
-.attachment-list span.close:hover{
+
+.attachment-list span.close:hover {
   color: #b93636;
 }
+
 .attachment-list a {
-    color: inherit;
-    text-decoration: none;
-    width: 90%;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  color: inherit;
+  text-decoration: none;
+  width: 90%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .attachment-list .attachName {
-    color: inherit;
-    text-decoration: none;
-    width: 86%;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  color: inherit;
+  text-decoration: none;
+  width: 86%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.attachment-list a:hover{
+
+.attachment-list a:hover {
   color: #363ce3;
   cursor: pointer;
 }
 
 /* popup modal css */
-    .modal .btn{
+.modal .btn {
   font-size: 14px;
   padding: 5px 8px;
   min-width: 68px;
   width: inherit;
 }
-  .modal-header-reject {
-    background-color: #efdfdf;
-    padding: .5rem 1rem;
-    border-bottom: 1px solid #dee2e6;
-    border-top-left-radius: calc(.3rem - 1px);
-    border-top-right-radius: calc(.3rem - 1px);
-    color: #cb2726;
+
+.modal-header-reject {
+  background-color: #efdfdf;
+  padding: .5rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  border-top-left-radius: calc(.3rem - 1px);
+  border-top-right-radius: calc(.3rem - 1px);
+  color: #cb2726;
 }
-.modal{
+
+.modal {
   background: #0000008a;
   padding: 30px;
   overflow: auto !important;
 }
-.spn-del:hover{
-    color: red;
-} 
-.dataTables_wrapper-overflow{
+
+.spn-del:hover {
+  color: red;
+}
+
+.active-navbar .dataTables_wrapper-overflow {
   overflow: auto;
-    width: 84vw;
+  width: 84vw;
 }
 
-/* @media only screen and (max-width: 1910px) {
-
-.dataTables_wrapper-overflow{
-    width: 84vw!important;
-}
-} */
 @media only screen and (max-width: 1688px) {
 
-.dataTables_wrapper-overflow{
-    width: 82vw!important;
+  .active-navbar .dataTables_wrapper-overflow {
+    width: 82vw !important;
+  }
 }
-}
+
 @media only screen and (max-width: 1390px) {
 
-.dataTables_wrapper-overflow{
-    width: 78vw!important;
-}
+  .active-navbar .dataTables_wrapper-overflow {
+    width: 78vw !important;
+  }
 
 }
+
+
+
 div#content-r {
-    overflow: hidden;
+  overflow: hidden;
 }
+
+
+

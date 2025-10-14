@@ -200,7 +200,10 @@
 #sidebar ul li a:hover {
   color: #fff;
 }
-
+.left-nav-active a.active {
+    padding: 0;
+    color: inherit;
+}
 #sidebar ul li.active>a {
   background: 0 0;
   color: #fff;

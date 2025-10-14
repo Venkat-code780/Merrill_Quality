@@ -1322,13 +1322,13 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                     {this.bindJobSteps()}
                                                 </tbody>
                                             </table>
-                                            {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} />Add Job Step</button>}
+                                            {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} /> Add Job Step</button>}
                                         </div>
                                         <div className="row">
                                             {/* Permits Section */}
                                             <div className="col-md-6">
                                                 <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faFileSignature} />Permits</h6>
+                                                    <h6 className=""> <FontAwesomeIcon icon={faFileSignature} /> Permits</h6>
                                                     <table id="PermitsTable" className="col-md-12">
                                                         <thead>
                                                             <tr className="bluebg">
@@ -1350,7 +1350,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {/* PPE Requirements */}
                                             <div className="col-md-6">
                                                 <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faHardHat} />PPE Requirements</h6>
+                                                    <h6 className=""> <FontAwesomeIcon icon={faHardHat} /> PPE Requirements</h6>
                                                     <table id="PPEREquirementsTable" className="col-md-12">
                                                         <thead>
                                                             <tr className="bluebg">
@@ -1368,7 +1368,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {/* Persons Involved */}
                                             <div className="col-md-6">
                                                 <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faUsers} />Persons Involved</h6>
+                                                    <h6 className=""> <FontAwesomeIcon icon={faUsers} /> Persons Involved</h6>
                                                     <table id="PersonsInvolvedTable" className="col-md-12">
                                                         <thead>
                                                             <tr className="bluebg">
@@ -1387,7 +1387,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {/* Supervisor Info */}
                                             <div className="col-md-6">
                                                 <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faUserTie} />Supervisor</h6>
+                                                    <h6 className=""> <FontAwesomeIcon icon={faUserTie} /> Supervisor</h6>
                                                     <table id="SupervisorTable" className="col-md-12">
                                                         <thead>
                                                             <tr className="bluebg">

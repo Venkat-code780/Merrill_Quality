@@ -209,7 +209,7 @@ export interface UASubTypeState {
         try{
             event.preventDefault();
             var data = {
-                UAMicroType: { val: (this.state.formData.Title.trim()), required: true, Name: 'UAMicro Type', Type: ControlType.string, Focusid: this.txtUAMicroType },
+                UAMicroType: { val: (this.state.formData.Title.trim()), required: true, Name: 'UA Micro Type', Type: ControlType.string, Focusid: this.txtUAMicroType },
                 UAType: { val: (this.state.formData.UAType0Id), required: true, Name: 'UA Type', Type: ControlType.reactSelect, Focusid:"divCategory"}
             }
             let isValid = formValidation.FormValidation( data );
@@ -400,7 +400,7 @@ private handleChangeClient = (selected: any) => {
                                                          <div className="col-md-3">
                                                               <div className="light-text">
                                                                 <label htmlFor="UATypedd">
-                                                                        UAType<span className="mandatoryhastrick">*</span>
+                                                                        UA Type<span className="mandatoryhastrick">*</span>
                                                                      </label>
                                                                 
                                                             <div className="custom-dropdown" id="divCategory">
@@ -410,7 +410,7 @@ private handleChangeClient = (selected: any) => {
                                                         </div>
                                                       
                                                         <div className="col-md-3 py-2 text-center" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title="Submit" onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
+                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
                                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                         </div>
                                                     </div>

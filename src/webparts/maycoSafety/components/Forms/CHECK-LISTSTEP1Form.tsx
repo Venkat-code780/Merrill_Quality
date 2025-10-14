@@ -371,8 +371,8 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
     }
     private onPlantChange = (state: any, PlantVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-        let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant.Title == PlantVal && dept.IsActiveMRO);// Note:in ventureglobal IsActive column exists , in WCM  IsActiveMRO column exists
-        let filteredAuditors = stateData.Auditors.filter((audit: any) => audit.Plant.Title == PlantVal && audit.Is_x0020_Active);
+        let filteredDepts = stateData.Departments.filter((dept: any) => dept.Plant?.Title == PlantVal && dept.IsActiveMRO);// Note:in ventureglobal IsActive column exists , in WCM  IsActiveMRO column exists
+        let filteredAuditors = stateData.Auditors.filter((audit: any) => audit.Plant?.Title == PlantVal && audit.Is_x0020_Active);
         let DepartmentsOpt = filteredDepts.map((item: any) => ({
             label: item.Title,
             value: item.Title,
@@ -400,7 +400,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
     }
     private onDepartmentChange = (state: any, PlantVal: any, DepartmentVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-        let filteredZones = stateData.Zones.filter((dept: any) => dept.Plant.Title == PlantVal && dept.Department.Title == DepartmentVal);
+        let filteredZones = stateData.Zones.filter((zone: any) => zone.Plant?.Title == PlantVal && zone.Department?.Title == DepartmentVal);
         let ZonesOpt = filteredZones.map((item: any) => ({
             label: item.Title,
             value: item.Title,
@@ -418,7 +418,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
     }
     private onZoneChange = (state: any, PlantVal: any, DepartmentVal: any, ZoneVal: any, isOnchange: boolean) => {
         let stateData: any = { ...state };
-        let filteredMachines = stateData.Machines.filter((dept: any) => dept.Plant.Title == PlantVal && dept.Department.Title == DepartmentVal && dept.Zone.Title == ZoneVal);
+        let filteredMachines = stateData.Machines.filter((mch: any) => mch.Plant?.Title == PlantVal && mch.Department?.Title == DepartmentVal && mch.Zone?.Title == ZoneVal);
         let MachinesOpt = filteredMachines.map((item: any) => ({
             label: item.Title,
             value: item.Title,
@@ -606,7 +606,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                                                         OptionsList={this.state.PlantsOpt}
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
-                                                        disabled={false}
+                                                        disabled={true}
                                                         noOptionsMessage="No Plant"
                                                     />
                                                 </div>

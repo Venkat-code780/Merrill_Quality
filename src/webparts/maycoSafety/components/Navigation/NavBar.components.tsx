@@ -37,6 +37,11 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
     private toggleSidebar = () => {
         let prevShowSidebar = this.state.showSidebar;
         this.setState({ showSidebar: !prevShowSidebar })
+        if (!prevShowSidebar) {
+            document.getElementById('sideMenuNav')?.classList.add('active-navbar');
+        } else {
+            document.getElementById('sideMenuNav')?.classList.remove('active-navbar');
+        }
     }
 
     private toggleSideBarItem = (event: any, title: string) => {
@@ -112,7 +117,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
 
                 <div className="brd-left-nav" id='Left-Nav-Bar'>
-                    <span className={`click-nav-icon ${this.state.showSidebar ? 'active-navbar' : ''}`}>
+                    <span className={`click-nav-icon`}>
                         <FontAwesomeIcon icon={faBars} onClick={this.toggleSidebar}></FontAwesomeIcon>
                     </span>
                     {/* //   <div className="outer-sidebar"> */}

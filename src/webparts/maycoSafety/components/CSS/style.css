@@ -270,7 +270,13 @@
   margin-top: 15px;
   font-weight: bold;
 }
-
+.NewButton:hover {
+    background: #39718f;
+    border-color: #39718f;
+}
+.rdt_Pagination button {
+    min-width: inherit;
+}
 /* input controls css for lable on border itself*/
 .light-text {
   position: relative;

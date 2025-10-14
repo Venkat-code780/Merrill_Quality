@@ -470,7 +470,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="Micro Root Cause" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.MicroRootCause} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.MicroRootCause} maxLength={250}/>
                                                                 <label>Micro Root Cause <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
@@ -491,7 +491,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                                                                         Secondary Root Cause<span className="mandatoryhastrick">*</span>
                                                                      </label>
                                                                    <div className="custom-dropdown" id="divSecondaryRootcause">
-                                                                <SearchableDropdown label={""} Title={"SecondaryRootCause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                <SearchableDropdown label={""} Title={"Secondary Root Cause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
                                                              </div>
                                                         
                                                               </div>

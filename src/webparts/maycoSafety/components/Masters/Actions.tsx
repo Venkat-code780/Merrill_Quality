@@ -472,7 +472,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                 <div className="row">
                                                     <div className="col-md-3">
                                                         <div className="light-text">
-                                                            <input className="form-control" required={true} placeholder="" type="text" name="Title" title="LeadSource" value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250} />
+                                                            <input className="form-control" required={true} placeholder="" type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250} />
                                                             <label>Action <span className="mandatoryhastrick">*</span></label>
                                                         </div>
                                                     </div>
@@ -482,7 +482,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                                 Root Cause <span className="mandatoryhastrick">*</span>
                                                             </label>
                                                             <div className="custom-dropdown" id="divRootcauese">
-                                                                <SearchableDropdown label={"Root Cause"} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                <SearchableDropdown label={"Root Cause"} Title="Root Cause" name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -493,7 +493,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                                 Secondary Root Cause <span className="mandatoryhastrick">*</span>
                                                             </label>
                                                             <div className="custom-dropdown" id="divSecondaryRootcause">
-                                                                <SearchableDropdown label={""} Title={"SecondaryRootCause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                <SearchableDropdown label={""} Title={"Secondary Root Cause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
                                                             </div>
 
                                                         </div>

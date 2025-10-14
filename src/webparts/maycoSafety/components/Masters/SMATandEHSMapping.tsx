@@ -446,7 +446,7 @@ formData[name as keyof typeof formData] = value as never;
                                                     <div className="row">
                                                           <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Audit_SubCategory" title="LeadSource" value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Audit_SubCategory" title={this.state.formData.Audit_SubCategory} value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
                                                                 <label>Audit SubCategory <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
@@ -464,7 +464,7 @@ formData[name as keyof typeof formData] = value as never;
                                                         
                                                            <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <select className="form-control"  name="Form_x0020_Type" title="Form_x0020_Type" value={ this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
+                                                                <select className="form-control"  name="Form_x0020_Type" title={this.state.formData.Form_x0020_Type} value={ this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
                                                                     <option value={""}>--Select One--</option>
                                                                     <option value={'WCC'}>WCC</option>
                                                                     <option value={'EHS'}>EHS</option>
@@ -475,7 +475,7 @@ formData[name as keyof typeof formData] = value as never;
                                                         </div>
                                                             <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <select className="form-control"  name="Is_x0020_Active" title="Is_x0020_Active" value={ this.state.formData.Is_x0020_Active === null?"":String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
+                                                                <select className="form-control"  name="Is_x0020_Active" title={this.state.formData.Is_x0020_Active === true ? 'Yes': this.state.formData.Is_x0020_Active === false? 'No': ''} value={ this.state.formData.Is_x0020_Active === null?"":String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
                                                                     <option value={0}>--Select One--</option>
                                                                     <option value={'true'}>Yes</option>
                                                                     <option value={'false'}>No</option>

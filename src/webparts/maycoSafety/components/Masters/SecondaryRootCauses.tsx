@@ -387,7 +387,7 @@ private handleChangeClient = (selected: any) => {
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="Secondary Root Cause" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtsecondaryrootcause} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtsecondaryrootcause} maxLength={250}/>
                                                                 <label>Secondary Root Cause <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
@@ -397,7 +397,7 @@ private handleChangeClient = (selected: any) => {
                                                                         Root Cause<span className="mandatoryhastrick">*</span>
                                                                      </label>
                                                                 <div className="custom-dropdown" id="divRootCause">
-                                                                 <SearchableDropdown label={""} Title={"RootCause"} name={"RootCauseId"} id={"ddRootCause"} className={""} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                 <SearchableDropdown label={""} Title={"Root Cause"} name={"RootCauseId"} id={"ddRootCause"} className={""} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                                 </div>
                                                               </div>
                                                         </div>

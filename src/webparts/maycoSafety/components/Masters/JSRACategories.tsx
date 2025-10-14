@@ -341,7 +341,7 @@ private async checkDuplicate() {
                 sortable: false
             },
             {
-                name: "Status",
+                name: "Category",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
                 cell: (record: { Title:  any; }) => {
@@ -380,7 +380,7 @@ private async checkDuplicate() {
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="Category" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRACategory} maxLength={250}/>
+                                                                <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRACategory} maxLength={250}/>
                                                                 <label>Category<span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>

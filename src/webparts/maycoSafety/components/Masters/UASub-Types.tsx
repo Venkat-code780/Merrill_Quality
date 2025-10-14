@@ -393,8 +393,8 @@ private handleChangeClient = (selected: any) => {
                                                     <div className="row">
                                                         <div className="col-md-3">
                                                             <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title="LeadSource" value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtUAMicroType} maxLength={250}/>
-                                                                <label>UAMicro Type <span className="mandatoryhastrick">*</span></label>
+                                                                <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtUAMicroType} maxLength={250}/>
+                                                                <label>UA Micro Type <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                          <div className="col-md-3">

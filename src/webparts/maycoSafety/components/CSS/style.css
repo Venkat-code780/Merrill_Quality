@@ -460,3 +460,30 @@ right: 8px;
 .spn-del:hover{
     color: red;
 } 
+.dataTables_wrapper-overflow{
+  overflow: auto;
+    /* width: 75vw; */
+}
+
+@media only screen and (max-width: 1910px) {
+
+.dataTables_wrapper-overflow{
+    width: 84vw!important;
+}
+}
+@media only screen and (max-width: 1688px) {
+
+.dataTables_wrapper-overflow{
+    width: 82vw!important;
+}
+}
+@media only screen and (max-width: 1390px) {
+
+.dataTables_wrapper-overflow{
+    width: 78vw!important;
+}
+
+}
+div#content-r {
+    overflow: hidden;
+}

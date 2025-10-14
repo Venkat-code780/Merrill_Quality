@@ -170,9 +170,9 @@ export default class CheckListStep1View extends React.Component<CheckListStep1Pr
                                 <div className="form-title">CHECK-LIST STEP 1</div>
                             </div>
                              <div className="mainContent px-4 borderLine">
-            <div>
+            <div className="row">
                <div className="col-md-3">
-                <div className="light-text">
+                <div className="light-text mt-4">
                    <label htmlFor="">
                     Year Filter 
                   </label>

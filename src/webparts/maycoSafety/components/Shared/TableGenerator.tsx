@@ -80,13 +80,13 @@ const TableGenerator = ({ columns, data, fileName,showExportExcel, ExportExcelCu
       <div className="dataTables_wrapper-overflow">
           <div className="form-border-box p-2 mx-1 my-2">
             <div className={showExportExcel ? '' : 'float-right'}>
-              <div className="p-1 pb-2">
+              
                 { data.length > 0 &&
                 <Search onSearch={value => {
                   setSearchText(value);
                 }} ></Search>
               }
-              </div>
+            
 
               {showExportExcel &&
                 <div className="col-6 text-right">

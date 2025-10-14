@@ -15,13 +15,14 @@ const Search : React.FC<SearchProps> = ({ onSearch }) => {
     };
 
     return(
+            <div className="my-2">
             <input type="text" 
-                className="form-control mx-2 sp-d-inline" 
-                style={{width:"240px"}}
+                className="form-control" 
                 placeholder="Search"
                 value={search}
                 onChange={ e => onInputChange(e.target.value)}
             />
+            </div>
     )
 
 };

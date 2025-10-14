@@ -462,15 +462,15 @@ right: 8px;
 } 
 .dataTables_wrapper-overflow{
   overflow: auto;
-    /* width: 75vw; */
+    width: 84vw;
 }
 
-@media only screen and (max-width: 1910px) {
+/* @media only screen and (max-width: 1910px) {
 
 .dataTables_wrapper-overflow{
     width: 84vw!important;
 }
-}
+} */
 @media only screen and (max-width: 1688px) {
 
 .dataTables_wrapper-overflow{

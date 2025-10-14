@@ -245,10 +245,10 @@ private handleConfirmDelete = async (id?: number | null) => {
              <div className="div-form-title">
                                 <div className="form-title">SMAT</div>
                             </div>
-                 <div className="mainContent px-4 borderLine">
-                  <div id="content" className="content p-2 pt-2">
+                 <div className="mainContent borderLine">
+                  <div className="row">
               <div className="col-md-3">
-                  <div className="light-text">
+                  <div className="light-text mt-4">
                    <label htmlFor="">
                     Year Filter
                   </label>

@@ -161,10 +161,10 @@ export default class CheckList3View extends React.Component<CheckList3Props,Chec
               <div className="div-form-title">
                                 <div className="form-title">CHECK-LIST STEP 3</div>
                             </div>
-                         <div className="mainContent px-4 borderLine">
-                  <div id="content" className="content p-2 pt-2">
+                         <div className="mainContent borderLine">
+                <div className="row">
                 <div className="col-md-3">
-                  <div className="light-text">
+                  <div className="light-text mt-4">
                    <label htmlFor="">
                     Year Filter 
                   </label>
@@ -180,11 +180,12 @@ export default class CheckList3View extends React.Component<CheckList3Props,Chec
               fileName={"Actions"}
               showPagination={true}
             />
+            </div>
          
           </div>
           </div>
         </div>
-      </div>
+    
     );
   }
 }

@@ -495,7 +495,7 @@ th {
 
 .active-navbar .dataTables_wrapper-overflow {
   overflow: auto;
-  width: 84vw;
+  width: 84vw!important;
 }
 
 @media only screen and (max-width: 1688px) {
@@ -513,7 +513,7 @@ th {
 
 }
 .dataTables_wrapper-overflow {
-    width: 91vw;
+    width: 91vw!important;
 }
 
 

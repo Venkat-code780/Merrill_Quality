@@ -21,7 +21,7 @@ import { format } from "date-fns";
 // import InputCheckBox from "../Shared/InputCheckBox";
 // import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faAdd, faClipboardList, faFileSignature, faHardHat, faUsers, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faAdd, faClipboardList, faFileSignature, faHardHat, faUsers, faUserTie } from "@fortawesome/free-solid-svg-icons";
 import Formvalidator from "../Utilities/FormValidator";
 
 export interface JSRAFormProps {
@@ -977,7 +977,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                     />
                     {/* </div> */}
                 </td>
-                {PPETypes.length > 1 ? <td className="text-center"><button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePPEType(index)} title="Delete PPE Type"><FontAwesomeIcon icon={faTrash} /></button></td> : ''}
+                {PPETypes.length > 1 ? <td className="text-center"><span className="spn-del" title="Delete PPE Type" onClick={() => this.deletePPEType(index)}><FontAwesomeIcon icon={faTrashCan} /></span></td> : ''}
             </tr>
 
         ))
@@ -1052,7 +1052,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                     <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
                     {/* </div> */}
                 </td>
-                {Persons.length > 1 ? <td className="text-center"><button type='button' className="btn mandatoryhastrick" onClick={() => this.deletePerson(index)} title="Delete Person"><FontAwesomeIcon icon={faTrash} /></button></td> : ''}
+                {Persons.length > 1 ? <td className="text-center"><span className="spn-del" title="Delete Person" onClick={() => this.deletePerson(index)}><FontAwesomeIcon icon={faTrashCan} /></span></td> : ''}
             </tr>
 
         ))
@@ -1309,7 +1309,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
                                             <table id="jobStepsTable" className="TablejobSteps">
                                                 <thead>
-                                                    <tr className="bluebg">
+                                                    <tr className="darkgraybg">
                                                         <th className="WPercent-4"></th>
                                                         <th className="WPercent-20">Job Step</th>
                                                         <th className="text-center WPercent-4">Required</th>
@@ -1334,7 +1334,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                     <h6 className=""> <FontAwesomeIcon icon={faFileSignature} /> Permits</h6>
                                                     <table id="PermitsTable" className="col-md-12">
                                                         <thead>
-                                                            <tr className="bluebg">
+                                                            <tr className="darkgraybg">
                                                                 <th>Type</th>
                                                                 <th>Required</th>
                                                                 <th>Acquired</th>
@@ -1356,7 +1356,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                     <h6 className=""> <FontAwesomeIcon icon={faHardHat} /> PPE Requirements</h6>
                                                     <table id="PPEREquirementsTable" className="col-md-12">
                                                         <thead>
-                                                            <tr className="bluebg">
+                                                            <tr className="darkgraybg">
                                                                 <th className="ps-3">PPE Type</th>
                                                                 {this.state.PPETypes.length > 1 ? <th className="text-center">Delete</th> : ""}
                                                             </tr>
@@ -1374,7 +1374,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                     <h6 className=""> <FontAwesomeIcon icon={faUsers} /> Persons Involved</h6>
                                                     <table id="PersonsInvolvedTable" className="col-md-12">
                                                         <thead>
-                                                            <tr className="bluebg">
+                                                            <tr className="darkgraybg">
                                                                 <th className="ps-3">Name</th>
                                                                 <th className="ps-3">Date</th>
                                                                 {this.state.Persons.length > 1 ? <th className="text-center">Delete</th> : ""}
@@ -1393,7 +1393,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                     <h6 className=""> <FontAwesomeIcon icon={faUserTie} /> Supervisor</h6>
                                                     <table id="SupervisorTable" className="col-md-12">
                                                         <thead>
-                                                            <tr className="bluebg">
+                                                            <tr className="darkgraybg">
                                                                 <th className="ps-3">Name</th>
                                                                 <th className="ps-3">Date</th>
                                                             </tr>

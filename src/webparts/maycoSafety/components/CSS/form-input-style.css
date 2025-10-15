@@ -3,41 +3,50 @@
     color: white;
     position: relative;
 }
+
 .div-form-title .form-title {
     padding: 10px 10px;
     font-size: 1.5rem;
 }
+
 span.span-mandatory-text {
     position: absolute;
     right: 3px;
     bottom: 10px;
 }
+
 /* .css-t3ipsp-control{
 
 } */
 .css-13cymwt-control {
     border-color: #d7d7d7 !important;
 }
+
 .light-text .form-control {
     border: 1px solid #d7d7d7 !important;
 }
+
 .form-border-box {
     border: 1px solid lightgray;
     border-radius: 11px;
     background: #f9f9f9;
 }
-.label-inactive{
+
+.label-inactive {
     background: #f2f2f2 !important;
 }
+
 canvas.sketchCanvas {
     /* width: 100%;
     height: 300px; */
     border: 2px solid #d3d3d3 !important;
     border-radius: 11px;
 }
+
 .sketch-container .toolbar {
     margin-bottom: 5px;
 }
+
 .div-root-cause {
     background: green;
     height: 95%;
@@ -45,24 +54,30 @@ canvas.sketchCanvas {
     border-radius: 3px;
     color: white;
 }
-.insider-m-0 .light-text{
-margin-top: 0!important
+
+.insider-m-0 .light-text {
+    margin-top: 0 !important
 }
+
 .sketch-container .toolbar button {
-    width: 34px;
-    height: 31px;
+    min-width: 34px;
+    height: 31px !important;
     border: 2px solid lightgray;
     border-radius: 5px;
     margin: 0 1px;
 }
-.sketch-container .toolbar select{
-        height: 31px;
+
+.sketch-container .toolbar select {
+     min-width: 34px;
+    height: 31px !important;
     border: 2px solid lightgray;
     border-radius: 5px;
     margin: 0 1px;
 }
-.sketch-container .toolbar input{
-        height: 31px;
+
+.sketch-container .toolbar input {
+    min-width: 34px;
+    height: 31px !important;
     border: 2px solid lightgray;
     border-radius: 5px;
     margin: 0 1px;

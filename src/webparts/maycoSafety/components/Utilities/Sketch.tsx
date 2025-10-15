@@ -248,8 +248,8 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
                 <button type='button' onClick={undo} disabled={history.length === 0} title='Undo'><FontAwesomeIcon icon={faUndo} /></button>
                 <button type='button' onClick={redo} disabled={redoHistory.length === 0} title='Redo'><FontAwesomeIcon icon={faRedo} /></button>
                 <button type='button' onClick={clearCanvas} title='Clear'><FontAwesomeIcon icon={faTimes} /></button>
-                {/* <button onClick={() => changeTool('ellipse')} title='Circle'><FontAwesomeIcon icon={faCircle} /></button> */}
-                <button type='button' onClick={() => changeTool('ellipse')} title='Circle' className='btnCircle'><p className='faCircle'></p></button>
+                {/* <button type='button' onClick={() => changeTool('ellipse')} title='Circle'><FontAwesomeIcon icon={faCircleRegular} /></button> */}
+                <button type='button' onClick={() => changeTool('ellipse')} title='Circle'><p className='faCircle'></p></button>
                 <button type='button' onClick={() => changeTool('line')} title='Line'><FontAwesomeIcon icon={faSlash} /></button>
                 <button type='button' onClick={() => changeTool('pen')} title='Pen'><FontAwesomeIcon icon={faPen} /></button>
                 <button type='button' onClick={() => changeTool('eraser')} title='Eraser'><FontAwesomeIcon icon={faEraser} /></button>
@@ -257,7 +257,7 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
                     {/* <option value={5}>5px</option> */}
                     {numArr.map((num) => (<option value={num}>{num + "px"}</option>))}
                 </select>
-                <input type="color" onChange={(e) => changeColor(e.target.value)} style={{ position: "relative", top: "6px"}} />
+                <input type="color" onChange={(e) => changeColor(e.target.value)}  />
                 <button type='button' onClick={getImage} className='d-none'>Get Image</button>
             </div>
 

@@ -14,7 +14,6 @@ import formValidation from "../Utilities/FormValidator";
 import { showToast } from "../Shared/Toaster";
 import { Navigate, NavLink } from "react-router-dom";
 import SearchableDropdown from "../Shared/Dropdown";
-import "../CSS/Masters.css";
 
 export interface ActionsProps {
     match: any;

@@ -2,7 +2,6 @@ import * as React from "react";
 import { hideLoader, showLoader } from "../Shared/Loader";
 import { Navigate } from "react-router-dom";
 import { SPHttpClient } from "@microsoft/sp-http";
-import "../CSS/UCANForm.css";
 import { ActionStatus, ControlType } from "../Constants/Contants";
 import { showToast } from "../Shared/Toaster";
 import { highlightCurrentNav } from "../Utilities/HighlightCurrentComponent";

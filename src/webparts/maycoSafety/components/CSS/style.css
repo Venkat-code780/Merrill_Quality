@@ -518,10 +518,15 @@ th {
     width: 91vw!important;
 }
 
-
 div#content-r {
   overflow: hidden;
 }
 
+.darkgraybg {
+  background-color: #e1e1e1;
+}
+.lightgreybg {
+    background-color: #f3f3f3;
+}
 
 

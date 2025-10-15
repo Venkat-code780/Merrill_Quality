@@ -8,7 +8,6 @@ import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
-import "../CSS/EHSForm.css";
 import { ActionStatus, ControlType } from "../Constants/Contants";
 import { showToast } from "../Shared/Toaster";
 import { highlightCurrentNav } from "../Utilities/HighlightCurrentComponent";
@@ -922,10 +921,10 @@ private getGroupName()
                                 </div>
                                 <div className="row mt-2">
                                     <div className="col-md-12">
-                                        <div className="divSection mb-2">
-                                    <table>
-                                        <thead className="darkgreybg">
-                                            <tr className="fs-5">
+                                        <div className="form-border-box p-1 my-2">
+                                    <table className="col-md-12">
+                                        <thead >
+                                            <tr className="darkgraybg fs-5">
                                                 <th>Requirement</th>
                                                 <th>Select</th>
                                             </tr>

@@ -10,14 +10,14 @@
     background-color: #3498db; */
      color: #025d81 !important;
     background-color: #acacac;
-    font-size: 22px;
+    font-size: 20px;
 }
 
 .Heading2 {
     color: #025d81 !important;
     /* background-color: #a4e2fa; */
     background-color: #d7d7d7;
-    font-size: 17px;
+    font-size: 15px;
 }
 
 .Low {
@@ -35,7 +35,7 @@
 .TopicCell {
     /* background-color: #71d6fd; */
     background-color: #edfaff;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: bold !important;
     color: #345260;
 }
@@ -45,6 +45,10 @@
     background-color: #edfaff;
     font-weight: bold !important;
     color: #345260;
+}
+.AuditScoreCell
+{
+    background-color: #fff;
 }
 
 /* custom widths */
@@ -79,7 +83,7 @@
     height: 500px;
     overflow-y: auto;
 }
-tr.HeadRows
+tbody.tbodyHeadRows
 {
     position: sticky;
      top: 0; 

@@ -488,7 +488,9 @@ th {
   padding: 30px;
   overflow: auto !important;
 }
-
+.spn-del {
+    color: #ff6d6d;
+}
 .spn-del:hover {
   color: red;
 }

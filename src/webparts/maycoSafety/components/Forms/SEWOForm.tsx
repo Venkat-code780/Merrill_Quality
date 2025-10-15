@@ -361,7 +361,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             let yesNoData = yesNo.map((item: any) => ({ label: item.Title, value: item.Id }));
             let statusData = status.map((item: any) => ({ label: item.Title, value: item.Id }));
             let filesArry: any[] = [];
-
+            let isEditForm = false;
             if (itemId != undefined) {
                 let SEWORes: any, SEWOAttach: any;
                 [SEWORes, SEWOAttach] = await Promise.all([getListItems(this.SEWOList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`), this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles()]);
@@ -478,7 +478,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         if (currentUserGroups.includes("Venture Global Owners") || currentUserGroups.includes("WCM Safety Admin") || currentUserGroups.includes("WCM Merrill Safety Mgt")) {
                             showSubmit = true;
                         }
-
+                        isEditForm = true;
                         let bodyPartValue = bodyPartsData.find((part: any) => (part.value == formData.BodyPartId))?.label;
                         selBodyPart = this.handleBodyPartChange(bodyPartValue);
                     }
@@ -493,7 +493,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 selBodyPart = this.handleBodyPartChange("None");
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, showSubmit, ItemId: itemId, accidentTypeData, accidentCauseData, injuryTypeData, bodyPartsData, rootCausesData, secondaryRootCausesData, microRootCausesData, actionsData, yesNoData, statusData, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, selBodyPart, fileArr: filesArry });
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, showSubmit, ItemId: itemId, accidentTypeData, accidentCauseData, injuryTypeData, bodyPartsData, rootCausesData, secondaryRootCausesData, microRootCausesData, actionsData, yesNoData, statusData, secondaryRootCausesOptions, microRootCausesOptions, actionsOptions, selBodyPart, fileArr: filesArry ,isEditForm});
         }
         catch (e) {
             console.log(e);
@@ -689,7 +689,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 zone: { val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone" },
                 machine: { val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine" },
                 accidentType: { val: formData.AccidentTypeId, required: true, Name: "Accident Type", Type: ControlType.reactSelect, Focusid: "ddlAccidentType" },
-                injuredName: { val: formData.InjuredName, required: true, Name: "Accident Type", Type: ControlType.string, Focusid: this.txtNameofInjured },
+                injuredName: { val: formData.InjuredName, required: true, Name: "Name of Injured", Type: ControlType.string, Focusid: this.txtNameofInjured },
                 sex: { val: formData.Sex, required: true, Name: "Sex", Type: ControlType.reactSelect, Focusid: "ddlSex" },
                 injuryType: { val: formData.InjuryTypeId, required: true, Name: "Injury Type", Type: ControlType.reactSelect, Focusid: "ddlInjuryType" },
                 injuryDateTime: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.date, Focusid: "dtInjuryDateTime" },
@@ -1854,7 +1854,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     {/* Buttons */}
                                     <div className="col-sm-12 text-center py-3" id="">
                                         {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
-                                        <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} >Cancel</button>
+                                        <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                                     </div>
                                 </div>
                             </div>

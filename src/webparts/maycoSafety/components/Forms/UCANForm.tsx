@@ -170,7 +170,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             let uaTypeData = uaTypes.map((item: any) => ({ label: item.Title, value: item.Id }));
             let subTypeOptions: any = [];
             let shiftData = shifts.map((item: any) => ({ label: item.Title, value: item.Title }));
-
+            let isEditForm = false;
             if (itemId > 0) {
                 let UCANRes: any = await getListItems(this.ucanList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`);
                 if (!UCANRes.isHttpRequestError) {
@@ -205,6 +205,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
 
                         //Super Admin
                         showSubmit = (editUCANItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        isEditForm = true;
                     }
                     else {
                         showToast("error", "No UCAN found");
@@ -213,7 +214,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 }
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, uaTypeData, subTypeData, subTypeOptions, shiftData, showSubmit, ItemId: itemId });
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, uaTypeData, subTypeData, subTypeOptions, shiftData, showSubmit, ItemId: itemId,isEditForm });
         } catch (e) {
             console.log(e);
             this.onError();
@@ -714,7 +715,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
 
                                         <div className="col-sm-12 text-center py-3 " id="">
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
-                                            <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlCancel} >Cancel</button>
+                                            <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlCancel} title="Cancel">Cancel</button>
                                         </div>
 
                                     </div>

@@ -710,8 +710,8 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                     </div>                       
                                 {/* Check List Table */}
                                 <div className="col-12 mt-2">
-                                <div className="divCheckListTable">
-                                    <table className="CheckListTable" id="tblCheckList">
+                                <div className="divCheckListTable form-border-box p-1 my-2">
+                                    <table className="CheckListTable col-md-12" id="tblCheckList">
                                         {this.bindCheckListTableHeader()}
                                         <tbody>
                                             {this.bindCheckListTableBody()}

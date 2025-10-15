@@ -183,7 +183,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             let shiftData = shifts.map((item: any) => ({ label: item.Title, value: item.Title }));
 
             let allMappingData;
-
+            let isEditForm = false;
             if (itemId > 0) {
                 let SMATRes: any, editSMATChildItems: any;
                 [SMATRes, editSMATChildItems] = await Promise.all([
@@ -234,6 +234,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                             })
                         }
                         showSubmit = (editSMATItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        isEditForm = true;
                     }
                     else {
                         showToast("error", "No SMAT found");
@@ -260,7 +261,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 }).filter(mapItem => mapItem != null);
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId });
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId, isEditForm});
         } catch (e) {
             console.log(e);
             this.onError();
@@ -1025,7 +1026,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
                                         <div className="col-sm-12 text-center py-3" id="">
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
-                                            <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} >Cancel</button>
+                                            <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                                         </div>
 
                                     </div>

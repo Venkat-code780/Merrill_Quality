@@ -546,6 +546,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
 
         headerStructure.forEach((row: any, index: number) => {
             HeaderRows.push(
+                // <thead> not working for cell merging
                 <tr key={`HeadRow${index}`} className="HeadRows">
                     {headerStructure[index].map((cell, index) => {
                         // Add appropriate colspan and rowspan to the cell
@@ -556,6 +557,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                         }
                     })}
                 </tr>
+            //   </thead>
             );
         })
         return HeaderRows;
@@ -707,8 +709,8 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
 
                                         {/* Check List Table */}
                                         <div className="col-12 mt-2">
-                                            <div className="divCheckListTable">
-                                                <table className="CheckListTable" id="tblCheckList">
+                                            <div className="divCheckListTable form-border-box p-1 my-2">
+                                                <table className="CheckListTable col-md-12" id="tblCheckList">
                                                     {this.bindCheckListTableHeader()}
                                                     <tbody>
                                                         {this.bindCheckListTableBody()}

@@ -512,7 +512,9 @@ th {
   }
 
 }
-
+.dataTables_wrapper-overflow {
+    width: 91vw;
+}
 
 
 div#content-r {

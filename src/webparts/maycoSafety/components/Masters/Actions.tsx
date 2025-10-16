@@ -212,13 +212,13 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
             const formData = { ...this.state.formData };
 
             let isValid = true;
-
+             if (formData.Title) formData.Title = formData.Title.trim();
             // Escape single quotes in Title
-            const escapedTitle = formData.Title.replace(/'/g, "''");
-
+            // const escapedTitle = formData.Title.replace(/'/g, "''");
+                
             // Build OData filter for all three fields
             // Note: Adjust property names according to your SharePoint list fields
-            let filterQuery = `Title eq '${escapedTitle}' and RootCauseId eq ${formData.RootCauseId} and SecondaryRootCauseId eq ${formData.SecondaryRootCauseId}`;
+            let filterQuery = `Title eq '${formData.Title}' and RootCauseId eq ${formData.RootCauseId} and SecondaryRootCauseId eq ${formData.SecondaryRootCauseId}`;
 
             if (this.state.ItemId > 0) {
                 // Exclude the current item (for update scenario)
@@ -288,7 +288,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
         try {
             let itemId = this.state.ItemId;
             let formData = { ...this.state.formData };
-            formData.Title = formData.Title ? formData.Title.trim() : "";
+               if (formData.Title) formData.Title = formData.Title.trim();
             if (itemId > 0) {
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update(formData).then((res) => {
                     let msg = "Action updated successfully";

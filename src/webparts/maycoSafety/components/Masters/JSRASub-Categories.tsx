@@ -210,7 +210,7 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
-                SubCategory: { val: (this.state.formData.Title.trim()), required: true, Name: 'JSRA SubCategory', Type: ControlType.string, Focusid: this.txtJSRASubCategory },
+                SubCategory: { val: (this.state.formData.Title.trim()), required: true, Name: 'JSRA Subcategory', Type: ControlType.string, Focusid: this.txtJSRASubCategory },
                 Category: { val: (this.state.formData.CategoryId), required: true, Name: 'JSRA Category', Type: ControlType.reactSelect, Focusid:"divCategory"}
             }
             let isValid = formValidation.FormValidation( data );
@@ -241,7 +241,7 @@ private async checkDuplicate() {
 
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
-                    let msg = "JSRA SubCategories updated successfully";
+                    let msg = "JSRA Subcategories updated successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -251,7 +251,7 @@ private async checkDuplicate() {
             }
             else{
                 this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then( (res) => {
-                    let msg = "JSRA SubCategories submitted successfully";
+                    let msg = "JSRA Subcategories submitted successfully";
                     this.setState({displayMessage: msg, redirect:true});
                     this.onSuccess();
                 }, (error) => {
@@ -313,7 +313,7 @@ private handleChangeClient = (selected: any) => {
         const formData:any = {...this.state.formData};
         const name = event.target.name;
         let value = event.target.type == 'checkbox' ? event.target.checked : event.target.value;
-        formData[name] = value;
+                 formData[name] = value;
         this.setState({formData});
     }
 
@@ -344,7 +344,7 @@ private handleChangeClient = (selected: any) => {
                 sortable: false
             },
             {
-                name: "SubCategory",
+                name: "Subcategory",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
                 cell: (record: { Title:  any; }) => {
@@ -377,7 +377,7 @@ private handleChangeClient = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="light-box border-box-shadow">
                                         <div className="div-form-title">
-                                <div className="form-title">JSRA SubCategories</div>
+                                <div className="form-title">JSRA Subcategories</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                                      <div className="mainContent px-4 borderLine">
@@ -394,7 +394,7 @@ private handleChangeClient = (selected: any) => {
                                                         <div className="col-md-3">
                                                             <div className="light-text">
                                                                 <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRASubCategory} maxLength={250}/>
-                                                                <label>JSRA SubCategory <span className="mandatoryhastrick">*</span></label>
+                                                                <label>JSRA Subcategory <span className="mandatoryhastrick">*</span></label>
                                                             </div>
                                                         </div>
                                                          <div className="col-md-3">

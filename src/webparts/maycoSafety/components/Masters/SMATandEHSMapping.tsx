@@ -182,10 +182,8 @@ export interface SMATandEHSMappingState {
     }
     
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 },()=>{
-            this.Audit_SubCategory.current?.focus();
-            
-        });
+        this.setState({ isFormOpen: true, ItemId: 0 })
+
     }
 
    
@@ -229,9 +227,8 @@ private async checkDuplicate() {
         try{
             event.preventDefault();
             var data = {
+                 AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: 'Audit Category', Type: ControlType.reactSelect, Focusid:'divAuditCategory' },
                 AuditSubcategory: { val: (this.state.formData.Audit_SubCategory.trim()), required: true, Name: 'Audit Subcategory', Type: ControlType.string, Focusid: this.Audit_SubCategory },
-                AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: 'Audit Category', Type: ControlType.reactSelect, Focusid:'divAuditCategory' },
-                
                 FormType:{ val: (this.state.formData.Form_x0020_Type), required: true, Name: 'FormType', Type: ControlType.string, Focusid: this.Form_x0020_Type },
                 IsActive:{ val: (this.state.formData.Is_x0020_Active), required: true, Name: 'Is Active', Type: ControlType.string, Focusid: this.Is_x0020_Active },
                  
@@ -398,7 +395,7 @@ formData[name as keyof typeof formData] = value as never;
                 },
             },
             {
-                name: "Audit SubCategory",
+                name: "Audit Subcategory",
                 selector: (row: { Audit_SubCategory: any; }, i: any) => row.Audit_SubCategory,
                 sortable: true,
                 cell: (record: { Audit_SubCategory:  any; }) => {
@@ -444,12 +441,7 @@ formData[name as keyof typeof formData] = value as never;
                                             <div className="">
                                                 <div className="form-border-box p-2 mx-1 mt-2">
                                                     <div className="row">
-                                                          <div className="col-md-3">
-                                                            <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Audit_SubCategory" title={this.state.formData.Audit_SubCategory} value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
-                                                                <label>Audit SubCategory <span className="mandatoryhastrick">*</span></label>
-                                                            </div>
-                                                        </div>
+                                                        
                                                          <div className="col-md-3">
                                                             <div className="light-text">
                                                                    <label htmlFor="ddAuditCategory">
@@ -459,6 +451,12 @@ formData[name as keyof typeof formData] = value as never;
                                                                  <SearchableDropdown label={""} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                                 </div>
                                                               </div>
+                                                        </div>
+                                                          <div className="col-md-3">
+                                                            <div className="light-text">
+                                                                <input className="form-control" required={true} type="text" name="Audit_SubCategory" title={this.state.formData.Audit_SubCategory} value={ this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250}/>
+                                                                <label>Audit Subcategory <span className="mandatoryhastrick">*</span></label>
+                                                            </div>
                                                         </div>
                                                       
                                                         

@@ -127,6 +127,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
     public componentDidMount(): void {
         highlightCurrentNav("liTAGForm");
         document.title = "Mayco - Safety | TAG";
+        document.getElementById("divDepartment")?.getElementsByTagName('input')[0].focus();
         this.getOnLoadData();
     }
 
@@ -295,7 +296,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 Zone: { val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone" },
                 Machine: { val: formData.Machine, required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine" },
                 Shift: { val: formData.Shift, required: true, Name: "Shift", Type: ControlType.reactSelect, Focusid: "ddlShift" },
-                Name: { val: formData.Name, required: true, Name: "Name", Type: ControlType.string, Focusid: this.Name },
+                Name: { val: formData.Name.trim(), required: true, Name: "Name", Type: ControlType.string, Focusid: this.Name },
                 Date: { val: formData.Date, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtDate" },
                 dateToday: { val: formData.Date, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtDate" },
             }
@@ -640,20 +641,20 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 <div className="col-md-12 mb-3">
                     <div className={"light-text"} >
                         <label className=" col-form-label" htmlFor="txtLocationPersons">Problem Details</label>
-                        <textarea className="form-control bs-textarea" rows={3} id="txtProblemDetails" name="ProblemDetails" placeholder="Problem Details" value={this.state.SafetyformData.ProblemDetails} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.ProblemDetails}></textarea>
+                        <textarea className="form-control bs-textarea" rows={3} id="txtProblemDetails" name="ProblemDetails" placeholder="" value={this.state.SafetyformData.ProblemDetails} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.ProblemDetails}></textarea>
                     </div>
                 </div>
                 <div className="col-md-12 mb-3">
                     <div className={"light-text"} >
                         <label className=" col-form-label" htmlFor="txtCounterMeasures">Counter Measures</label>
-                        <textarea className="form-control bs-textarea" rows={3} id="txtCounterMeasures" name="CounterMeasures" placeholder="Counter Measures" value={this.state.SafetyformData.CounterMeasures} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.CounterMeasures}></textarea>
+                        <textarea className="form-control bs-textarea" rows={3} id="txtCounterMeasures" name="CounterMeasures" placeholder="" value={this.state.SafetyformData.CounterMeasures} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.SafetyformData.CounterMeasures}></textarea>
                     </div>
                 </div>
                 <div className="col-md-4" id="divDate">
                     <div className="light-text">
                         <label className="" >Completed Date {this.state.SafetyformData.CompletedByIds.length > 0 ? <span className="mandatoryhastrick">* </span> : ''}</label>
                         <div className="custom-datepicker" id="divCompletedDate">
-                            <DatePickercontrol placeholder="" selectedDate={this.state.SafetyformData.CompletedDate} title={this.state.SafetyformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                            <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.SafetyformData.CompletedDate} title={this.state.SafetyformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
                         </div>
                     </div>
                 </div>
@@ -705,7 +706,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 <div className="col-md-12">
                     <div className="light-text">
                         <label className=" col-form-label">Tag Type<span className="mandatoryhastrick">* </span></label>
-                        <select className="form-control" placeholder="" name="TagType" id="txtTagType" ref={this.TagType} value={this.state.AMWOformData.TagType} title={this.state.AMWOformData.TagType} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={this.state.ItemId > 0}>
+                        <select className="form-select pt-2 ps-2" placeholder="" name="TagType" id="txtTagType" ref={this.TagType} value={this.state.AMWOformData.TagType} title={this.state.AMWOformData.TagType} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={this.state.ItemId > 0}>
                             <option value="">None</option>
                             <option value="AM">AM</option>
                             <option value="WO">WO</option>
@@ -726,7 +727,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                     <div className="light-text">
                         <label className="" >Completed Date{this.state.AMWOformData.CompletedByIds.length > 0 ? <span className="mandatoryhastrick">* </span> : ''}</label>
                         <div className="custom-datepicker" id="divCompletedDate">
-                            <DatePickercontrol placeholder="" selectedDate={this.state.AMWOformData.CompletedDate} title={this.state.AMWOformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                            <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.AMWOformData.CompletedDate} title={this.state.AMWOformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
                         </div>
                     </div>
                 </div>
@@ -751,14 +752,14 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                         </div>
                     </div>
                 </div>
-            
-            <div className="col-md-12">
-                <div className={"light-text"} >
-                    <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.AMWOformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.AMWOformData.Comments}></textarea>
-                    <label className=" col-form-label" htmlFor="txtComments">Comments</label>
+
+                <div className="col-md-12">
+                    <div className={"light-text"} >
+                        <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.AMWOformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.AMWOformData.Comments}></textarea>
+                        <label className=" col-form-label" htmlFor="txtComments">Comments</label>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     }
     // PM Tag functions
@@ -767,18 +768,18 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
 
             <div className="col-md-12"><h1 className="text-left">Professional Maintenance</h1></div>
             <div className="row mb-3">
-                <div className="col-md-12 ms-auto">
+                <div className="col-md-12 ms-auto pb-2">
                     <div className="light-text">
                         <label className=" col-form-label">TAG# </label>
                         <input className="form-control onlyNum" placeholder="" name="TAG" type="text" id="txtTAG" value={this.state.PMformData.TAG} title={this.state.PMformData.TAG} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} />
                     </div>
                 </div>
-           
+
                 <div className="col-md-4" id="divDate">
                     <div className="light-text">
                         <label className="" >Completed Date{this.state.PMformData.CompletedByIds.length > 0 ? <span className="mandatoryhastrick">* </span> : ''}</label>
                         <div className="custom-datepicker" id="divCompletedDate">
-                            <DatePickercontrol placeholder="" selectedDate={this.state.PMformData.CompletedDate} title={this.state.PMformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
+                            <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.PMformData.CompletedDate} title={this.state.PMformData.CompletedDate} id='dtCompletedDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate")} highlightDate={new Date()} showIcon />
                         </div>
                     </div>
                 </div>
@@ -803,14 +804,14 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                         </div>
                     </div>
                 </div>
-            
-            <div className="col-md-12">
-                <div className={"light-text"} >
-                    <label className=" col-form-label" htmlFor="txtComments">Comments</label>
-                    <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.PMformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.PMformData.Comments}></textarea>
+
+                <div className="col-md-12">
+                    <div className={"light-text"} >
+                        <label className=" col-form-label" htmlFor="txtComments">Comments</label>
+                        <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="" value={this.state.PMformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.PMformData.Comments}></textarea>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     }
     //common validation for all tags Safety/AMWO/PM
@@ -878,7 +879,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="div-form-title">
-                                <div className="form-title">{" TAG " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <div className="form-title">{" TAG Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
                                 <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
                             <div className="">
@@ -988,7 +989,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                 <div className="light-text">
                                                     <label className=""> Date <span className="mandatoryhastrick">*</span></label>
                                                     <div className="custom-datepicker" id="divDate">
-                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
+                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.Date} title={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
                                                     </div>
                                                 </div>
                                             </div>

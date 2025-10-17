@@ -121,6 +121,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
     public componentDidMount(): void {
         highlightCurrentNav("liJSRAForm");
         document.title = "Mayco - Safety | JSRA";
+        document.getElementById("divDate")?.getElementsByTagName('input')[0].focus();
         this.getOnLoadData();
     }
 
@@ -728,7 +729,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             <tr key={jobStep.id}>
                 <td className="text-center">{jobStep.id}</td>
                 <td>
-                    <input className="form-control" placeholder={``} name={`JobStep_${jobStep.id}`} type="text" id={`JobStep_${jobStep.id}`} value={jobStep.Step} title={jobStep.Step} onChange={(e) => this.handleJobStepChange(index, 'Step', e.target.value)} disabled={this.state.isEditForm} />
+                    <input className="form-control" placeholder={`Job Step`} name={`JobStep_${jobStep.id}`} type="text" id={`JobStep_${jobStep.id}`} value={jobStep.Step} title={jobStep.Step} onChange={(e) => this.handleJobStepChange(index, 'Step', e.target.value)} disabled={this.state.isEditForm} />
 
                 </td>
                 <td className="text-center">
@@ -744,7 +745,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             Title={jobStep.RiskFamily}
                             name={""}
                             id={`RiskFamily_${jobStep.id}`}
-                            placeholderText={""}
+                            placeholderText={"Risk Family"}
                             className={""}
                             selectedValue={jobStep.RiskFamily}
                             OptionsList={this.state.RiskFamilyOpt}
@@ -762,7 +763,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             Title={jobStep.Risk}
                             name={""}
                             id={`Risk_${jobStep.id}`}
-                            placeholderText={""}
+                            placeholderText={"Risk"}
                             className={""}
                             selectedValue={jobStep.Risk}
                             OptionsList={jobStep.RiskOpt}
@@ -838,6 +839,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 <td>
                     <div className={`div-RL-Total ${jobStep.RiskLevelColorClasses.Total}`} title="Total Score">{jobStep.TotalScore}</div>
                 </td>
+                {(!this.state.isEditForm && jobSteps.length > 1) ? <td className="text-center"><span className="spn-del" title="Delete Job Step" onClick={() => this.deleteJobStep(index)}><FontAwesomeIcon icon={faTrashCan} /></span></td> : ''}
             </tr>
         ))
 
@@ -899,10 +901,21 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 RiskOpt: [],
             },]
             this.setState({ jobSteps: updatedjobSteps });
+            setTimeout(()=>{document.getElementById(`JobStep_${updatedjobSteps.length}`)?.focus()},300);
         }
         else {
             showToast("error", isValid.message);
         }
+    };
+    private deleteJobStep = (index: number) => {
+        const prevJobSteps = [...this.state.jobSteps];
+        const updatedJobSteps = prevJobSteps.filter((_, i) => i !== index);
+        // Optionally reassign IDs if needed
+        const reindexedJobSteps = updatedJobSteps.map((item, idx) => ({
+            ...item,
+            id: idx + 1
+        }));
+        this.setState({ jobSteps: reindexedJobSteps });
     };
     private validateJobSteps = () => {
         const updatedJobSteps = [...this.state.jobSteps];
@@ -959,14 +972,14 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         DynamicHTML = PPETypes.map((PPE, index) => (
 
             <tr key={PPE.id}>
-                <td className="p-1">
+                <td className="p-1" title={PPE.PPEType}>
                     {/* <div className="custom-dropdown" id={`divPPE_${PPE.id}`} title={PPE.PPEType}> */}
                     <SearchableDropdown
                         label={""}
                         Title={PPE.PPEType}
                         name={""}
                         id={`PPEType_${PPE.id}`}
-                        placeholderText={""}
+                        placeholderText={"PPE Type"}
                         className={""}
                         selectedValue={PPE.PPEType}
                         OptionsList={this.state.PPETypesOpt}
@@ -1002,6 +1015,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 PPEType: '',
             },]
             this.setState({ PPETypes: updatedPPETypes });
+            setTimeout(()=>{document.getElementById(`PPEType_${updatedPPETypes.length}`)?.getElementsByTagName('input')[0].focus()},300);
         }
         else {
             showToast("error", isValid.message);
@@ -1044,12 +1058,12 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         DynamicHTML = Persons.map((Person, index) => (
             <tr key={Person.id}>
                 <td className="p-1">
-                    <input className="form-control p-1" placeholder={``} name={`PersonName_${Person.id}`} type="text" id={`PersonName_${Person.id}`} value={Person.PersonName} title={Person.PersonName} onChange={(e) => this.handlePersonsChange(index, 'PersonName', e.target.value)} disabled={false} />
+                    <input className="form-control p-1" placeholder={`Person Name`} name={`PersonName_${Person.id}`} type="text" id={`PersonName_${Person.id}`} value={Person.PersonName} title={Person.PersonName} onChange={(e) => this.handlePersonsChange(index, 'PersonName', e.target.value)} disabled={false} />
 
                 </td>
                 <td className="p-1">
                     {/* <div className="c-date-picker"> */}
-                    <DatePickercontrol placeholder="" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
+                    <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={Person.PersonDate} title={Person.PersonDate} isDisabled={false} id={`PersonDate_${Person.id}`} startDate={undefined} endDate={undefined} name={`PersonDate_${index}`} onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divPersonDate")} highlightDate={new Date()} showIcon />
                     {/* </div> */}
                 </td>
                 {Persons.length > 1 ? <td className="text-center"><span className="spn-del" title="Delete Person" onClick={() => this.deletePerson(index)}><FontAwesomeIcon icon={faTrashCan} /></span></td> : ''}
@@ -1078,6 +1092,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 PersonDate: ''
             },]
             this.setState({ Persons: updatedPersons });
+            setTimeout(()=>{document.getElementById(`PersonName_${updatedPersons.length}`)?.focus()},300);
         }
         else {
             showToast("error", isValid.message);
@@ -1106,12 +1121,12 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 document.getElementById(`PersonName_${Person.id}`)?.focus();
                 break;
             }
-            else if (!Person.PersonDate) {
-                isValid = { message: `'Person Date' cannot be blank.`, status: false };
-                setTimeout(() => { document.getElementById(`PersonDate_${Person.id}`)?.classList.add('mandatory-FormContent-focus'); }, 100);
-                document.getElementById(`PersonDate_${Person.id}`)?.focus();
-                break;
-            }
+            // else if (!Person.PersonDate) {
+            //     isValid = { message: `'Person Date' cannot be blank.`, status: false };
+            //     setTimeout(() => { document.getElementById(`PersonDate_${Person.id}`)?.classList.add('mandatory-FormContent-focus'); }, 100);
+            //     document.getElementById(`PersonDate_${Person.id}`)?.focus();
+            //     break;
+            // }
 
             if (!isValid.status) break;
         }
@@ -1137,18 +1152,17 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="div-form-title">
-                                <div className="form-title">{" JSRA " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <div className="form-title">{" JSRA Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
                                 <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
                             <div className="">
-                                <div className="greenborder">
-                                    <div className="p-2 mx-3 my-2">
+                                <div className="form-border-box p-2 mx-3 my-2">
                                         <div className="row py-2">
-                                            <div className="col-md-3" id="divDate">
+                                            <div className="col-md-3">
                                                 <div className="light-text">
                                                     <label className="z-in-9"> Date <span className="mandatoryhastrick">*</span></label>
                                                     <div className="custom-datepicker" id="divDate">
-                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
+                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.Date} title={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
                                                     </div>
                                                 </div>
                                             </div>
@@ -1305,27 +1319,29 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                         {/* Job Steps Table */}
                                         <div className="row">
                                             <div className="col-12">
-                                        <div className={'form-border-box p-2 my-2'}>
-                                            <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
-                                            <table id="jobStepsTable" className="TablejobSteps">
-                                                <thead>
-                                                    <tr className="darkgraybg">
-                                                        <th className="WPercent-4"></th>
-                                                        <th className="WPercent-20">Job Step</th>
-                                                        <th className="text-center WPercent-4">Required</th>
-                                                        <th className="text-center WPercent-20">Risk Family</th>
-                                                        <th className="text-center WPercent-20">Risk</th>
-                                                        <th className="text-center WPercent-20">Factors</th>
-                                                        <th className="WPercent-6">Risk Level</th>
-                                                        <th className="WPercent-6">Total Score</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {this.bindJobSteps()}
-                                                </tbody>
-                                            </table>
-                                            {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} /> Add Job Step</button>}
-                                        </div>
+                                                <div className={'form-border-box p-2 my-2'}>
+                                                    <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
+                                                    <table id="jobStepsTable" className="TablejobSteps">
+                                                        <thead>
+                                                            <tr className="darkgraybg">
+                                                                <th className="WPercent-4"></th>
+                                                                <th className="WPercent-20">Job Step</th>
+                                                                <th className="text-center WPercent-4">Required</th>
+                                                                <th className="text-center WPercent-20">Risk Family</th>
+                                                                <th className="text-center WPercent-20">Risk</th>
+                                                                <th className="text-center WPercent-20">Factors</th>
+                                                                <th className="WPercent-6">Risk Level</th>
+                                                                <th className="WPercent-6">Total Score</th>
+                                                                {(!this.state.isEditForm && this.state.jobSteps.length > 1) ? <th className="text-center">Delete</th> : ""}
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {this.bindJobSteps()}
+                                                        </tbody>
+                                                    </table>
+                                                    {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} /> Add Job Step</button>}
+                                                </div>
 
                                             </div>
                                             {/* Permits Section */}
@@ -1401,11 +1417,11 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         <tbody>
                                                             <tr>
                                                                 <td className="p-1">
-                                                                    <input className="form-control p-1" placeholder="" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
+                                                                    <input className="form-control p-1" placeholder="Supervisor Name" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
 
                                                                 </td>
                                                                 <td className="p-1">
-                                                                    <DatePickercontrol placeholder="" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
+                                                                    <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -1418,7 +1434,6 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                         </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

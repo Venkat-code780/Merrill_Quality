@@ -123,13 +123,24 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
 
 
     // Stop drawing
-    const stopDrawing = () => {
-        setIsDrawing(false);
-        if (currentShape) {
-            drawShape(currentShape);
-        }
+    // const stopDrawing = () => {
+    //     setIsDrawing(false);
+    //     if (currentShape) {
+    //         drawShape(currentShape);
+    //     }
+    //     setCurrentShape(null);
+    // };
+    const stopDrawing = (e:any,isMouseUp?:boolean) => {
+    setIsDrawing(false);
+
+    if (currentShape) {
+        drawShape(currentShape);
         setCurrentShape(null);
-    };
+    } 
+    if(isMouseUp){
+        saveHistory(); 
+    }
+};
 
     // Function to draw the current shape
     const drawShape = (shape: any) => {
@@ -268,7 +279,7 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
                 style={{ border: '1px solid #000' }}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
-                onMouseUp={stopDrawing}
+                onMouseUp={(e)=>stopDrawing(e,true)}
                 onMouseLeave={stopDrawing}
                 className={`sketchCanvas ${getCursorClass()}`}
             />

@@ -84,7 +84,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({ onImageUpload, onRemoveI
   return (
     <div className="imageUploader light-text">
       <label className="label">Upload Image</label>
-      <div className="uploadContainer">
+      <div className="uploadContainer p-2 form-control">
         <div onClick={triggerFileSelect} style={{cursor:"pointer"}}>
             <img
             src="/sites/ventureglobal/mayco/merrill/sa/SiteAssets/Images/upload.png"

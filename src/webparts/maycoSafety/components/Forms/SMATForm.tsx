@@ -120,6 +120,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
     public componentDidMount(): void {
         highlightCurrentNav("liSMATForm");
         document.title = "Mayco - Safety | SMAT";
+        document.getElementById("divWCCDate")?.getElementsByTagName('input')[0].focus();
         this.getOnLoadData();
     }
 
@@ -261,7 +262,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 }).filter(mapItem => mapItem != null);
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId, isEditForm});
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId, isEditForm });
         } catch (e) {
             console.log(e);
             this.onError();
@@ -786,7 +787,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="div-form-title">
-                                <div className="form-title">{" SMAT " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <div className="form-title">{" SMAT Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
                                 <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
                             <div className="">
@@ -798,13 +799,13 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                 <div className="light-text">
                                                     <label className="" htmlFor="dtWCCDate"> Date <span className="mandatoryhastrick">*</span></label>
                                                     <div className="custom-datepicker" id="divWCCDate">
-                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WCCDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.WCCDate} title={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WCCDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
                                                     </div>
                                                 </div>
                                             </div>
                                             {/* Shift */}
                                             <div className="col-md-3">
-                                                <div className="custom-dropdown" id="divShift">
+                                                <div className="custom-dropdown" id="divShift" title={this.state.formData.ShiftType}>
                                                     <SearchableDropdown
                                                         label={"Shift"}
                                                         Title={"Shift"}
@@ -863,7 +864,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         <div className="row pb-2">
                                             {/* Department */}
                                             <div className="col-md-3">
-                                                <div className="custom-dropdown" id="divDepartment">
+                                                <div className="custom-dropdown" id="divDepartment" title={this.state.formData.Department}>
                                                     <SearchableDropdown
                                                         label={"Department"}
                                                         Title={"Department"}
@@ -882,7 +883,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                             </div>
                                             {/* Zone */}
                                             <div className="col-md-3">
-                                                <div className="custom-dropdown" id="divZone">
+                                                <div className="custom-dropdown" id="divZone" title={this.state.formData.Zone}>
                                                     <SearchableDropdown
                                                         label={"Zone"}
                                                         Title={"Zone"}
@@ -901,7 +902,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                             </div>
                                             {/* Machine */}
                                             <div className="col-md-3">
-                                                <div className="custom-dropdown" id="divMachine">
+                                                <div className="custom-dropdown" id="divMachine" title={this.state.formData.Machine}>
                                                     <SearchableDropdown
                                                         label={"Machine"}
                                                         Title={"Machine"}
@@ -981,19 +982,19 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         <div className="row mt-2">
                                             <div className="col-md-12">
                                                 <div className="form-border-box p-1 my-2">
-                                                <table className="col-md-12">
-                                                    <thead >
-                                                        <tr className="darkgraybg fs-5">
-                                                            <th>Requirement</th>
-                                                            <th>Select</th>
-                                                            <th>Comments</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {this.bindDynamicTable()}
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                    <table className="col-md-12">
+                                                        <thead >
+                                                            <tr className="darkgraybg fs-5">
+                                                                <th>Requirement</th>
+                                                                <th>Select</th>
+                                                                <th>Comments</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {this.bindDynamicTable()}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                         {/* Comments */}
@@ -1001,7 +1002,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                             <div className="col-md-12">
                                                 <div className="light-text" >
                                                     <label className=" col-form-label" htmlFor="txtComments">Comments </label>
-                                                    <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="Comments" value={this.state.formData.Comments} onChange={this.handleChange} title="Comments" ></textarea>
+                                                    <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" ref={this.txtComments} placeholder="" value={this.state.formData.Comments} title={this.state.formData.Comments} onChange={this.handleChange} ></textarea>
                                                 </div>
                                             </div>
                                             {/* Supervisor Action Completed */}
@@ -1009,7 +1010,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                 <div className="">
                                                     <div className="light-text">
                                                         <label className=" col-form-label" htmlFor="txtActionCompleted">Action Completed </label>
-                                                        <textarea className="form-control bs-textarea" rows={3} id="txtActionCompleted" name="ActionCompleted" ref={this.txtActionCompleted} placeholder="Action Completed" value={this.state.formData.ActionCompleted} onChange={this.handleChange} title="Action Completed"></textarea>
+                                                        <textarea className="form-control bs-textarea" rows={3} id="txtActionCompleted" name="ActionCompleted" ref={this.txtActionCompleted} placeholder="" value={this.state.formData.ActionCompleted} title={this.state.formData.ActionCompleted} onChange={this.handleChange}></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1018,7 +1019,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                 <div className="light-text">
                                                     <label className="" htmlFor="dtCompletedDate"> Completed Date </label>
                                                     <div className="custom-datepicker" id="divCompletedDate">
-                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.CompletedDate} id='dtCompletedDate' startDate={undefined} endDate={undefined} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.CompletedDate} title={this.state.formData.CompletedDate} id='dtCompletedDate' startDate={undefined} endDate={undefined} name="CompletedDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divCompletedDate", dateProps)} highlightDate={new Date()} showIcon />
                                                     </div>
                                                 </div>
                                             </div>

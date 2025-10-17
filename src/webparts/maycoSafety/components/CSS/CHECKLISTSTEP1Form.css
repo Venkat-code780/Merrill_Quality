@@ -21,15 +21,18 @@
 }
 
 .Low {
-    background-color: #d7e5eb;
+    /* background-color: #d7e5eb; */
+    background-color: #a0dcf3;
 }
 
 .Medium {
-    background-color: #b5c4ca;
+    /* background-color: #b5c4ca; */
+    background-color: #75cef1;
 }
 
 .High {
-    background-color: #8f9da3;
+    /* background-color: #8f9da3; */
+    background-color: #3bbdef;
 }
 
 .TopicCell {

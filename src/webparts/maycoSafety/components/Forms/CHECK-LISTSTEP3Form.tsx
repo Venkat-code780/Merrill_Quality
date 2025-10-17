@@ -113,6 +113,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
     public componentDidMount(): void {
         highlightCurrentNav("liCHECK-LISTSTEP3Form");
         document.title = "Mayco - Safety | CHECKLISTSTEP3";
+        document.getElementById("divDate")?.getElementsByTagName('input')[0].focus();
         this.getOnLoadData();
     }
 
@@ -581,7 +582,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="div-form-title">
-                                <div className="form-title">{" Mayco International - WCM Safety Pillar Step Audits - Level 3 " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
+                                <div className="form-title">{" Mayco International - WCM Safety Pillar Step Audits - Level 3 Form " + (this.state.isEditForm ? (" - " + this.state.ItemId) : "")} </div>
                                 <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>
                             </div>
                             <div className="">
@@ -592,7 +593,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                                 <div className="light-text">
                                                     <label className=""> Date <span className="mandatoryhastrick">*</span></label>
                                                     <div className="custom-datepicker" id="divDate">
-                                                        <DatePickercontrol placeholder="" selectedDate={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
+                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.Date} title={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} highlightDate={new Date()} showIcon />
                                                     </div>
                                                 </div>
                                             </div>
@@ -711,7 +712,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
 
                                             {/* Check List Table */}
                                             <div className="col-12 mt-2"></div>
-                                            <div className="divCheckListTable form-border-box my-2">
+                                            <div className="divCheckListTable form-border-box px-0 my-2">
                                                 <table className="CheckListTable col-md-12" id="tblCheckList">
                                                     <tbody className="tbodyHeadRows">
                                                         {this.bindCheckListTableHeader()}

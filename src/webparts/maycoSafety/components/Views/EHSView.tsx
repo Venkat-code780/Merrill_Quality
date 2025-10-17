@@ -245,7 +245,7 @@ export default class EHSView extends React.Component<EHSProps,EHSState> {
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
               <div className="div-form-title">
-                                <div className="form-title">EHS</div>
+                                <div className="form-title">EHS View</div>
                             </div>
                     <div className="mainContent borderLine">
                   <div className="row">

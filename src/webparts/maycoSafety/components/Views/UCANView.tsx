@@ -221,7 +221,7 @@ private async loadListData() {
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
                <div className="div-form-title">
-                                <div className="form-title">UCAN</div>
+                                <div className="form-title">UCAN View</div>
                             </div>
                    <div className="mainContent borderLine">
                   <div className="row">

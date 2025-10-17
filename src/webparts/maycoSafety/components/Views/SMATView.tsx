@@ -243,7 +243,7 @@ private handleConfirmDelete = async (id?: number | null) => {
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
              <div className="div-form-title">
-                                <div className="form-title">SMAT</div>
+                                <div className="form-title">SMAT View</div>
                             </div>
                  <div className="mainContent borderLine">
                   <div className="row">

@@ -179,8 +179,8 @@ private async checkDuplicate() {
         showLoader();
         const formData = { ...this.state.formData };
         let isValid = true;
-        const escapedTitle = formData.Title.replace(/'/g, "''");
-        let filterQuery = `Title eq '${escapedTitle}' and RootCauseId eq ${formData.RootCauseId}`;
+         if (formData.Title) formData.Title = formData.Title.trim();
+        let filterQuery = `Title eq '${this.state.formData.Title}' and RootCauseId eq ${formData.RootCauseId}`;
 
         if (this.state.ItemId > 0) {
             filterQuery += ` and Id ne ${this.state.ItemId}`;
@@ -237,7 +237,7 @@ private async checkDuplicate() {
         try{
             let itemId = this.state.ItemId;
             let formData = {...this.state.formData};
-            formData.Title = formData.Title ? formData.Title.trim() : "";
+            if (formData.Title) formData.Title = formData.Title.trim();
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
                     let msg = "Secondary Root Cause updated successfully";
@@ -396,7 +396,7 @@ private handleChangeClient = (selected: any) => {
                                                                  <label htmlFor="ddRootCause">
                                                                         Root Cause<span className="mandatoryhastrick">*</span>
                                                                      </label>
-                                                                <div className="custom-dropdown" id="divRootCause">
+                                                                <div className="custom-dropdown" id="divRootCause" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
                                                                  <SearchableDropdown label={""} Title={"Root Cause"} name={"RootCauseId"} id={"ddRootCause"} className={""} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                                 </div>
                                                               </div>

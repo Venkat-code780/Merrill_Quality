@@ -162,7 +162,7 @@ export default class CheckList2View extends React.Component<CheckList2Props,Chec
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
             <div className="div-form-title">
-                                <div className="form-title">CHECK-LIST STEP 2</div>
+                                <div className="form-title">CHECK-LIST STEP 2 View</div>
                             </div>
                   <div className="mainContent borderLine">
                     <div className="row">

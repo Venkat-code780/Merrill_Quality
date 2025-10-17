@@ -76,7 +76,7 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
         InjuredName: item.InjuredName,
         InjuryType: item.InjuryType?.Title || "",
         Injury_x0020_Date_x0020_Time: DateUtilities.getDateMMDDYYYY(item.Injury_x0020_Date_x0020_Time), 
-        Injury_x0020_Date_x0020_TimeForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Injury_x0020_Date_x0020_Time)}</span>${DateUtilities.getDateMMDDYYYY(item.Injury_x0020_Date_x0020_Time)}`, 
+        Injury_x0020_Date_x0020_TimeForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Injury_x0020_Date_x0020_Time)}</span>${DateUtilities.getDateMMDDYYYYTimes(item.Injury_x0020_Date_x0020_Time)}`, 
         Plant: item.Plant,
         Department: item.Department,
         Zone: item.Zone,
@@ -143,9 +143,10 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
       {
         name: "Injury Date Time",
         selector: (row: any) => row.Injury_x0020_Date_x0020_TimeForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Injury_x0020_Date_x0020_TimeForGrid }} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Injury_x0020_Date_x0020_TimeForGrid }} onClick={(event)=>{this.handleRowClicked(event,row.id)}} />,
         sortable: true
-      }, { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
+      },
+      { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
       { name: "Department", selector: (row: any) => row.Department, sortable: true },
       { name: "Zone", selector: (row: any) => row.Zone, sortable: true },
       { name: "Machine", selector: (row: any) => row.Machine, sortable: true },
@@ -162,7 +163,7 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
       <div className="container-fluid">
         <div className="light-box border-box-shadow">
              <div className="div-form-title">
-                                <div className="form-title">SEWO</div>
+                                <div className="form-title">SEWO View</div>
                             </div>
                             <div className="mainContent borderLine">
 

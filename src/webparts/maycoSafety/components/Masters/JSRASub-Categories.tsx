@@ -176,11 +176,10 @@ private async checkDuplicate() {
         let isValid = true;
 
         // Escape single quotes in Title
-        const escapedTitle = formData.Title.replace(/'/g, "''");
-
+                 if (formData.Title) formData.Title = formData.Title.trim();
         // Build OData filter for all three fields
         // Note: Adjust property names according to your SharePoint list fields
-        let filterQuery = `Title eq '${escapedTitle}' and CategoryId eq ${formData.CategoryId}`;
+        let filterQuery = `Title eq '${this.state.formData.Title}' and CategoryId eq ${formData.CategoryId}`;
 
         if (this.state.ItemId > 0) {
             // Exclude the current item (for update scenario)
@@ -238,6 +237,7 @@ private async checkDuplicate() {
         try{
             let itemId = this.state.ItemId;
             let formData = {...this.state.formData};
+            if (formData.Title) formData.Title = formData.Title.trim();
 
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
@@ -402,7 +402,7 @@ private handleChangeClient = (selected: any) => {
                                                                  <label htmlFor="CategoryDropdown">
                                                                         JSRA Category<span className="mandatoryhastrick">*</span>
                                                                      </label>
-                                                            <div className="custom-dropdown" id="divCategory">
+                                                            <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
                                                                 <Dropdown label={""} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
                                                             </div>
                                                             </div>

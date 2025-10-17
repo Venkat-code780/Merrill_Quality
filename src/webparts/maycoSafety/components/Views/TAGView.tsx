@@ -180,7 +180,7 @@ export default class TAGView extends React.Component<TAGProps,TAGState> {
         <div className="container-fluid">
           <div className="light-box border-box-shadow">
                <div className="div-form-title">
-                                <div className="form-title">TAG</div>
+                                <div className="form-title">TAG View</div>
                             </div>
                       <div className="mainContent borderLine">
                   {/* <div id="content" className="content p-2 pt-2"> */}

@@ -537,7 +537,7 @@ private handleSubCategoryChange = (selected: any) => {
                                                                  <label htmlFor="CategoryIdddl">
                                                                         Category<span className="mandatoryhastrick">*</span>
                                                                      </label>
-                                                                  <div className="custom-dropdown" id="divCategory">
+                                                                  <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategories.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
                                                                 <Dropdown label={""} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
                                                                 </div>
                                                                 </div>
@@ -547,7 +547,7 @@ private handleSubCategoryChange = (selected: any) => {
                                                                  <label htmlFor="Sub_x0020_CategoryIdddl">
                                                                         Sub Category<span className="mandatoryhastrick">*</span>
                                                                      </label>
-                                                                  <div className="custom-dropdown" id="divSubCategory">
+                                                                  <div className="custom-dropdown" id="divSubCategory"  title={(this.state.FilteredSubCategories.find((i: { label: string; value: any }) => i.value == this.state.formData.Sub_x0020_CategoryId) as { label: string; value: any } | undefined)?.label}>
                                                                 <Dropdown label={""} Title={"CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange= {this.handleSubCategoryChange} isRequired={true} disabled={false}></Dropdown>
                                                                 </div>
                                                                 </div>

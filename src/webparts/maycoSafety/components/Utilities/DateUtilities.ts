@@ -9,6 +9,28 @@ class DateUtilities {
         let date=new Date(givenDate);
           return (date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) + "/" + (date.getDate() <= 9 ? "0" + date.getDate() : date.getDate()) + "/" + date.getFullYear()+ " " + date.getHours() + ":" + date.getMinutes();
     }
+  public static getDateMMDDYYYYTimes(givenDate: any) {
+    let date = new Date(givenDate);
+
+    // Get hours, minutes, and AM/PM
+    let hours = date.getHours();
+    let minutes: number | string = date.getMinutes();  // Allow both number and string for minutes
+    let ampm = hours >= 12 ? "PM" : "AM";
+
+    // Convert hours from 24-hour format to 12-hour format
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+
+    // Ensure minutes are formatted as a 2-digit string
+    minutes = minutes < 10 ? "0" + minutes : minutes.toString(); // Convert to string
+
+    // Return the formatted date with AM/PM
+    return (date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) + "/" +
+        (date.getDate() <= 9 ? "0" + date.getDate() : date.getDate()) + "/" + date.getFullYear() +
+        " " + hours + ":" + minutes + " " + ampm;
+}
+
+
     public static getDateYYYYMMDDForSorting(givenDate: any)
     {
         let date=new Date(givenDate);
@@ -28,5 +50,6 @@ class DateUtilities {
     newDate.setTime(newDate.getTime() - ((webTimeZoneData.Bias - utcOffsetMinutes + webTimeZoneData.DaylightBias) * 60 * 1000));
     return newDate;
   }
+  
  }
  export default DateUtilities;

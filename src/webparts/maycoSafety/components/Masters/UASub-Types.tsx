@@ -174,12 +174,8 @@ export interface UASubTypeState {
          const formData = { ...this.state.formData };
  
          let isValid = true;
- 
-  
-         const escapedTitle = formData.Title.replace(/'/g, "''");
- 
-      
-         let filterQuery = `Title eq '${escapedTitle}' and UAType0Id eq ${formData.UAType0Id}`;
+         if (formData.Title) formData.Title = formData.Title.trim();
+         let filterQuery = `Title eq '${this.state.formData.Title}' and UAType0Id eq ${formData.UAType0Id}`;
  
          if (this.state.ItemId > 0) {
              // Exclude the current item (for update scenario)
@@ -237,7 +233,7 @@ export interface UASubTypeState {
         try{
             let itemId = this.state.ItemId;
             let formData = {...this.state.formData};
-
+                if (formData.Title) formData.Title = formData.Title.trim();
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
                     let msg = "UA Micro Type updated successfully";
@@ -403,7 +399,7 @@ private handleChangeClient = (selected: any) => {
                                                                         UA Type<span className="mandatoryhastrick">*</span>
                                                                      </label>
                                                                 
-                                                            <div className="custom-dropdown" id="divCategory">
+                                                            <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
                                                                 <Dropdown label={""} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
                                                             </div>
                                                             </div>

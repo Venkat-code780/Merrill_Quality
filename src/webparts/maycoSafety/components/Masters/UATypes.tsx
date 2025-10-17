@@ -178,8 +178,8 @@ private async checkDuplicate() {
         showLoader();
         const formData = { ...this.state.formData };
         let isValid = true;
-        const escapedTitle = formData.Title.replace(/'/g, "''");
-        let filterQuery = `Title eq '${escapedTitle}'`;
+                 if (formData.Title) formData.Title = formData.Title.trim();
+        let filterQuery = `Title eq '${this.state.formData.Title}'`;
 
         if (this.state.ItemId > 0) {
             filterQuery += ` and Id ne ${this.state.ItemId}`;
@@ -245,7 +245,7 @@ private async checkDuplicate() {
         try{
             let itemId = this.state.ItemId;
             let formData = {...this.state.formData};
-
+            if (formData.Title) formData.Title = formData.Title.trim();
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
                     let msg = "UA Type updated successfully";

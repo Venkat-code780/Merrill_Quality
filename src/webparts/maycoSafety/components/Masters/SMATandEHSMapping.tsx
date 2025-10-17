@@ -193,6 +193,8 @@ private async checkDuplicate() {
         const formData = { ...this.state.formData };
 
         let isValid = true;
+                 if (formData.Audit_SubCategory) formData.Audit_SubCategory = formData.Audit_SubCategory.trim();
+
         const escapedTitle = formData.Audit_SubCategory.replace(/'/g, "''");
 
      
@@ -258,7 +260,7 @@ private async checkDuplicate() {
         try{
             let itemId = this.state.ItemId;
             let formData = {...this.state.formData};
-
+            if (formData.Audit_SubCategory) formData.Audit_SubCategory = formData.Audit_SubCategory.trim();
             if( itemId > 0 ){
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
                     let msg = "SMAT and EHS Mapping updated successfully";
@@ -447,7 +449,7 @@ formData[name as keyof typeof formData] = value as never;
                                                                    <label htmlFor="ddAuditCategory">
                                                                         Audit Category<span className="mandatoryhastrick">*</span>
                                                                      </label>
-                                                                <div className="custom-dropdown" id="divAuditCategory">
+                                                                <div className="custom-dropdown" id="divAuditCategory" title={(this.state.AuditCategory.find((i: { label: string; value: any }) => i.value == this.state.formData.Audit_categoriesId) as { label: string; value: any } | undefined)?.label}>
                                                                  <SearchableDropdown label={""} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                                 </div>
                                                               </div>

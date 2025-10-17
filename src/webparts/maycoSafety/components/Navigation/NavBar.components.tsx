@@ -50,10 +50,10 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
      private setAccordionFromPath = () => {
      let path = this.props.router.location.pathname.toLowerCase();
           const openSideBars: { [key: string]: boolean } = {
-  Masters: false,
-  Forms: false,
-  Views: false,
-  Home: false
+              Masters: false,
+               Forms: false,
+                Views: false,
+               Home: false
 };
     // const openSideBars: any = {};
     const openMasters: any = {};
@@ -207,7 +207,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
                             <div>
                                 <ul className="list-unstyled ul-leftnav components mb-5">
                                     <li id="liHome" className="mb-1">
-                                        <div className="sidebar-title" onClick={(e) => this.toggleSideBarItem(e, 'Home')}>
+                                        <div className={`sidebar-title ${this.state.openSideBars["Home"] ? 'left-nav-active' : ''}`} onClick={(e) => this.toggleSideBarItem(e, 'Home')}>
                                             <NavLink to={"/Home"}><span><FontAwesomeIcon icon={faHome} /> Home</span></NavLink>
                                         </div>
                                     </li>

@@ -47,6 +47,7 @@ export interface ActionsState {
     RootCausesid: number,
     SecondaryRootCauseid: number,
     FilteredSecondaryrootCauses: any
+    FilteredSecondaryTitle:any
 
 }
 
@@ -85,7 +86,8 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
             SecondaryRootCauses: [],
             FilteredSecondaryrootCauses: [],
             RootCausesid: 0,
-            SecondaryRootCauseid: 0
+            SecondaryRootCauseid: 0,
+            FilteredSecondaryTitle:''
         };
 
         this.Title = React.createRef<HTMLInputElement>();
@@ -372,13 +374,16 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
 
     private handleSecondaryRootCauseChange = (selected: any) => {
         const selectedSecondaryId = selected?.value ?? 0;
+        const selectedSecondaryTitle = selected?.label ?? "";
+
         document.getElementById("divSecondaryRootcause")?.classList.remove("searchMandatory");
 
         this.setState((prevState) => ({
             formData: {
                 ...prevState.formData,
                 SecondaryRootCauseId: selectedSecondaryId   // correct field
-            }
+            },
+            FilteredSecondaryTitle:selectedSecondaryTitle
         }));
     };
 
@@ -480,7 +485,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                             <label htmlFor="ddlRootCause">
                                                                 Root Cause <span className="mandatoryhastrick">*</span>
                                                             </label>
-                                                            <div className="custom-dropdown" id="divRootcauese">
+                                                            <div className="custom-dropdown" id="divRootcauese" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
                                                                 <SearchableDropdown label={"Root Cause"} Title="Root Cause" name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
                                                             </div>
                                                         </div>
@@ -491,7 +496,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                             <label htmlFor="ddlSecondaryRootCause">
                                                                 Secondary Root Cause <span className="mandatoryhastrick">*</span>
                                                             </label>
-                                                            <div className="custom-dropdown" id="divSecondaryRootcause">
+                                                            <div className="custom-dropdown" id="divSecondaryRootcause" title={(this.state.FilteredSecondaryrootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.SecondaryRootCauseId) as { label: string; value: any } | undefined)?.label} >
                                                                 <SearchableDropdown label={""} Title={"Secondary Root Cause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
                                                             </div>
 

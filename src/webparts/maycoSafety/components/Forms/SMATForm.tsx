@@ -380,8 +380,6 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
     private handleDateChange = (dateValue: any, name: any, divId: any, dateProps: any) => {
         const formData: any = { ...this.state.formData };
-        console.log(dateProps);
-
         if (!([null, undefined, ''].includes(divId))) {
             var ddlElement = document.getElementById(divId);
             if (!([null, undefined, ''].includes(dateValue))) {
@@ -427,14 +425,12 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             let isValid = formValidation.FormValidation(data);
 
             if (isValid.status) {
-                // console.log("Valid Data");
                 let isValidDynamicComments = this.validateDynamicSubCategoryComments();
                 if (isValidDynamicComments) {
 
                     //Date formatting, Year and YearMonth
                     formData.WCCDate = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(formData.WCCDate)), this.props.spContext.webTimeZoneData).toISOString();
                     let mmddyyyyDate = format(formData.WCCDate, "MM/dd/yyyy");
-                    // console.log(mmddyyyyDate);
                     formData.Year = mmddyyyyDate.split("/")[2];
                     formData.YearMonth = mmddyyyyDate.split("/")[0];
                     if (formData.CompletedDate != "") {
@@ -466,11 +462,6 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
                     formData.unsafeactCount = unsafeact.toString();
                     formData.unsafeconditionCount = unsafeConddition.toString();
-
-                    console.clear();
-                    console.log(formData);
-                    console.log(this.state.allMappingData);
-
                     await this.InsertOrUpdateData(formData);
                 }
             }
@@ -626,7 +617,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
     }
     private getGroupName() {
         var selectedDept = this.state.formData.Department;
-        let group = "OTHER [WCM Merrill Safety Mgt]"; // Default group
+        // let group = "OTHER [WCM Merrill Safety Mgt]"; // Default group
+        let group = "WCM Merrill Safety Mgt"; // Default group
 
         switch (selectedDept) {
             case "Molding":
@@ -716,7 +708,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         </select>
                                     </div>
                                 </td>
-                                <td>
+                                {allMappingData.some(i=>i.SubCategoryStatus!='Satisfactory') && <td>
                                     <div className={` ${isSatisfactory ? 'd-none' : ''}`} id={`divSubCategory${rowIndex}`}>
                                         <textarea
                                             className="form-control bs-textarea"
@@ -730,7 +722,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                             title="Comments"
                                         />
                                     </div>
-                                </td>
+                                </td>}
                             </tr>
                         );
                     })}
@@ -745,7 +737,6 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         const allMappingData: any = [...this.state.allMappingData];
         const value = event.target.value;
         allMappingData[CategoryIndex].SubCategoryStatus = value;
-        console.log(allMappingData);
         this.setState({ allMappingData });
     };
 
@@ -758,7 +749,6 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         }
         const allMappingData: any = [...this.state.allMappingData];
         allMappingData[CategoryIndex].SubCategoryComments = event.target.value;
-        console.log(allMappingData);
         this.setState({ allMappingData });
     };
 
@@ -799,7 +789,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                 <div className="light-text">
                                                     <label className="" htmlFor="dtWCCDate"> Date <span className="mandatoryhastrick">*</span></label>
                                                     <div className="custom-datepicker" id="divWCCDate">
-                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.WCCDate} title={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="WCCDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.WCCDate} title={this.state.formData.WCCDate} id='dtWCCDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="WCCDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divWCCDate", dateProps)} highlightDate={new Date()} showIcon />
                                                     </div>
                                                 </div>
                                             </div>
@@ -818,7 +808,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No ShiftType"
+                                                        noOptionsMessage="No Shift Type available"
                                                     />
                                                 </div>
                                             </div>
@@ -837,7 +827,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAuditorName") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Auditor's Names"
+                                                        noOptionsMessage="No Auditor Names available"
                                                     />
                                                 </div>
                                             </div>
@@ -877,7 +867,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Departments"
+                                                        noOptionsMessage="No Departments available"
                                                     />
                                                 </div>
                                             </div>
@@ -896,7 +886,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Zones"
+                                                        noOptionsMessage="No Zones available"
                                                     />
                                                 </div>
                                             </div>
@@ -915,7 +905,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Machines"
+                                                        noOptionsMessage="No Machines available"
                                                     />
                                                 </div>
                                             </div>
@@ -934,7 +924,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divWorkCell") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No WorkCell"
+                                                        noOptionsMessage="No Work Cell available"
                                                     />
                                                 </div>
                                             </div>
@@ -955,7 +945,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divToolNumber") }}
                                                         isRequired={this.state.formData.Department == "Molding"}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No ToolNumber's"
+                                                        noOptionsMessage="No Tool Numbers available"
                                                     />
                                                 </div>
                                             </div>
@@ -974,7 +964,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSupervisor") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Supervisor's"
+                                                        noOptionsMessage="No Supervisors available"
                                                     />
                                                 </div>
                                             </div>
@@ -986,8 +976,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                         <thead >
                                                             <tr className="darkgraybg fs-5">
                                                                 <th>Requirement</th>
-                                                                <th>Select</th>
-                                                                <th>Comments</th>
+                                                                <th>Status</th>
+                                                                {this.state.allMappingData.some(i=>i.SubCategoryStatus!='Satisfactory') &&<th>Comments<span className="mandatoryhastrick"> *</span></th>}
                                                             </tr>
                                                         </thead>
                                                         <tbody>

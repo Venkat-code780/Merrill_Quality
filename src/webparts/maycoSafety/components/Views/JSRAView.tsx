@@ -7,10 +7,11 @@ import { Navigate, NavLink } from 'react-router-dom';
 import TableGenerator from "../Shared/TableGenerator";
 import { hideLoader, showLoader } from "../Shared/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit,faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import DateUtilities from "../Utilities/DateUtilities"
 import ModalApprovePopUp from "../Shared/ModalApprovePopUp";
 import Serachbledropdown from "../Shared/Dropdown";
+import { showToast } from "../Shared/Toaster";
 
 export interface JSRAProps {
   context: any;
@@ -19,40 +20,40 @@ export interface JSRAProps {
 export interface JSRAState {
   ActionsData: Array<{
     Id: number;
-    Date:string;
-    Plant:string;
-    Department:string;
-    Zone:string;
-    Machine:string;
-    Work_x0020_Cell:string;
-    Supervisor:string;
-    Shift:string;
-    Task_x0020_Analyzed:string;
-     Tool_x0020_Number:string;
-     Hot_x0020_Work_x0020_Permit_x002:string;
-     Hot_x0020_Work_x0020_Permit_x0020:string;
-     Electrical_x0020_Permit_x0020_Re:string;
-     Electrical_x0020_Permit_x0020_Ac:string;
-     Confined_x0020_Space_x0020_Permi:string;
-     Confined_x0020_Space_x0020_Permi0:string;
-     Supervisor_x0020_Name:string;
-     Supervisor_x0020_Date:string;
-     Year:string;
-        
+    Date: string;
+    Plant: string;
+    Department: string;
+    Zone: string;
+    Machine: string;
+    Work_x0020_Cell: string;
+    Supervisor: string;
+    Shift: number;
+    Task_x0020_Analyzed: string;
+    Tool_x0020_Number: string;
+    Hot_x0020_Work_x0020_Permit_x002: string;
+    Hot_x0020_Work_x0020_Permit_x0020: string;
+    Electrical_x0020_Permit_x0020_Re: string;
+    Electrical_x0020_Permit_x0020_Ac: string;
+    Confined_x0020_Space_x0020_Permi: string;
+    Confined_x0020_Space_x0020_Permi0: string;
+    Supervisor_x0020_Name: string;
+    Supervisor_x0020_Date: string;
+    Year: number;
+
   }>;
   loading: boolean;
   pageNumber: number;
   sortBy: number;
   sortOrder: boolean;
-          ItemID:number,
-  redirect:boolean
+  ItemID: number,
+  redirect: boolean
   showDeleteModal: boolean;
   deleteItemId: number | null;
-         yearOptions: Array<{ label: string; value: string }>;
-  selectedYear: string | undefined;
+  yearOptions: Array<{ label: string; value: string }>;
+  selectedYear: any;
 }
 
-export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
+export default class JSRAView extends React.Component<JSRAProps, JSRAState> {
   private sp = spfi().using(SPFx(this.props.context));
 
   constructor(props: JSRAProps) {
@@ -64,10 +65,10 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
       sortBy: 1,
       ItemID: 0,
       sortOrder: false,
-      redirect:false,
-        showDeleteModal: false,
+      redirect: false,
+      showDeleteModal: false,
       deleteItemId: null,
-          yearOptions: [],
+      yearOptions: [],
       selectedYear: "All",
     };
   }
@@ -86,33 +87,32 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
         .orderBy("Modified", false)();
 
       const tableData = items.map((item: any) => ({
-        Id: item.Id,
-         Date: DateUtilities.getDateMMDDYYYY(item.Date), 
-      DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
-    
-        Plant:item.Plant,
-        Department:item.Department,
-        Zone:item.Zone,
-        Machine:item.Machine,
-        Work_x0020_Cell:item.Work_x0020_Cell,
-        Supervisor:item.Supervisor,
-        Shift:item.Shift,
-        Task_x0020_Analyzed:item.Task_x0020_Analyzed,
-        Hot_x0020_Work_x0020_Permit_x002:item.Hot_x0020_Work_x0020_Permit_x002,
-        Hot_x0020_Work_x0020_Permit_x0020:item.Hot_x0020_Work_x0020_Permit_x0020,
-        Electrical_x0020_Permit_x0020_Re:item.Electrical_x0020_Permit_x0020_Re,
-        Electrical_x0020_Permit_x0020_Ac:item.Electrical_x0020_Permit_x0020_Ac,
-        Confined_x0020_Space_x0020_Permi:item.Confined_x0020_Space_x0020_Permi,
-        Confined_x0020_Space_x0020_Permi0:item.Confined_x0020_Space_x0020_Permi0,
-        Supervisor_x0020_Name:item.Supervisor_x0020_Name,
-          Supervisor_x0020_Date: DateUtilities.getDateMMDDYYYY(item.Supervisor_x0020_Date), 
-      Supervisor_x0020_DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Supervisor_x0020_Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Supervisor_x0020_Date)}`,
-        Year:item.Year,
-        Tool_x0020_Number:item.Tool_x0020_Number
-   
-      
+        Id: Number(item.Id),
+        Date: DateUtilities.getDateMMDDYYYY(item.Date),
+        DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
+        Plant: item.Plant,
+        Department: item.Department,
+        Zone: item.Zone,
+        Machine: item.Machine,
+        Work_x0020_Cell: item.Work_x0020_Cell,
+        Supervisor: item.Supervisor,
+        Shift: [null, undefined, ''].includes(item.Shift) ? item.Shift : Number(item.Shift),
+        Task_x0020_Analyzed: item.Task_x0020_Analyzed,
+        Hot_x0020_Work_x0020_Permit_x002: item.Hot_x0020_Work_x0020_Permit_x002,
+        Hot_x0020_Work_x0020_Permit_x0020: item.Hot_x0020_Work_x0020_Permit_x0020,
+        Electrical_x0020_Permit_x0020_Re: item.Electrical_x0020_Permit_x0020_Re,
+        Electrical_x0020_Permit_x0020_Ac: item.Electrical_x0020_Permit_x0020_Ac,
+        Confined_x0020_Space_x0020_Permi: item.Confined_x0020_Space_x0020_Permi,
+        Confined_x0020_Space_x0020_Permi0: item.Confined_x0020_Space_x0020_Permi0,
+        Supervisor_x0020_Name: item.Supervisor_x0020_Name,
+        Supervisor_x0020_Date: [null, undefined, ''].includes(item.Supervisor_x0020_Date) ? item.Supervisor_x0020_Date : DateUtilities.getDateMMDDYYYY(item.Supervisor_x0020_Date),
+        Supervisor_x0020_DateForGrid: [null, undefined, ''].includes(item.Supervisor_x0020_Date) ? item.Supervisor_x0020_Date : `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Supervisor_x0020_Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Supervisor_x0020_Date)}`,
+        Year: [null, undefined, ''].includes(item.Year) ? item.Year : Number(item.Year),
+        Tool_x0020_Number: item.Tool_x0020_Number
+
+
       }));
-         const yearList = tableData
+      const yearList = tableData
         .map((i) => parseInt(i.Year, 10))
         .filter((y) => !isNaN(y));
 
@@ -129,46 +129,47 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
         }
       }
 
-      this.setState({ ActionsData: tableData,yearOptions });
+      this.setState({ ActionsData: tableData, yearOptions });
     } catch (e) {
       console.error(e);
     } finally {
       hideLoader();
     }
   }
-   private  handleRowClicked = (row:any,Id?:any) => {
-        let ID = row.Id?row.Id:Id;
-        this.setState({ItemID:ID,redirect:true});
-      }
-    private openDeleteModal = (id: number) => {
+  private handleRowClicked = (row: any, Id?: any) => {
+    let ID = row.Id ? row.Id : Id;
+    this.setState({ ItemID: ID, redirect: true });
+  }
+  private openDeleteModal = (id: number) => {
     this.setState({ showDeleteModal: true, deleteItemId: id });
+    setTimeout(() => { document.getElementById("btnOK")?.focus() }, 300);
   };
 
 
- private handleConfirmDelete = async (id?: number | null) => {
+  private handleConfirmDelete = async (id?: number | null) => {
     try {
       if (id != null) {
         showLoader();
         this.setState({ showDeleteModal: false });
         const parentId = id;
-        
+
         // Delete children
         const childItems = await this.sp.web.lists
           .getByTitle("JSRA Line")
           .items.filter(`JSRA_x0020_ID eq ${parentId}`)();
-  
+
         for (const child of childItems) {
           await this.sp.web.lists.getByTitle("JSRA Line").items.getById(child.Id).delete();
         }
-  
+
         // Delete parent
-        await this.sp.web.lists.getByTitle("JSRA").items.getById(parentId).delete();
-  
-        // Update UI
-        this.setState(prev => ({
+        await this.sp.web.lists.getByTitle("JSRA").items.getById(parentId).delete().then(res => {
+          showToast("success", `JSRA - ${parentId}  deleted Successfully`);
+           this.setState(prev => ({
           ActionsData: prev.ActionsData.filter(item => item.Id !== parentId),
           deleteItemId: null,
         }));
+        });
       }
     } catch (err) {
       console.error("Delete failed:", err);
@@ -178,55 +179,56 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
   };
 
 
-          private handleYearChange = (selected: any) => {
-  // assuming Serachbledropdown sends { label, value }
-  this.setState({ selectedYear: selected?.value || "All" });
-};
+  private handleYearChange = (selected: any, actionMeta?: any) => {
+    // assuming Serachbledropdown sends { label, value }
+    let value = actionMeta.action == 'clear' ? '' : selected.value;
+    this.setState({ selectedYear: value });
+  };
 
 
 
-   private handleCancelDelete = () => {
+  private handleCancelDelete = () => {
     this.setState({ showDeleteModal: false, deleteItemId: null });
   };
 
   public render() {
     const columns = [
-               {
-                  name: "Edit",
-                  //selector: "Id",
-                  selector: (row: { Id: any; }, i: any) => row.Id,
-                  cell: (record: { Id: any; }) => {
-                    return (
-                      <React.Fragment>
-                        <div style={{ paddingLeft: '10px' }}>
-                          <NavLink title="Edit" className="csrLink ms-draggable" to={`/JSRAForm/${record.Id}`}>
-                            <FontAwesomeIcon icon={faEdit} ></FontAwesomeIcon>
-                          </NavLink>
-                        </div>
-                      </React.Fragment>
-                    );
-                  },
-                  width:'60px',
-                },
-                    {
+      {
+        name: "Edit",
+        //selector: "Id",
+        selector: (row: { Id: any; }, i: any) => row.Id,
+        cell: (record: { Id: any; }) => {
+          return (
+            <React.Fragment>
+              <div style={{ paddingLeft: '10px' }}>
+                <NavLink title="Edit" className="csrLink ms-draggable" to={`/JSRAForm/${record.Id}`}>
+                  <FontAwesomeIcon icon={faEdit} ></FontAwesomeIcon>
+                </NavLink>
+              </div>
+            </React.Fragment>
+          );
+        },
+        width: '60px',
+      },
+      {
         name: "Delete",
         selector: (row: { Id: any }) => row.Id,
         cell: (record: { Id: number }) => (
           <div style={{ paddingLeft: "10px", cursor: "pointer" }}>
             <span className="spn-del" title="Delete" onClick={() => this.openDeleteModal(record.Id)}>
-            <FontAwesomeIcon
-              icon={faTrashCan}
-            />
+              <FontAwesomeIcon
+                icon={faTrashCan}
+              />
             </span>
           </div>
         ),
         width: "70px",
-      },,
-      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
-       {
+      }, ,
+      { name: "ID", selector: (row: any) => row.Id, sortable: true, width: '60px' },
+      {
         name: "Date",
         selector: (row: any) => row.DateForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} onClick={(event) => this.handleRowClicked(event, row.Id)} />,
         sortable: true,
       },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
@@ -238,66 +240,66 @@ export default class JSRAView extends React.Component<JSRAProps,JSRAState> {
       { name: "Shift", selector: (row: any) => row.Shift, sortable: true },
       { name: "Task Analyzed", selector: (row: any) => row.Task_x0020_Analyzed, sortable: true },
       { name: "Tool Number.", selector: (row: any) => row.Tool_x0020_Number, sortable: true },
-      { name: "Hot Work Permit Required", selector: (row: any) => row.Hot_x0020_Work_x0020_Permit_x002 ? "Yes":"No", sortable: true },
-      { name: "Hot Work Permit Acquired", selector: (row: any) => row.Hot_x0020_Work_x0020_Permit_x0020 ? "Yes":"No", sortable: true },
-      { name: "Electrical Permit Required", selector: (row: any) => row.Electrical_x0020_Permit_x0020_Re? "Yes":"No", sortable: true },
-      { name: "Electrical Permit Acquired", selector: (row: any) => row.Electrical_x0020_Permit_x0020_Ac? "Yes":"No", sortable: true },
-      { name: "Confined Space Permit Required", selector: (row: any) => row.Confined_x0020_Space_x0020_Permi? "Yes":"No", sortable: true },
-      { name: "Confined Space Permit Acquired", selector: (row: any) => row.Confined_x0020_Space_x0020_Permi0? "Yes":"No", sortable: true },
+      { name: "Hot Work Permit Required", selector: (row: any) => row.Hot_x0020_Work_x0020_Permit_x002 ? "Yes" : "No", sortable: true },
+      { name: "Hot Work Permit Acquired", selector: (row: any) => row.Hot_x0020_Work_x0020_Permit_x0020 ? "Yes" : "No", sortable: true },
+      { name: "Electrical Permit Required", selector: (row: any) => row.Electrical_x0020_Permit_x0020_Re ? "Yes" : "No", sortable: true },
+      { name: "Electrical Permit Acquired", selector: (row: any) => row.Electrical_x0020_Permit_x0020_Ac ? "Yes" : "No", sortable: true },
+      { name: "Confined Space Permit Required", selector: (row: any) => row.Confined_x0020_Space_x0020_Permi ? "Yes" : "No", sortable: true },
+      { name: "Confined Space Permit Acquired", selector: (row: any) => row.Confined_x0020_Space_x0020_Permi0 ? "Yes" : "No", sortable: true },
       { name: "Supervisor Name", selector: (row: any) => row.Supervisor_x0020_Name, sortable: true },
-        {
+      {
         name: "Supervisor Date",
         selector: (row: any) => row.Supervisor_x0020_DateForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Supervisor_x0020_DateForGrid }} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Supervisor_x0020_DateForGrid }} onClick={(event) => this.handleRowClicked(event, row.Id)} />,
         sortable: true
       },
-      { name: "Year", selector: (row: any) =>row.Year, sortable: true },
-      
-    ];
-      const filteredData =this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter( (item) => item.Year === this.state.selectedYear ): this.state.ActionsData;
+      { name: "Year", selector: (row: any) => row.Year, sortable: true },
 
-       if(this.state.redirect){
-                    let url = `/JSRAForm/${this.state.ItemID}`;
-                return (<Navigate to={url}/>);
-                 }
+    ];
+    const filteredData = this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter((item) => item.Year == this.state.selectedYear) : this.state.ActionsData;
+
+    if (this.state.redirect) {
+      let url = `/JSRAForm/${this.state.ItemID}`;
+      return (<Navigate to={url} />);
+    }
     return (
-        <div className="container-fluid">
-          <div className="light-box border-box-shadow">
-              <div className="div-form-title">
-                                <div className="form-title">JSRA View</div>
-                            </div>
-                            <div className="mainContent borderLine">
-                  <div className="row">
-            <div className="col-md-3">
-                  <div className="light-text mt-4">
-                   <label htmlFor="">
+      <div className="container-fluid">
+        <div className="light-box border-box-shadow">
+          <div className="div-form-title">
+            <div className="form-title">JSRA View</div>
+          </div>
+          <div className="mainContent borderLine">
+            <div className="row">
+              <div className="col-md-3">
+                <div className="light-text mt-4">
+                  <label htmlFor="">
                     Year Filter
                   </label>
-                <div className="custom-dropdown" id="divRootcauese">
-            <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+                  <div className="custom-dropdown" id="divRootcauese">
+                    <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+                  </div>
+                </div>
+              </div>
+              <TableGenerator
+                columns={columns}
+                data={filteredData}
+                onRowClick={this.handleRowClicked}
+                fileName={"Actions"}
+                showPagination={true}
+              />
+              <ModalApprovePopUp
+                message="Are you sure you want to Delete?"
+                modalHeader="modal-header-reject"
+                title="Delete"
+                isVisible={this.state.showDeleteModal}
+                isSuccess={false}
+                errorMessage=""
+                comments={() => { }}
+                commentsValue=""
+                onConfirm={() => this.handleConfirmDelete(this.state.deleteItemId)}
+                onCancel={this.handleCancelDelete}
+              />
             </div>
-            </div>
-            </div>
-            <TableGenerator
-              columns={columns}
-              data={filteredData}
-              onRowClick={this.handleRowClicked}
-              fileName={"Actions"}
-              showPagination={true}
-            />
-             <ModalApprovePopUp
-          message="Are you sure you want to Delete?"
-          modalHeader="modal-header-reject"
-          title="Delete"
-          isVisible={this.state.showDeleteModal}
-          isSuccess={false}
-          errorMessage=""
-          comments={() => {}}
-          commentsValue=""
-          onConfirm={()=>this.handleConfirmDelete(this.state.deleteItemId)}
-          onCancel={this.handleCancelDelete}
-        />
-          </div>
           </div>
         </div>
       </div>

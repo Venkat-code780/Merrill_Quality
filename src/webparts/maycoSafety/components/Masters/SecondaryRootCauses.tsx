@@ -397,7 +397,7 @@ private handleChangeClient = (selected: any) => {
                                                                         Root Cause<span className="mandatoryhastrick">*</span>
                                                                      </label>
                                                                 <div className="custom-dropdown" id="divRootCause" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
-                                                                 <SearchableDropdown label={""} Title={"Root Cause"} name={"RootCauseId"} id={"ddRootCause"} className={""} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                 <SearchableDropdown label={""} Title={"Root Cause"} name={"RootCauseId"} id={"ddRootCause"} className={""} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Root Cause available"></SearchableDropdown>
                                                                 </div>
                                                               </div>
                                                         </div>

@@ -368,8 +368,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 [SEWORes] = await Promise.all([getListItems(this.SEWOList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`)]);
                 if (!SEWORes.isHttpRequestError) {
                     if (SEWORes.length) {
-                       SEWOAttach= this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles();
-                        console.log(SEWOAttach);
+                       SEWOAttach= await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles();
                         SEWOAttach.map(async (selItem: any) => {
                             let name = selItem.FileName;
                             var fileUrl = selItem.ServerRelativeUrl;
@@ -634,8 +633,6 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
     private handleDateChange = (dateValue: any, name: any, divId: any, dateProps: any) => {
         const formData: any = { ...this.state.formData };
         let statusText = this.state.statusText;
-        console.log(dateProps);
-
         if (!([null, undefined, ''].includes(divId))) {
             var ddlElement = document.getElementById(divId);
             if (!([null, undefined, ''].includes(dateValue))) {
@@ -648,8 +645,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
 
         if (dateValue != null) {
             if (name == "Injury_x0020_Date_x0020_Time") {
-                dateValue = format(dateValue, "MM/dd/yyyy HH:mm")
-                console.log(dateValue);
+                dateValue = format(dateValue, "MM/dd/yyyy HH:mm");
             }
             else {
                 dateValue = format(DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(dateValue)), this.props.spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy");
@@ -720,13 +716,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                     formData.Injury_x0020_Date_x0020_Time = DateUtilities.addBrowserwrtServer(new Date(formData.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString();
                     formData.DaysOff = Number(formData.DaysOff);
                     formData.Sketch = this.sketchRef.current?.getImageData();
-                    console.log(formData.Sketch);
                     //To handle optional Date fields
                     this.processOptionalDateFields(formData);
                     //To handle optional LookUp Fields
                     this.processOptionalLookUpFields(formData);
-                    console.clear();
-                    console.log(formData);
                     await this.InsertOrUpdateData(formData);
                 }
                 else {
@@ -1060,7 +1053,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAccidentType") }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                noOptionsMessage="No AccidentTypes available"
+                                                noOptionsMessage="No Accident Types available"
                                             />
                                         </div>
                                     </div>
@@ -1079,7 +1072,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAccidentCause") }}
                                                 isRequired={false}
                                                 disabled={this.state.isInputDisabled}
-                                                noOptionsMessage="No AccidentCauses available"
+                                                noOptionsMessage="No Accident Causes available"
                                             />
                                         </div>
                                     </div>
@@ -1138,7 +1131,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divInjuryType") }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                noOptionsMessage="No InjuryTypes available"
+                                                noOptionsMessage="No Injury Types available"
                                             />
                                         </div>
                                     </div>
@@ -1217,7 +1210,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPositionType") }}
                                                 isRequired={false}
                                                 disabled={this.state.isInputDisabled}
-                                                noOptionsMessage="No Position Type Available"
+                                                noOptionsMessage="No Position Types Available"
                                             />
                                         </div>
                                     </div>
@@ -1344,7 +1337,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                     OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divBodyPart") }}
                                                     isRequired={true}
                                                     disabled={this.state.isInputDisabled}
-                                                    noOptionsMessage="No BodyParts available"
+                                                    noOptionsMessage="No Body Parts available"
                                                 />
                                             </div>
                                             <BodyPart selectedBodyPart={this.state.selBodyPart} />
@@ -1449,7 +1442,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divRootCause") }}
                                                 isRequired={true}
                                                 disabled={this.state.isInputDisabled}
-                                                noOptionsMessage="No RootCauses available"
+                                                noOptionsMessage="No Root Causes available"
                                             />
                                         </div>
                                     </div>

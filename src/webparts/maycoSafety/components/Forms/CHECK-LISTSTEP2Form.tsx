@@ -109,7 +109,6 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
         this.rootSiteURL = this.props.spContext.siteAbsoluteUrl; //   sites/wcm
         this.currentSiteURL = this.props.spContext.webAbsoluteUrl;//  sites/wcm/mayco/merrill/sa
         this.MaycoURL = `${this.rootSiteURL}/mayco`;
-        //console.log(this.rootSiteURL);      //sites/wcm
     }
 
     public componentDidMount(): void {
@@ -271,7 +270,6 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
         else {
             await addListItem('CheckListStep2', this.currentSiteURL, CheckListPostObj).then(async (res: any) => {
                 //let adedItemId = res.Id;
-                console.log(res)
                 if (!res.isHttpRequestError) {
                     let msg = "Check List Step - 2 submitted successfully";
                     this.onSuccess(msg);
@@ -613,7 +611,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={true}
-                                                        noOptionsMessage="No Plant"
+                                                        noOptionsMessage="No Plants available"
                                                     />
                                                 </div>
                                             </div>
@@ -631,7 +629,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Department"
+                                                        noOptionsMessage="No Departments available"
                                                     />
                                                 </div>
                                             </div>
@@ -649,7 +647,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Zone"
+                                                        noOptionsMessage="No Zones available"
                                                     />
                                                 </div>
                                             </div>
@@ -669,7 +667,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Machine"
+                                                        noOptionsMessage="No Machines available"
                                                     />
                                                 </div>
                                             </div>
@@ -687,7 +685,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Shift"
+                                                        noOptionsMessage="No Shifts available"
                                                     />
                                                 </div>
                                             </div>
@@ -705,7 +703,7 @@ export default class CHECKLISTSTEP2Form extends React.Component<CHECKLISTSTEP2Fo
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Auditor"
+                                                        noOptionsMessage="No Auditors available"
                                                     />
                                                 </div>
                                             </div>

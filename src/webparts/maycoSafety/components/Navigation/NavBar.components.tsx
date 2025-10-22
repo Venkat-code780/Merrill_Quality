@@ -29,13 +29,14 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
     public state: NavBarState = {
         currentUserLinks: [],
-        showSidebar: false,
+        showSidebar: true,
         openSideBars: {},
         openMasters: {},
         activeRoute: null
     };
 
     componentDidMount() {
+        document.getElementById('sideMenuNav')?.classList.add('active-navbar');
         this.setAccordionFromPath();
     }
 
@@ -97,7 +98,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
     }
 
     // Home
-    else if (/^\/home/.test(path)) {
+    else if (/^\/(home|)/.test(path)) {
       openSideBars["Home"] = true;
     }
 

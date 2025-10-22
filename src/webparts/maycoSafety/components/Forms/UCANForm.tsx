@@ -310,8 +310,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
 
     private handleDateChange = (dateValue: any, name: any, divId: any, dateProps: any) => {
         const formData: any = { ...this.state.formData };
-        console.log(dateProps);
-
         if (!([null, undefined, ''].includes(divId))) {
             var ddlElement = document.getElementById(divId);
             if (!([null, undefined, ''].includes(dateValue))) {
@@ -368,10 +366,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             let isValid = formValidation.FormValidation(data);
 
             if (isValid.status) {
-                console.log("Valid Data");
                 formData.Date = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(formData.Date)), this.props.spContext.webTimeZoneData).toISOString();
                 let mmddyyyyDate = format(formData.Date, "MM/dd/yyyy");
-                console.log(mmddyyyyDate);
                 formData.Year = mmddyyyyDate.split("/")[2];
                 formData.YearMonth = mmddyyyyDate.split("/")[0];
                 if (formData.Date_x0020_Completed != "") {
@@ -436,7 +432,6 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
     private onImageChange = (base64: string) => {
         const formData = { ...this.state.formData };
         formData.Attachment = base64;
-        console.log(base64);
         this.setState({ imageBase64: base64, formData })
     }
 
@@ -481,7 +476,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divUCANType") }}
                                                             isRequired={true}
                                                             disabled={this.state.isInputDisabled}
-                                                            noOptionsMessage="No UCAN Types"
+                                                            noOptionsMessage="No UCAN Types available"
                                                         />
                                                     </div>
                                                 </div>
@@ -519,7 +514,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment") }}
                                                             isRequired={true}
                                                             disabled={this.state.isInputDisabled}
-                                                            noOptionsMessage="No Departments"
+                                                            noOptionsMessage="No Departments available"
                                                         />
                                                     </div>
                                                 </div>
@@ -538,7 +533,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone") }}
                                                             isRequired={true}
                                                             disabled={this.state.isInputDisabled}
-                                                            noOptionsMessage="No Zones"
+                                                            noOptionsMessage="No Zones available"
                                                         />
                                                     </div>
                                                 </div>
@@ -557,7 +552,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine") }}
                                                             isRequired={this.state.formData.UCAN_x0020_Type != "Unsafe Act"}
                                                             disabled={this.state.isInputDisabled}
-                                                            noOptionsMessage="No Machines"
+                                                            noOptionsMessage="No Machines available"
                                                         />
                                                     </div>
                                                 </div>
@@ -576,7 +571,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divType") }}
                                                             isRequired={true}
                                                             disabled={this.state.isInputDisabled}
-                                                            noOptionsMessage="No Types"
+                                                            noOptionsMessage="No Types available"
                                                         />
                                                     </div>
                                                 </div>
@@ -595,7 +590,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSubType") }}
                                                             isRequired={true}
                                                             disabled={this.state.isInputDisabled}
-                                                            noOptionsMessage="No SubTypes"
+                                                            noOptionsMessage="No Sub Types available"
                                                         />
                                                     </div>
                                                 </div>
@@ -649,7 +644,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift") }}
                                                                         isRequired={true}
                                                                         disabled={this.state.isInputDisabled}
-                                                                        noOptionsMessage="No Shifts"
+                                                                        noOptionsMessage="No Shifts available"
                                                                     />
                                                                 </div>
                                                             </div>

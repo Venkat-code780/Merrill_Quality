@@ -115,7 +115,6 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         this.Date = React.createRef();
         this.SupervisorDate = React.createRef();
         this.SupervisorName = React.createRef();
-        //console.log(this.rootSiteURL);      //sites/wcm
     }
 
     public componentDidMount(): void {
@@ -493,7 +492,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         let group = '';
 
         if (selectedDept == "IP Assembly")
-            group = "WCM Safety IP Assy";
+            group = "WCM Safety IP Assembly";
         else if (selectedDept == "Sequencing")
             group = "WCM Safety Seq";
         else if (selectedDept == "Thermoforming")
@@ -752,7 +751,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'RiskFamily', selectedOption ? selectedOption.value : '')}
                             isRequired={false}
                             disabled={(!jobStep.Required) || this.state.isEditForm}
-                            noOptionsMessage="No Risk Family"
+                            noOptionsMessage="No Risk Family available"
                         />
                     </div>
                 </td>
@@ -770,13 +769,13 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Risk', selectedOption ? selectedOption.value : '')}
                             isRequired={false}
                             disabled={(!jobStep.Required) || this.state.isEditForm}
-                            noOptionsMessage="No Risk"
+                            noOptionsMessage="No Risk available"
                         />
                     </div>
                 </td>
                 <td>
-                    <div className="" title={String(jobStep.Probability)}>
-                        <div className="custom-dropdown" id={`divProbability_${jobStep.id}`}>
+                    <div className="" >
+                        <div className="custom-dropdown" id={`divProbability_${jobStep.id}`} title={(this.state.ProbabilityOpt.find((i: { label: string; value: any }) => i.value == jobStep.Probability) as { label: string; value: any } | undefined)?.label}>
                             <SearchableDropdown
                                 label={"Probability"}
                                 Title={String(jobStep.Probability)}
@@ -789,12 +788,12 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Probability', selectedOption ? selectedOption.value : '0')}
                                 isRequired={jobStep.Required}
                                 disabled={!jobStep.Required}
-                                noOptionsMessage="No Probability"
+                                noOptionsMessage="No Probability available"
                             />
                         </div>
                     </div>
-                    <div className="" title={String(jobStep.Controls)}>
-                        <div className="custom-dropdown" id={`divControls_${jobStep.id}`}>
+                    <div className="">
+                        <div className="custom-dropdown" id={`divControls_${jobStep.id}`} title={(this.state.ControlsOpt.find((i: { label: string; value: any }) => i.value == jobStep.Controls) as { label: string; value: any } | undefined)?.label}>
                             <SearchableDropdown
                                 label={"Controls"}
                                 Title={String(jobStep.Controls)}
@@ -807,12 +806,12 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Controls', selectedOption ? selectedOption.value : '0')}
                                 isRequired={jobStep.Required}
                                 disabled={!jobStep.Required}
-                                noOptionsMessage="No Controls"
+                                noOptionsMessage="No Controls available"
                             />
                         </div>
                     </div>
-                    <div className="" title={String(jobStep.Severity)}>
-                        <div className="custom-dropdown" id={`divSeverity_${jobStep.id}`}>
+                    <div className="">
+                        <div className="custom-dropdown" id={`divSeverity_${jobStep.id}`} title={(this.state.SeverityOpt.find((i: { label: string; value: any }) => i.value == jobStep.Severity) as { label: string; value: any } | undefined)?.label}>
                             <SearchableDropdown
                                 label={"Severity"}
                                 Title={String(jobStep.Severity)}
@@ -825,7 +824,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                 OnChange={(selectedOption: any, actionMeta: any) => this.handleJobStepChange(index, 'Severity', selectedOption ? selectedOption.value : '0')}
                                 isRequired={jobStep.Required}
                                 disabled={!jobStep.Required}
-                                noOptionsMessage="No Severity"
+                                noOptionsMessage="No Severity available"
                             />
                         </div>
                     </div>
@@ -986,7 +985,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         OnChange={(selectedOption: any, actionMeta: any) => this.handlePPETypeChange(index, 'PPEType', selectedOption ? selectedOption.value : '')}
                         isRequired={false}
                         disabled={false}
-                        noOptionsMessage="No PPE Type"
+                        noOptionsMessage="No PPE Type available"
                     />
                     {/* </div> */}
                 </td>
@@ -1180,7 +1179,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={true}
-                                                        noOptionsMessage="No Plant"
+                                                        noOptionsMessage="No Plants available"
                                                     />
                                                 </div>
                                             </div>
@@ -1198,7 +1197,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Department"
+                                                        noOptionsMessage="No Departments available"
                                                     />
                                                 </div>
                                             </div>
@@ -1216,7 +1215,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Zone"
+                                                        noOptionsMessage="No Zones available"
                                                     />
                                                 </div>
                                             </div>
@@ -1236,7 +1235,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Work Cell"
+                                                        noOptionsMessage="No Work Cells available"
                                                     />
                                                 </div>
                                             </div>
@@ -1254,7 +1253,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Machine"
+                                                        noOptionsMessage="No Machines available"
                                                     />
                                                 </div>
                                             </div>
@@ -1272,7 +1271,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={false}
                                                         disabled={false}
-                                                        noOptionsMessage="No Shift"
+                                                        noOptionsMessage="No Shifts available"
                                                     />
                                                 </div>
                                             </div>
@@ -1290,7 +1289,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={false}
                                                         disabled={false}
-                                                        noOptionsMessage="No Supervisor"
+                                                        noOptionsMessage="No Supervisors available"
                                                     />
                                                 </div>
                                             </div>
@@ -1310,7 +1309,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={this.state.isToolNumberMandatory}
                                                         disabled={false}
-                                                        noOptionsMessage="No Tool Number"
+                                                        noOptionsMessage="No Tool Numbers available"
                                                     />
                                                 </div>
                                             </div>
@@ -1321,7 +1320,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                                             <div className="col-12">
                                                 <div className={'form-border-box p-2 my-2'}>
                                                     <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
-                                                    <table id="jobStepsTable" className="TablejobSteps">
+                                                    <table id="jobStepsTable" className="TablejobSteps col-md-12">
                                                         <thead>
                                                             <tr className="darkgraybg">
                                                                 <th className="WPercent-4"></th>

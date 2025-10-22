@@ -54,8 +54,6 @@ export default class MaycoSafety extends React.Component<IMaycoSafetyProps> {
 
               currentUserGroupsList.push(group.Title);
             }
-            console.log("Current user groups");
-            console.log(currentUserGroupsList);
             if (currEnvironment.toLowerCase() == "wcm") { isWCM = true };
             this.setState({
               isAuthorized: true,

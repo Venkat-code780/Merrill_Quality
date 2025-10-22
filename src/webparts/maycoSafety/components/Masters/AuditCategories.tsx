@@ -322,8 +322,6 @@ private async checkDuplicate() {
 
   formData[name] = checked as never;
   this.setState({ formData });
-
-  console.log("Checkbox Changed:", name, checked);
 };
 
 

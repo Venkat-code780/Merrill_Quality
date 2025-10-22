@@ -10,15 +10,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import DateUtilities from "../Utilities/DateUtilities"
 import Serachbledropdown from "../Shared/Dropdown";
+import { format } from "date-fns";
+
 
 export interface SEWOProps {
+  spContext: any;
   context: any;
 }
 
 export interface SEWOState {
   ActionsData: Array<{
     Id: number;
-    Year: string;
+    Year: number;
     InjuredName: string;
     InjuryType: string;
     Injury_x0020_Date_x0020_Time: string;
@@ -36,7 +39,7 @@ export interface SEWOState {
   ItemID: number;
   redirect: boolean;
   yearOptions: Array<{ label: string; value: string }>;
-  selectedYear: string | undefined;
+  selectedYear: any;
 }
 
 export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
@@ -71,12 +74,13 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
         .orderBy("Modified", false)();
 
       const tableData = items.map((item: any) => ({
-        Id: item.Id,
-        Year: item.Year,
+        Id: Number(item.Id),
+        Year: [null, undefined, ''].includes(item.Year) ? item.Year : Number(item.Year),
         InjuredName: item.InjuredName,
         InjuryType: item.InjuryType?.Title || "",
-        Injury_x0020_Date_x0020_Time: DateUtilities.getDateMMDDYYYY(item.Injury_x0020_Date_x0020_Time), 
-        Injury_x0020_Date_x0020_TimeForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Injury_x0020_Date_x0020_Time)}</span>${DateUtilities.getDateMMDDYYYYTimes(item.Injury_x0020_Date_x0020_Time)}`, 
+        Injury_x0020_Date_x0020_Time: DateUtilities.getDateMMDDYYYY(item.Injury_x0020_Date_x0020_Time),
+        // Injury_x0020_Date_x0020_TimeForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Injury_x0020_Date_x0020_Time)}</span>${DateUtilities.getDateMMDDYYYYTimes(item.Injury_x0020_Date_x0020_Time)}`, 
+        Injury_x0020_Date_x0020_TimeForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDHHMMForSorting(DateUtilities.removeBrowserwrtServer(new Date(item.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString())}</span>${format(DateUtilities.removeBrowserwrtServer(new Date(item.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy hh:mm aa")}`,
         Plant: item.Plant,
         Department: item.Department,
         Zone: item.Zone,
@@ -112,9 +116,10 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
     let ID = row.Id ? row.Id : Id;
     this.setState({ ItemID: ID, redirect: true });
   }
-  private handleYearChange = (selected: any) => {
+  private handleYearChange = (selected: any,actionMeta?:any) => {
     // assuming Serachbledropdown sends { label, value }
-    this.setState({ selectedYear: selected?.value || "All" });
+    let value = actionMeta.action == 'clear' ? '' : selected.value;
+    this.setState({ selectedYear: value });
   };
 
   public render() {
@@ -134,16 +139,16 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
             </React.Fragment>
           );
         },
-        width:'60px'
+        width: '60px'
       },
-      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
+      { name: "ID", selector: (row: any) => row.Id, sortable: true, width: '60px' },
       { name: "Year", selector: (row: any) => row.Year, sortable: true },
       { name: "Name of injured", selector: (row: any) => row.InjuredName, sortable: true },
       { name: "Injury Type", selector: (row: any) => row.InjuryType, sortable: true },
       {
         name: "Injury Date Time",
         selector: (row: any) => row.Injury_x0020_Date_x0020_TimeForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Injury_x0020_Date_x0020_TimeForGrid }} onClick={(event)=>{this.handleRowClicked(event,row.id)}} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Injury_x0020_Date_x0020_TimeForGrid }} onClick={(event) => this.handleRowClicked(event, row.Id)} />,
         sortable: true
       },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
@@ -153,7 +158,7 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
       { name: "Accident Type", selector: (row: any) => row.AccidentType, sortable: true },
       { name: "Accident Cause", selector: (row: any) => row.AccidentCause, sortable: true },
     ];
-    const filteredData = this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter((item) => item.Year === this.state.selectedYear) : this.state.ActionsData;
+    const filteredData = this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter((item) => item.Year == this.state.selectedYear) : this.state.ActionsData;
 
     if (this.state.redirect) {
       let url = `/SEWOForm/${this.state.ItemID}`;
@@ -162,30 +167,30 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
     return (
       <div className="container-fluid">
         <div className="light-box border-box-shadow">
-             <div className="div-form-title">
-                                <div className="form-title">SEWO View</div>
-                            </div>
-                            <div className="mainContent borderLine">
+          <div className="div-form-title">
+            <div className="form-title">SEWO View</div>
+          </div>
+          <div className="mainContent borderLine">
 
-          <div className="row">
-            <div className="col-md-3">
-              <div className="light-text mt-4">
-                <label htmlFor="">
-                  Year Filter
-                </label>
-                <div className="custom-dropdown" id="divRootcauese">
-                  <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+            <div className="row">
+              <div className="col-md-3">
+                <div className="light-text mt-4">
+                  <label htmlFor="">
+                    Year Filter
+                  </label>
+                  <div className="custom-dropdown" id="divRootcauese">
+                    <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+                  </div>
                 </div>
               </div>
+              <TableGenerator
+                columns={columns}
+                data={filteredData}
+                onRowClick={this.handleRowClicked}
+                fileName={"Actions"}
+                showPagination={true}
+              />
             </div>
-            <TableGenerator
-              columns={columns}
-              data={filteredData}
-              onRowClick={this.handleRowClicked}
-              fileName={"Actions"}
-              showPagination={true}
-            />
-          </div>
           </div>
         </div>
       </div>

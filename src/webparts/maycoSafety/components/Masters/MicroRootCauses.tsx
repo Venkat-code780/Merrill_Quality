@@ -481,7 +481,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                                                                         Root Cause<span className="mandatoryhastrick">*</span>
                                                                      </label>
                                                                      <div className="custom-dropdown" id="divRootcause" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
-                                                                    <SearchableDropdown label={""} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                    <SearchableDropdown label={""} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Root Cause available"></SearchableDropdown>
                                                                  </div>
                                                               </div>
                                                         </div>
@@ -492,7 +492,7 @@ private handleSecondaryRootCauseChange = (selected: any) => {
                                                                         Secondary Root Cause<span className="mandatoryhastrick">*</span>
                                                                      </label>
                                                                    <div className="custom-dropdown" id="divSecondaryRootcause" title={(this.state.FilteredSecondaryrootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.SecondaryRootCauseId) as { label: string; value: any } | undefined)?.label}>
-                                                                <SearchableDropdown label={""} Title={"Secondary Root Cause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false}></SearchableDropdown>
+                                                                <SearchableDropdown label={""} Title={"Secondary Root Cause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Secondary Root Cause available"></SearchableDropdown>
                                                              </div>
                                                         
                                                               </div>

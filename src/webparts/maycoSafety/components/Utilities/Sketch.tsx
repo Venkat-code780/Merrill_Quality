@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEraser, faPen, faRedo, faSlash, faTimes, faUndo } from '@fortawesome/free-solid-svg-icons';
 
 export interface SketchProps {
-  initialImage?: string;
+    initialImage?: string;
 }
 
 export interface SketchHandle {
-  getImageData: () => string | null;
+    getImageData: () => string | null;
 }
 
 const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
@@ -70,7 +70,10 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
             setLastPosition(pos);
             setStartPosition(pos);
             setIsDrawing(true);
-            saveHistory(); // Save the current state of the canvas before starting drawing
+            if (history.length === 0) {
+                saveHistory(); // Save the initial blank state
+            }
+            //saveHistory(); // Save the current state of the canvas before starting drawing
         }
     };
 
@@ -130,17 +133,17 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
     //     }
     //     setCurrentShape(null);
     // };
-    const stopDrawing = (e:any,isMouseUp?:boolean) => {
-    setIsDrawing(false);
+    const stopDrawing = (e: any, isMouseUp?: boolean) => {
+        setIsDrawing(false);
 
-    if (currentShape) {
-        drawShape(currentShape);
+        if (currentShape) {
+            drawShape(currentShape);
+        }
         setCurrentShape(null);
-    } 
-    if(isMouseUp){
-        saveHistory(); 
-    }
-};
+        if (isMouseUp) {
+            saveHistory();
+        }
+    };
 
     // Function to draw the current shape
     const drawShape = (shape: any) => {
@@ -204,7 +207,8 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
         setRedoHistory((prevRedo) => [lastState, ...prevRedo]);
 
         const img = new Image();
-        img.src = lastState;
+        // img.src = lastState;
+        img.src = newHistory[newHistory.length - 1] || ''; // Load previous state or blank
         img.onload = () => {
             const ctx = getContext();
             if (ctx && canvasRef.current) {
@@ -268,7 +272,7 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
                     {/* <option value={5}>5px</option> */}
                     {numArr.map((num) => (<option value={num}>{num + "px"}</option>))}
                 </select>
-                <input type="color" onChange={(e) => changeColor(e.target.value)}  />
+                <input type="color" onChange={(e) => changeColor(e.target.value)} />
                 <button type='button' onClick={getImage} className='d-none'>Get Image</button>
             </div>
 
@@ -279,7 +283,7 @@ const Sketch = forwardRef<SketchHandle, SketchProps>((props, ref) => {
                 style={{ border: '1px solid #000' }}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
-                onMouseUp={(e)=>stopDrawing(e,true)}
+                onMouseUp={(e) => stopDrawing(e, true)}
                 onMouseLeave={stopDrawing}
                 className={`sketchCanvas ${getCursorClass()}`}
             />

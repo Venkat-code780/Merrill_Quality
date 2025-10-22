@@ -372,7 +372,7 @@ private handleChangeClient = (selected: any) => {
                             <div className="container-fluid">
                                 <div className="light-box border-box-shadow">
                                         <div className="div-form-title">
-                                <div className="form-title">UA Sub-Types</div>
+                                <div className="form-title">UA Sub - Types</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                             <div className="mainContent px-4 borderLine">
@@ -400,7 +400,7 @@ private handleChangeClient = (selected: any) => {
                                                                      </label>
                                                                 
                                                             <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
-                                                                <Dropdown label={""} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false}></Dropdown>
+                                                                <Dropdown label={""} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange= {this.handleChangeClient } isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
                                                             </div>
                                                             </div>
                                                         </div>

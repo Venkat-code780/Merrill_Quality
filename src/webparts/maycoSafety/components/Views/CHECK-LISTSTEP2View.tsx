@@ -23,22 +23,22 @@ export interface CheckList2State {
     Department: string;
     Zone: string;
     Machine: string;
-    Audit_x0020_Score: string;
-    Year: string;
+    Audit_x0020_Score: number;
+    Year: number;
     Auditor: string;
-    Month: string;
+    Month: number;
   }>;
   loading: boolean;
   pageNumber: number;
   sortBy: number;
   sortOrder: boolean;
-          ItemID:number;
-  redirect:boolean;
-     yearOptions: Array<{ label: string; value: string }>;
-  selectedYear: string | undefined;
+  ItemID: number;
+  redirect: boolean;
+  yearOptions: Array<{ label: string; value: string }>;
+  selectedYear: any;
 }
 
-export default class CheckList2View extends React.Component<CheckList2Props,CheckList2State> {
+export default class CheckList2View extends React.Component<CheckList2Props, CheckList2State> {
   private sp = spfi().using(SPFx(this.props.context));
 
   constructor(props: CheckList2Props) {
@@ -50,8 +50,8 @@ export default class CheckList2View extends React.Component<CheckList2Props,Chec
       sortBy: 1,
       ItemID: 0,
       sortOrder: false,
-      redirect:false,
-       yearOptions: [],
+      redirect: false,
+      yearOptions: [],
       selectedYear: "All",
     };
   }
@@ -70,19 +70,19 @@ export default class CheckList2View extends React.Component<CheckList2Props,Chec
         .orderBy("Modified", false)();
 
       const tableData = items.map((item: any) => ({
-        Id: item.Id,
-          Date: DateUtilities.getDateMMDDYYYY(item.Date), 
+        Id: Number(item.Id),
+        Date: DateUtilities.getDateMMDDYYYY(item.Date),
         DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
         Plant: item.Plant,
         Department: item.Department,
         Zone: item.Zone,
         Machine: item.Machine,
-        Audit_x0020_Score: item.Audit_x0020_Score,
-        Year: item.Year,
+        Audit_x0020_Score: [null,undefined,''].includes(item.Audit_x0020_Score) ? item.Audit_x0020_Score : Number(item.Audit_x0020_Score),
+        Year: [null,undefined,''].includes(item.Year)?item.Year:Number(item.Year),
         Auditor: item.Auditor, // handles person field
-        Month: item.Month,
+        Month: [null,undefined,''].includes(item.Month)?item.Month:Number(item.Month),
       }));
-        const yearList = tableData
+      const yearList = tableData
         .map((i) => parseInt(i.Year, 10))
         .filter((y) => !isNaN(y));
 
@@ -99,46 +99,47 @@ export default class CheckList2View extends React.Component<CheckList2Props,Chec
         }
       }
 
-      this.setState({ ActionsData: tableData,yearOptions });
+      this.setState({ ActionsData: tableData, yearOptions });
     } catch (e) {
       console.error(e);
     } finally {
       hideLoader();
     }
   }
-   private  handleRowClicked = (row:any,Id?:any) => {
-        let ID = row.Id?row.Id:Id;
-        this.setState({ItemID:ID,redirect:true});
-      }
-       private handleYearChange = (selected: any) => {
-  // assuming Serachbledropdown sends { label, value }
-  this.setState({ selectedYear: selected?.value || "All" });
-};
+  private handleRowClicked = (row: any, Id?: any) => {
+    let ID = row.Id ? row.Id : Id;
+    this.setState({ ItemID: ID, redirect: true });
+  }
+  private handleYearChange = (selected: any,actionMeta?:any) => {
+    // assuming Serachbledropdown sends { label, value }
+     let value = actionMeta.action == 'clear' ? '' : selected.value;
+    this.setState({ selectedYear: value });
+  };
 
   public render() {
     const columns = [
-               {
-                  name: "Edit",
-                  //selector: "Id",
-                  selector: (row: { Id: any; }, i: any) => row.Id,
-                  cell: (record: { Id: any; }) => {
-                    return (
-                      <React.Fragment>
-                        <div style={{ paddingLeft: '10px' }}>
-                          <NavLink title="Edit" className="csrLink ms-draggable" to={`/CHECK-LISTSTEP2Form/${record.Id}`}>
-                            <FontAwesomeIcon icon={faEdit} ></FontAwesomeIcon>
-                          </NavLink>
-                        </div>
-                      </React.Fragment>
-                    );
-                  },
-                  width:'60px',
-                },
-      { name: "ID", selector: (row: any) => row.Id, sortable: true,width:'60px' },
-         {
+      {
+        name: "Edit",
+        //selector: "Id",
+        selector: (row: { Id: any; }, i: any) => row.Id,
+        cell: (record: { Id: any; }) => {
+          return (
+            <React.Fragment>
+              <div style={{ paddingLeft: '10px' }}>
+                <NavLink title="Edit" className="csrLink ms-draggable" to={`/CHECK-LISTSTEP2Form/${record.Id}`}>
+                  <FontAwesomeIcon icon={faEdit} ></FontAwesomeIcon>
+                </NavLink>
+              </div>
+            </React.Fragment>
+          );
+        },
+        width: '60px',
+      },
+      { name: "ID", selector: (row: any) => row.Id, sortable: true, width: '60px' },
+      {
         name: "Date",
         selector: (row: any) => row.DateForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} onClick={(event)=>this.handleRowClicked(event,row.Id)}/>,
         sortable: true
       },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
@@ -150,44 +151,44 @@ export default class CheckList2View extends React.Component<CheckList2Props,Chec
       { name: "Auditor", selector: (row: any) => row.Auditor, sortable: true },
       { name: "Month", selector: (row: any) => row.Month, sortable: true },
     ];
-        const filteredData =this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter(
-        (item) => item.Year === this.state.selectedYear
-      ): this.state.ActionsData;
-       if(this.state.redirect){
-                    let url = `/CHECK-LISTSTEP2Form/${this.state.ItemID}`;
-                return (<Navigate to={url}/>);
-                 }
+    const filteredData = this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter(
+      (item) => item.Year == this.state.selectedYear
+    ) : this.state.ActionsData;
+    if (this.state.redirect) {
+      let url = `/CHECK-LISTSTEP2Form/${this.state.ItemID}`;
+      return (<Navigate to={url} />);
+    }
     return (
-      
-        <div className="container-fluid">
-          <div className="light-box border-box-shadow">
-            <div className="div-form-title">
-                                <div className="form-title">CHECK-LIST STEP 2 View</div>
-                            </div>
-                  <div className="mainContent borderLine">
-                    <div className="row">
-                <div className="col-md-3">
-                 <div className="light-text mt-4">
-                   <label htmlFor="">
-                    Year Filter 
-                  </label>
-                <div className="custom-dropdown" id="divRootcauese">
-            <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
-            </div>
-            </div>
-            </div>
-            <TableGenerator
-              columns={columns}
-              data={filteredData}
-              onRowClick={this.handleRowClicked}
-              fileName={"Actions"}
-              showPagination={true}
-            />
-            </div>
+
+      <div className="container-fluid">
+        <div className="light-box border-box-shadow">
+          <div className="div-form-title">
+            <div className="form-title">CHECK-LIST STEP 2 View</div>
           </div>
+          <div className="mainContent borderLine">
+            <div className="row">
+              <div className="col-md-3">
+                <div className="light-text mt-4">
+                  <label htmlFor="">
+                    Year Filter
+                  </label>
+                  <div className="custom-dropdown" id="divRootcauese">
+                    <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+                  </div>
+                </div>
+              </div>
+              <TableGenerator
+                columns={columns}
+                data={filteredData}
+                onRowClick={this.handleRowClicked}
+                fileName={"Actions"}
+                showPagination={true}
+              />
+            </div>
           </div>
         </div>
- 
+      </div>
+
     );
   }
 }

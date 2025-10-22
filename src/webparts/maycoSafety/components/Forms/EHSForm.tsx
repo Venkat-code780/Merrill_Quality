@@ -387,7 +387,6 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
     private handleDateChange = (dateValue: any, name: any, divId: any, dateProps: any) => {
         const formData: any = { ...this.state.formData };
-        console.log(dateProps);
 
         if (!([null, undefined, ''].includes(divId))) {
             var ddlElement = document.getElementById(divId);
@@ -433,12 +432,10 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             let isValid = formValidation.FormValidation(data);
 
             if (isValid.status) {
-                // console.log("Valid Data");
 
                 //Date formatting, Year and YearMonth
                 formData.Date = DateUtilities.addBrowserwrtServer(new Date(DateUtilities.getDateMMDDYYYY(formData.Date)), this.props.spContext.webTimeZoneData).toISOString();
                 let mmddyyyyDate = format(formData.Date, "MM/dd/yyyy");
-                // console.log(mmddyyyyDate);
                 formData.Year = mmddyyyyDate.split("/")[2];
                 formData.YearMonth = mmddyyyyDate.split("/")[0];
 
@@ -464,11 +461,6 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
                 formData.unsafeactCount = unsafeact.toString();
                 formData.unsafeconditionCount = unsafeConddition.toString();
-
-                console.clear();
-                console.log(formData);
-                console.log(this.state.allMappingData);
-
                 await this.InsertOrUpdateData(formData);
             }
             else {
@@ -699,7 +691,6 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         const allMappingData: any = [...this.state.allMappingData];
         const value = event.target.value;
         allMappingData[CategoryIndex].Status = value;
-        console.log(allMappingData);
         this.setState({ allMappingData });
     };
 
@@ -740,7 +731,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                 <div className="light-text">
                                                     <label className="" htmlFor="dtDate"> Date <span className="text-danger">*</span></label>
                                                     <div className="custom-datepicker" id="divDate">
-                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.Date} title={this.state.formData.Date} id='dtDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={undefined} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate", dateProps)} highlightDate={new Date()} showIcon />
+                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.Date} title={this.state.formData.Date} id='dtDate' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate", dateProps)} highlightDate={new Date()} showIcon />
                                                     </div>
                                                 </div>
                                             </div>
@@ -759,7 +750,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divShift") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Shifts"
+                                                        noOptionsMessage="No Shifts available"
                                                     />
                                                 </div>
                                             </div>
@@ -778,7 +769,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divAuditorName") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Auditor's Names"
+                                                        noOptionsMessage="No Auditor Names available"
                                                     />
                                                 </div>
                                             </div>
@@ -818,7 +809,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divDepartment") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Departments"
+                                                        noOptionsMessage="No Departments available"
                                                     />
                                                 </div>
                                             </div>
@@ -837,7 +828,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divZone") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Zones"
+                                                        noOptionsMessage="No Zones available"
                                                     />
                                                 </div>
                                             </div>
@@ -856,7 +847,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divMachine") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Machines"
+                                                        noOptionsMessage="No Machines available"
                                                     />
                                                 </div>
                                             </div>
@@ -875,7 +866,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divWorkCell") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No WorkCell"
+                                                        noOptionsMessage="No Work Cells available"
                                                     />
                                                 </div>
                                             </div>
@@ -896,7 +887,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divToolNo") }}
                                                         isRequired={this.state.formData.Department == "Molding"}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No ToolNo's"
+                                                        noOptionsMessage="No Tool No's available"
                                                     />
                                                 </div>
                                             </div>
@@ -915,7 +906,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSupervisor") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Supervisor's"
+                                                        noOptionsMessage="No Supervisor's available" 
                                                     />
                                                 </div>
                                             </div>
@@ -927,7 +918,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         <thead >
                                                             <tr className="darkgraybg fs-5">
                                                                 <th>Requirement</th>
-                                                                <th>Select</th>
+                                                                <th>Status</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

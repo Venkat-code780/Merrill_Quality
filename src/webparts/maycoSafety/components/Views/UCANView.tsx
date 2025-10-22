@@ -18,35 +18,35 @@ export interface UCANProps {
 export interface UCANState {
   ActionsData: Array<{
     Id: number;
-    UCAN_x0020_Type:string;
-    Plant:string;
-    Department:string;
-    Zone:string;
-    Machine:string;
-    UAType:string;
-    Sub_x002d_Type:string;
-    Shift:string;
-    Reported_x0020_By:string;
-    Location_x002f_Persons:string;
-    Safety_x0020_Tag:string;
-    Date:string;
-    Original_x0020_Tag_x0020_No_x002:string;
-    Date_x0020_Completed:string;
-    Action_x0020_Completed:string;
-    Modified:string;
-    Year: string;
+    UCAN_x0020_Type: string;
+    Plant: string;
+    Department: string;
+    Zone: string;
+    Machine: string;
+    UAType: string;
+    Sub_x002d_Type: string;
+    Shift: number;
+    Reported_x0020_By: string;
+    Location_x002f_Persons: string;
+    Safety_x0020_Tag: string;
+    Date: string;
+    Original_x0020_Tag_x0020_No_x002: number;
+    Date_x0020_Completed: string;
+    Action_x0020_Completed: string;
+    Modified: string;
+    Year: number;
   }>;
   loading: boolean;
   pageNumber: number;
   sortBy: number;
   sortOrder: boolean;
-          ItemID:number;
-  redirect:boolean;
-      yearOptions: Array<{ label: string; value: string }>;
-  selectedYear: string | undefined;
+  ItemID: number;
+  redirect: boolean;
+  yearOptions: Array<{ label: string; value: string }>;
+  selectedYear: any;
 }
 
-export default class UCANView extends React.Component<UCANProps,UCANState> {
+export default class UCANView extends React.Component<UCANProps, UCANState> {
   private sp = spfi().using(SPFx(this.props.context));
 
   constructor(props: UCANProps) {
@@ -58,8 +58,8 @@ export default class UCANView extends React.Component<UCANProps,UCANState> {
       sortBy: 1,
       ItemID: 0,
       sortOrder: false,
-      redirect:false,
-         yearOptions: [],
+      redirect: false,
+      yearOptions: [],
       selectedYear: "All",
     };
   }
@@ -68,115 +68,116 @@ export default class UCANView extends React.Component<UCANProps,UCANState> {
     document.title = "Mayco - Safety | UCAN View";
     this.loadListData();
   }
-private async loadListData() {
-  try {
-    showLoader();
-    const items = await this.sp.web.lists
-      .getByTitle("UCAN")
-      .items.select(
-        "Id",
-        "UCAN_x0020_Type",
-        "Plant",
-        "Department",
-        "Zone",
-        "Machine",
-        "UAType/Title",
-        "Sub_x002d_Type/Title",
-        "Shift",
-        "Reported_x0020_By",
-        "Location_x002f_Persons",
-        "Safety_x0020_Tag",
-        "Date",
-        "Original_x0020_Tag_x0020_No_x002",
-        "Date_x0020_Completed",
-        "Action_x0020_Completed",
-        "Modified",
-        "Year"
-      )
-      .expand("UAType", "Sub_x002d_Type")
-      .orderBy("Modified", false)
-      .top(2000)(); 
+  private async loadListData() {
+    try {
+      showLoader();
+      const items = await this.sp.web.lists
+        .getByTitle("UCAN")
+        .items.select(
+          "Id",
+          "UCAN_x0020_Type",
+          "Plant",
+          "Department",
+          "Zone",
+          "Machine",
+          "UAType/Title",
+          "Sub_x002d_Type/Title",
+          "Shift",
+          "Reported_x0020_By",
+          "Location_x002f_Persons",
+          "Safety_x0020_Tag",
+          "Date",
+          "Original_x0020_Tag_x0020_No_x002",
+          "Date_x0020_Completed",
+          "Action_x0020_Completed",
+          "Modified",
+          "Year"
+        )
+        .expand("UAType", "Sub_x002d_Type")
+        .orderBy("Modified", false)
+        .top(2000)();
 
-    const tableData = items.map((item: any) => ({
-      Id: item.Id,
-      UCAN_x0020_Type: item.UCAN_x0020_Type,
-      Plant: item.Plant,
-      Department: item.Department,
-      Zone: item.Zone,
-      Machine: item.Machine,
-      UAType: item.UAType?.Title || "",
-      Sub_x002d_Type: item.Sub_x002d_Type?.Title || "",
-      Shift: item.Shift,
-      Reported_x0020_By: item.Reported_x0020_By,
-      Location_x002f_Persons: item.Location_x002f_Persons,
-      Safety_x0020_Tag: item.Safety_x0020_Tag,
-      Date: DateUtilities.getDateMMDDYYYY(item.Date), 
-      DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`, 
-      
-      Original_x0020_Tag_x0020_No_x002: item.Original_x0020_Tag_x0020_No_x002,
-        Date_x0020_Completed: DateUtilities.getDateMMDDYYYY(item.Date_x0020_Completed), 
-     Date_x0020_CompletedForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date_x0020_Completed)}</span>${DateUtilities.getDateMMDDYYYY(item.Date_x0020_Completed)}`, 
-      Action_x0020_Completed: item.Action_x0020_Completed,
-       Modified: DateUtilities.getDateMMDDYYYY(item.Modified), 
-      ModifiedForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Modified)}</span>${DateUtilities.getDateMMDDYYYY(item.Modified)}`, 
-      Year: item.Year,
-    }));
+      const tableData = items.map((item: any) => ({
+        Id: Number(item.Id),
+        UCAN_x0020_Type: item.UCAN_x0020_Type,
+        Plant: item.Plant,
+        Department: item.Department,
+        Zone: item.Zone,
+        Machine: item.Machine,
+        UAType: item.UAType?.Title || "",
+        Sub_x002d_Type: item.Sub_x002d_Type?.Title || "",
+        Shift: [null, undefined, ''].includes(item.Shift) ? item.Shift : Number(item.Shift),
+        Reported_x0020_By: item.Reported_x0020_By,
+        Location_x002f_Persons: item.Location_x002f_Persons,
+        Safety_x0020_Tag: item.Safety_x0020_Tag,
+        Date: DateUtilities.getDateMMDDYYYY(item.Date),
+        DateForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date)}</span>${DateUtilities.getDateMMDDYYYY(item.Date)}`,
 
-    const yearList = tableData
-      .map((i) => parseInt(i.Year, 10))
-      .filter((y) => !isNaN(y));
+        Original_x0020_Tag_x0020_No_x002: [null, undefined, ''].includes(item.Original_x0020_Tag_x0020_No_x002) ? item.Original_x0020_Tag_x0020_No_x002 : Number(item.Original_x0020_Tag_x0020_No_x002),
+        Date_x0020_Completed: [null, undefined, ''].includes(item.Date_x0020_Completed) ? item.Date_x0020_Completed : DateUtilities.getDateMMDDYYYY(item.Date_x0020_Completed),
+        Date_x0020_CompletedForGrid: [null, undefined, ''].includes(item.Date_x0020_Completed) ? item.Date_x0020_Completed : `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Date_x0020_Completed)}</span>${DateUtilities.getDateMMDDYYYY(item.Date_x0020_Completed)}`,
+        Action_x0020_Completed: item.Action_x0020_Completed,
+        Modified: DateUtilities.getDateMMDDYYYY(item.Modified),
+        ModifiedForGrid: `<span class='d-none'>${DateUtilities.getDateYYYYMMDDForSorting(item.Modified)}</span>${DateUtilities.getDateMMDDYYYY(item.Modified)}`,
+        Year: [null, undefined, ''].includes(item.Year) ? item.Year : Number(item.Year),
+      }));
 
-    let yearOptions: { label: string; value: string }[] = [
-      { label: "All", value: "All" }, // 🔹 Add "All" as first option
-    ];
+      const yearList = tableData
+        .map((i) => parseInt(i.Year, 10))
+        .filter((y) => !isNaN(y));
 
-    if (yearList.length > 0) {
-      const minYear = Math.min(...yearList);
-      const currentYear = new Date().getFullYear();
+      let yearOptions: { label: string; value: string }[] = [
+        { label: "All", value: "All" }, // 🔹 Add "All" as first option
+      ];
 
-      for (let y = minYear; y <= currentYear; y++) {
-        yearOptions.push({ label: y.toString(), value: y.toString() });
+      if (yearList.length > 0) {
+        const minYear = Math.min(...yearList);
+        const currentYear = new Date().getFullYear();
+
+        for (let y = minYear; y <= currentYear; y++) {
+          yearOptions.push({ label: y.toString(), value: y.toString() });
+        }
       }
+
+      this.setState({ ActionsData: tableData, yearOptions });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      hideLoader();
     }
-
-    this.setState({ ActionsData: tableData, yearOptions });
-  } catch (e) {
-    console.error(e);
-  } finally {
-    hideLoader();
   }
-}
 
-  
-   private  handleRowClicked = (row:any,Id?:any) => {
-        let ID = row.Id?row.Id:Id;
-        this.setState({ItemID:ID,redirect:true});
-      }
-              private handleYearChange = (selected: any) => {
-  // assuming Serachbledropdown sends { label, value }
-  this.setState({ selectedYear: selected?.value || "All" });
-};
+
+  private handleRowClicked = (row: any, Id?: any) => {
+    let ID = row.Id ? row.Id : Id;
+    this.setState({ ItemID: ID, redirect: true });
+  }
+  private handleYearChange = (selected: any,actionMeta?:any) => {
+    // assuming Serachbledropdown sends { label, value }
+    let value = actionMeta.action == 'clear' ? '' : selected.value;
+    this.setState({ selectedYear: value });
+  };
 
   public render() {
     const columns = [
-               {
-                  name: "Edit",
-                  //selector: "Id",
-                  selector: (row: { Id: any; }, i: any) => row.Id,
-                  cell: (record: { Id: any; }) => {
-                    return (
-                      <React.Fragment>
-                        <div style={{ paddingLeft: '10px' }}>
-                          <NavLink title="Edit" className="csrLink ms-draggable" to={`/UCANForm/${record.Id}`}>
-                            <FontAwesomeIcon icon={faEdit} ></FontAwesomeIcon>
-                          </NavLink>
-                        </div>
-                      </React.Fragment>
-                    );
-                  },
-                  width:'60px',
-                },
-      { name: "ID", selector: (row: any) => row.Id, sortable: false,width:'60px' },
+      {
+        name: "Edit",
+        //selector: "Id",
+        selector: (row: { Id: any; }, i: any) => row.Id,
+        cell: (record: { Id: any; }) => {
+          return (
+            <React.Fragment>
+              <div style={{ paddingLeft: '10px' }}>
+                <NavLink title="Edit" className="csrLink ms-draggable" to={`/UCANForm/${record.Id}`}>
+                  <FontAwesomeIcon icon={faEdit} ></FontAwesomeIcon>
+                </NavLink>
+              </div>
+            </React.Fragment>
+          );
+        },
+        width: '60px',
+      },
+      { name: "ID", selector: (row: any) => row.Id, sortable: true, width: '60px' },
       { name: "Near miss, Unsafe condition", selector: (row: any) => row.UCAN_x0020_Type, sortable: true },
       { name: "Plant", selector: (row: any) => row.Plant, sortable: true },
       { name: "Department", selector: (row: any) => row.Department, sortable: true },
@@ -187,62 +188,62 @@ private async loadListData() {
       { name: "Shift", selector: (row: any) => row.Shift, sortable: true },
       { name: "Reported By", selector: (row: any) => row.Reported_x0020_By, sortable: true },
       { name: "Location/Persons", selector: (row: any) => row.Location_x002f_Persons, sortable: true },
-      { name: "Safety Tag", selector: (row: any) => row.Safety_x0020_Tag ? "Yes":"No", sortable: true },
-        {
+      { name: "Safety Tag", selector: (row: any) => row.Safety_x0020_Tag ? "Yes" : "No", sortable: true },
+      {
         name: "Date",
         selector: (row: any) => row.DateForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.DateForGrid }} onClick={(event) => this.handleRowClicked(event, row.Id)}/>,
         sortable: true
       },
       { name: "Original Tag No.", selector: (row: any) => row.Original_x0020_Tag_x0020_No_x002, sortable: true },
-         {
+      {
         name: "Date Completed",
         selector: (row: any) => row.Date_x0020_CompletedForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Date_x0020_CompletedForGrid }} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Date_x0020_CompletedForGrid }} onClick={(event) => this.handleRowClicked(event, row.Id)}/>,
         sortable: true
       },
       { name: "Action Completed", selector: (row: any) => row.Action_x0020_Completed, sortable: true },
-         {
+      {
         name: "Modified",
         selector: (row: any) => row.ModifiedForGrid,
-        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.ModifiedForGrid }} />,
+        cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.ModifiedForGrid }} onClick={(event) => this.handleRowClicked(event, row.Id)}/>,
         sortable: true
       },
-      { name: "Year", selector: (row: any) =>row.Year, sortable: true },
-      
-    ];
-              const filteredData =this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter( (item) => item.Year === this.state.selectedYear ): this.state.ActionsData;
+      { name: "Year", selector: (row: any) => row.Year, sortable: true },
 
-       if(this.state.redirect){
-                    let url = `/UCANForm/${this.state.ItemID}`;
-                return (<Navigate to={url}/>);
-                 }
+    ];
+    const filteredData = this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter((item) => item.Year == this.state.selectedYear) : this.state.ActionsData;
+
+    if (this.state.redirect) {
+      let url = `/UCANForm/${this.state.ItemID}`;
+      return (<Navigate to={url} />);
+    }
     return (
-        <div className="container-fluid">
-          <div className="light-box border-box-shadow">
-               <div className="div-form-title">
-                                <div className="form-title">UCAN View</div>
-                            </div>
-                   <div className="mainContent borderLine">
-                  <div className="row">
-                <div className="col-md-3">
-                  <div className="light-text mt-4">
-                   <label htmlFor="">
+      <div className="container-fluid">
+        <div className="light-box border-box-shadow">
+          <div className="div-form-title">
+            <div className="form-title">UCAN View</div>
+          </div>
+          <div className="mainContent borderLine">
+            <div className="row">
+              <div className="col-md-3">
+                <div className="light-text mt-4">
+                  <label htmlFor="">
                     Year Filter
                   </label>
-                <div className="custom-dropdown" id="divRootcauese">
-            <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+                  <div className="custom-dropdown" id="divRootcauese">
+                    <Serachbledropdown label={""} Title={"Year Filter"} name={"selectedYear"} id={undefined} className={""} selectedValue={this.state.selectedYear} OptionsList={this.state.yearOptions} OnChange={this.handleYearChange} isRequired={false} disabled={false}></Serachbledropdown>
+                  </div>
+                </div>
+              </div>
+              <TableGenerator
+                columns={columns}
+                data={filteredData}
+                onRowClick={this.handleRowClicked}
+                fileName={"Actions"}
+                showPagination={true}
+              />
             </div>
-            </div>
-            </div>
-            <TableGenerator
-              columns={columns}
-              data={filteredData}
-              onRowClick={this.handleRowClicked}
-              fileName={"Actions"}
-              showPagination={true}
-            />
-          </div>
           </div>
         </div>
       </div>

@@ -121,7 +121,6 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         this.MaycoURL = `${this.rootSiteURL}/mayco`;
         this.Name = React.createRef();
         this.TagType = React.createRef();
-        //console.log(this.rootSiteURL);      //sites/wcm
     }
 
     public componentDidMount(): void {
@@ -900,7 +899,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={true}
-                                                        noOptionsMessage="No Plant"
+                                                        noOptionsMessage="No Plants available"
                                                     />
                                                 </div>
                                             </div>
@@ -918,7 +917,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Department"
+                                                        noOptionsMessage="No Departments available"
                                                     />
                                                 </div>
                                             </div>
@@ -936,7 +935,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Zone"
+                                                        noOptionsMessage="No Zones available"
                                                     />
                                                 </div>
                                             </div>
@@ -954,7 +953,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Machine"
+                                                        noOptionsMessage="No Machines available"
                                                     />
                                                 </div>
                                             </div>
@@ -975,7 +974,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
                                                         isRequired={true}
                                                         disabled={false}
-                                                        noOptionsMessage="No Shift"
+                                                        noOptionsMessage="No Shifts available"
                                                     />
                                                 </div>
                                             </div>

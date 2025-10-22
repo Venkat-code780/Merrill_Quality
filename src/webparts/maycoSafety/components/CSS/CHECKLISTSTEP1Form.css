@@ -4,6 +4,10 @@
     /* border: 1px solid #0fbafe; */
     border: 1px solid #9b9d9f;
 }
+.CheckListTable{
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
 
 .Heading1 {
     /* color: #fff;

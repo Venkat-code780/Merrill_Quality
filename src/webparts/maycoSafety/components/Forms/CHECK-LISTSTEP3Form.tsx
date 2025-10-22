@@ -705,11 +705,9 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
                                                     />
                                                 </div>
                                             </div>
-
-
-
-                                            {/* Check List Table */}
-                                            <div className="col-12 mt-2"></div>
+                                        </div>
+                                        {/* Check List Table */}
+                                        <div className="col-12">
                                             <div className="divCheckListTable form-border-box px-0 my-2">
                                                 <table className="CheckListTable col-md-12" id="tblCheckList">
                                                     <tbody className="tbodyHeadRows">

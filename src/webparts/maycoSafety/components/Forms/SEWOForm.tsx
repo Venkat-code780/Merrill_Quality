@@ -411,7 +411,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         formData.Injury_x0020_Date_x0020_Time = DateUtilities.removeBrowserwrtServer(new Date(editSEWOItem.Injury_x0020_Date_x0020_Time), this.props.spContext.webTimeZoneData).toISOString();
                         formData.InjuryTime = editSEWOItem.InjuryTime ?? '';
                         formData.InjuryTypeId = editSEWOItem.InjuryTypeId ?? '';
-                        formData.IsHospitalRefused = editSEWOItem.IsHospitalRefused ?? '';
+                        formData.IsHospitalRefused = editSEWOItem.IsHospitalRefused ?? false;
                         formData.Location = editSEWOItem.Location ?? '';
                         formData.Machine = editSEWOItem.Machine ?? '';
                         formData.MicroRootCauseId = editSEWOItem.MicroRootCauseId ?? '';
@@ -1261,7 +1261,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                     {!this.state.formData.IsHospitalRefused && <div className="col-md-6">
                                         <div className="light-text">
                                             <label className=" col-form-label" htmlFor="txtNameoftheHospital">Name of the Clinic/Hospital <span className="mandatoryhastrick"> *</span></label>
-                                            <input className="form-control" placeholder="Name of the Clinic/Hospital" name="NameoftheHospital" type="text" id="txtNameoftheHospital" ref={this.txtNameoftheHospital} value={this.state.formData.NameoftheHospital} title={this.state.formData.NameoftheHospital} onChange={this.handleChange} disabled={this.state.isInputDisabled} />
+                                            <input className="form-control" placeholder="" name="NameoftheHospital" type="text" id="txtNameoftheHospital" ref={this.txtNameoftheHospital} value={this.state.formData.NameoftheHospital} title={this.state.formData.NameoftheHospital} onChange={this.handleChange} disabled={this.state.isInputDisabled} />
                                         </div>
                                     </div>}
                                 </div>

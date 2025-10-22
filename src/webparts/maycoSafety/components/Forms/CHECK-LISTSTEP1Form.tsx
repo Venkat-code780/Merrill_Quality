@@ -702,20 +702,18 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                                                     />
                                                 </div>
                                             </div>
-
-
-                                            {/* Check List Table */}
-                                            <div className="col-12 mt-2">
-                                                <div className="divCheckListTable form-border-box px-0 my-2">
-                                                    <table className="CheckListTable col-md-12" id="tblCheckList">
-                                                        <tbody className="tbodyHeadRows">
-                                                            {this.bindCheckListTableHeader()}
-                                                        </tbody>
-                                                        <tbody>
-                                                            {this.bindCheckListTableBody()}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                        </div>
+                                        {/* Check List Table */}
+                                        <div className="col-12">
+                                            <div className="divCheckListTable form-border-box px-0 my-2">
+                                                <table className="CheckListTable col-md-12" id="tblCheckList">
+                                                    <tbody className="tbodyHeadRows">
+                                                        {this.bindCheckListTableHeader()}
+                                                    </tbody>
+                                                    <tbody>
+                                                        {this.bindCheckListTableBody()}
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                         {/* Buttons */}

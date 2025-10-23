@@ -371,7 +371,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="div-form-title">
-                                <div className="form-title">UA Sub - Types</div>
+                                <div className="form-title">UA Sub-Types</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                             <div className="p-2 mx-1">

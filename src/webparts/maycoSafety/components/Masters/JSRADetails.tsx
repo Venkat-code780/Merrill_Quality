@@ -426,7 +426,7 @@ export default class JSRADetails extends React.Component<JSRAdetailsProps, JSRAd
                 },
             },
             {
-                name: "Sub Category",
+                name: "Sub-Category",
                 selector: (row: { Sub_x0020_CategoryTitle: any; }, i: any) => row.Sub_x0020_CategoryTitle,
                 sortable: true,
                 cell: (record: { Sub_x0020_CategoryTitle: any; }) => {

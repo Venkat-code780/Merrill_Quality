@@ -180,7 +180,7 @@ export default class Injurytype extends React.Component<InjurytypeProps, Injuryt
             let isValid = true;
             if (formData.Title) formData.Title = formData.Title.trim();
 
-            let filterQuery = `Title eq '${this.state.formData.Title}'`;
+            let filterQuery = `Title eq '${formData.Title}'`;
 
             if (this.state.ItemId > 0) {
                 filterQuery += ` and Id ne ${this.state.ItemId}`;

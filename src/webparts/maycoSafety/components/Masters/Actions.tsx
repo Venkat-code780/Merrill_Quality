@@ -184,9 +184,9 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                         formData,
                         RootCausesid: item.RootCauseId,
                         FilteredSecondaryrootCauses: filteredSecondary
-                    }, () => {
-                        this.Title.current?.focus();
                     });
+                    document.getElementById("divRootcauese")?.getElementsByTagName('input')[0].focus() 
+
                 }
             })
         }
@@ -198,11 +198,8 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
     }
 
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 }, () => {
-            this.Title.current?.focus();
-        }
-        );
-
+        this.setState({ isFormOpen: true, ItemId: 0 });
+        setTimeout(() => { document.getElementById("divRootcauese")?.getElementsByTagName('input')[0].focus() }, 300);
 
 
     }
@@ -259,9 +256,10 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
         try {
             event.preventDefault();
             var data = {
-                Action: { val: (this.state.formData.Title.trim()), required: true, Name: "'Action'", Type: ControlType.string, Focusid: this.Title },
+                
                 RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: "'Root Cause'", Type: ControlType.reactSelect, Focusid: 'divRootcauese' },
                 SecondRootCause: { val: (this.state.formData.SecondaryRootCauseId), required: true, Name: "'Secondary Root Cause'", Type: ControlType.reactSelect, Focusid: 'divSecondaryRootcause' },
+                Action: { val: (this.state.formData.Title.trim()), required: true, Name: "'Action'", Type: ControlType.string, Focusid: this.Title },
 
 
             }
@@ -473,13 +471,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                     <div className="">
                                         <div className="form-border-box p-2 mx-1 my-2">
                                             <div className="row">
-                                                <div className="col-md-3">
-                                                    <div className="light-text">
-                                                        <input className="form-control" required={true} placeholder="" type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250} />
-                                                        <label>Action <span className="mandatoryhastrick">*</span></label>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-3">
+                                                         <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divRootcauese" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
                                                         <SearchableDropdown
                                                             label={"Root Cause"}
@@ -496,8 +488,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                         />
                                                     </div>
                                                 </div>
-
-                                                <div className="col-md-3">
+                                                   <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divSecondaryRootcause" title={(this.state.FilteredSecondaryrootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.SecondaryRootCauseId) as { label: string; value: any } | undefined)?.label} >
                                                         <SearchableDropdown
                                                             label={"Secondary Root Cause"}
@@ -515,6 +506,15 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                         />
                                                     </div>
                                                 </div>
+
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} placeholder="" type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250} />
+                                                        <label>Action <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                       
+                                             
                                                 <div className="col-md-3 py-2 text-center" id="">
                                                     <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
                                                     <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>

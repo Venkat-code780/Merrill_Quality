@@ -182,9 +182,8 @@ export default class Microrootcauses extends React.Component<MicrorootcausesProp
                         formData,
                         RootCausesid: item.RootCauseId,
                         FilteredSecondaryrootCauses: filteredSecondary
-                    }, () => {
-                        this.MicroRootCause.current?.focus();
                     });
+                    document.getElementById("divRootcause")?.getElementsByTagName('input')[0].focus()
                 }
             })
         }
@@ -196,9 +195,9 @@ export default class Microrootcauses extends React.Component<MicrorootcausesProp
     }
 
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 }, () => {
-            this.MicroRootCause.current?.focus();
-        });
+        this.setState({ isFormOpen: true, ItemId: 0 });
+                setTimeout(() => { document.getElementById("divRootcause")?.getElementsByTagName('input')[0].focus() }, 300);
+
     }
 
     private async checkDuplicate() {
@@ -214,7 +213,7 @@ export default class Microrootcauses extends React.Component<MicrorootcausesProp
 
             // Build OData filter for all three fields
             // Note: Adjust property names according to your SharePoint list fields
-            let filterQuery = `Title eq '${this.state.formData.Title}' and RootCauseId eq ${formData.RootCauseId} and SecondaryRootCauseId eq ${formData.SecondaryRootCauseId}`;
+            let filterQuery = `Title eq '${formData.Title}' and RootCauseId eq ${formData.RootCauseId} and SecondaryRootCauseId eq ${formData.SecondaryRootCauseId}`;
 
             if (this.state.ItemId > 0) {
                 // Exclude the current item (for update scenario)
@@ -253,10 +252,10 @@ export default class Microrootcauses extends React.Component<MicrorootcausesProp
         try {
             event.preventDefault();
             var data = {
-                Action: { val: (this.state.formData.Title.trim()), required: true, Name: 'Micro Root Cause', Type: ControlType.string, Focusid: this.MicroRootCause },
-                RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: 'Root Cause', Type: ControlType.reactSelect, Focusid: 'divRootcause' },
+                 RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: 'Root Cause', Type: ControlType.reactSelect, Focusid: 'divRootcause' },
                 SecondRootCause: { val: (this.state.formData.SecondaryRootCauseId), required: true, Name: 'Secondary Root Cause', Type: ControlType.reactSelect, Focusid: 'divSecondaryRootcause' },
-
+                Action: { val: (this.state.formData.Title.trim()), required: true, Name: 'Micro Root Cause', Type: ControlType.string, Focusid: this.MicroRootCause },
+              
 
             }
             let isValid = formValidation.FormValidation(data);
@@ -470,13 +469,7 @@ export default class Microrootcauses extends React.Component<MicrorootcausesProp
                                     <div className="">
                                         <div className="form-border-box p-2 mx-1 my-2">
                                             <div className="row">
-                                                <div className="col-md-3">
-                                                    <div className="light-text">
-                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.MicroRootCause} maxLength={250} />
-                                                        <label>Micro Root Cause <span className="mandatoryhastrick">*</span></label>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-3">
+                                                 <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divRootcause" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
                                                         <SearchableDropdown label={"Root Cause"} Title={"Root Cause"} name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Root Cause available"></SearchableDropdown>
                                                     </div>
@@ -487,6 +480,13 @@ export default class Microrootcauses extends React.Component<MicrorootcausesProp
                                                         <SearchableDropdown label={"Secondary Root Cause"} Title={"Secondary Root Cause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Secondary Root Cause available"></SearchableDropdown>
                                                     </div>
                                                 </div>
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.MicroRootCause} maxLength={250} />
+                                                        <label>Micro Root Cause <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                               
                                                 <div className="col-md-3 py-2 text-center" id="">
                                                     <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
                                                     <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>

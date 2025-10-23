@@ -186,7 +186,7 @@ export default class Status extends React.Component<StatusProps, StatusState> {
 
             // Build OData filter for all three fields
             // Note: Adjust property names according to your SharePoint list fields
-            let filterQuery = `Title eq '${this.state.formData.Title}'`;
+            let filterQuery = `Title eq '${formData.Title}'`;
 
             if (this.state.ItemId > 0) {
                 // Exclude the current item (for update scenario)

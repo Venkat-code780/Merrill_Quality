@@ -197,10 +197,10 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
             let isValid = true;
             if (formData.Audit_SubCategory) formData.Audit_SubCategory = formData.Audit_SubCategory.trim();
 
-            const escapedTitle = formData.Audit_SubCategory.replace(/'/g, "''");
+            // const escapedTitle = formData.Audit_SubCategory.replace(/'/g, "''");
 
 
-            let filterQuery = `Audit_SubCategory eq '${escapedTitle}' and Audit_categoriesId eq '${formData.Audit_categoriesId}' and Form_x0020_Type eq '${formData.Form_x0020_Type}'`;
+            let filterQuery = `Audit_SubCategory eq '${formData.Audit_SubCategory}' and Audit_categoriesId eq '${formData.Audit_categoriesId}' and Form_x0020_Type eq '${formData.Form_x0020_Type}'`;
 
             if (this.state.ItemId > 0) {
                 // Exclude the current item (for update scenario)
@@ -232,7 +232,7 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
             event.preventDefault();
             var data = {
                 AuditCategory: { val: (this.state.formData.Audit_categoriesId), required: true, Name: 'Audit Category', Type: ControlType.reactSelect, Focusid: 'divAuditCategory' },
-                AuditSubcategory: { val: (this.state.formData.Audit_SubCategory.trim()), required: true, Name: 'Audit Sub Category', Type: ControlType.string, Focusid: this.Audit_SubCategory },
+                AuditSubcategory: { val: (this.state.formData.Audit_SubCategory.trim()), required: true, Name: 'Audit Sub-Category', Type: ControlType.string, Focusid: this.Audit_SubCategory },
                 FormType: { val: (this.state.formData.Form_x0020_Type), required: true, Name: 'FormType', Type: ControlType.string, Focusid: this.Form_x0020_Type },
                 IsActive: { val: (this.state.formData.Is_x0020_Active), required: true, Name: 'Is Active', Type: ControlType.string, Focusid: this.Is_x0020_Active },
 
@@ -397,7 +397,7 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
                 },
             },
             {
-                name: "Audit Sub Category",
+                name: "Audit Sub-Category",
                 selector: (row: { Audit_SubCategory: any; }, i: any) => row.Audit_SubCategory,
                 sortable: true,
                 cell: (record: { Audit_SubCategory: any; }) => {
@@ -413,6 +413,18 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
                 cell: (record: { Form_x0020_Type: any; }) => {
                     return (
                         record.Form_x0020_Type
+                    );
+                },
+            },
+               {
+                name: "Is Active",
+                selector: (row: { Is_x0020_Active: any; }, i: any) => row.Is_x0020_Active,
+                sortable: true,
+                cell: (record: { Is_x0020_Active: any; }) => {
+                    return (
+                        // record.Is_x0020_Active
+
+                        record.Is_x0020_Active === true ? 'Yes' : record.Is_x0020_Active === false ? 'No' : ''
                     );
                 },
             },
@@ -451,7 +463,7 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
                                                 <div className="col-md-3">
                                                     <div className="light-text">
                                                         <input className="form-control" required={true} type="text" name="Audit_SubCategory" title={this.state.formData.Audit_SubCategory} value={this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250} />
-                                                        <label>Audit Sub Category <span className="mandatoryhastrick">*</span></label>
+                                                        <label>Audit Sub-Category <span className="mandatoryhastrick">*</span></label>
                                                     </div>
                                                 </div>
 

@@ -147,9 +147,8 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                     formData.Title = item.Title;
                     formData.UAType0Id = item.UAType0Id;
                     hideLoader();
-                    this.setState({ formData }, () => {
-                        this.txtUAMicroType.current?.focus();
-                    });
+                    this.setState({ formData });
+                    document.getElementById("divCategory")?.getElementsByTagName('input')[0].focus()
                 }
             })
         }
@@ -161,9 +160,8 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
     }
 
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 }, () => {
-            this.txtUAMicroType.current?.focus();
-        });
+        this.setState({ isFormOpen: true, ItemId: 0 });
+        setTimeout(() => { document.getElementById("divCategory")?.getElementsByTagName('input')[0].focus() }, 300);
     }
 
 
@@ -175,7 +173,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
 
             let isValid = true;
             if (formData.Title) formData.Title = formData.Title.trim();
-            let filterQuery = `Title eq '${this.state.formData.Title}' and UAType0Id eq ${formData.UAType0Id}`;
+            let filterQuery = `Title eq '${formData.Title}' and UAType0Id eq ${formData.UAType0Id}`;
 
             if (this.state.ItemId > 0) {
                 // Exclude the current item (for update scenario)
@@ -205,8 +203,9 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
         try {
             event.preventDefault();
             var data = {
+                 UAType: { val: (this.state.formData.UAType0Id), required: true, Name: 'UA Type', Type: ControlType.reactSelect, Focusid: "divCategory"},
                 UAMicroType: { val: (this.state.formData.Title.trim()), required: true, Name: 'UA Micro Type', Type: ControlType.string, Focusid: this.txtUAMicroType },
-                UAType: { val: (this.state.formData.UAType0Id), required: true, Name: 'UA Type', Type: ControlType.reactSelect, Focusid: "divCategory" }
+               
             }
             let isValid = formValidation.FormValidation(data);
 
@@ -386,17 +385,18 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                                     <div className="">
                                         <div className="form-border-box p-2 mx-1 my-2">
                                             <div className="row">
+                                                     <div className="col-md-3">
+                                                    <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
+                                                        <Dropdown label={"Category"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
+                                                    </div>
+                                                </div>
                                                 <div className="col-md-3">
                                                     <div className="light-text">
                                                         <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtUAMicroType} maxLength={250} />
                                                         <label>UA Micro Type <span className="mandatoryhastrick">*</span></label>
                                                     </div>
                                                 </div>
-                                                <div className="col-md-3">
-                                                    <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
-                                                        <Dropdown label={"Category"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
-                                                    </div>
-                                                </div>
+                                           
 
                                                 <div className="col-md-3 py-2 text-center" id="">
                                                     <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>

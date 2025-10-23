@@ -84,7 +84,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
 
     public componentDidMount() {
         highlightCurrentNav("liJSRASub-Categories");
-        document.title = "Mayco - Safety | JSRA Sub - Categories";
+        document.title = "Mayco - Safety | JSRA Sub-Categories";
         this.loadListData();
     }
 
@@ -149,9 +149,8 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                     formData.CategoryId = item.CategoryId;
                     //formData.IsActive = item.IsActive;
                     hideLoader();
-                    this.setState({ formData }, () => {
-                        this.txtJSRASubCategory.current?.focus();
-                    });
+                    this.setState({ formData });
+                    document.getElementById("divCategory")?.getElementsByTagName('input')[0].focus()
                 }
             })
         }
@@ -163,9 +162,9 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
     }
 
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 }, () => {
-            this.txtJSRASubCategory.current?.focus();
-        });
+        this.setState({ isFormOpen: true, ItemId: 0 });
+        setTimeout(() => { document.getElementById("divCategory")?.getElementsByTagName('input')[0].focus() }, 300);
+
     }
 
     private async checkDuplicate() {
@@ -179,7 +178,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
             if (formData.Title) formData.Title = formData.Title.trim();
             // Build OData filter for all three fields
             // Note: Adjust property names according to your SharePoint list fields
-            let filterQuery = `Title eq '${this.state.formData.Title}' and CategoryId eq ${formData.CategoryId}`;
+            let filterQuery = `Title eq '${formData.Title}' and CategoryId eq ${formData.CategoryId}`;
 
             if (this.state.ItemId > 0) {
                 // Exclude the current item (for update scenario)
@@ -209,8 +208,9 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
         try {
             event.preventDefault();
             var data = {
-                SubCategory: { val: (this.state.formData.Title.trim()), required: true, Name: 'JSRA Sub Category', Type: ControlType.string, Focusid: this.txtJSRASubCategory },
-                Category: { val: (this.state.formData.CategoryId), required: true, Name: 'JSRA Category', Type: ControlType.reactSelect, Focusid: "divCategory" }
+                Category: { val: (this.state.formData.CategoryId), required: true, Name: 'JSRA Category', Type: ControlType.reactSelect, Focusid: "divCategory" },
+                SubCategory: { val: (this.state.formData.Title.trim()), required: true, Name: 'JSRA Sub-Category', Type: ControlType.string, Focusid: this.txtJSRASubCategory },
+
             }
             let isValid = formValidation.FormValidation(data);
 
@@ -241,7 +241,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
 
             if (itemId > 0) {
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update(formData).then((res) => {
-                    let msg = "JSRA Sub Category updated successfully";
+                    let msg = "JSRA Sub-Category updated successfully";
                     this.setState({ displayMessage: msg, redirect: true });
                     this.onSuccess();
                 }, (error) => {
@@ -251,7 +251,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
             }
             else {
                 this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then((res) => {
-                    let msg = "JSRA Sub Category submitted successfully";
+                    let msg = "JSRA Sub-Category submitted successfully";
                     this.setState({ displayMessage: msg, redirect: true });
                     this.onSuccess();
                 }, (error) => {
@@ -343,7 +343,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                 sortable: false
             },
             {
-                name: "Sub Category",
+                name: "Sub-Category",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
                 cell: (record: { Title: any; }) => {
@@ -376,7 +376,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                     <div className="container-fluid">
                         <div className="light-box border-box-shadow">
                             <div className="div-form-title">
-                                <div className="form-title">JSRA Sub Categories</div>
+                                <div className="form-title">JSRA Sub-Categories</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
                             <div className="p-2 mx-1">
@@ -390,16 +390,17 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                                         <div className="form-border-box p-2 mx-1 my-2">
                                             <div className="row">
                                                 <div className="col-md-3">
-                                                    <div className="light-text">
-                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRASubCategory} maxLength={250} />
-                                                        <label>JSRA Sub Category <span className="mandatoryhastrick">*</span></label>
+                                                    <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
+                                                        <Dropdown label={"JSRA Category"} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No JSRA Category available"></Dropdown>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
-                                                        <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
-                                                            <Dropdown label={"JSRA Category"} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No JSRA Category available"></Dropdown>
-                                                        </div>
+                                                    <div className="light-text">
+                                                        <label>JSRA Sub-Category <span className="mandatoryhastrick">*</span></label>
+                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRASubCategory} maxLength={250} />
+                                                    </div>
                                                 </div>
+
 
                                                 <div className="col-md-3 py-2 text-center" id="">
                                                     <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>

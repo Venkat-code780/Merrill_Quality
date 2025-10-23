@@ -354,7 +354,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 zone: { val: formData.Zone, required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: "ddlZone" },
                 machine: { val: formData.Machine, required: (formData.UCAN_x0020_Type != "Unsafe Act"), Name: "Machine", Type: ControlType.reactSelect, Focusid: "ddlMachine" },
                 uaType: { val: formData.UATypeId, required: true, Name: "UA Type", Type: ControlType.reactSelect, Focusid: "ddlUAType" },
-                subType: { val: formData.Sub_x002d_TypeId, required: true, Name: "Sub Type", Type: ControlType.reactSelect, Focusid: "ddlSubType" },
+                subType: { val: formData.Sub_x002d_TypeId, required: true, Name: "Sub - Type", Type: ControlType.reactSelect, Focusid: "ddlSubType" },
                 shift: { val: formData.Shift, required: true, Name: "Shift", Type: ControlType.reactSelect, Focusid: "ddlShift" },
                 date: { val: formData.Date, required: true, Name: "Date", Type: ControlType.date, Focusid: "dtDate" },
                 dateToday: { val: formData.Date, required: true, Name: "Date", Type: ControlType.lessthanTodayDate, Focusid: "dtDate" },
@@ -590,7 +590,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                                             OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSubType") }}
                                                             isRequired={true}
                                                             disabled={this.state.isInputDisabled}
-                                                            noOptionsMessage="No Sub Types available"
+                                                            noOptionsMessage="No Sub-Types available"
                                                         />
                                                     </div>
                                                 </div>

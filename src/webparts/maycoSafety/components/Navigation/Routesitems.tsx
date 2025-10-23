@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Route,Routes, useParams } from "react-router-dom";
+import { Route, Routes, useLocation, useParams } from "react-router-dom";
 import { Suspense } from "react";
 import Home from "../Home/Home.component";
 import Actions from "../Masters/Actions";
@@ -7,7 +7,7 @@ import SecondaryRootCauses from "../Masters/SecondaryRootCauses";
 import MicroRootCauses from "../Masters/MicroRootCauses";
 import InjuryTypes from "../Masters/InjuryTypes";
 import Status from "../Masters/Status";
-import  AuditCategories from "../Masters/AuditCategories";
+import AuditCategories from "../Masters/AuditCategories";
 import SMATandEHSMapping from "../Masters/SMATandEHSMapping";
 import JSRACategories from "../Masters/JSRACategories";
 import JSRASubCategories from "../Masters/JSRASub-Categories";
@@ -44,183 +44,283 @@ export interface RoutesProps {
 export interface RoutesState {
 }
 
-class RoutesItems extends React.Component<RoutesProps,RoutesState> {
+class RoutesItems extends React.Component<RoutesProps, RoutesState> {
 
     public render() {
-        const WrapperHome = (props:any,component:Comment) => {
+        const WrapperHome = (props: any, component: Comment) => {
             let params = useParams();
-            return <Home {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <Home {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
         // Masters
-        const WrapperActions = (props:any) => {
+        const WrapperActions = (props: any) => {
             let params = useParams();
-            return <Actions {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <Actions {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-         const WrapperSecondaryRootCauses = (props:any) => {
+        const WrapperSecondaryRootCauses = (props: any) => {
             let params = useParams();
-            return <SecondaryRootCauses {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <SecondaryRootCauses {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperInjuryTypes = (props:any) => {
+        const WrapperInjuryTypes = (props: any) => {
             let params = useParams();
-            return <InjuryTypes {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <InjuryTypes {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperMicroRootCauses = (props:any) => {
+        const WrapperMicroRootCauses = (props: any) => {
             let params = useParams();
-            return <MicroRootCauses {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <MicroRootCauses {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperStatus = (props:any) => {
+        const WrapperStatus = (props: any) => {
             let params = useParams();
-            return <Status {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <Status {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperAuditCategories = (props:any) => {
+        const WrapperAuditCategories = (props: any) => {
             let params = useParams();
-            return <AuditCategories {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <AuditCategories {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperSMATandEHSMapping = (props:any) => {
+        const WrapperSMATandEHSMapping = (props: any) => {
             let params = useParams();
-            return <SMATandEHSMapping {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <SMATandEHSMapping {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperJSRACategories = (props:any) => {
+        const WrapperJSRACategories = (props: any) => {
             let params = useParams();
-            return <JSRACategories {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <JSRACategories {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperJSRASubCategories = (props:any) => {
+        const WrapperJSRASubCategories = (props: any) => {
             let params = useParams();
-            return <JSRASubCategories {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <JSRASubCategories {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperPPETypes = (props:any) => {
+        const WrapperPPETypes = (props: any) => {
             let params = useParams();
-            return <PPETypes {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <PPETypes {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperJSRADetails = (props:any) => {
+        const WrapperJSRADetails = (props: any) => {
             let params = useParams();
-            return <JSRADetails {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <JSRADetails {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperUATypes = (props:any) => {
+        const WrapperUATypes = (props: any) => {
             let params = useParams();
-            return <UATypes {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <UATypes {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperUASubTypes = (props:any) => {
+        const WrapperUASubTypes = (props: any) => {
             let params = useParams();
-            return <UASubTypes {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <UASubTypes {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
         // Forms
-        const WrapperSEWOForm = (props:any) => {
-            let params = useParams();
-            return <SEWOForm {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperUCANForm = (props:any) => {
-            let params = useParams();
-            return <UCANForm {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperSMATForm = (props:any) => {
-            let params = useParams();
-            return <SMATForm {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperEHSForm = (props:any) => {
-            let params = useParams();
-            return <EHSForm {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperJSRAForm = (props:any) => {
-            let params = useParams();
-            return <JSRAForm {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperTAGForm = (props:any) => {
-            let params = useParams();
-            return <TAGForm {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperCHECKLISTSTEP1Form = (props:any) => {
-            let params = useParams();
-            return <CHECKLISTSTEP1Form {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperCHECKLISTSTEP2Form = (props:any) => {
-            let params = useParams();
-            return <CHECKLISTSTEP2Form {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
-        const WrapperCHECKLISTSTEP3Form = (props:any) => {
-            let params = useParams();
-            return <CHECKLISTSTEP3Form {...this.context} {...this.props} {...{...props, match:{params}}}  />
-        }
+        const WrapperSEWOForm = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <SEWOForm key={key} {...allProps} />;
+        };
+        const WrapperUCANForm = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <UCANForm key={key} {...allProps} />;
+        };
+        const WrapperSMATForm = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <SMATForm key={key} {...allProps} />;
+        };
+        const WrapperEHSForm = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <EHSForm key={key} {...allProps} />;
+        };
+        const WrapperJSRAForm = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <JSRAForm key={key} {...allProps} />;
+        };
+        const WrapperTAGForm = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <TAGForm key={key} {...allProps} />;
+        };
+        const WrapperCHECKLISTSTEP1Form = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <CHECKLISTSTEP1Form key={key} {...allProps} />;
+        };
+        const WrapperCHECKLISTSTEP2Form = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <CHECKLISTSTEP2Form key={key} {...allProps} />;
+        };
+        const WrapperCHECKLISTSTEP3Form = (props: any) => {
+            const location = useLocation();
+            const params = useParams();
+
+            const key = location.pathname + location.search;
+
+            const allProps = {
+                ...this.context,
+                ...this.props,
+                ...props,
+                match: { params },
+            };
+
+            return <CHECKLISTSTEP3Form key={key} {...allProps} />;
+        };
         //Views
-         const WrapperCHECKLISTSTEP1View = (props:any) => {
+        const WrapperCHECKLISTSTEP1View = (props: any) => {
             let params = useParams();
-            return <CHECKLISTSTEP1View {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <CHECKLISTSTEP1View {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-         const WrapperCHECKLISTSTEP2View = (props:any) => {
+        const WrapperCHECKLISTSTEP2View = (props: any) => {
             let params = useParams();
-            return <CHECKLISTSTEP2View {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <CHECKLISTSTEP2View {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-         const WrapperCHECKLISTSTEP3View = (props:any) => {
+        const WrapperCHECKLISTSTEP3View = (props: any) => {
             let params = useParams();
-            return <CHECKLISTSTEP3View {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <CHECKLISTSTEP3View {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-          const WrapperSEWOView = (props:any) => {
+        const WrapperSEWOView = (props: any) => {
             let params = useParams();
-            return <SEWOView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <SEWOView {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperUCANView= (props:any) => {
+        const WrapperUCANView = (props: any) => {
             let params = useParams();
-            return <UCANView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <UCANView {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperSMATView= (props:any) => {
+        const WrapperSMATView = (props: any) => {
             let params = useParams();
-            return <SMATView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <SMATView {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        const WrapperEHSView= (props:any) => {
+        const WrapperEHSView = (props: any) => {
             let params = useParams();
-            return <EHSView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <EHSView {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-          const WrapperJSRAView= (props:any) => {
+        const WrapperJSRAView = (props: any) => {
             let params = useParams();
-            return <JSRAView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <JSRAView {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-            const WrapperTAGView= (props:any) => {
+        const WrapperTAGView = (props: any) => {
             let params = useParams();
-            return <TAGView {...this.context} {...this.props} {...{...props, match:{params}}}  />
+            return <TAGView {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
-        return(
+
+
+        return (
             <Suspense fallback={<div></div>}>
                 <Routes>
-                    <Route path="/" element={  <WrapperHome /> }/>
-                    <Route path="/Home" element={ <WrapperHome />}/>
+                    <Route path="/" element={<WrapperHome />} />
+                    <Route path="/Home" element={<WrapperHome />} />
                     {/* Masters */}
-                    <Route path="/Actions" element={ <WrapperActions />}/>
-                    <Route path="/SecondaryRootCauses" element={ <WrapperSecondaryRootCauses />}/>
-                    <Route path="/MicroRootCauses" element={ <WrapperMicroRootCauses />}/>
-                    <Route path="/InjuryTypes" element={ <WrapperInjuryTypes />}/>
-                    <Route path="/Status" element={ <WrapperStatus />}/>
-                    <Route path="/AuditCategories" element={ <WrapperAuditCategories />}/>
-                    <Route path="/SMATandEHSMapping" element={ <WrapperSMATandEHSMapping />}/>
-                    <Route path="/JSRACategories" element={ <WrapperJSRACategories />}/>
-                    <Route path="/JSRASub-Categories" element={ <WrapperJSRASubCategories />}/>
-                    <Route path="/PPETypes" element={ <WrapperPPETypes />}/>
-                    <Route path="/JSRADetails" element={ <WrapperJSRADetails />}/>
-                    <Route path="/UATypes" element={ <WrapperUATypes />}/>
-                    <Route path="/UASub-Types" element={ <WrapperUASubTypes />}/>
+                    <Route path="/Actions" element={<WrapperActions />} />
+                    <Route path="/SecondaryRootCauses" element={<WrapperSecondaryRootCauses />} />
+                    <Route path="/MicroRootCauses" element={<WrapperMicroRootCauses />} />
+                    <Route path="/InjuryTypes" element={<WrapperInjuryTypes />} />
+                    <Route path="/Status" element={<WrapperStatus />} />
+                    <Route path="/AuditCategories" element={<WrapperAuditCategories />} />
+                    <Route path="/SMATandEHSMapping" element={<WrapperSMATandEHSMapping />} />
+                    <Route path="/JSRACategories" element={<WrapperJSRACategories />} />
+                    <Route path="/JSRASub-Categories" element={<WrapperJSRASubCategories />} />
+                    <Route path="/PPETypes" element={<WrapperPPETypes />} />
+                    <Route path="/JSRADetails" element={<WrapperJSRADetails />} />
+                    <Route path="/UATypes" element={<WrapperUATypes />} />
+                    <Route path="/UASub-Types" element={<WrapperUASubTypes />} />
                     {/* Forms */}
-                    <Route path="/SEWOForm/:id?" element={ <WrapperSEWOForm />}/>
-                    <Route path="/UCANForm/:id?" element={ <WrapperUCANForm />}/>
-                    <Route path="/SMATForm/:id?" element={ <WrapperSMATForm />}/>
-                    <Route path="/EHSForm/:id?" element={ <WrapperEHSForm />}/>
-                    <Route path="/JSRAForm/:id?" element={ <WrapperJSRAForm />}/>
-                    <Route path="/TAGForm/:id?" element={ <WrapperTAGForm />}/>
-                    <Route path="/CHECK-LISTSTEP1Form/:id?" element={ <WrapperCHECKLISTSTEP1Form />}/>
-                    <Route path="/CHECK-LISTSTEP2Form/:id?" element={ <WrapperCHECKLISTSTEP2Form />}/>
-                    <Route path="/CHECK-LISTSTEP3Form/:id?" element={ <WrapperCHECKLISTSTEP3Form />}/>
+                    <Route path="/SEWOForm/:id?" element={<WrapperSEWOForm />} />
+                    <Route path="/UCANForm/:id?" element={<WrapperUCANForm />} />
+                    <Route path="/SMATForm/:id?" element={<WrapperSMATForm />} />
+                    <Route path="/EHSForm/:id?" element={<WrapperEHSForm />} />
+                    <Route path="/JSRAForm/:id?" element={<WrapperJSRAForm />} />
+                    <Route path="/TAGForm/:id?" element={<WrapperTAGForm />} />
+                    <Route path="/CHECK-LISTSTEP1Form/:id?" element={<WrapperCHECKLISTSTEP1Form />} />
+                    <Route path="/CHECK-LISTSTEP2Form/:id?" element={<WrapperCHECKLISTSTEP2Form />} />
+                    <Route path="/CHECK-LISTSTEP3Form/:id?" element={<WrapperCHECKLISTSTEP3Form />} />
                     {/* Views */}
-                    <Route path="/CHECK-LISTSTEP1View" element={<WrapperCHECKLISTSTEP1View/>}/>
-                    <Route path="/CHECK-LISTSTEP2View" element={<WrapperCHECKLISTSTEP2View/>}/>
-                    <Route path="/CHECK-LISTSTEP3View" element={<WrapperCHECKLISTSTEP3View/>}/>
-                    <Route path="/SEWOView" element={<WrapperSEWOView/>}/>
-                    <Route path="/UCANView" element={<WrapperUCANView/>}/>
-                    <Route path="/SMATView" element={<WrapperSMATView/>}/>
-                    <Route path="/EHSView" element={<WrapperEHSView/>}/>
-                    <Route path="/JSRAView" element={<WrapperJSRAView/>}/>
-                    <Route path="/TAGView" element={<WrapperTAGView/>}/>
+                    <Route path="/CHECK-LISTSTEP1View" element={<WrapperCHECKLISTSTEP1View />} />
+                    <Route path="/CHECK-LISTSTEP2View" element={<WrapperCHECKLISTSTEP2View />} />
+                    <Route path="/CHECK-LISTSTEP3View" element={<WrapperCHECKLISTSTEP3View />} />
+                    <Route path="/SEWOView" element={<WrapperSEWOView />} />
+                    <Route path="/UCANView" element={<WrapperUCANView />} />
+                    <Route path="/SMATView" element={<WrapperSMATView />} />
+                    <Route path="/EHSView" element={<WrapperEHSView />} />
+                    <Route path="/JSRAView" element={<WrapperJSRAView />} />
+                    <Route path="/TAGView" element={<WrapperTAGView />} />
 
 
 
-                     
+
 
                 </Routes>
             </Suspense>

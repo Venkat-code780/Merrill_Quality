@@ -157,9 +157,8 @@ export default class SecondaryRootCauses extends React.Component<SecondaryRootCa
                         formData,
                         RootCausesid: item.RootCauseId,
 
-                    }, () => {
-                        this.txtsecondaryrootcause.current?.focus();
                     });
+                    document.getElementById("divRootCause")?.getElementsByTagName('input')[0].focus()
                 }
             })
         }
@@ -172,7 +171,7 @@ export default class SecondaryRootCauses extends React.Component<SecondaryRootCa
 
     private addNew = () => {
         this.setState({ isFormOpen: true, ItemId: 0 }, () => {
-            this.txtsecondaryrootcause.current?.focus();
+            setTimeout(() => { document.getElementById("divRootCause")?.getElementsByTagName('input')[0].focus() }, 300);
         });
     }
     private async checkDuplicate() {
@@ -181,7 +180,7 @@ export default class SecondaryRootCauses extends React.Component<SecondaryRootCa
             const formData = { ...this.state.formData };
             let isValid = true;
             if (formData.Title) formData.Title = formData.Title.trim();
-            let filterQuery = `Title eq '${this.state.formData.Title}' and RootCauseId eq ${formData.RootCauseId}`;
+            let filterQuery = `Title eq '${formData.Title}' and RootCauseId eq ${formData.RootCauseId}`;
 
             if (this.state.ItemId > 0) {
                 filterQuery += ` and Id ne ${this.state.ItemId}`;
@@ -208,8 +207,9 @@ export default class SecondaryRootCauses extends React.Component<SecondaryRootCa
         try {
             event.preventDefault();
             var data = {
-                Action: { val: (this.state.formData.Title.trim()), required: true, Name: 'Secondary Root Cause', Type: ControlType.string, Focusid: this.txtsecondaryrootcause },
+                
                 RootCause: { val: (this.state.formData.RootCauseId), required: true, Name: 'Root Cause', Type: ControlType.reactSelect, Focusid: 'divRootCause' },
+                Action: { val: (this.state.formData.Title.trim()), required: true, Name: 'Secondary Root Cause', Type: ControlType.string, Focusid: this.txtsecondaryrootcause }
 
 
             }
@@ -385,15 +385,16 @@ export default class SecondaryRootCauses extends React.Component<SecondaryRootCa
                                     <div className="">
                                         <div className="form-border-box p-2 mx-1 my-2">
                                             <div className="row">
-                                                <div className="col-md-3">
-                                                    <div className="light-text">
-                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtsecondaryrootcause} maxLength={250} />
-                                                        <label>Secondary Root Cause <span className="mandatoryhastrick">*</span></label>
-                                                    </div>
-                                                </div>
+                                               
                                                 <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divRootCause" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
                                                         <SearchableDropdown label={"Root Cause"} Title={"Root Cause"} name={"RootCauseId"} id={"ddRootCause"} className={""} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Root Cause available"></SearchableDropdown>
+                                                    </div>
+                                                </div>
+                                                 <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtsecondaryrootcause} maxLength={250} />
+                                                        <label>Secondary Root Cause <span className="mandatoryhastrick">*</span></label>
                                                     </div>
                                                 </div>
 

@@ -445,7 +445,7 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
 
                                                 <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divAuditCategory" title={(this.state.AuditCategory.find((i: { label: string; value: any }) => i.value == this.state.formData.Audit_categoriesId) as { label: string; value: any } | undefined)?.label}>
-                                                        <SearchableDropdown label={""} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Audit Category available"></SearchableDropdown>
+                                                        <SearchableDropdown label={"Audit Category"} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Audit Category available"></SearchableDropdown>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">

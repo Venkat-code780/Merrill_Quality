@@ -24,56 +24,55 @@
   padding: 0 !important;
 }
 
-#content-r{
+#content-r {
   margin: 0px !important;
 }
 
- #content{
-    padding: 0!important;
-    min-height: inherit!important;
-  }
-  button {
-    display: none!important;
-  }
-  .add-button {
-    display: none!important;
-  }
-  .container-fluid {
-    padding: 0;
-  }
-  #content-r {
-    margin: 0;
-    background: transparent !important;
-  }
+#content {
+  padding: 0 !important;
+  min-height: inherit !important;
+}
 
-  .ms-wikicontent {
-    padding-right: 0 !important;
-  }
-  .ms-webpartzone-cell {
-    margin: 0;
-  }
+.container-fluid {
+  padding: 0;
+}
 
-  #ms-designer-ribbon {
-    display: none!important;
-  }
+#content-r {
+  margin: 0;
+  background: transparent !important;
+}
 
-  #site_content {
-    display: block!important;
-    margin-top: -8px!important;
-    overflow: auto!important;
-  }
-  #main #site_content {
-    display: block!important;
-    margin-top: -8px!important;
-    overflow: auto!important;
-  }
+.ms-wikicontent {
+  padding-right: 0 !important;
+}
 
-  .footer.ms-dialogHidden {
-    display: none!important;
-  }
-  .botom-border {
-    display: none!important;
-  } 
+.ms-webpartzone-cell {
+  margin: 0;
+}
+
+#ms-designer-ribbon {
+  display: none !important;
+}
+
+#site_content {
+  display: block !important;
+  margin-top: -8px !important;
+  overflow: auto !important;
+}
+
+#main #site_content {
+  display: block !important;
+  margin-top: -8px !important;
+  overflow: auto !important;
+}
+
+.footer.ms-dialogHidden {
+  display: none !important;
+}
+
+.botom-border {
+  display: none !important;
+}
 
 .FormContent {
   position: relative;
@@ -321,13 +320,16 @@
   margin-top: 8px;
   font-weight: bold;
 }
+
 .NewButton:hover {
-    background: #39718f;
-    border-color: #39718f;
+  background: #39718f;
+  border-color: #39718f;
 }
+
 .rdt_Pagination button {
-    min-width: inherit;
+  min-width: inherit;
 }
+
 /* input controls css for lable on border itself*/
 .light-text {
   position: relative;
@@ -539,16 +541,18 @@ th {
   padding: 30px;
   overflow: auto !important;
 }
+
 .spn-del {
-    color: #ff6d6d;
+  color: #ff6d6d;
 }
+
 .spn-del:hover {
   color: red;
 }
 
 .active-navbar .dataTables_wrapper-overflow {
   overflow: auto;
-  width: 84vw!important;
+  width: 84vw !important;
 }
 
 @media only screen and (max-width: 1688px) {
@@ -565,8 +569,9 @@ th {
   }
 
 }
+
 .dataTables_wrapper-overflow {
-    width: 91vw!important;
+  width: 91vw !important;
 }
 
 div#content-r {
@@ -576,23 +581,28 @@ div#content-r {
 .darkgraybg {
   background-color: #e1e1e1;
 }
+
 .lightgreybg {
-    background-color: #f3f3f3;
+  background-color: #f3f3f3;
 }
+
 .text-danger {
-    font-weight: bold !important;
+  font-weight: bold !important;
 }
 
 .ARC .div-root-cause {
-    padding: 7px !important;
+  padding: 7px !important;
 }
+
 .ARC div {
-    /* margin: 0 !important; */
-    padding: 0 !important;
+  /* margin: 0 !important; */
+  padding: 0 !important;
 }
+
 div#divUsualWork {
-    padding-right: 1px;
+  padding-right: 1px;
 }
+
 div#divShift {
-    padding-left: 1px ;
+  padding-left: 1px;
 }

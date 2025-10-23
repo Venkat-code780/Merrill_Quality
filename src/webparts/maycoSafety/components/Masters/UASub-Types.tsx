@@ -394,7 +394,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                                                 </div>
                                                 <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
-                                                        <Dropdown label={""} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
+                                                        <Dropdown label={"Category"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
                                                     </div>
                                                 </div>
 

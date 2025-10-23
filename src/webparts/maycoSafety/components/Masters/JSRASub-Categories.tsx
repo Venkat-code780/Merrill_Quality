@@ -397,7 +397,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                                                 </div>
                                                 <div className="col-md-3">
                                                         <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
-                                                            <Dropdown label={""} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No JSRA Category available"></Dropdown>
+                                                            <Dropdown label={"JSRA Category"} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No JSRA Category available"></Dropdown>
                                                         </div>
                                                 </div>
 

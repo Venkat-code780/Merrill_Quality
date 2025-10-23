@@ -500,7 +500,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                                 <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divSecondaryRootcause" title={(this.state.FilteredSecondaryrootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.SecondaryRootCauseId) as { label: string; value: any } | undefined)?.label} >
                                                         <SearchableDropdown
-                                                            label={""}
+                                                            label={"Secondary Root Cause"}
                                                             Title={"Secondary Root Cause"}
                                                             name={"SecondaryRootCauseId"}
                                                             id={"ddlSecondaryRootCause"}

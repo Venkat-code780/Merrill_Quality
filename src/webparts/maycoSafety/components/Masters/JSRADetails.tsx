@@ -524,12 +524,12 @@ export default class JSRADetails extends React.Component<JSRAdetailsProps, JSRAd
                                             <div className="row pt-2 px-2">
                                                 <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategories.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
-                                                        <Dropdown label={""} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Category available"></Dropdown>
+                                                        <Dropdown label={"Category"} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Category available"></Dropdown>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divSubCategory" title={(this.state.FilteredSubCategories.find((i: { label: string; value: any }) => i.value == this.state.formData.Sub_x0020_CategoryId) as { label: string; value: any } | undefined)?.label}>
-                                                        <Dropdown label={""} Title={"CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange={this.handleSubCategoryChange} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Sub Category available"></Dropdown>
+                                                        <Dropdown label={"Sub-Category"} Title={"Sub-CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange={this.handleSubCategoryChange} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Sub Category available"></Dropdown>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
@@ -570,7 +570,7 @@ export default class JSRADetails extends React.Component<JSRAdetailsProps, JSRAd
                                                 </div>
                                                 <div className="col-md-12 mt-2">
                                                     <div className="light-text">
-                                                        <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title={this.state.formData.Details} style={{ height: "150px" }}></textarea>
+                                                        <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title={this.state.formData.Details} ></textarea>
                                                         <label>Details<span className="mandatoryhastrick">*</span></label>
                                                     </div>
                                                 </div>

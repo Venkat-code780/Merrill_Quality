@@ -12,14 +12,6 @@
   margin: 0px !important;
 }
 
-.ms-webpart-titleText {
-  display: none;
-}
-
-.ms-core-pageTitle {
-  display: none;
-}
-
 #contentRow {
   padding: 0 !important;
 }
@@ -50,9 +42,6 @@
   margin: 0;
 }
 
-#ms-designer-ribbon {
-  display: none !important;
-}
 
 #site_content {
   display: block !important;
@@ -66,13 +55,6 @@
   overflow: auto !important;
 }
 
-.footer.ms-dialogHidden {
-  display: none !important;
-}
-
-.botom-border {
-  display: none !important;
-}
 
 .FormContent {
   position: relative;

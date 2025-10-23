@@ -362,7 +362,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.currentSiteURL);
                         if (GroupMemberEmails.length) {
                             let link = this.currentSiteURL + '/SitePages/Home.aspx#/JSRAForm/' + adedItemId
-                            let body = "<p>Hi,</p>" + "<p>New 'JSRA-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards</p>";
+                            let body = "<p>Hi,</p>" + "<p>New 'JSRA-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>"+this.props.userDisplayName+"</p>";
                             await sendEmail(this.rootSiteURL, GroupMemberEmails, "New 'JSRA' Submitted", body);
                         }
                     }

@@ -465,8 +465,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             }
             else {
                 showToast("error", isValid.message);
+                hideLoader();
             }
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
@@ -513,7 +513,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
                     if (GroupMemberEmails.length) {
                         let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/EHSForm/' + adedItemId
-                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards</p>";
+                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>"+this.props.userDisplayName+"</p>";
                         await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'EHS' Submitted", body);
                     }
                 }
@@ -528,6 +528,9 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+         finally {
+            hideLoader();
         }
     }
 
@@ -550,6 +553,9 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+        finally {
+            hideLoader();
         }
     }
 
@@ -906,7 +912,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                                         OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divSupervisor") }}
                                                         isRequired={true}
                                                         disabled={this.state.isInputDisabled}
-                                                        noOptionsMessage="No Supervisor's available" 
+                                                        noOptionsMessage="No Supervisor's available"
                                                     />
                                                 </div>
                                             </div>

@@ -705,7 +705,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                 <div className="col-md-12">
                     <div className="light-text">
                         <label className=" col-form-label">Tag Type<span className="mandatoryhastrick">* </span></label>
-                        <select className="form-select pt-2 ps-2" placeholder="" name="TagType" id="txtTagType" ref={this.TagType} value={this.state.AMWOformData.TagType} title={this.state.AMWOformData.TagType} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={this.state.ItemId > 0}>
+                        <select className="form-select pt-3 ps-2" placeholder="" name="TagType" id="txtTagType" ref={this.TagType} value={this.state.AMWOformData.TagType} title={this.state.AMWOformData.TagType} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={this.state.ItemId > 0}>
                             <option value="">None</option>
                             <option value="AM">AM</option>
                             <option value="WO">WO</option>

@@ -123,7 +123,6 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         document.getElementById("divWCCDate")?.getElementsByTagName('input')[0].focus();
         this.getOnLoadData();
     }
-
     private getOnLoadData = async () => {
         try {
             showLoader();
@@ -467,8 +466,8 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             }
             else {
                 showToast("error", isValid.message);
+                hideLoader();
             }
-            hideLoader();
         } catch (e) {
             console.log(e);
             this.onError();
@@ -514,7 +513,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
                     if (GroupMemberEmails.length) {
                         let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/SMATForm/' + adedItemId
-                        let body = "<p>Hi,</p>" + "<p>New 'SMAT-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards</p>";
+                        let body = "<p>Hi,</p>" + "<p>New 'SMAT-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>"+this.props.userDisplayName+"</p>";
                         await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'SMAT' Submitted", body);
                     }
                 }
@@ -529,6 +528,9 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+        finally {
+            hideLoader();
         }
     }
 
@@ -551,6 +553,9 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         } catch (e) {
             console.log(e);
             this.onError();
+        }
+         finally {
+            hideLoader();
         }
     }
 
@@ -599,6 +604,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 element?.classList.add("mandatory-FormContent-focus");
                 element?.focus();
                 showToast("error", "Comments cannot be blank for Status-" + allMappingData[i].SubCategoryStatus);
+                 hideLoader();
                 break;
             }
         }
@@ -708,7 +714,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         </select>
                                     </div>
                                 </td>
-                                {allMappingData.some(i=>i.SubCategoryStatus!='Satisfactory') && <td>
+                                {allMappingData.some(i => i.SubCategoryStatus != 'Satisfactory') && <td>
                                     <div className={` ${isSatisfactory ? 'd-none' : ''}`} id={`divSubCategory${rowIndex}`}>
                                         <textarea
                                             className="form-control bs-textarea"
@@ -977,7 +983,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                                             <tr className="darkgraybg fs-5">
                                                                 <th>Requirement</th>
                                                                 <th>Status</th>
-                                                                {this.state.allMappingData.some(i=>i.SubCategoryStatus!='Satisfactory') &&<th>Comments<span className="mandatoryhastrick"> *</span></th>}
+                                                                {this.state.allMappingData.some(i => i.SubCategoryStatus != 'Satisfactory') && <th>Comments<span className="mandatoryhastrick"> *</span></th>}
                                                             </tr>
                                                         </thead>
                                                         <tbody>

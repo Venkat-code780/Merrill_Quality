@@ -185,7 +185,7 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
 
     private addNew = () => {
         this.setState({ isFormOpen: true, ItemId: 0 });
-        setTimeout(()=>{document.getElementById("divAuditCategory")?.getElementsByTagName('input')[0].focus()},300);
+        setTimeout(() => { document.getElementById("divAuditCategory")?.getElementsByTagName('input')[0].focus() }, 300);
     }
 
 
@@ -432,69 +432,62 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
                                 <div className="form-title">SMAT and EHS Mapping</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="mainContent px-4 borderLine">
-                                <div>
-                                    {!this.state.isFormOpen &&
-                                        <div className="text-end me-1" id="">
-                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
-                                                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
-                                        </div>}
-                                    {this.state.isFormOpen &&
-                                        <div className="">
-                                            <div className="form-border-box p-2 mx-1 mt-2">
-                                                <div className="row">
+                            <div className="p-2 mx-1">
+                                {!this.state.isFormOpen &&
+                                    <div className="text-end me-1" id="">
+                                        <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
+                                            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
+                                    </div>}
+                                {this.state.isFormOpen &&
+                                    <div className="">
+                                        <div className="form-border-box p-2 mx-1 my-2">
+                                            <div className="row">
 
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <label htmlFor="ddAuditCategory">
-                                                                Audit Category<span className="mandatoryhastrick">*</span>
-                                                            </label>
-                                                            <div className="custom-dropdown" id="divAuditCategory" title={(this.state.AuditCategory.find((i: { label: string; value: any }) => i.value == this.state.formData.Audit_categoriesId) as { label: string; value: any } | undefined)?.label}>
-                                                                <SearchableDropdown label={""} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Audit Category available"></SearchableDropdown>
-                                                            </div>
-                                                        </div>
+                                                <div className="col-md-3">
+                                                    <div className="custom-dropdown" id="divAuditCategory" title={(this.state.AuditCategory.find((i: { label: string; value: any }) => i.value == this.state.formData.Audit_categoriesId) as { label: string; value: any } | undefined)?.label}>
+                                                        <SearchableDropdown label={""} Title={"Audit Category"} name={"Audit_categoriesId"} id={"ddAuditCategory"} className={""} selectedValue={this.state.formData.Audit_categoriesId} OptionsList={this.state.AuditCategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Audit Category available"></SearchableDropdown>
                                                     </div>
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} type="text" name="Audit_SubCategory" title={this.state.formData.Audit_SubCategory} value={this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250} />
-                                                            <label>Audit Sub Category <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <select className="form-control" name="Form_x0020_Type" title={this.state.formData.Form_x0020_Type} value={this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
-                                                                <option value={""}>--Select One--</option>
-                                                                <option value={'WCC'}>WCC</option>
-                                                                <option value={'EHS'}>EHS</option>
-
-                                                            </select>
-                                                            <label>Form Type<span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <select className="form-control" name="Is_x0020_Active" title={this.state.formData.Is_x0020_Active === true ? 'Yes' : this.state.formData.Is_x0020_Active === false ? 'No' : ''} value={this.state.formData.Is_x0020_Active === null ? "" : String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
-                                                                <option value={0}>--Select One--</option>
-                                                                <option value={'true'}>Yes</option>
-                                                                <option value={'false'}>No</option>
-                                                            </select>
-                                                            <label>Is Active<span className="mandatoryhastrick">*</span></label>
-                                                        </div>
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Audit_SubCategory" title={this.state.formData.Audit_SubCategory} value={this.state.formData.Audit_SubCategory} onChange={this.handleChangeDynamic} id="txtSubcategory" autoComplete="off" ref={this.Audit_SubCategory} maxLength={250} />
+                                                        <label>Audit Sub Category <span className="mandatoryhastrick">*</span></label>
                                                     </div>
                                                 </div>
 
 
-                                                <div className="col-sm-12 text-center py-3" id="">
-                                                    <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
-                                                    <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <select className="form-control" name="Form_x0020_Type" title={this.state.formData.Form_x0020_Type} value={this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
+                                                            <option value={""}>--Select One--</option>
+                                                            <option value={'WCC'}>WCC</option>
+                                                            <option value={'EHS'}>EHS</option>
+
+                                                        </select>
+                                                        <label>Form Type<span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <select className="form-control" name="Is_x0020_Active" title={this.state.formData.Is_x0020_Active === true ? 'Yes' : this.state.formData.Is_x0020_Active === false ? 'No' : ''} value={this.state.formData.Is_x0020_Active === null ? "" : String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
+                                                            <option value={0}>--Select One--</option>
+                                                            <option value={'true'}>Yes</option>
+                                                            <option value={'false'}>No</option>
+                                                        </select>
+                                                        <label>Is Active<span className="mandatoryhastrick">*</span></label>
+                                                    </div>
                                                 </div>
                                             </div>
 
+
+                                            <div className="col-sm-12 text-center py-3" id="">
+                                                <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
+                                                <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                                            </div>
                                         </div>
-                                    }
-                                </div>
+
+                                    </div>
+                                }
                                 <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>

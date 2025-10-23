@@ -16,12 +16,12 @@ import { showToast } from "../Shared/Toaster";
 import { Navigate, NavLink } from "react-router-dom";
 
 export interface UATypeProps {
-    match:any;
-    spContext:any;
+    match: any;
+    spContext: any;
     spHttpClient: SPHttpClient;
     context: any;
     history: any;
-    currentUser : any,
+    currentUser: any,
 }
 
 export interface UATypeState {
@@ -35,173 +35,174 @@ export interface UATypeState {
     ItemId: number;
     formData: {
         Title: string;
-    
+
     },
     redirect: boolean,
     isEdit: boolean,
-    displayMessage:string,
+    displayMessage: string,
     isUnauthorized: Boolean,
-    RootCauses:any,
-    RootCausesid:number,
-    
+    RootCauses: any,
+    RootCausesid: number,
+
 }
 
- export default class AuditCategories extends React.Component<UATypeProps, UATypeState> {
+export default class AuditCategories extends React.Component<UATypeProps, UATypeState> {
 
     private ActionsList = "UATypes";
     private txtLeadSourceName;
-    
+
 
     private sp = spfi().using(SPFx(this.props.context));
 
-    constructor(props: UATypeProps){
+    constructor(props: UATypeProps) {
         super(props);
 
         var lsTableProps = localStorage.getItem('PrvData');
-        let TablePropsJson =  lsTableProps != 'null' && lsTableProps != undefined && lsTableProps != null ? JSON.parse(lsTableProps):null;
+        let TablePropsJson = lsTableProps != 'null' && lsTableProps != undefined && lsTableProps != null ? JSON.parse(lsTableProps) : null;
 
         this.state = {
             ActionsData: [],
             loading: true,
             pageNumber: TablePropsJson != null ? TablePropsJson.pageNumber : 1,
-            sortBy: TablePropsJson != null ? TablePropsJson.sortBy: 1,
-            sortOrder: TablePropsJson != null ? TablePropsJson.sortOrder == 'asc'? true: false : false,
+            sortBy: TablePropsJson != null ? TablePropsJson.sortBy : 1,
+            sortOrder: TablePropsJson != null ? TablePropsJson.sortOrder == 'asc' ? true : false : false,
             searchText: TablePropsJson != null ? TablePropsJson.searchText : "",
             isFormOpen: false,
             ItemId: 0,
             formData: {
                 Title: '',
-           
-               
+
+
             },
             redirect: false,
             isEdit: false,
-            displayMessage:'',
+            displayMessage: '',
             isUnauthorized: false,
-            RootCauses:[],
-               RootCausesid:0,
+            RootCauses: [],
+            RootCausesid: 0,
         };
 
         this.txtLeadSourceName = React.createRef<HTMLInputElement>();
-   
+
 
 
     }
 
-    public componentDidMount(){
+    public componentDidMount() {
         highlightCurrentNav("liUATypes");
         document.title = "Mayco - Safety | UA Types";
         this.loadListData();
     }
 
-    public componentDidUpdate(){
-        if( this.state.redirect) {
+    public componentDidUpdate() {
+        if (this.state.redirect) {
             this.loadListData();
         }
     }
 
-    private async loadListData(){
-        try{
+    private async loadListData() {
+        try {
             showLoader();
-            this.setState({ redirect: false});
-             let lsTableProps = {'PageNumber':1,"sortOrder":false,"sortBy":1,'SearchKey':null};
+            this.setState({ redirect: false });
+            let lsTableProps = { 'PageNumber': 1, "sortOrder": false, "sortBy": 1, 'SearchKey': null };
             localStorage.setItem('PrvData', JSON.stringify(lsTableProps));
 
-           let  [UATypes]=await Promise.all([
-            this.sp.web.lists.getByTitle('UATypes').items.select('Id', 'Title').top(2000).orderBy("Modified", false)(),
-           ])
-           let tableData: { Id: any; Title: any;}[]=[];
-           UATypes.forEach(Src=>{
-             let tableObj = {
-                                Id: Src.Id,
-                                Title: Src.Title,
-                            
-                            
-                            }
-                tableData.push(tableObj);
-           })
+            let [UATypes] = await Promise.all([
+                this.sp.web.lists.getByTitle('UATypes').items.select('Id', 'Title').top(2000).orderBy("Modified", false)(),
+            ])
+            let tableData: { Id: any; Title: any; }[] = [];
+            UATypes.forEach(Src => {
+                let tableObj = {
+                    Id: Src.Id,
+                    Title: Src.Title,
 
-           
-        this.setState({ ActionsData: tableData});
+
+                }
+                tableData.push(tableObj);
+            })
+
+
+            this.setState({ ActionsData: tableData });
         }
-        catch(e){
+        catch (e) {
             this.onError();
             console.log(e);
         }
-        finally{
+        finally {
             hideLoader();
         }
     }
 
-    private async editItem( Id: number ){
-        try{
-             var formData = {...this.state.formData};
+    private async editItem(Id: number) {
+        try {
+            var formData = { ...this.state.formData };
             formData.Title = '';
             //formData.IsActive = false;
             showLoader();
-            this.setState({ isFormOpen: true, ItemId: Id, formData});
-            await this.sp.web.lists.getByTitle(this.ActionsList).items.getById(Id)().then( (item:any) => {
-                if( item.Error ){
+            this.setState({ isFormOpen: true, ItemId: Id, formData });
+            await this.sp.web.lists.getByTitle(this.ActionsList).items.getById(Id)().then((item: any) => {
+                if (item.Error) {
                     hideLoader();
                     console.log(item.Error);
                 }
-                else{
+                else {
                     formData.Title = item.Title;
-                 
-                  //formData.IsActive = item.IsActive;
+
+                    //formData.IsActive = item.IsActive;
                     hideLoader();
-                    this.setState({ formData,   
-                     
-                    },()=>{
+                    this.setState({
+                        formData,
+
+                    }, () => {
                         this.txtLeadSourceName.current?.focus();
                     });
                 }
             })
         }
-        catch(e){
+        catch (e) {
             this.onError();
             hideLoader();
             console.log(e);
         }
     }
-    
+
     private addNew = () => {
-        this.setState({ isFormOpen: true, ItemId: 0 },()=>{
+        this.setState({ isFormOpen: true, ItemId: 0 }, () => {
             this.txtLeadSourceName.current?.focus();
         });
     }
 
-  
 
-private async checkDuplicate() {
-    try {
-        showLoader();
-        const formData = { ...this.state.formData };
-        let isValid = true;
-                 if (formData.Title) formData.Title = formData.Title.trim();
-        let filterQuery = `Title eq '${this.state.formData.Title}'`;
 
-        if (this.state.ItemId > 0) {
-            filterQuery += ` and Id ne ${this.state.ItemId}`;
+    private async checkDuplicate() {
+        try {
+            showLoader();
+            const formData = { ...this.state.formData };
+            let isValid = true;
+            if (formData.Title) formData.Title = formData.Title.trim();
+            let filterQuery = `Title eq '${this.state.formData.Title}'`;
+
+            if (this.state.ItemId > 0) {
+                filterQuery += ` and Id ne ${this.state.ItemId}`;
+            }
+
+            const results = await this.sp.web.lists
+                .getByTitle(this.ActionsList)
+                .items.filter(filterQuery)();
+
+            if (results && results.length > 0) {
+                isValid = false;
+                showToast("error", "Record already exists");
+            }
+            hideLoader();
+            return isValid;
+        } catch (e) {
+            this.onError();
+            hideLoader();
+            console.error(e);
+            return false;
         }
-
-        const results = await this.sp.web.lists
-            .getByTitle(this.ActionsList)
-            .items.filter(filterQuery)();
-
-        if (results && results.length > 0) {
-            isValid = false;
-            showToast("error", "Record already exists");
-        }
-        hideLoader();
-        return isValid;
-    } catch (e) {
-        this.onError();
-        hideLoader();
-        console.error(e);
-        return false;
     }
-}
 
 
 
@@ -211,30 +212,30 @@ private async checkDuplicate() {
 
 
 
-    private handleSubmit =async (event:any) =>{
+    private handleSubmit = async (event: any) => {
         showLoader();
-        try{
+        try {
             event.preventDefault();
             var data = {
                 Status: { val: (this.state.formData.Title.trim()), required: true, Name: 'UA Type', Type: ControlType.string, Focusid: this.txtLeadSourceName },
 
-                 
-            }
-            let isValid = formValidation.FormValidation( data );
 
-            if( isValid.status ){ 
+            }
+            let isValid = formValidation.FormValidation(data);
+
+            if (isValid.status) {
                 let validDuplicate = await this.checkDuplicate();
-                
-                if( validDuplicate ){
+
+                if (validDuplicate) {
                     this.InsertOrUpdateDate();
                 }
 
-            }else{
-                showToast( "error", isValid.message  );
+            } else {
+                showToast("error", isValid.message);
                 hideLoader();
             }
         }
-        catch(e){
+        catch (e) {
             this.onError();
             hideLoader();
             console.log(e);
@@ -242,24 +243,24 @@ private async checkDuplicate() {
     }
 
     private InsertOrUpdateDate() {
-        try{
+        try {
             let itemId = this.state.ItemId;
-            let formData = {...this.state.formData};
+            let formData = { ...this.state.formData };
             if (formData.Title) formData.Title = formData.Title.trim();
-            if( itemId > 0 ){
-                this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update( formData ).then( (res) => {
+            if (itemId > 0) {
+                this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update(formData).then((res) => {
                     let msg = "UA Type updated successfully";
-                    this.setState({displayMessage: msg, redirect:true});
+                    this.setState({ displayMessage: msg, redirect: true });
                     this.onSuccess();
                 }, (error) => {
                     console.log(error);
                     this.onError();
                 })
             }
-            else{
-                this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then( (res) => {
+            else {
+                this.sp.web.lists.getByTitle(this.ActionsList).items.add(formData).then((res) => {
                     let msg = "UA Type submitted successfully";
-                    this.setState({displayMessage: msg, redirect:true});
+                    this.setState({ displayMessage: msg, redirect: true });
                     this.onSuccess();
                 }, (error) => {
                     console.log(error);
@@ -267,49 +268,49 @@ private async checkDuplicate() {
                 })
             }
         }
-        catch(e){
+        catch (e) {
             this.onError();
             hideLoader();
             console.log(e);
         }
     }
 
-    private onSuccess = ( ) =>{
+    private onSuccess = () => {
         this.closeForm();
-        showToast( "success", this.state.displayMessage );
+        showToast("success", this.state.displayMessage);
         hideLoader();
     }
 
-    private onError = () =>{
-        showToast( "error", ActionStatus.Error );
+    private onError = () => {
+        showToast("error", ActionStatus.Error);
         hideLoader();
     }
 
-    private closeForm= () =>{
-        var formData = {...this.state.formData};
+    private closeForm = () => {
+        var formData = { ...this.state.formData };
         formData.Title = '';
         //formData.IsActive = true;
         this.setState({ isFormOpen: false, formData });
     }
 
-    private onPageChange =(pageIndex:any)=>{
-        this.setState({pageNumber: pageIndex});  
+    private onPageChange = (pageIndex: any) => {
+        this.setState({ pageNumber: pageIndex });
     }
 
     private handleChangeDynamic = (event: any) => {
-        const formData:any = {...this.state.formData};
+        const formData: any = { ...this.state.formData };
         const name = event.target.name;
         let value = event.target.type == 'checkbox' ? event.target.checked : event.target.value;
         formData[name] = value;
-        this.setState({formData});
+        this.setState({ formData });
     }
 
-    private handleRowClicked = (row:any,Id?: any) => {
-        let ID = row.Id? row.Id:Id;
+    private handleRowClicked = (row: any, Id?: any) => {
+        let ID = row.Id ? row.Id : Id;
         this.editItem(ID);
     }
 
-    public render(){
+    public render() {
         const columns = [
             {
                 name: "Edit",
@@ -327,69 +328,67 @@ private async checkDuplicate() {
                     );
                 },
                 sortable: false,
-                 width: '60px',
+                width: '60px',
             },
             {
                 name: "UA Type",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
-                cell: (record: { Title:  any; }) => {
+                cell: (record: { Title: any; }) => {
                     return (
                         record.Title
                     );
                 },
             },
-     
+
         ];
 
-        if(this.state.isUnauthorized){
+        if (this.state.isUnauthorized) {
             return <Navigate to="/UnAuthorized" />
         }
-        else{
-            
-            return(
+        else {
+
+            return (
                 <React.Fragment>
-    
-                            <div className="container-fluid">
-                                <div className="light-box border-box-shadow">
-                                      <div className="div-form-title">
+
+                    <div className="container-fluid">
+                        <div className="light-box border-box-shadow">
+                            <div className="div-form-title">
                                 <div className="form-title">UA Types</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                                  <div className="mainContent px-4 borderLine">
-                                    <div>
-                                        { !this.state.isFormOpen && 
-                                        <div className="text-end me-1" id="">
-                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
-                                                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
-                                        </div> }
-                                        { this.state.isFormOpen && 
-                                            <div className="">
-                                                <div className="form-border-box p-2 mx-1 mt-2">
-                                                    <div className="row">
-                                                        <div className="col-md-3">
-                                                            <div className="light-text">
-                                                                <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={ this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250}/>
-                                                                <label>UA Type <span className="mandatoryhastrick">*</span></label>
-                                                            </div>
-                                                        </div>
-                                                    
-                                                       
-                                                        <div className="col-md-3 py-2 text-center" id="">
-                                                            <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId? 'Update':'Submit'}</button>
-                                                            <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
-                                                        </div>
+                            <div className="p-2 mx-1">
+                                {!this.state.isFormOpen &&
+                                    <div className="text-end me-1" id="">
+                                        <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
+                                            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
+                                    </div>}
+                                {this.state.isFormOpen &&
+                                    <div className="">
+                                        <div className="form-border-box p-2 mx-1 my-2">
+                                            <div className="row">
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtLeadSourceName} maxLength={250} />
+                                                        <label>UA Type <span className="mandatoryhastrick">*</span></label>
                                                     </div>
                                                 </div>
-                                               
+
+
+                                                <div className="col-md-3 py-2 text-center" id="">
+                                                    <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
+                                                    <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                                                </div>
                                             </div>
-                                        }
+                                        </div>
+
                                     </div>
-                                    <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
-                               </div>
-                                </div>
+                                }
+                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
-          
+                        </div>
+                    </div>
+
                 </React.Fragment>
             )
         }

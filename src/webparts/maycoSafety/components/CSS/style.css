@@ -24,6 +24,57 @@
   padding: 0 !important;
 }
 
+#content-r{
+  margin: 0px !important;
+}
+
+ #content{
+    padding: 0!important;
+    min-height: inherit!important;
+  }
+  button {
+    display: none!important;
+  }
+  .add-button {
+    display: none!important;
+  }
+  .container-fluid {
+    padding: 0;
+  }
+  #content-r {
+    margin: 0;
+    background: transparent !important;
+  }
+
+  .ms-wikicontent {
+    padding-right: 0 !important;
+  }
+  .ms-webpartzone-cell {
+    margin: 0;
+  }
+
+  #ms-designer-ribbon {
+    display: none!important;
+  }
+
+  #site_content {
+    display: block!important;
+    margin-top: -8px!important;
+    overflow: auto!important;
+  }
+  #main #site_content {
+    display: block!important;
+    margin-top: -8px!important;
+    overflow: auto!important;
+  }
+
+  .footer.ms-dialogHidden {
+    display: none!important;
+  }
+  .botom-border {
+    display: none!important;
+  } 
+
 .FormContent {
   position: relative;
   margin-bottom: 10px;
@@ -267,7 +318,7 @@
   color: white;
   border: 1px solid #0b3e50;
   padding: 6px 18px;
-  margin-top: 15px;
+  margin-top: 8px;
   font-weight: bold;
 }
 .NewButton:hover {
@@ -528,5 +579,20 @@ div#content-r {
 .lightgreybg {
     background-color: #f3f3f3;
 }
+.text-danger {
+    font-weight: bold !important;
+}
 
-
+.ARC .div-root-cause {
+    padding: 7px !important;
+}
+.ARC div {
+    /* margin: 0 !important; */
+    padding: 0 !important;
+}
+div#divUsualWork {
+    padding-right: 1px;
+}
+div#divShift {
+    padding-left: 1px ;
+}

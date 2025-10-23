@@ -379,44 +379,37 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                                 <div className="form-title">JSRA Sub Categories</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="mainContent px-4 borderLine">
-                                <div>
-                                    {!this.state.isFormOpen &&
-                                        <div className="text-end me-1" id="">
-                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
-                                                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
-                                        </div>}
-                                    {this.state.isFormOpen &&
-                                        <div className="">
-                                            <div className="form-border-box p-2 mx-1 mt-2">
-                                                <div className="row">
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRASubCategory} maxLength={250} />
-                                                            <label>JSRA Sub Category <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <label htmlFor="CategoryDropdown">
-                                                                JSRA Category<span className="mandatoryhastrick">*</span>
-                                                            </label>
-                                                            <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
-                                                                <Dropdown label={""} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No JSRA Category available"></Dropdown>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="col-md-3 py-2 text-center" id="">
-                                                        <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
-                                                        <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                            <div className="p-2 mx-1">
+                                {!this.state.isFormOpen &&
+                                    <div className="text-end me-1" id="">
+                                        <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
+                                            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
+                                    </div>}
+                                {this.state.isFormOpen &&
+                                    <div className="">
+                                        <div className="form-border-box p-2 mx-1 my-2">
+                                            <div className="row">
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.txtJSRASubCategory} maxLength={250} />
+                                                        <label>JSRA Sub Category <span className="mandatoryhastrick">*</span></label>
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <div className="col-md-3">
+                                                        <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
+                                                            <Dropdown label={""} Title={"JSRA Category"} name={"JSRA Category"} id={"CategoryDropdown"} className={"Category"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No JSRA Category available"></Dropdown>
+                                                        </div>
+                                                </div>
 
+                                                <div className="col-md-3 py-2 text-center" id="">
+                                                    <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
+                                                    <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    }
-                                </div>
+
+                                    </div>
+                                }
                                 <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>

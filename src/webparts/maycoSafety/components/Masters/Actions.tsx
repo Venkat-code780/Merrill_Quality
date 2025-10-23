@@ -47,7 +47,7 @@ export interface ActionsState {
     RootCausesid: number,
     SecondaryRootCauseid: number,
     FilteredSecondaryrootCauses: any
-    FilteredSecondaryTitle:any
+    FilteredSecondaryTitle: any
 
 }
 
@@ -87,7 +87,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
             FilteredSecondaryrootCauses: [],
             RootCausesid: 0,
             SecondaryRootCauseid: 0,
-            FilteredSecondaryTitle:''
+            FilteredSecondaryTitle: ''
         };
 
         this.Title = React.createRef<HTMLInputElement>();
@@ -214,10 +214,10 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
             const formData = { ...this.state.formData };
 
             let isValid = true;
-             if (formData.Title) formData.Title = formData.Title.trim();
+            if (formData.Title) formData.Title = formData.Title.trim();
             // Escape single quotes in Title
             // const escapedTitle = formData.Title.replace(/'/g, "''");
-                
+
             // Build OData filter for all three fields
             // Note: Adjust property names according to your SharePoint list fields
             let filterQuery = `Title eq '${formData.Title}' and RootCauseId eq ${formData.RootCauseId} and SecondaryRootCauseId eq ${formData.SecondaryRootCauseId}`;
@@ -290,7 +290,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
         try {
             let itemId = this.state.ItemId;
             let formData = { ...this.state.formData };
-               if (formData.Title) formData.Title = formData.Title.trim();
+            if (formData.Title) formData.Title = formData.Title.trim();
             if (itemId > 0) {
                 this.sp.web.lists.getByTitle(this.ActionsList).items.getById(this.state.ItemId).update(formData).then((res) => {
                     let msg = "Action updated successfully";
@@ -383,7 +383,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                 ...prevState.formData,
                 SecondaryRootCauseId: selectedSecondaryId   // correct field
             },
-            FilteredSecondaryTitle:selectedSecondaryTitle
+            FilteredSecondaryTitle: selectedSecondaryTitle
         }));
     };
 
@@ -399,7 +399,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                 name: "Edit",
                 selector: (row: { Id: any; }, i: any) => row.Id,
                 export: false,
-               
+
                 cell: (record: { Id: any; }) => {
                     return (
                         <React.Fragment>
@@ -411,8 +411,8 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                         </React.Fragment>
                     );
                 },
-                 width: '60px',
-               
+                width: '60px',
+
                 sortable: false,
             },
             {
@@ -461,56 +461,69 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                 <div className="form-title">Actions</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="mainContent px-4 borderLine">
+                            <div className="p-2 mx-1">
 
-                                <div>
-                                    {!this.state.isFormOpen &&
-                                        <div className="text-end me-1" id="">
-                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
-                                                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
-                                        </div>}
+                                {!this.state.isFormOpen &&
+                                    <div className="text-end me-1" id="">
+                                        <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
+                                            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
+                                    </div>}
 
-                                    {this.state.isFormOpen &&
-                                        <div className="">
-                                            <div className="form-border-box p-2 mx-1 mt-2">
-                                                <div className="row">
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} placeholder="" type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250} />
-                                                            <label>Action <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
+                                {this.state.isFormOpen &&
+                                    <div className="">
+                                        <div className="form-border-box p-2 mx-1 my-2">
+                                            <div className="row">
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} placeholder="" type="text" name="Title" title={this.state.formData.Title} value={this.state.formData.Title} onChange={this.handleChangeDynamic} id="txtAction" autoComplete="off" ref={this.Title} maxLength={250} />
+                                                        <label>Action <span className="mandatoryhastrick">*</span></label>
                                                     </div>
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <label htmlFor="ddlRootCause">
-                                                                Root Cause <span className="mandatoryhastrick">*</span>
-                                                            </label>
-                                                            <div className="custom-dropdown" id="divRootcauese" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
-                                                                <SearchableDropdown label={"Root Cause"} Title="Root Cause" name={"RootCauseId"} id={"ddlRootCause"} className={"RootCauseId"} selectedValue={this.state.formData.RootCauseId} OptionsList={this.state.RootCauses} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Root Cause available"></SearchableDropdown>
-                                                            </div>
-                                                        </div>
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <div className="custom-dropdown" id="divRootcauese" title={(this.state.RootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.RootCauseId) as { label: string; value: any } | undefined)?.label}>
+                                                        <SearchableDropdown
+                                                            label={"Root Cause"}
+                                                            Title="Root Cause"
+                                                            name={"RootCauseId"}
+                                                            id={"ddlRootCause"}
+                                                            className={"RootCauseId"}
+                                                            selectedValue={this.state.formData.RootCauseId}
+                                                            OptionsList={this.state.RootCauses}
+                                                            OnChange={this.handleChangeClient}
+                                                            isRequired={true} disabled={false}
+                                                            placeholderText=""
+                                                            noOptionsMessage="No Root Cause available"
+                                                        />
                                                     </div>
+                                                </div>
 
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <label htmlFor="ddlSecondaryRootCause">
-                                                                Secondary Root Cause <span className="mandatoryhastrick">*</span>
-                                                            </label>
-                                                            <div className="custom-dropdown" id="divSecondaryRootcause" title={(this.state.FilteredSecondaryrootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.SecondaryRootCauseId) as { label: string; value: any } | undefined)?.label} >
-                                                                <SearchableDropdown label={""} Title={"Secondary Root Cause"} name={"SecondaryRootCauseId"} id={"ddlSecondaryRootCause"} className={"SecondaryRootCauseId"} selectedValue={this.state.formData.SecondaryRootCauseId} OptionsList={this.state.FilteredSecondaryrootCauses} OnChange={this.handleSecondaryRootCauseChange} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Secondary Root Cause available"></SearchableDropdown>
-                                                            </div>
-
-                                                        </div>
+                                                <div className="col-md-3">
+                                                    <div className="custom-dropdown" id="divSecondaryRootcause" title={(this.state.FilteredSecondaryrootCauses.find((i: { label: string; value: any }) => i.value == this.state.formData.SecondaryRootCauseId) as { label: string; value: any } | undefined)?.label} >
+                                                        <SearchableDropdown
+                                                            label={""}
+                                                            Title={"Secondary Root Cause"}
+                                                            name={"SecondaryRootCauseId"}
+                                                            id={"ddlSecondaryRootCause"}
+                                                            className={"SecondaryRootCauseId"}
+                                                            selectedValue={this.state.formData.SecondaryRootCauseId}
+                                                            OptionsList={this.state.FilteredSecondaryrootCauses}
+                                                            OnChange={this.handleSecondaryRootCauseChange}
+                                                            isRequired={true}
+                                                            disabled={false}
+                                                            placeholderText=""
+                                                            noOptionsMessage="No Secondary Root Cause available"
+                                                        />
                                                     </div>
-                                                    <div className="col-md-3 py-2 text-center" id="">
-                                                        <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
-                                                        <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
-                                                    </div>
+                                                </div>
+                                                <div className="col-md-3 py-2 text-center" id="">
+                                                    <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
+                                                    <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
                                                 </div>
                                             </div>
                                         </div>
-                                    }
-                                </div>
+                                    </div>
+                                }
+
                                 <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>

@@ -224,7 +224,7 @@ export default class JSRADetails extends React.Component<JSRAdetailsProps, JSRAd
 
     private addNew = () => {
         this.setState({ isFormOpen: true, ItemId: 0 });
-        setTimeout(() => {document.getElementById("divCategory")?.getElementsByTagName('input')[0].focus()}, 300);
+        setTimeout(() => { document.getElementById("divCategory")?.getElementsByTagName('input')[0].focus() }, 300);
 
     }
 
@@ -512,90 +512,78 @@ export default class JSRADetails extends React.Component<JSRAdetailsProps, JSRAd
                                 <div className="form-title">JSRA Details</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="mainContent px-4 borderLine">
-                                <div>
-                                    {!this.state.isFormOpen &&
-                                        <div className="text-end me-1" id="">
-                                            <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
-                                                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
-                                        </div>}
-                                    {this.state.isFormOpen &&
-                                        <div className="">
-                                            <div className="form-border-box p-2 mx-1 mt-2">
-                                                <div className="row pt-2 px-2">
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <label htmlFor="CategoryIdddl">
-                                                                Category<span className="mandatoryhastrick">*</span>
-                                                            </label>
-                                                            <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategories.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
-                                                                <Dropdown label={""} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Category available"></Dropdown>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <label htmlFor="Sub_x0020_CategoryIdddl">
-                                                                Sub Category<span className="mandatoryhastrick">*</span>
-                                                            </label>
-                                                            <div className="custom-dropdown" id="divSubCategory" title={(this.state.FilteredSubCategories.find((i: { label: string; value: any }) => i.value == this.state.formData.Sub_x0020_CategoryId) as { label: string; value: any } | undefined)?.label}>
-                                                                <Dropdown label={""} Title={"CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange={this.handleSubCategoryChange} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Sub Category available"></Dropdown>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} type="text" name="Probability_x0020_1" title={this.state.formData.Probability_x0020_1} value={this.state.formData.Probability_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_1} maxLength={250} />
-                                                            <label>Probability 1 <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} type="text" name="Probability_x0020_2" title={this.state.formData.Probability_x0020_2} value={this.state.formData.Probability_x0020_2} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_2} maxLength={250} />
-                                                            <label>Probability 2 <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3 mt-2">
-                                                        <div className="light-text ">
-                                                            <input className="form-control" required={true} type="text" name="Probability_x0020_3" title={this.state.formData.Probability_x0020_3} value={this.state.formData.Probability_x0020_3} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_3} maxLength={250} />
-                                                            <label>Probability 3 <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3 mt-2">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_" title={this.state.formData.Mitigation_x002f_Controls_x0020_} value={this.state.formData.Mitigation_x002f_Controls_x0020_} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_} maxLength={250} />
-                                                            <label>Mitigation/Controls 1 <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3 mt-2">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_0" title={this.state.formData.Mitigation_x002f_Controls_x0020_0} value={this.state.formData.Mitigation_x002f_Controls_x0020_0} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_0} maxLength={250} />
-                                                            <label>Mitigation/Controls 2 <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3 mt-2">
-                                                        <div className="light-text">
-                                                            <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_1" title={this.state.formData.Mitigation_x002f_Controls_x0020_1} value={this.state.formData.Mitigation_x002f_Controls_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_1} maxLength={250} />
-                                                            <label>Mitigation/Controls 3 <span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-12 mt-2">
-                                                        <div className="light-text">
-                                                            <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title={this.state.formData.Details} style={{ height: "150px" }}></textarea>
-                                                            <label>Details<span className="mandatoryhastrick">*</span></label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="col-sm-12 text-center py-3" id="">
-                                                        <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
-                                                        <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                            <div className="p-2 mx-1">
+                                {!this.state.isFormOpen &&
+                                    <div className="text-end me-1" id="">
+                                        <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
+                                            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> New</button>
+                                    </div>}
+                                {this.state.isFormOpen &&
+                                    <div className="">
+                                        <div className="form-border-box p-2 mx-1 my-2">
+                                            <div className="row pt-2 px-2">
+                                                <div className="col-md-3">
+                                                    <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategories.find((i: { label: string; value: any }) => i.value == this.state.formData.CategoryId) as { label: string; value: any } | undefined)?.label}>
+                                                        <Dropdown label={""} Title={"CategoryId"} name={"CategoryId"} id={"CategoryIdddl"} className={"UAType0Id"} selectedValue={this.state.formData.CategoryId} OptionsList={this.state.JSRACategories} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Category available"></Dropdown>
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <div className="col-md-3">
+                                                    <div className="custom-dropdown" id="divSubCategory" title={(this.state.FilteredSubCategories.find((i: { label: string; value: any }) => i.value == this.state.formData.Sub_x0020_CategoryId) as { label: string; value: any } | undefined)?.label}>
+                                                        <Dropdown label={""} Title={"CategoryId"} name={"Sub_x0020_CategoryId"} id={"Sub_x0020_CategoryIdddl"} className={"Sub_x0020_CategoryId"} selectedValue={this.state.formData.Sub_x0020_CategoryId} OptionsList={this.state.FilteredSubCategories} OnChange={this.handleSubCategoryChange} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No Sub Category available"></Dropdown>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Probability_x0020_1" title={this.state.formData.Probability_x0020_1} value={this.state.formData.Probability_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_1} maxLength={250} />
+                                                        <label>Probability 1 <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Probability_x0020_2" title={this.state.formData.Probability_x0020_2} value={this.state.formData.Probability_x0020_2} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_2} maxLength={250} />
+                                                        <label>Probability 2 <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-3 mt-2">
+                                                    <div className="light-text ">
+                                                        <input className="form-control" required={true} type="text" name="Probability_x0020_3" title={this.state.formData.Probability_x0020_3} value={this.state.formData.Probability_x0020_3} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Probability_x0020_3} maxLength={250} />
+                                                        <label>Probability 3 <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-3 mt-2">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_" title={this.state.formData.Mitigation_x002f_Controls_x0020_} value={this.state.formData.Mitigation_x002f_Controls_x0020_} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_} maxLength={250} />
+                                                        <label>Mitigation/Controls 1 <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-3 mt-2">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_0" title={this.state.formData.Mitigation_x002f_Controls_x0020_0} value={this.state.formData.Mitigation_x002f_Controls_x0020_0} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_0} maxLength={250} />
+                                                        <label>Mitigation/Controls 2 <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-3 mt-2">
+                                                    <div className="light-text">
+                                                        <input className="form-control" required={true} type="text" name="Mitigation_x002f_Controls_x0020_1" title={this.state.formData.Mitigation_x002f_Controls_x0020_1} value={this.state.formData.Mitigation_x002f_Controls_x0020_1} onChange={this.handleChangeDynamic} id="txtLeadSourceName" autoComplete="off" ref={this.Mitigation_x002f_Controls_x0020_1} maxLength={250} />
+                                                        <label>Mitigation/Controls 3 <span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-12 mt-2">
+                                                    <div className="light-text">
+                                                        <textarea className="form-control bs-textarea" rows={3} id="txtDetails" name="Details" ref={this.Details} value={this.state.formData.Details} onChange={this.handleChange} disabled={false} title={this.state.formData.Details} style={{ height: "150px" }}></textarea>
+                                                        <label>Details<span className="mandatoryhastrick">*</span></label>
+                                                    </div>
+                                                </div>
 
+                                                <div className="col-sm-12 text-center py-3" id="">
+                                                    <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId ? 'Update' : 'Submit'} onClick={this.handleSubmit}>{this.state.ItemId ? 'Update' : 'Submit'}</button>
+                                                    <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.closeForm}>Cancel</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    }
-                                </div>
+
+                                    </div>
+                                }
                                 <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>

@@ -1367,7 +1367,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             <div className="form-border-box p-2 mx-3 mt-2">
                                 <h6 className="greenbg"><FontAwesomeIcon icon={faChartLine} /> Analysis Root Cause: write "5 Why's" for the most probable cause</h6>
                                 {/* FiveWhy1 */}
-                                <div className="row g-0 insider-m-0">
+                                <div className="row g-0 insider-m-0 ARC">
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">1</div></div>
                                     <div className="col-lg-11 col-md-11 col-sm-11 col-xs-11">
                                         <div className="col-md-12">
@@ -1588,14 +1588,18 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 </div>
                                             </div>
                                             {/* Location */}
-                                            <div className="col-md-4 light-text" >
-                                                <label className="col-form-label" htmlFor="txtLocation">Location </label>
-                                                <textarea className="form-control bs-textarea" rows={3} id="txtLocation" name="Location" ref={this.txtLocation} placeholder="" value={this.state.formData.Location} title={this.state.formData.Location} onChange={this.handleChange} disabled={this.state.isInputDisabled} ></textarea>
+                                            <div className="col-md-4" >
+                                                <div className="light-text mt-0">
+                                                    <label className="col-form-label" htmlFor="txtLocation">Location </label>
+                                                    <textarea className="form-control bs-textarea" rows={3} id="txtLocation" name="Location" ref={this.txtLocation} placeholder="" value={this.state.formData.Location} title={this.state.formData.Location} onChange={this.handleChange} disabled={this.state.isInputDisabled} ></textarea>
+                                                </div>
                                             </div>
                                             {/* Act */}
                                             <div className="col-md-4 light-text">
-                                                <label className="col-form-label" htmlFor="txtAct">Act </label>
-                                                <textarea className="form-control bs-textarea" rows={3} id="txtAct" name="Act" ref={this.txtAct} placeholder="" value={this.state.formData.Act} title={this.state.formData.Act} onChange={this.handleChange} disabled={this.state.isInputDisabled}></textarea>
+                                                <div className="light-text mt-0">
+                                                    <label className="col-form-label" htmlFor="txtAct">Act </label>
+                                                    <textarea className="form-control bs-textarea" rows={3} id="txtAct" name="Act" ref={this.txtAct} placeholder="" value={this.state.formData.Act} title={this.state.formData.Act} onChange={this.handleChange} disabled={this.state.isInputDisabled}></textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1639,7 +1643,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                 </div>
-                                <table className="table table-condensed table-bordered border col-xs-12 col-md-12 col-lg-12 col-sm-12 mt-2">
+                                <table className="table-condensed table-bordered border col-xs-12 col-md-12 col-lg-12 col-sm-12 mt-2">
                                     <tr>
                                         <th scope="col">&nbsp;</th>
                                         <th scope="col">Employee</th>

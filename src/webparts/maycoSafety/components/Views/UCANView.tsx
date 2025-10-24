@@ -225,7 +225,7 @@ export default class UCANView extends React.Component<UCANProps, UCANState> {
             <div className="form-title">UCAN View</div>
           </div>
           <div className="mainContent borderLine">
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -242,6 +242,7 @@ export default class UCANView extends React.Component<UCANProps, UCANState> {
                 onRowClick={this.handleRowClicked}
                 fileName={"Actions"}
                 showPagination={true}
+                className="sp-Datatable-hh"
               />
             </div>
           </div>

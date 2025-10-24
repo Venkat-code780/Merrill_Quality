@@ -209,11 +209,11 @@
   white-space: normal !important;
 }
 
-.ViewTable {
+/* .ViewTable {
   display: block !important;
   overflow-x: auto !important;
   width: 100%;
-}
+} */
 
 .ViewTable .after-title {
   margin: 30px 0 !important;
@@ -244,11 +244,7 @@
 }
 
 .ViewTable {
-  display: grid;
-}
-
-.ViewTable .after-title {
-  margin: 30px 0 !important;
+  display: grid !important;
 }
 
 .rdt_TableBody .rdt_TableRow {
@@ -577,4 +573,13 @@ div#divShift {
 position: sticky;
 top: 0;
 background-color: #bdbbbb;
+}
+.rdt_TableCell div{
+  white-space: inherit !important;
+}
+.dataTables_wrapper-overflow button {
+  min-width: inherit !important;
+}
+.dataTables_wrapper-overflow.table-responsive{
+  width: auto;
 }

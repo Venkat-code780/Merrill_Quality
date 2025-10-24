@@ -374,7 +374,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                                 <div className="form-title">UA Sub-Types</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="p-2 mx-1">
+                            <div className="p-2 mx-1 ViewTable">
 
                                 {!this.state.isFormOpen &&
                                     <div className="text-end me-1" id="">
@@ -407,7 +407,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
 
                                     </div>
                                 }
-                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} className="sp-Datatable-hh" onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>
                     </div>

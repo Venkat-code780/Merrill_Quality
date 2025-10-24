@@ -172,7 +172,7 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
           </div>
           <div className="mainContent borderLine">
 
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -189,6 +189,7 @@ export default class SEWOView extends React.Component<SEWOProps, SEWOState> {
                 onRowClick={this.handleRowClicked}
                 fileName={"Actions"}
                 showPagination={true}
+                className="sp-Datatable-hh"
               />
             </div>
           </div>

@@ -256,7 +256,7 @@ export default class SMATView extends React.Component<SMATProps, SMATState> {
             <div className="form-title">SMAT View</div>
           </div>
           <div className="mainContent borderLine">
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -273,6 +273,7 @@ export default class SMATView extends React.Component<SMATProps, SMATState> {
                 onRowClick={this.handleRowClicked}
                 fileName={"Actions"}
                 showPagination={true}
+                className="sp-Datatable-hh"
               />
               <ModalApprovePopUp
                 message="Are you sure you want to Delete?"

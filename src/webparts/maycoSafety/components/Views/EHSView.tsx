@@ -252,7 +252,7 @@ export default class EHSView extends React.Component<EHSProps, EHSState> {
             <div className="form-title">EHS View</div>
           </div>
           <div className="mainContent borderLine">
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -269,6 +269,7 @@ export default class EHSView extends React.Component<EHSProps, EHSState> {
                 onRowClick={this.handleRowClicked}
                 fileName={"Actions"}
                 showPagination={true}
+                className="sp-Datatable-hh"
               />
               <ModalApprovePopUp
                 message="Are you sure you want to Delete?"

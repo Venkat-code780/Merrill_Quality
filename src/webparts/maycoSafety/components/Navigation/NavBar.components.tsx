@@ -200,8 +200,8 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
 
                 <div className="brd-left-nav" id='Left-Nav-Bar'>
-                    <span className={`click-nav-icon`}>
-                        <FontAwesomeIcon icon={faBars} onClick={this.toggleSidebar}></FontAwesomeIcon>
+                    <span className={`click-nav-icon`} onClick={this.toggleSidebar}>
+                        <FontAwesomeIcon icon={faBars} ></FontAwesomeIcon>
                     </span>
                     {/* //   <div className="outer-sidebar"> */}
                     {(this.state.showSidebar) &&

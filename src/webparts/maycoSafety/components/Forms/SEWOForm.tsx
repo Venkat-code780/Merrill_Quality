@@ -1855,7 +1855,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             </div>
 
                             {this.state.formData.ActionHistory.length > 0 &&
-                                <div className="col-md-12">
+                                <div className="col-md-12 mb-3">
                                     <div className="form-border-box p-2 mx-1">
                                         <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
                                         <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />

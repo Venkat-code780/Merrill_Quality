@@ -1043,16 +1043,16 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                 {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                                 <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                             </div>
-                                            {this.state.formData.ActionHistory.length > 0 &&
-                                                <div className="col-md-12">
-                                                    <div className="form-border-box p-2 mx-1">
-                                                        <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
-                                                        <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
 
+                                        </div>
+                                        {this.state.formData.ActionHistory.length > 0 &&
+                                            <div className="col-md-12 mb-3">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                    <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>

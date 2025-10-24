@@ -731,7 +731,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                         </div>
                                         {this.state.formData.ActionHistory.length > 0 &&
-                                            <div className="col-md-12">
+                                            <div className="col-md-12 mb-3">
                                                 <div className="form-border-box p-2 mx-1">
                                                     <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
                                                     <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />

@@ -971,7 +971,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                             <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                                         </div>
                                         {this.state.formData.ActionHistory.length > 0 &&
-                                            <div className="col-md-12">
+                                            <div className="col-md-12 mb-3">
                                                 <div className="form-border-box p-2 mx-1">
                                                     <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
                                                     <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />

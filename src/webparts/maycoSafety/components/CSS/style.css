@@ -12,11 +12,11 @@
   margin: 0px !important;
 }
 
-.ms-wikicontent{
+.ms-wikicontent {
   padding-right: 0px !important;
 }
 
-.ms-webpart-chrome-title{
+.ms-webpart-chrome-title {
   display: none;
 }
 
@@ -28,9 +28,11 @@
   padding: 0 !important;
   min-height: inherit !important;
 }
-.ms-webpart-titleText{
+
+.ms-webpart-titleText {
   display: none !important;
 }
+
 .FormContent {
   position: relative;
   margin-bottom: 10px;
@@ -193,7 +195,7 @@
 }
 
 
-/* Views tables Styles */
+/* Views tables Styles for responsive with Horizontal scroll */
 .rdt_TableCol_Sortable div {
   overflow: visible !important;
   text-overflow: unset !important;
@@ -206,17 +208,7 @@
 }
 
 .rdt_TableCell div {
-  white-space: normal !important;
-}
-
-/* .ViewTable {
-  display: block !important;
-  overflow-x: auto !important;
-  width: 100%;
-} */
-
-.ViewTable .after-title {
-  margin: 30px 0 !important;
+  white-space: inherit !important;
 }
 
 .dataTables_wrapper .row:first-child {
@@ -231,29 +223,18 @@
 
 .rdt_TableCol {
   color: black !important;
-
-}
-
-.rdt_TableCell {
-  cursor: pointer;
-  padding-left: 10px !important;
-}
-
-.rdt_TableCell div {
-  white-space: normal !important;
 }
 
 .ViewTable {
   display: grid !important;
 }
 
-.rdt_TableBody .rdt_TableRow {
-  min-height: 50px;
+.ViewTable .after-title {
+  margin: 30px 0 !important;
 }
 
-.rdt_TableCol {
-  color: black !important;
-
+.rdt_TableBody .rdt_TableRow {
+  min-height: 50px;
 }
 
 .right-search-table .col-6:nth-child(1) {
@@ -262,6 +243,14 @@
 
 .right-search-table .col-6:nth-child(1) input {
   margin-left: auto !important;
+}
+
+.dataTables_wrapper-overflow button {
+  min-width: inherit !important;
+}
+
+.dataTables_wrapper-overflow.table-responsive {
+  width: auto;
 }
 
 /* Masers styles */
@@ -522,16 +511,15 @@ th {
   }
 
 }
-
 .dataTables_wrapper-overflow {
   width: 91vw !important;
 } */
 
-.container-fluid{
+.container-fluid {
   padding: 0 !important;
   padding-left: 15px !important;
 }
- 
+
 div#content-r {
   overflow: hidden;
 }
@@ -564,22 +552,22 @@ div#divUsualWork {
 div#divShift {
   padding-left: 1px;
 }
-.divActionHistory
-{
-  height: 100px;
+
+.divActionHistory {
+  max-height: 200px;
+  height: auto;
   overflow-y: auto;
+  margin-bottom: 5px;
 }
-.theadActionHistory{
-position: sticky;
-top: 0;
-background-color: #bdbbbb;
+
+.theadActionHistory {
+  position: sticky;
+  top: 0;
+  background-color: #bdbbbb;
 }
-.rdt_TableCell div{
-  white-space: inherit !important;
-}
-.dataTables_wrapper-overflow button {
-  min-width: inherit !important;
-}
-.dataTables_wrapper-overflow.table-responsive{
-  width: auto;
+
+/* To hide unnecessary div and br  at above the footer */
+.ms-rtestate-read:first-of-type~div,
+.ms-rtestate-read:first-of-type~br {
+  display: none !important;
 }

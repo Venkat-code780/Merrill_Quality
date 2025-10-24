@@ -8,6 +8,18 @@
   display: none !important;
 }
 
+#site_content {
+  margin: 0px !important;
+}
+
+.ms-wikicontent{
+  padding-right: 0px !important;
+}
+
+.ms-webpart-chrome-title{
+  display: none;
+}
+
 #content-r {
   margin: 0px !important;
 }

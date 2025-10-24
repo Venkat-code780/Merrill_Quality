@@ -19,9 +19,6 @@ import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import MultipleImageUploader from "../Shared/MutipleImageUploader";
 import formValidation from "../Utilities/FormValidator";
 import { createBatch } from "@pnp/sp/batching";
-import { faHistory } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ActionHistory from "../Shared/ActionHistory";
 
 export interface SMATFormProps {
     match: any;
@@ -67,8 +64,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             WCCDate: '',
             CompletedDate: '',
             Year: '',
-            YearMonth: '',
-            ActionHistory: [],
+            YearMonth: ''
         },
         childFormData: {
             wccId: 0,
@@ -185,6 +181,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
             let toolNumbersOptions: any = [];
             let workCellOptions: any = [];
             let shiftData = shifts.map((item: any) => ({ label: item.Title, value: item.Title }));
+            let sortedData: any = [];
 
             let allMappingData;
             let isEditForm = false;
@@ -213,9 +210,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                             formData.WCCDate = editSMATItem.WCCDate ?? '',
                             formData.CompletedDate = editSMATItem.CompletedDate ?? '',
                             formData.Year = editSMATItem.Year ?? '',
-                            formData.YearMonth = editSMATItem.YearMonth ?? '';
-                        formData.ActionHistory = editSMATItem.ActionHistory ? JSON.parse(editSMATItem.ActionHistory) : [];
-
+                            formData.YearMonth = editSMATItem.YearMonth ?? ''
 
                         zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editSMATItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
@@ -238,6 +233,18 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                         SubCategoryComments: item.SubCategoryComments ?? ''
                                     })
                             })
+
+                            sortedData = allMappingData.sort((a: any, b: any) => {
+                                // First sort by WccCategory
+                                if (a.WccCategory < b.WccCategory) return -1;
+                                if (a.WccCategory > b.WccCategory) return 1;
+
+                                // If categories are the same, then sort by WccSubCategory
+                                if (a.WccSubCategory < b.WccSubCategory) return -1;
+                                if (a.WccSubCategory > b.WccSubCategory) return 1;
+
+                                return 0;
+                            });
                         }
                         showSubmit = (editSMATItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                         isEditForm = true;
@@ -265,9 +272,21 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                         return null;
                     }
                 }).filter(mapItem => mapItem != null);
+
+                sortedData = allMappingData.sort((a: any, b: any) => {
+                    // First sort by WccCategory
+                    if (a.WccCategory < b.WccCategory) return -1;
+                    if (a.WccCategory > b.WccCategory) return 1;
+
+                    // If categories are the same, then sort by WccSubCategory
+                    if (a.WccSubCategory < b.WccSubCategory) return -1;
+                    if (a.WccSubCategory > b.WccSubCategory) return 1;
+
+                    return 0;
+                });
             }
 
-            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId, isEditForm });
+            this.setState({ formData, plantsData, departmentData, departmentOptions, zoneData, zoneOptions, machineData, machineOptions, shiftData, toolNumbersData, toolNumbersOptions, supervisorsData, auditorNameData, workCellData, workCellOptions, allMappingData: sortedData, activeAuditCategoriesData, auditCategoryStatusData, showSubmit, ItemId: itemId, isEditForm });
         } catch (e) {
             console.log(e);
             this.onError();
@@ -467,8 +486,6 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
                     formData.unsafeactCount = unsafeact.toString();
                     formData.unsafeconditionCount = unsafeConddition.toString();
-                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
-                    formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                     await this.InsertOrUpdateData(formData);
                 }
             }
@@ -516,7 +533,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                 this.sp.web.lists.getByTitle(this.SMATChildList).items.using(batchedPipe).add(item);
             }
             await execute().then(async () => {
-                let GroupName = await this.getGroupName();
+                let GroupName = this.getGroupName();
                 if (GroupName != '') {
                     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
                     if (GroupMemberEmails.length) {
@@ -629,49 +646,36 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
-    private getGroupName=async() =>{
-        //var selectedDept = this.state.formData.Department;
+    private getGroupName() {
+        var selectedDept = this.state.formData.Department;
         // let group = "OTHER [WCM Merrill Safety Mgt]"; // Default group
         let group = "WCM Merrill Safety Mgt"; // Default group
-        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
-        let EmailConfigList = 'EmailsConfiguration', PlantSelQuery = 'Plant/Title,Department/Title,ToEmailGroup/Title,*', plantFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'SMAT'`, PlantExpFields = 'Plant,Department,ToEmailGroup';
-        try {
-               let items=await getListItems(EmailConfigList, this.MaycoURL, PlantSelQuery, PlantExpFields, plantFiltQuery);
-               if(items.length)
-               {
-                group=items[0].ToEmailGroup.Title;
-               }
-        }
-        catch(e) {
-            console.log(e);
-            this.onError();
-        }
 
-        // switch (selectedDept) {
-        //     case "Molding":
-        //     case "Deco":
-        //         group = "WCM Merrill Safety Deco";
-        //         break;
-        //     case "Foam":
-        //     case "GM Assembly":
-        //     case "IP Manufacturing":
-        //     case "JL Assembly":
-        //     case "Sequencing":
-        //     case "Sports Bar":
-        //     case "Thermoform":
-        //     case "WD TP Assembly":
-        //         group = "WCM Merrill Safety Seq";
-        //         break;
-        //     case "Maintenance":
-        //         group = "WCM Safety Maintenance";
-        //         break;
-        //     case "Shipping  Receiving":
-        //         group = "WCM Safety Shipping";
-        //         break;
-        //     case "Quality":
-        //         group = "WCM SMAT Quality";
-        //         break;
-        // }
+        switch (selectedDept) {
+            case "Molding":
+            case "Deco":
+                group = "WCM Merrill Safety Deco";
+                break;
+            case "Foam":
+            case "GM Assembly":
+            case "IP Manufacturing":
+            case "JL Assembly":
+            case "Sequencing":
+            case "Sports Bar":
+            case "Thermoform":
+            case "WD TP Assembly":
+                group = "WCM Merrill Safety Seq";
+                break;
+            case "Maintenance":
+                group = "WCM Safety Maintenance";
+                break;
+            case "Shipping  Receiving":
+                group = "WCM Safety Shipping";
+                break;
+            case "Quality":
+                group = "WCM SMAT Quality";
+                break;
+        }
         return group;
     }
 
@@ -703,7 +707,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                     {categoryRows.map((subCategory, subIndex) => {
 
                         // const rowIndex = allMappingData.findIndex( item =>  item.WccCategory == category && item.WccSubCategory == subCategory.WccSubCategory);
-                         const rowIndex = allMappingData.indexOf(subCategory);
+                        const rowIndex = allMappingData.indexOf(subCategory);
                         const isSatisfactory = subCategory.SubCategoryStatus === 'Satisfactory';
 
                         return (
@@ -1046,14 +1050,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                             <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                                         </div>
-                                        {this.state.formData.ActionHistory.length > 0 &&
-                                            <div className="col-md-12">
-                                                <div className="form-border-box p-2 mx-1">
-                                                    <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
-                                                    <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
-                                                </div>
-                                            </div>
-                                        }
+
                                     </div>
                                 </div>
                             </div>

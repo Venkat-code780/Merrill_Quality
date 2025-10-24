@@ -19,6 +19,9 @@ import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import MultipleImageUploader from "../Shared/MutipleImageUploader";
 import formValidation from "../Utilities/FormValidator";
 import { createBatch } from "@pnp/sp/batching";
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ActionHistory from "../Shared/ActionHistory";
 
 export interface EHSFormProps {
     match: any;
@@ -61,7 +64,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             unsafeactCount: '',
             unsafeconditionCount: '',
             Year: '',
-            YearMonth: ''
+            YearMonth: '',
+            ActionHistory: [],
         },
         childFormData: {
             EHSId: 0,
@@ -202,7 +206,9 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                             formData.unsafeactCount = editEHSItem.unsafeactCount ?? '',
                             formData.unsafeconditionCount = editEHSItem.unsafeconditionCount ?? '',
                             formData.Year = editEHSItem.Year ?? '',
-                            formData.YearMonth = editEHSItem.YearMonth ?? ''
+                            formData.YearMonth = editEHSItem.YearMonth ?? '';
+                            formData.ActionHistory = editEHSItem.ActionHistory ? JSON.parse(editEHSItem.ActionHistory) : [];
+
 
                         zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editEHSItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
@@ -461,6 +467,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
                 formData.unsafeactCount = unsafeact.toString();
                 formData.unsafeconditionCount = unsafeConddition.toString();
+                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
+                formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                 await this.InsertOrUpdateData(formData);
             }
             else {
@@ -513,7 +521,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
                     if (GroupMemberEmails.length) {
                         let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/EHSForm/' + adedItemId
-                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>"+this.props.userDisplayName+"</p>";
+                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
                         await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'EHS' Submitted", body);
                     }
                 }
@@ -529,7 +537,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             console.log(e);
             this.onError();
         }
-         finally {
+        finally {
             hideLoader();
         }
     }
@@ -948,6 +956,14 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                             <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                                         </div>
+                                        {this.state.formData.ActionHistory.length > 0 &&
+                                            <div className="col-md-12">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                    <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>

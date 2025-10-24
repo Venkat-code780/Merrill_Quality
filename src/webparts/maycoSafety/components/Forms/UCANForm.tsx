@@ -25,6 +25,10 @@ import "@pnp/sp/files";
 import "@pnp/sp/folders";
 // import SingleImageUpload from "../Shared/singleFileUpload";
 import ImageUploader from "../Shared/ImageUploader";
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ActionHistory from "../Shared/ActionHistory";
+
 
 export interface UCANFormProps {
     match: any;
@@ -82,6 +86,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             Year: '',
             YearMonth: '',
             Attachment: '',
+            ActionHistory: [],
         },
         ucanTypeData: [],
         plantsData: [],
@@ -197,6 +202,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                         formData.Year = [null, undefined, ""].includes(editUCANItem.Year) ? "" : editUCANItem.Year;
                         formData.YearMonth = [null, undefined, ""].includes(editUCANItem.YearMonth) ? "" : editUCANItem.YearMonth;
                         formData.Attachment = [null, undefined, ""].includes(editUCANItem.Attachment) ? "" : editUCANItem.Attachment;
+                        formData.ActionHistory = editUCANItem.ActionHistory ? JSON.parse(editUCANItem.ActionHistory) : [];
+
 
                         zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editUCANItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
@@ -376,7 +383,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 else {
                     delete formData.Date_x0020_Completed;
                 }
-
+                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
+                formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                 this.InsertOrUpdateData(formData);
             }
             else {
@@ -713,6 +721,15 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                             <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlCancel} title="Cancel">Cancel</button>
                                         </div>
+
+                                        {this.state.formData.ActionHistory.length > 0 &&
+                                            <div className="col-md-12">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                    <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                                </div>
+                                            </div>
+                                        }
 
                                     </div>
                                 </div>

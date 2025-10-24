@@ -17,6 +17,9 @@ import SearchableDropdown from "../Shared/Dropdown";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import DateUtilities from "../Utilities/DateUtilities";
 import { addDays } from 'office-ui-fabric-react';
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ActionHistory from "../Shared/ActionHistory";
 
 import { format } from "date-fns";
 // import FileUpload from "../Shared/FileUpload";
@@ -55,6 +58,8 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
             Machine: '',
             Shift: '',
             Auditor: '',
+            ActionHistory: [],
+
         },
         CheckListTable: {
             'Corporate / Plant Safety Policy': [
@@ -161,6 +166,7 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                         formData.Machine = [null, undefined, '', 'None'].includes(CheckListData.Machine) ? '' : CheckListData.Machine;
                         formData.Shift = [null, undefined, '', 'None'].includes(CheckListData.Shifts) ? '' : CheckListData.Shifts;
                         formData.Auditor = [null, undefined, '', 'None'].includes(CheckListData.Auditor) ? '' : CheckListData.Auditor;
+                        formData.ActionHistory = CheckListData.ActionHistory ? JSON.parse(CheckListData.ActionHistory) : [];
                         let CheckListTable = { ...stateData.CheckListTable };
                         let AuditData = [null, undefined, ''].includes(CheckListData.Audit_x0020_Data) ? {} : JSON.parse(CheckListData.Audit_x0020_Data);
                         //Binding check list table score and comments :Start
@@ -297,6 +303,8 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                 AuditData.Data.push({ [ScoreKey]: row.AuditScore, [CommentsKey]: row.Comments })
             });
         }
+        let ActHist = stateData.formData.ActionHistory;
+        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) });
         CheckListPostObj = {
             Date: CheckListDate,
             Plant: stateData.formData.Plant,
@@ -308,7 +316,8 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
             Month: mmddyyyyCheckListDate.split("/")[0],
             Auditor: stateData.formData.Auditor,
             Audit_x0020_Score: stateData.TotalAuditScore,
-            Audit_x0020_Data: JSON.stringify(AuditData)
+            Audit_x0020_Data: JSON.stringify(AuditData),
+            ActionHistory: JSON.stringify(ActHist)
         }
         return CheckListPostObj;
     }
@@ -721,6 +730,14 @@ export default class CHECKLISTSTEP1Form extends React.Component<CHECKLISTSTEP1Fo
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                             <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                         </div>
+                                        {this.state.formData.ActionHistory.length > 0 &&
+                                            <div className="col-md-12">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                    <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>

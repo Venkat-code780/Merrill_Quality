@@ -22,6 +22,9 @@ import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/People
 // import InputCheckBox from "../Shared/InputCheckBox";
 // import { format } from "date-fns";
 import Formvalidator from "../Utilities/FormValidator";
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ActionHistory from "../Shared/ActionHistory";
 
 export interface TAGFormProps {
     match: any;
@@ -60,6 +63,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
             Shift: '',
             Name: '',
             Date: '',
+            ActionHistory: [],
         },
         SafetyformData: {
             TAG: '',
@@ -245,6 +249,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                         updatedTagformData.ProblemDetails = [null, undefined].includes(TAGData.Problem_x0020_Details) ? '' : TAGData.Problem_x0020_Details;
                         updatedTagformData.CounterMeasures = [null, undefined].includes(TAGData.Counter_x0020_Measures) ? '' : TAGData.Counter_x0020_Measures;
                         stateData.SafetyformData = updatedTagformData;
+                        stateData.formData.ActionHistory = TAGData.ActionHistory ? JSON.parse(TAGData.ActionHistory) : [];
 
                     }
                     else if (stateData.activeTag === 'AMWO') {
@@ -404,12 +409,14 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
     private getSATAGpostObject = (TagPostObj: any) => {
         let stateData: any = { ...this.state };
         let SafetyformData = { ...stateData.SafetyformData };
-
+        let ActHist = stateData.formData.ActionHistory;
+        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) });
         TagPostObj.Near_x0020_Miss = SafetyformData.NearMissSEWORequired;
         TagPostObj.Unsafe_x0020_Condition = SafetyformData.UnsafeConditionImmediateFixWorkOrder;
         TagPostObj.Unsafe_x0020_Act = SafetyformData.UnsafeActCoachingCounselingTrainingOPLTWTTF;
         TagPostObj.Problem_x0020_Details = SafetyformData.ProblemDetails;
         TagPostObj.Counter_x0020_Measures = SafetyformData.CounterMeasures;
+        TagPostObj.ActionHistory = JSON.stringify(ActHist)
 
         return TagPostObj;
     }
@@ -1036,6 +1043,14 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                                                 {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                                 <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
                                             </div>
+                                            {this.state.formData.ActionHistory.length > 0 &&
+                                                <div className="col-md-12">
+                                                    <div className="form-border-box p-2 mx-1">
+                                                        <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                        <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                                    </div>
+                                                </div>
+                                            }
                                         </div>
 
                                     </div>

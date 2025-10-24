@@ -21,8 +21,9 @@ import { format } from "date-fns";
 // import InputCheckBox from "../Shared/InputCheckBox";
 // import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan, faAdd, faClipboardList, faFileSignature, faHardHat, faUsers, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faAdd, faClipboardList, faFileSignature, faHardHat, faUsers, faUserTie, faHistory } from "@fortawesome/free-solid-svg-icons";
 import Formvalidator from "../Utilities/FormValidator";
+import ActionHistory from "../Shared/ActionHistory";
 
 export interface JSRAFormProps {
     match: any;
@@ -60,7 +61,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             Supervisor: '',
             ToolNumber: '',
             SupervisorName: '',
-            SupervisorDate: ''
+            SupervisorDate: '',
+            ActionHistory: [],
         },
         Probability: [], Controls: [], Severity: [],
         ProbabilityOpt: [], ControlsOpt: [], SeverityOpt: [], PPETypesOpt: [],
@@ -212,6 +214,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         formData.ToolNumber = [null, undefined, '', 'None'].includes(jsraData.Tool_x0020_Number) ? '' : jsraData.Tool_x0020_Number;
                         formData.SupervisorName = [null, undefined, '', 'None'].includes(jsraData.Supervisor_x0020_Name) ? '' : jsraData.Supervisor_x0020_Name;
                         formData.SupervisorDate = [null, undefined, '', 'None'].includes(jsraData.Supervisor_x0020_Date) ? '' : jsraData.Supervisor_x0020_Date;
+                        formData.ActionHistory = jsraData.ActionHistory ? JSON.parse(jsraData.ActionHistory) : [];
+
                         let Permits = [...this.state.Permits];
                         Permits[0].Required = [null, undefined].includes(jsraData.Hot_x0020_Work_x0020_Permit_x002) ? false : jsraData.Hot_x0020_Work_x0020_Permit_x002;
                         Permits[0].Acquired = [null, undefined].includes(jsraData.Hot_x0020_Work_x0020_Permit_x0020) ? false : jsraData.Hot_x0020_Work_x0020_Permit_x0020;
@@ -362,7 +366,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.currentSiteURL);
                         if (GroupMemberEmails.length) {
                             let link = this.currentSiteURL + '/SitePages/Home.aspx#/JSRAForm/' + adedItemId
-                            let body = "<p>Hi,</p>" + "<p>New 'JSRA-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>"+this.props.userDisplayName+"</p>";
+                            let body = "<p>Hi,</p>" + "<p>New 'JSRA-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
                             await sendEmail(this.rootSiteURL, GroupMemberEmails, "New 'JSRA' Submitted", body);
                         }
                     }
@@ -412,7 +416,8 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             }
         })
 
-
+        let ActHist = stateData.formData.ActionHistory;
+        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) });
 
         let postObjectJSRA = {
             Date: JSRADate,
@@ -436,6 +441,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
             Confined_x0020_Space_x0020_Permi0: stateData.Permits[2].Acquired,
             PPE: PPEItems,
             Personnel: PersonnelItems,
+            ActionHistory: JSON.stringify(ActHist)
         }
         return postObjectJSRA;
     }
@@ -900,7 +906,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 RiskOpt: [],
             },]
             this.setState({ jobSteps: updatedjobSteps });
-            setTimeout(()=>{document.getElementById(`JobStep_${updatedjobSteps.length}`)?.focus()},300);
+            setTimeout(() => { document.getElementById(`JobStep_${updatedjobSteps.length}`)?.focus() }, 300);
         }
         else {
             showToast("error", isValid.message);
@@ -1014,7 +1020,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 PPEType: '',
             },]
             this.setState({ PPETypes: updatedPPETypes });
-            setTimeout(()=>{document.getElementById(`PPEType_${updatedPPETypes.length}`)?.getElementsByTagName('input')[0].focus()},300);
+            setTimeout(() => { document.getElementById(`PPEType_${updatedPPETypes.length}`)?.getElementsByTagName('input')[0].focus() }, 300);
         }
         else {
             showToast("error", isValid.message);
@@ -1091,7 +1097,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 PersonDate: ''
             },]
             this.setState({ Persons: updatedPersons });
-            setTimeout(()=>{document.getElementById(`PersonName_${updatedPersons.length}`)?.focus()},300);
+            setTimeout(() => { document.getElementById(`PersonName_${updatedPersons.length}`)?.focus() }, 300);
         }
         else {
             showToast("error", isValid.message);
@@ -1156,283 +1162,291 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                             </div>
                             <div className="">
                                 <div className="form-border-box p-2 mx-3 my-2">
-                                        <div className="row py-2">
-                                            <div className="col-md-3">
-                                                <div className="light-text">
-                                                    <label className="z-in-9"> Date <span className="mandatoryhastrick">*</span></label>
-                                                    <div className="custom-datepicker" id="divDate">
-                                                        <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.Date} title={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3" title={this.state.formData.Plant}>
-                                                <div className="custom-dropdown" id="divPlant">
-                                                    <SearchableDropdown
-                                                        label={"Plant"}
-                                                        Title={"Plant"}
-                                                        name={"Plant"}
-                                                        id="ddlPlant"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.Plant}
-                                                        OptionsList={this.state.PlantsOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={true}
-                                                        disabled={true}
-                                                        noOptionsMessage="No Plants available"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3" title={this.state.formData.Department}>
-                                                <div className="custom-dropdown" id="divDepartment">
-                                                    <SearchableDropdown
-                                                        label={"Department"}
-                                                        Title={"Department"}
-                                                        name={"Department"}
-                                                        id="ddlDepartment"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.Department}
-                                                        OptionsList={this.state.DepartmentsOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={true}
-                                                        disabled={false}
-                                                        noOptionsMessage="No Departments available"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3" title={this.state.formData.Zone}>
-                                                <div className="custom-dropdown" id="divZone">
-                                                    <SearchableDropdown
-                                                        label={"Zone"}
-                                                        Title={"Zone"}
-                                                        name={"Zone"}
-                                                        id="ddlZone"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.Zone}
-                                                        OptionsList={this.state.ZonesOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={true}
-                                                        disabled={false}
-                                                        noOptionsMessage="No Zones available"
-                                                    />
+                                    <div className="row py-2">
+                                        <div className="col-md-3">
+                                            <div className="light-text">
+                                                <label className="z-in-9"> Date <span className="mandatoryhastrick">*</span></label>
+                                                <div className="custom-datepicker" id="divDate">
+                                                    <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.Date} title={this.state.formData.Date} id='dtDate' isDisabled={false} startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divDate")} ref={this.Date} highlightDate={new Date()} showIcon />
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="row pb-2">
-                                            <div className="col-md-3" title={this.state.formData.WorkCell}>
-                                                <div className="custom-dropdown" id="divWorkCell">
-                                                    <SearchableDropdown
-                                                        label={"Work Cell"}
-                                                        Title={"Work Cell"}
-                                                        name={"WorkCell"}
-                                                        id="ddlWorkCell"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.WorkCell}
-                                                        OptionsList={this.state.WorkCellsOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={true}
-                                                        disabled={false}
-                                                        noOptionsMessage="No Work Cells available"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3" title={this.state.formData.Machine}>
-                                                <div className="custom-dropdown" id="divMachine">
-                                                    <SearchableDropdown
-                                                        label={"Machine"}
-                                                        Title={"Machine"}
-                                                        name={"Machine"}
-                                                        id="ddlMachine"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.Machine}
-                                                        OptionsList={this.state.MachinesOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={true}
-                                                        disabled={false}
-                                                        noOptionsMessage="No Machines available"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3" title={this.state.formData.Shift}>
-                                                <div className="custom-dropdown" id="divShift">
-                                                    <SearchableDropdown
-                                                        label={"Shift"}
-                                                        Title={"Shift"}
-                                                        name={"Shift"}
-                                                        id="ddlShift"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.Shift}
-                                                        OptionsList={this.state.ShiftsOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={false}
-                                                        disabled={false}
-                                                        noOptionsMessage="No Shifts available"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3" title={this.state.formData.Supervisor}>
-                                                <div className="custom-dropdown" id="divSupervisor">
-                                                    <SearchableDropdown
-                                                        label={"Supervisor"}
-                                                        Title={"Supervisor"}
-                                                        name={"Supervisor"}
-                                                        id="ddlSupervisor"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.Supervisor}
-                                                        OptionsList={this.state.SupervisorsOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={false}
-                                                        disabled={false}
-                                                        noOptionsMessage="No Supervisors available"
-                                                    />
-                                                </div>
+                                        <div className="col-md-3" title={this.state.formData.Plant}>
+                                            <div className="custom-dropdown" id="divPlant">
+                                                <SearchableDropdown
+                                                    label={"Plant"}
+                                                    Title={"Plant"}
+                                                    name={"Plant"}
+                                                    id="ddlPlant"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.Plant}
+                                                    OptionsList={this.state.PlantsOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={true}
+                                                    disabled={true}
+                                                    noOptionsMessage="No Plants available"
+                                                />
                                             </div>
                                         </div>
-                                        <div className="row pb-2">
-                                            <div className="col-md-3" title={this.state.formData.ToolNumber}>
-                                                <div className="custom-dropdown" id="divToolNumber">
-                                                    <SearchableDropdown
-                                                        label={"Tool Number"}
-                                                        Title={"Tool Number"}
-                                                        name={"ToolNumber"}
-                                                        id="ddlToolNumber"
-                                                        placeholderText={""}
-                                                        className={""}
-                                                        selectedValue={this.state.formData.ToolNumber}
-                                                        OptionsList={this.state.ToolNumbersOpt}
-                                                        OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
-                                                        isRequired={this.state.isToolNumberMandatory}
-                                                        disabled={false}
-                                                        noOptionsMessage="No Tool Numbers available"
-                                                    />
-                                                </div>
+                                        <div className="col-md-3" title={this.state.formData.Department}>
+                                            <div className="custom-dropdown" id="divDepartment">
+                                                <SearchableDropdown
+                                                    label={"Department"}
+                                                    Title={"Department"}
+                                                    name={"Department"}
+                                                    id="ddlDepartment"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.Department}
+                                                    OptionsList={this.state.DepartmentsOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={true}
+                                                    disabled={false}
+                                                    noOptionsMessage="No Departments available"
+                                                />
                                             </div>
                                         </div>
-                                        {/* Five Sections */}
-                                        {/* Job Steps Table */}
-                                        <div className="row">
-                                            <div className="col-12">
-                                                <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
-                                                    <table id="jobStepsTable" className="TablejobSteps col-md-12">
-                                                        <thead>
-                                                            <tr className="darkgraybg">
-                                                                <th className="WPercent-4"></th>
-                                                                <th className="WPercent-20">Job Step</th>
-                                                                <th className="text-center WPercent-4">Required</th>
-                                                                <th className="text-center WPercent-20">Risk Family</th>
-                                                                <th className="text-center WPercent-20">Risk</th>
-                                                                <th className="text-center WPercent-20">Factors</th>
-                                                                <th className="WPercent-6">Risk Level</th>
-                                                                <th className="WPercent-6">Total Score</th>
-                                                                {(!this.state.isEditForm && this.state.jobSteps.length > 1) ? <th className="text-center">Delete</th> : ""}
+                                        <div className="col-md-3" title={this.state.formData.Zone}>
+                                            <div className="custom-dropdown" id="divZone">
+                                                <SearchableDropdown
+                                                    label={"Zone"}
+                                                    Title={"Zone"}
+                                                    name={"Zone"}
+                                                    id="ddlZone"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.Zone}
+                                                    OptionsList={this.state.ZonesOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={true}
+                                                    disabled={false}
+                                                    noOptionsMessage="No Zones available"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row pb-2">
+                                        <div className="col-md-3" title={this.state.formData.WorkCell}>
+                                            <div className="custom-dropdown" id="divWorkCell">
+                                                <SearchableDropdown
+                                                    label={"Work Cell"}
+                                                    Title={"Work Cell"}
+                                                    name={"WorkCell"}
+                                                    id="ddlWorkCell"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.WorkCell}
+                                                    OptionsList={this.state.WorkCellsOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={true}
+                                                    disabled={false}
+                                                    noOptionsMessage="No Work Cells available"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-3" title={this.state.formData.Machine}>
+                                            <div className="custom-dropdown" id="divMachine">
+                                                <SearchableDropdown
+                                                    label={"Machine"}
+                                                    Title={"Machine"}
+                                                    name={"Machine"}
+                                                    id="ddlMachine"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.Machine}
+                                                    OptionsList={this.state.MachinesOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={true}
+                                                    disabled={false}
+                                                    noOptionsMessage="No Machines available"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-3" title={this.state.formData.Shift}>
+                                            <div className="custom-dropdown" id="divShift">
+                                                <SearchableDropdown
+                                                    label={"Shift"}
+                                                    Title={"Shift"}
+                                                    name={"Shift"}
+                                                    id="ddlShift"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.Shift}
+                                                    OptionsList={this.state.ShiftsOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={false}
+                                                    disabled={false}
+                                                    noOptionsMessage="No Shifts available"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-3" title={this.state.formData.Supervisor}>
+                                            <div className="custom-dropdown" id="divSupervisor">
+                                                <SearchableDropdown
+                                                    label={"Supervisor"}
+                                                    Title={"Supervisor"}
+                                                    name={"Supervisor"}
+                                                    id="ddlSupervisor"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.Supervisor}
+                                                    OptionsList={this.state.SupervisorsOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={false}
+                                                    disabled={false}
+                                                    noOptionsMessage="No Supervisors available"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row pb-2">
+                                        <div className="col-md-3" title={this.state.formData.ToolNumber}>
+                                            <div className="custom-dropdown" id="divToolNumber">
+                                                <SearchableDropdown
+                                                    label={"Tool Number"}
+                                                    Title={"Tool Number"}
+                                                    name={"ToolNumber"}
+                                                    id="ddlToolNumber"
+                                                    placeholderText={""}
+                                                    className={""}
+                                                    selectedValue={this.state.formData.ToolNumber}
+                                                    OptionsList={this.state.ToolNumbersOpt}
+                                                    OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta) }}
+                                                    isRequired={this.state.isToolNumberMandatory}
+                                                    disabled={false}
+                                                    noOptionsMessage="No Tool Numbers available"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Five Sections */}
+                                    {/* Job Steps Table */}
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <div className={'form-border-box p-2 my-2'}>
+                                                <h6 className=""> <FontAwesomeIcon icon={faClipboardList} />Job Steps</h6>
+                                                <table id="jobStepsTable" className="TablejobSteps col-md-12">
+                                                    <thead>
+                                                        <tr className="darkgraybg">
+                                                            <th className="WPercent-4"></th>
+                                                            <th className="WPercent-20">Job Step</th>
+                                                            <th className="text-center WPercent-4">Required</th>
+                                                            <th className="text-center WPercent-20">Risk Family</th>
+                                                            <th className="text-center WPercent-20">Risk</th>
+                                                            <th className="text-center WPercent-20">Factors</th>
+                                                            <th className="WPercent-6">Risk Level</th>
+                                                            <th className="WPercent-6">Total Score</th>
+                                                            {(!this.state.isEditForm && this.state.jobSteps.length > 1) ? <th className="text-center">Delete</th> : ""}
 
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.bindJobSteps()}
-                                                        </tbody>
-                                                    </table>
-                                                    {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} /> Add Job Step</button>}
-                                                </div>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.bindJobSteps()}
+                                                    </tbody>
+                                                </table>
+                                                {!this.state.isEditForm && <button type="button" value="Add Job Step" title="Add Job Step" className="addbutton" onClick={this.addJobStep} id="btnAddJobStep" ><FontAwesomeIcon icon={faAdd} /> Add Job Step</button>}
+                                            </div>
 
-                                            </div>
-                                            {/* Permits Section */}
-                                            <div className="col-md-6">
-                                                <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faFileSignature} /> Permits</h6>
-                                                    <table id="PermitsTable" className="col-md-12">
-                                                        <thead>
-                                                            <tr className="darkgraybg">
-                                                                <th>Type</th>
-                                                                <th>Required</th>
-                                                                <th>Acquired</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.state.Permits.map(p => (
-                                                                <tr><td>{`${p.type}`}</td>
-                                                                    <td><input id={`Required_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Required_${p.id}`} onChange={this.handleChange} checked={p.Required} /></td>
-                                                                    <td><input id={`Acquired_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Acquired_${p.id}`} onChange={this.handleChange} checked={p.Acquired} /></td>
-                                                                </tr>))}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            {/* PPE Requirements */}
-                                            <div className="col-md-6">
-                                                <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faHardHat} /> PPE Requirements</h6>
-                                                    <table id="PPEREquirementsTable" className="col-md-12">
-                                                        <thead>
-                                                            <tr className="darkgraybg">
-                                                                <th className="ps-3">PPE Type</th>
-                                                                {this.state.PPETypes.length > 1 ? <th className="text-center">Delete</th> : ""}
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.bindPPETypes()}
-                                                        </tbody>
-                                                    </table>
-                                                    <button type="button" value="Add PPE" title="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" ><FontAwesomeIcon icon={faAdd} /> Add PPE</button>
-                                                </div>
-                                            </div>
-                                            {/* Persons Involved */}
-                                            <div className="col-md-6">
-                                                <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faUsers} /> Persons Involved</h6>
-                                                    <table id="PersonsInvolvedTable" className="col-md-12">
-                                                        <thead>
-                                                            <tr className="darkgraybg">
-                                                                <th className="ps-3">Name</th>
-                                                                <th className="ps-3">Date</th>
-                                                                {this.state.Persons.length > 1 ? <th className="text-center">Delete</th> : ""}
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.bindPersons()}
-                                                        </tbody>
-                                                    </table>
-                                                    <button type="button" value="Add Person" title="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson"><FontAwesomeIcon icon={faAdd} /> Add Person</button>
-                                                </div>
-                                            </div>
-                                            {/* Supervisor Info */}
-                                            <div className="col-md-6">
-                                                <div className={'form-border-box p-2 my-2'}>
-                                                    <h6 className=""> <FontAwesomeIcon icon={faUserTie} /> Supervisor</h6>
-                                                    <table id="SupervisorTable" className="col-md-12">
-                                                        <thead>
-                                                            <tr className="darkgraybg">
-                                                                <th className="ps-3">Name</th>
-                                                                <th className="ps-3">Date</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td className="p-1">
-                                                                    <input className="form-control p-1" placeholder="Supervisor Name" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
-
-                                                                </td>
-                                                                <td className="p-1">
-                                                                    <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                        </div>
+                                        {/* Permits Section */}
+                                        <div className="col-md-6">
+                                            <div className={'form-border-box p-2 my-2'}>
+                                                <h6 className=""> <FontAwesomeIcon icon={faFileSignature} /> Permits</h6>
+                                                <table id="PermitsTable" className="col-md-12">
+                                                    <thead>
+                                                        <tr className="darkgraybg">
+                                                            <th>Type</th>
+                                                            <th>Required</th>
+                                                            <th>Acquired</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.state.Permits.map(p => (
+                                                            <tr><td>{`${p.type}`}</td>
+                                                                <td><input id={`Required_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Required_${p.id}`} onChange={this.handleChange} checked={p.Required} /></td>
+                                                                <td><input id={`Acquired_${p.id}`} type="checkbox" className="checkinputfeild" name={`chkPermits_Acquired_${p.id}`} onChange={this.handleChange} checked={p.Acquired} /></td>
+                                                            </tr>))}
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
-                                        {/* Buttons */}
-                                        <div className="col-sm-12 text-center py-3" id="divButtons" >
-                                            {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
-                                            <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
+                                        {/* PPE Requirements */}
+                                        <div className="col-md-6">
+                                            <div className={'form-border-box p-2 my-2'}>
+                                                <h6 className=""> <FontAwesomeIcon icon={faHardHat} /> PPE Requirements</h6>
+                                                <table id="PPEREquirementsTable" className="col-md-12">
+                                                    <thead>
+                                                        <tr className="darkgraybg">
+                                                            <th className="ps-3">PPE Type</th>
+                                                            {this.state.PPETypes.length > 1 ? <th className="text-center">Delete</th> : ""}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.bindPPETypes()}
+                                                    </tbody>
+                                                </table>
+                                                <button type="button" value="Add PPE" title="Add PPE" className="addbutton" onClick={this.addPPEType} id="btnAddPPE" ><FontAwesomeIcon icon={faAdd} /> Add PPE</button>
+                                            </div>
                                         </div>
+                                        {/* Persons Involved */}
+                                        <div className="col-md-6">
+                                            <div className={'form-border-box p-2 my-2'}>
+                                                <h6 className=""> <FontAwesomeIcon icon={faUsers} /> Persons Involved</h6>
+                                                <table id="PersonsInvolvedTable" className="col-md-12">
+                                                    <thead>
+                                                        <tr className="darkgraybg">
+                                                            <th className="ps-3">Name</th>
+                                                            <th className="ps-3">Date</th>
+                                                            {this.state.Persons.length > 1 ? <th className="text-center">Delete</th> : ""}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.bindPersons()}
+                                                    </tbody>
+                                                </table>
+                                                <button type="button" value="Add Person" title="Add Person" className="addbutton" onClick={this.addPerson} id="btnAddPerson"><FontAwesomeIcon icon={faAdd} /> Add Person</button>
+                                            </div>
+                                        </div>
+                                        {/* Supervisor Info */}
+                                        <div className="col-md-6">
+                                            <div className={'form-border-box p-2 my-2'}>
+                                                <h6 className=""> <FontAwesomeIcon icon={faUserTie} /> Supervisor</h6>
+                                                <table id="SupervisorTable" className="col-md-12">
+                                                    <thead>
+                                                        <tr className="darkgraybg">
+                                                            <th className="ps-3">Name</th>
+                                                            <th className="ps-3">Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td className="p-1">
+                                                                <input className="form-control p-1" placeholder="Supervisor Name" name="SupervisorName" type="text" id="txtSupervisorName" ref={this.SupervisorName} value={this.state.formData.SupervisorName} title={this.state.formData.SupervisorName} onChange={this.handleChange} disabled={false} />
+
+                                                            </td>
+                                                            <td className="p-1">
+                                                                <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={this.state.formData.SupervisorDate} title={this.state.formData.SupervisorDate} id='dtSupervisorDate' isDisabled={false} startDate={undefined} endDate={undefined} name="SupervisorDate" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divSupervisorDate")} ref={this.SupervisorDate} highlightDate={new Date()} showIcon />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Buttons */}
+                                    <div className="col-sm-12 text-center py-3" id="divButtons" >
+                                        {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" title={this.state.ItemId > 0 ? 'Update' : 'Submit'} onClick={this.handleSubmit} >{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
+                                        <button type="button" id="btnCancel" className="btn btn-secondary" title="Cancel" onClick={this.handlCancel}>Cancel</button>
+                                    </div>
+                                    {this.state.formData.ActionHistory.length > 0 &&
+                                        <div className="col-md-12">
+                                            <div className="form-border-box p-2 mx-1">
+                                                <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>

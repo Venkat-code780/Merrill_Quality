@@ -507,7 +507,7 @@ th {
   color: red;
 }
 
-.active-navbar .dataTables_wrapper-overflow {
+/* .active-navbar .dataTables_wrapper-overflow {
   overflow: auto;
   width: 84vw !important;
 }
@@ -529,8 +529,13 @@ th {
 
 .dataTables_wrapper-overflow {
   width: 91vw !important;
-}
+} */
 
+.container-fluid{
+  padding: 0 !important;
+  padding-left: 15px !important;
+}
+ 
 div#content-r {
   overflow: hidden;
 }
@@ -562,4 +567,14 @@ div#divUsualWork {
 
 div#divShift {
   padding-left: 1px;
+}
+.divActionHistory
+{
+  height: 100px;
+  overflow-y: auto;
+}
+.theadActionHistory{
+position: sticky;
+top: 0;
+background-color: #bdbbbb;
 }

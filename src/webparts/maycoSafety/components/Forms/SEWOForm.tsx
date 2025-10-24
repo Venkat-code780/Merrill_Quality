@@ -21,8 +21,9 @@ import formValidation from "../Utilities/FormValidator";
 import BodyPart from "../Utilities/BodyChart";
 import Sketch, { SketchHandle } from "../Utilities/Sketch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faWarning, faHistory } from "@fortawesome/free-solid-svg-icons";
 import FileUpload from "../Shared/FileUpload";
+import ActionHistory from "../Shared/ActionHistory";
 
 export interface SEWOFormProps {
     match: any;
@@ -196,7 +197,9 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             WWho: '',
             Year: '',
             YearMonth: '',
-            Zone: ''
+            Zone: '',
+            ActionHistory: [],
+
         },
         plantsData: [],
         departmentData: [],
@@ -368,7 +371,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 [SEWORes] = await Promise.all([getListItems(this.SEWOList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`)]);
                 if (!SEWORes.isHttpRequestError) {
                     if (SEWORes.length) {
-                       SEWOAttach= await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles();
+                        SEWOAttach = await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles();
                         SEWOAttach.map(async (selItem: any) => {
                             let name = selItem.FileName;
                             var fileUrl = selItem.ServerRelativeUrl;
@@ -455,6 +458,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         formData.Year = editSEWOItem.Year ?? '';
                         formData.YearMonth = editSEWOItem.YearMonth ?? '';
                         formData.Zone = editSEWOItem.Zone ?? '';
+                        formData.ActionHistory = editSEWOItem.ActionHistory ? JSON.parse(editSEWOItem.ActionHistory) : [];
                         //Shifts column if WCM
                         if (this.props.isWCM) {
                             formData.Shift = editSEWOItem.Shifts ?? '';
@@ -720,6 +724,8 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                     this.processOptionalDateFields(formData);
                     //To handle optional LookUp Fields
                     this.processOptionalLookUpFields(formData);
+                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
+                    formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                     await this.InsertOrUpdateData(formData);
                 }
                 else {
@@ -1847,6 +1853,15 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                 <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                             </div>
+
+                            {this.state.formData.ActionHistory.length > 0 &&
+                                <div className="col-md-12">
+                                    <div className="form-border-box p-2 mx-1">
+                                        <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                        <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </React.Fragment >

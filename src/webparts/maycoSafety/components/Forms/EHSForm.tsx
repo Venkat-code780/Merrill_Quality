@@ -207,7 +207,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                             formData.unsafeconditionCount = editEHSItem.unsafeconditionCount ?? '',
                             formData.Year = editEHSItem.Year ?? '',
                             formData.YearMonth = editEHSItem.YearMonth ?? '';
-                            formData.ActionHistory = editEHSItem.ActionHistory ? JSON.parse(editEHSItem.ActionHistory) : [];
+                        formData.ActionHistory = editEHSItem.ActionHistory ? JSON.parse(editEHSItem.ActionHistory) : [];
 
 
                         zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editEHSItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
@@ -516,7 +516,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                 this.sp.web.lists.getByTitle(this.EHSChildList).items.using(batchedPipe).add(item);
             }
             await execute().then(async () => {
-                let GroupName = this.getGroupName();
+                let GroupName = await this.getGroupName();
                 if (GroupName != '') {
                     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
                     if (GroupMemberEmails.length) {
@@ -610,27 +610,41 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
-    private getGroupName() {
-        var selectedDept = this.state.formData.Department;
-        var selectedZone = this.state.formData.Zone;
+    private getGroupName = async () => {
+        //var selectedDept = this.state.formData.Department;
+        //var selectedZone = this.state.formData.Zone;
         let group = '';
+        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+        let EmailConfigList = 'EmailsConfiguration',  EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*',  EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'EHS'`,  EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+        if(this.state.formData.Department.toLowerCase()=='molding')
+        EmailConfigFiltQuery+=` and Zone/Title eq '${this.state.formData.Zone}'`;
+        try {
+            let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+            if (items.length) {
+                group = items[0].ToEmailGroup.Title;
+            }
+        }
+        catch (e) {
+            console.log(e);
+            this.onError();
+        }
 
-        if (selectedDept == "IP Assembly")
-            group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
-        else if (selectedDept == "Sequencing")
-            group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
-        else if (selectedDept == "Thermoforming")
-            group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
-        else if (selectedDept == "Deco")
-            group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 1")
-            group = "WCM Safety Molding Zone 1";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 2")
-            group = "WCM Safety Molding Zone 2";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 3")
-            group = "WCM Safety Molding Zone 3";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 4")
-            group = "WCM Safety Molding Zone 4";
+        // if (selectedDept == "IP Assembly")
+        //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+        // else if (selectedDept == "Sequencing")
+        //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
+        // else if (selectedDept == "Thermoforming")
+        //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+        // else if (selectedDept == "Deco")
+        //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+        //     group = "WCM Safety Molding Zone 1";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+        //     group = "WCM Safety Molding Zone 2";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+        //     group = "WCM Safety Molding Zone 3";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+        //     group = "WCM Safety Molding Zone 4";
         return group;
     }
     private handleCancel = () => {

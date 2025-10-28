@@ -417,7 +417,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         })
 
         let ActHist = stateData.formData.ActionHistory;
-        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) });
+        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() });
 
         let postObjectJSRA = {
             Date: JSRADate,

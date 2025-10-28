@@ -306,7 +306,7 @@ export default class CHECKLISTSTEP3Form extends React.Component<CHECKLISTSTEP3Fo
             });
         }
         let ActHist = stateData.formData.ActionHistory;
-        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) });
+        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() });
         CheckListPostObj = {
             Date: CheckListDate,
             Plant: stateData.formData.Plant,

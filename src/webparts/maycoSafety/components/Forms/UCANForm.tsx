@@ -212,7 +212,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                         subTypeOptions = subTypeData.filter((option: any) => option.UAType0.Id == editUCANItem.UATypeId).map((item: any) => ({ label: item.Title, value: item.Id, }));
 
                         //Super Admin
-                        showSubmit = (editUCANItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        showSubmit = (editUCANItem.Author.Title == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                         isEditForm = true;
                     }
                     else {
@@ -383,7 +383,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 else {
                     delete formData.Date_x0020_Completed;
                 }
-                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
+                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() })
                 formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                 this.InsertOrUpdateData(formData);
             }

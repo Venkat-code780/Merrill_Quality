@@ -248,7 +248,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                 }
                             }).filter(mapItem => mapItem != null);
                         }
-                        showSubmit = (editEHSItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        showSubmit = (editEHSItem.Author.Title == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                         isEditForm = true;
                     }
                     else {
@@ -467,7 +467,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
                 formData.unsafeactCount = unsafeact.toString();
                 formData.unsafeconditionCount = unsafeConddition.toString();
-                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
+                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() })
                 formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                 await this.InsertOrUpdateData(formData);
             }

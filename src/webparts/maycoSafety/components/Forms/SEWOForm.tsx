@@ -724,7 +724,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                     this.processOptionalDateFields(formData);
                     //To handle optional LookUp Fields
                     this.processOptionalLookUpFields(formData);
-                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
+                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString()})
                     formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                     await this.InsertOrUpdateData(formData);
                 }

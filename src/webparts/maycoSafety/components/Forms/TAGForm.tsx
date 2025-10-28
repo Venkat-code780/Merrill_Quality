@@ -410,7 +410,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         let stateData: any = { ...this.state };
         let SafetyformData = { ...stateData.SafetyformData };
         let ActHist = stateData.formData.ActionHistory;
-        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) });
+        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() });
         TagPostObj.Near_x0020_Miss = SafetyformData.NearMissSEWORequired;
         TagPostObj.Unsafe_x0020_Condition = SafetyformData.UnsafeConditionImmediateFixWorkOrder;
         TagPostObj.Unsafe_x0020_Act = SafetyformData.UnsafeActCoachingCounselingTrainingOPLTWTTF;
@@ -630,19 +630,13 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                     </div>
                 </div>
                 <div className="col-md-12">
-                    <div className='mt-3'>
                         <input title={'Near Miss SEWO Required'} type='checkbox' checked={this.state.SafetyformData.NearMissSEWORequired} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'NearMissSEWORequired'} autoComplete="off" disabled={false} id={`chk_NearMissSEWORequired`} /> <label title={'Near Miss SEWO Required'} className="col-form-label chkLbl" htmlFor={`chk_NearMissSEWORequired`}>Near Miss SEWO Required</label>
-                    </div>
                 </div>
                 <div className="col-md-12">
-                    <div className='mt-3'>
                         <input title={'Unsafe Condition Immediate Fix/Work Order'} type='checkbox' checked={this.state.SafetyformData.UnsafeConditionImmediateFixWorkOrder} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'UnsafeConditionImmediateFixWorkOrder'} autoComplete="off" disabled={false} id={`chk_UnsafeConditionImmediateFix/WorkOrder`} /> <label title={'Unsafe Condition Immediate Fix/Work Order'} className="col-form-label chkLbl" htmlFor={`chk_UnsafeConditionImmediateFix/WorkOrder`}>Unsafe Condition Immediate Fix/Work Order</label>
-                    </div>
                 </div>
                 <div className="col-md-12">
-                    <div className='mt-3'>
                         <input title={'Unsafe Act Coaching,Counseling,Training,OPL TWTTF'} type='checkbox' checked={this.state.SafetyformData.UnsafeActCoachingCounselingTrainingOPLTWTTF} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'UnsafeActCoachingCounselingTrainingOPLTWTTF'} autoComplete="off" disabled={false} id={`chk_UnsafeActCoachingCounselingTrainingOPLTWTTF`} /> <label title={'Unsafe Act Coaching,Counseling,Training,OPL TWTTF'} className="col-form-label chkLbl" htmlFor={`chk_UnsafeActCoachingCounselingTrainingOPLTWTTF`}>Unsafe Act Coaching,Counseling,Training,OPL TWTTF</label>
-                    </div>
                 </div>
                 <div className="col-md-12 mb-3">
                     <div className={"light-text"} >
@@ -761,7 +755,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
 
                 <div className="col-md-12">
                     <div className={"light-text"} >
-                        <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="Comments" value={this.state.AMWOformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.AMWOformData.Comments}></textarea>
+                        <textarea className="form-control bs-textarea" rows={3} id="txtComments" name="Comments" placeholder="" value={this.state.AMWOformData.Comments} onChange={(e) => this.handleChange(e, this.state.activeTag)} disabled={false} title={this.state.AMWOformData.Comments}></textarea>
                         <label className=" col-form-label" htmlFor="txtComments">Comments</label>
                     </div>
                 </div>

@@ -405,7 +405,7 @@ export default class AuditCategories extends React.Component<AuditcategoryProps,
                                                 </div>
                                                 <div className="col-md-3">
                                                     <div className="form-floating">
-                                                        <InputCheckBox label={"Is Active"} name={"Is_x0020_Active"} checked={this.state.formData.Is_x0020_Active} onChange={this.handleCheckbox} isdisable={false} isRequired={false}></InputCheckBox>
+                                                        <InputCheckBox label={"Is Active"} name={"Is_x0020_Active"} id={'chk_Is_x0020_Active'} checked={this.state.formData.Is_x0020_Active} onChange={this.handleCheckbox} isdisable={false} isRequired={false}></InputCheckBox>
                                                     </div>
                                                 </div>
 

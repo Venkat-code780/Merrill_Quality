@@ -1,5 +1,5 @@
 import * as React from 'react';
-import DateUtilities from "../Utilities/DateUtilities";
+//import DateUtilities from "../Utilities/DateUtilities";
 import { format } from "date-fns";
 
 interface ActionHistoryProps {
@@ -22,7 +22,7 @@ const ActionHistory = ({ HeaderData, HistoryData, spContext }: ActionHistoryProp
             {HistoryData.map((action: any, index: number) => (
                 <tr key={index}>
                     <td>{action.ActionBy}</td>
-                    <td>{format(DateUtilities.removeBrowserwrtServer(new Date(action.ActionDateTime), spContext.webTimeZoneData).toISOString(), "MM/dd/yyyy hh:mm aa")}</td>
+                    <td>{format(new Date(action.ActionDateTime), "MM/dd/yyyy hh:mm aa")}</td>
                 </tr>
             ))}
         </tbody>

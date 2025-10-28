@@ -250,7 +250,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
                                 return 0;
                             });
                         }
-                        showSubmit = (editSMATItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        showSubmit = (editSMATItem.Author.Title == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                         isEditForm = true;
                     }
                     else {
@@ -490,7 +490,7 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
                     formData.unsafeactCount = unsafeact.toString();
                     formData.unsafeconditionCount = unsafeConddition.toString();
-                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: DateUtilities.addBrowserwrtServer(new Date(), this.props.spContext.webTimeZoneData) })
+                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() })
                     formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                     await this.InsertOrUpdateData(formData);
                 }

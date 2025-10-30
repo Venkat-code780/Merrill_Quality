@@ -726,7 +726,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                     this.processOptionalDateFields(formData);
                     //To handle optional LookUp Fields
                     this.processOptionalLookUpFields(formData);
-                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString()})
+                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() })
                     formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                     await this.InsertOrUpdateData(formData);
                 }
@@ -772,6 +772,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         await this.handleAttachmentUpload(res.Id.toString(), newFileArry);
                     }
                     else {
+                         await this.sendEmailOnItemAdd(res.Id);
                         let msg = "SEWO submitted successfully";
                         this.onSuccess(msg);
                     }
@@ -796,12 +797,64 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             for (const file of fileArr) {
                 await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(SEWOId).attachmentFiles.add(file.name, file);
             }
+            if (!(this.state.ItemId > 0)) {
+                await this.sendEmailOnItemAdd(SEWOId);
+            }
             let msg = this.state.ItemId > 0 ? "SEWO updated successfully" : "SEWO submitted successfully";
             this.onSuccess(msg);
         } catch (e) {
             console.log(e);
             this.onError();
         }
+    }
+    private sendEmailOnItemAdd=async(ItmeId:any) =>
+    {
+            let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
+            let GroupName = await this.getGroupName();
+                if (GroupName != '') {
+                    let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
+                    if (GroupMemberEmails.length) {
+                        let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/SEWOForm/' + ItmeId
+                        let body = "<p>Hi,</p>" + "<p>New 'SEWO-" + ItmeId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
+                        await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'SEWO' Submitted", body);
+                    }
+                }
+    }
+    private getGroupName = async () => {
+        //var selectedDept = this.state.formData.Department;
+        //var selectedZone = this.state.formData.Zone;
+        let group = "WCM Merrill Safety Mgt"; // Default group
+        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+        let EmailConfigList = 'EmailsConfiguration', EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*', EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'SEWO'`, EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+        if (this.state.formData.Department.toLowerCase() == 'molding')
+            EmailConfigFiltQuery += ` and Zone/Title eq '${this.state.formData.Zone}'`;
+        try {
+            let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+            if (items.length) {
+                group = items[0].ToEmailGroup.Title;
+            }
+        }
+        catch (e) {
+            console.log(e);
+            this.onError();
+        }
+        // if (selectedDept == "IP Assembly")
+        //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+        // else if (selectedDept == "Sequencing")
+        //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
+        // else if (selectedDept == "Thermoforming")
+        //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+        // else if (selectedDept == "Deco")
+        //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+        //     group = "WCM Safety Molding Zone 1";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+        //     group = "WCM Safety Molding Zone 2";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+        //     group = "WCM Safety Molding Zone 3";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+        //     group = "WCM Safety Molding Zone 4";
+        return group;
     }
 
     private handleAttachmentDelete = async (SEWOId: any, delFileArr: any) => {
@@ -1148,7 +1201,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         <div className="light-text">
                                             <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
                                             <div className="custom-datepicker" id="divInjuryDateTime">
-                                                <DatePickercontrol placeholder="MM/DD/YYYY HH:MM A" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} title={this.state.formData.Injury_x0020_Date_x0020_Time?format(this.state.formData.Injury_x0020_Date_x0020_Time,'MM/dd/yyyy hh:mm aa'):''} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showTime={true} showIcon />
+                                                <DatePickercontrol placeholder="MM/DD/YYYY HH:MM A" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} title={this.state.formData.Injury_x0020_Date_x0020_Time ? format(this.state.formData.Injury_x0020_Date_x0020_Time, 'MM/dd/yyyy hh:mm aa') : ''} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showTime={true} showIcon />
                                             </div>
                                         </div>
                                     </div>

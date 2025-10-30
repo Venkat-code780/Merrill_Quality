@@ -15,7 +15,7 @@ function ValidateForm(data:any){
     }
     let status = true;
     let message ="";
-    let propertieTypes={Number:ControlType.number,String:ControlType.string,MobileNumber:ControlType.mobileNumber,Email:ControlType.email,People:ControlType.people,Date:ControlType.date,compareDates:ControlType.compareDates, reactSelect: ControlType.reactSelect, radio: ControlType.radio, lessthanTodayDate: ControlType.lessthanTodayDate, greaterthanTodayDate: ControlType.greaterthanTodayDate, compareNumbers: ControlType.compareNum, ArrayField: ControlType.array, limitedNumber: ControlType.limitedNumber};
+    let propertieTypes={Number:ControlType.number,String:ControlType.string,MobileNumber:ControlType.mobileNumber,Email:ControlType.email,People:ControlType.people,Date:ControlType.date,DateTime:ControlType.DateTime,compareDates:ControlType.compareDates, reactSelect: ControlType.reactSelect, radio: ControlType.radio, lessthanTodayDate: ControlType.lessthanTodayDate, greaterthanTodayDate: ControlType.greaterthanTodayDate, compareNumbers: ControlType.compareNum, ArrayField: ControlType.array, limitedNumber: ControlType.limitedNumber};
     for (let key in data) {
         let value = data[key].val;
         let type =data[key].Type;
@@ -81,6 +81,19 @@ function ValidateForm(data:any){
             let element = document.getElementById(prpData);
             element?.focus();
             setTimeout(() =>{element?.classList.add('mandatory-FormContent-focus');},100);
+            status = false;
+            break;
+        }
+        else if((propertieTypes.DateTime==type && isrequired) && [undefined,null,''].includes(value))
+        {
+            message ="'"+data[key].Name+"' cannot be blank.";
+            let prpData =data[key].Focusid;
+            let element = document.getElementById(prpData);
+            element?.getElementsByTagName('input')[0].focus();
+            setTimeout(() =>{
+                element?.children[0].children[0].classList.remove('Mui-focused'); //default class removed
+                element?.children[0].children[0].classList.add('focus-Div');
+            },300);
             status = false;
             break;
         }

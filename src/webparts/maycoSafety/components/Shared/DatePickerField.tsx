@@ -1,94 +1,137 @@
-// import { parse } from "date-fns";
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+interface DatePickerControlProps {
+  id?: string;
+  name?: string;
+  title?: string;
+  selectedDate?: string;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  isDisabled?: boolean;
+  readOnly?: boolean;
+  placeholder?: string;
+  showTime?: boolean;
+  highlightDate?: Date | null;
+  showIcon?: boolean;
+  ref?: HTMLElement
+  onDatechange?: (args: [Date | null, string | undefined, string | undefined]) => void;
+}
 
+const DatePickercontrol: React.FC<DatePickerControlProps> = (props) => {
+  const [selectedDay, setSelectedDay] = useState<Date | null>(
+    props.selectedDate ? new Date(props.selectedDate) : null
+  );
 
-const DatePickercontrol = (props: any) => {
-  var [selectedDay, setDate] = useState(null);
-  let selectedDate = props.selectedDate != null ? props.selectedDate : null;
-  let startDate = props.startDate;
-  let endDate = props.endDate;
-  // let selDate=null;
-  if (selectedDate != null && selectedDate != "") {
-    selectedDay = selectedDate;
-  }
-  else {
-    selectedDay = null;
-  }
+  useEffect(() => {
+    if (props.selectedDate) {
+      setSelectedDay(new Date(props.selectedDate));
+    } else {
+      setSelectedDay(null);
+    }
+  }, [props.selectedDate]);
 
-  if (props.isDisabled) {
-    setTimeout(() => {
-      var DatePickers = document.getElementsByClassName("DatePicker");
-      for (var i = 0; i < DatePickers.length; i++) {
-        (DatePickers[i] as HTMLInputElement).disabled = true;
-      }
-    }, 1000);
-  } else {
-    setTimeout(() => {
-      var DatePickers = document.getElementsByClassName("DatePicker");
-      for (var i = 0; i < DatePickers.length; i++) {
-        (DatePickers[i] as HTMLInputElement).disabled = false;
-      }
-    }, 1000);
-  }
+  // Handle date selection from the picker
+  const handleChange = (selDate: Date | null) => {
+    setSelectedDay(selDate);
+    props.onDatechange?.([selDate, props.id, props.name]);
+  };
 
-  function handlechangeevent(seldate: any) {
-    setDate(seldate);
-    props.onDatechange([seldate, props.id, props.name]);
-  }
-
-  const handleRawChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle manual input (MM/DD/YYYY)
+  const handleRawChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
     const inputValue = e.target.value;
-
-    // Regex for MM/dd/yyyy format
     const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-
 
     if (dateRegex.test(inputValue)) {
       const parsedDate = new Date(inputValue);
-      const isAfterStart = !(props.startDate) || parsedDate >= new Date(props.startDate.setHours(0, 0, 0));
-      const isBeforeEnd = !(props.endDate) || parsedDate <= new Date(props.endDate.setHours(0, 0, 0));
+      let now = new Date();
+      const isAfterStart =
+        !props.startDate || parsedDate >= new Date(props.startDate.setHours(0, 0, 0));
+      const isBeforeEnd =
+        !props.endDate || parsedDate <= new Date(props.endDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds()));
+
       if (!isNaN(parsedDate.getTime()) && isAfterStart && isBeforeEnd) {
-        props.onDatechange([parsedDate, props.id, props.name]);
+        props.onDatechange?.([parsedDate, props.id, props.name]);
       }
     } else {
-      // Optionally show an error or clear the date
-      props.onDatechange([null, props.id, props.name]);
+      props.onDatechange?.([null, props.id, props.name]);
     }
   };
 
+  // Handle “Now” button click
+  const datePickerRef = React.useRef<DatePicker>(null);
+  // const handleNowClick = () => {
+  //   const now = new Date();
+  //   setSelectedDay(now);
+  //   props.onDatechange?.([now, props.id, props.name]);
+  //   datePickerRef.current?.setOpen(false);
+  // };
+
+  // ✅ Choose date format dynamically
+  const dateFormat = props.showTime ? "MM/dd/yyyy hh:mm aa" : "MM/dd/yyyy";
 
   return (
     <DatePicker
+      ref={datePickerRef}
       selected={selectedDay}
-      title={props.title}
-      dateFormat={props.showTime ? props.TimeFormat : 'MM/dd/yyyy'}
-      // timeFormat="hh:mm aa" // Forces 12-hour format
-      // timeIntervals={1}    // Optional, for nicer time stepping
-      // timeCaption="Time"    // Optional label for the time selector
-      // showTimeSelect        // Enables the time dropdown selectorF
-      showBorder={true}
-      onChange={handlechangeevent}
-      // onChangeRaw={handlechangeevent}
-      onChangeRaw={(e) => handleRawChange(e)}
-      highlightDates={[props.highlightDate]}
-      placeholderText={props.placeholder}
+      onChange={handleChange}
+      onChangeRaw={handleRawChange}
+      placeholderText={props.placeholder ?? (props.showTime ? "MM/DD/YYYY hh:mm AM" : "MM/DD/YYYY")}
+      dateFormat={dateFormat}
+      highlightDates={props.highlightDate ? [props.highlightDate] : []}
       className="form-control DatePicker"
       id={props.id}
+      name={props.name}
       readOnly={props.readOnly || false}
       disabled={props.isDisabled || false}
-      showIcon
+      showIcon={props.showIcon ?? true}
       showMonthDropdown
       showYearDropdown
       toggleCalendarOnIconClick
-      minDate={[null, undefined, ''].includes(startDate) ? undefined : startDate}
-      maxDate={[null, undefined, ''].includes(endDate) ? undefined : endDate}
-      showTimeInput={props.showTime ?? false}
+      minDate={props.startDate || undefined}
+      maxDate={props.endDate || undefined}
       tabIndex={0}
-    // ref={endDate.ref || endDate
+      title={props.title}
+      showTimeInput={props.showTime ?? false}
+      // Below props are for Time Drpdown format
+      //Add this block to inject "Now" button inside popup
+      // showTimeSelect={props.showTime ?? false}
+      // timeFormat="hh:mm aa"
+      // timeIntervals={1} // 1 minute gap
+      // timeCaption="Time"
+      // calendarContainer={({
+      //   className,
+      //   children,
+      // }: {
+      //   className?: string;
+      //   children?: React.ReactNode;
+      // }) => (
+      //   <div className={className}>
+      //     {children}
+      //     {props.showTime && !props.isDisabled && (
+      //       <div style={{padding: "8px" }}>
+      //         <button
+      //           type="button"
+      //           onClick={handleNowClick}
+      //           style={{
+      //             backgroundColor: "#1976d2",
+      //             color: "white",
+      //             border: "none",
+      //             borderRadius: "4px",
+      //             padding: "4px 10px",
+      //             fontSize: "0.8rem",
+      //             cursor: "pointer",
+      //             minWidth: '20px'
+      //           }}
+      //         >
+      //           Now
+      //         </button>
+      //       </div>
+      //     )}
+      //   </div>
+      // )}
     />
   );
 };

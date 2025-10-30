@@ -5,6 +5,7 @@ export enum ControlType {
     email='Email',
     people='PeoplePicker',
     date='DatePicker',
+    DateTime='DateTimePicker',
     compareDates='CompareDates',
     compareNum='CompareNumbers',
     lessthanTodayDate='LessThanTodayDate',

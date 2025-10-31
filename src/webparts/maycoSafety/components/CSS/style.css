@@ -271,8 +271,12 @@
 .rdt_Pagination button {
   min-width: inherit;
 }
-.MuiPickersLayout-contentWrapper button {
+.custom-date-time-picker button {
   min-width: inherit!important;
+}
+.custom-date-time-picker .DatePicker {
+    padding: 0;
+    border: 0 !important;
 }
 /* input controls css for lable on border itself*/
 .light-text {

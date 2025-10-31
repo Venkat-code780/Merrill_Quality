@@ -17,7 +17,7 @@ import DateUtilities from "../Utilities/DateUtilities";
 import { format } from "date-fns";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import DatePickercontrol from "../Shared/DatePickerField";
-// import DateTimePickercontrol from "../Shared/DateTimePickerField";
+import DateTimePickercontrol from "../Shared/DateTimePickerField";
 import formValidation from "../Utilities/FormValidator";
 import BodyPart from "../Utilities/BodyChart";
 import Sketch, { SketchHandle } from "../Utilities/Sketch";
@@ -1206,14 +1206,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Below is required for future update of HH MM separate dropdowns using MUI  */}
-                                    {/* <div className="col-md-3">
+                                    <div className="col-md-3 d-none">
                                         <div className="light-text">
                                             <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
-                                            <div className="custom-datepicker" id="divInjuryDateTime">
+                                            <div className="custom-date-time-picker" id="divInjuryDateTime">
                                                 <DateTimePickercontrol placeholder="MM/DD/YYYY HH:MM" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time ? new Date(this.state.formData.Injury_x0020_Date_x0020_Time) : null} title={this.state.formData.Injury_x0020_Date_x0020_Time} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} />
                                             </div>
                                         </div>
-                                    </div> */}
+                                    </div>
                                     {/* Usual Work & Shift */}
                                     <div className="col-md-3 row">
                                         {/* Usual Work */}

@@ -271,7 +271,9 @@
 .rdt_Pagination button {
   min-width: inherit;
 }
-
+.MuiPickersLayout-contentWrapper button {
+  min-width: inherit!important;
+}
 /* input controls css for lable on border itself*/
 .light-text {
   position: relative;

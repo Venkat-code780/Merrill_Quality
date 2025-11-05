@@ -137,7 +137,7 @@ __________________________
 
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "74a9fa60-3b81-4890-be3f-1f65aefd833g",
+  "id": "74a9fa60-3b81-4890-be3f-1f65aefd834f",
   "alias": "MaycoSafetyWebPart",
   "componentType": "WebPart",
 

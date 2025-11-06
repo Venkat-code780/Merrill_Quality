@@ -119,9 +119,15 @@ export default class SMATView extends React.Component<SMATProps, SMATState> {
         const minYear = Math.min(...yearList);
         const currentYear = new Date().getFullYear();
 
-        for (let y = minYear; y <= currentYear; y++) {
+        for (let y = currentYear; y >= minYear; y--) {
           yearOptions.push({ label: y.toString(), value: y.toString() });
         }
+      }
+      else{
+        let currYear = new Date().getFullYear();
+        let lastYear = new Date().getFullYear()-1;
+        yearOptions.push({ label: currYear.toString(), value: currYear.toString() });
+        yearOptions.push({ label: lastYear.toString(), value: lastYear.toString() });
       }
 
       this.setState({ ActionsData: tableData, yearOptions });

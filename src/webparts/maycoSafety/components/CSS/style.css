@@ -271,7 +271,7 @@
 .rdt_Pagination button {
   min-width: inherit;
 }
-.custom-date-time-picker button {
+.MuiPickersLayout-contentWrapper button, .custom-date-time-picker button {
   min-width: inherit!important;
 }
 .custom-date-time-picker .DatePicker {
@@ -576,4 +576,30 @@ div#divShift {
 .ms-rtestate-read:first-of-type~div,
 .ms-rtestate-read:first-of-type~br {
   display: none !important;
+}
+
+/* Colors for SVG Icons */
+.planHead svg {
+    color: orange;
+}
+.analysisHead svg, .sketchHead svg{
+    color: #1757e5;
+}
+.bodyChartHead svg{
+    color: #dc2626;
+}
+.actionHead svg, .doHead svg{
+    color: #315aff;
+}
+.rootCauseHead svg{
+    color: #c857ff;
+}
+.checkHead svg, .injuredHead svg{
+    color: #784bd1;
+}
+.witnessHead svg{
+    color: green;
+}
+select{
+  appearance: auto !important;
 }

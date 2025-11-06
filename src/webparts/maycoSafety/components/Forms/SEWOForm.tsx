@@ -22,7 +22,7 @@ import formValidation from "../Utilities/FormValidator";
 import BodyPart from "../Utilities/BodyChart";
 import Sketch, { SketchHandle } from "../Utilities/Sketch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faWarning, faHistory } from "@fortawesome/free-solid-svg-icons";
+import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faHistory, faRectangleList } from "@fortawesome/free-solid-svg-icons";
 import FileUpload from "../Shared/FileUpload";
 import ActionHistory from "../Shared/ActionHistory";
 
@@ -154,7 +154,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             Injury_x0020_Date_x0020_Time: '',
             InjuryTime: '',
             InjuryTypeId: '',
-            IsHospitalRefused: false,
+            IsHospitalRefused: true,
             Location: '',
             Machine: '',
             MicroRootCauseId: '',
@@ -1021,7 +1021,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
 
                             {/* PLAN */}
                             <div className="form-border-box p-2 mx-3 my-2">
-                                <h6 className="greenbg"><FontAwesomeIcon icon={faWarning} /> PLAN</h6>
+                                <h6 className="greenbg planHead"><FontAwesomeIcon icon={faRectangleList} /> PLAN</h6>
                                 <div className="row">
                                     {/* Plant */}
                                     <div className="col-md-3">
@@ -1197,7 +1197,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Injury Date Time*/}
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 d-none">
                                         <div className="light-text">
                                             <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
                                             <div className="custom-datepicker" id="divInjuryDateTime">
@@ -1206,7 +1206,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Below is required for future update of HH MM separate dropdowns using MUI  */}
-                                    <div className="col-md-3 d-none">
+                                    <div className="col-md-3">
                                         <div className="light-text">
                                             <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
                                             <div className="custom-date-time-picker" id="divInjuryDateTime">
@@ -1276,7 +1276,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                                 placeholderText={""}
                                                 className={""}
                                                 selectedValue={this.state.formData.PositionType}
-                                                OptionsList={[{ label: "Permanent", value: "Permanent" }, { label: "Temporory", value: "Temporory" }]}
+                                                OptionsList={[{ label: "Permanent", value: "Permanent" }, { label: "Temporary", value: "Temporary" }]}
                                                 OnChange={(selectedOption: any, actionMeta: any) => { this.handleDropdownChange(selectedOption, actionMeta, "divPositionType") }}
                                                 isRequired={false}
                                                 disabled={this.state.isInputDisabled}
@@ -1341,7 +1341,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             <div className="form-border-box p-2 mx-3 mt-2">
                                 <div className="row mt-2">
                                     {/* 5W+1H Analysis */}
-                                    <h6 className="greenbg"><FontAwesomeIcon icon={faSearch} /> 5W+1H Analysis</h6>
+                                    <h6 className="greenbg analysisHead"><FontAwesomeIcon icon={faSearch} /> 5W+1H Analysis</h6>
                                     {/* What */}
                                     <div className="col-md-6">
                                         <div className="light-text">
@@ -1391,7 +1391,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {/* BODY CHART */}
                                 <div className="col-md-6">
                                     <div className="form-border-box p-2 mx-1 mt-2">
-                                        <h6 className="greenbg"><FontAwesomeIcon icon={faUser} /> BODY CHART</h6>
+                                        <h6 className="greenbg bodyChartHead"><FontAwesomeIcon icon={faUser} /> BODY CHART</h6>
                                         {/* Body Part */}
                                         <div className="col-md-12">
                                             <div className="custom-dropdown" id="divBodyPart" title={(this.state.bodyPartsData.find((i: { label: string; value: any }) => i.value == this.state.formData.BodyPartId) as { label: string; value: any } | undefined)?.label}>
@@ -1417,7 +1417,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {/* SKETCH */}
                                 <div className="col-md-6 ps-0">
                                     <div className="form-border-box p-2 mx-1 mt-2">
-                                        <h6 className="greenbg"><FontAwesomeIcon icon={faPencil} /> SKETCH</h6>
+                                        <h6 className="greenbg sketchHead"><FontAwesomeIcon icon={faPencil} /> SKETCH</h6>
                                         <Sketch ref={this.sketchRef} initialImage={this.state.formData.Sketch} />
                                         <FileUpload ismultiAllowed={true} onFileChanges={this.filesChanged} isFileCloseShow={!this.state.isFileCloseShow} files={[this.state.fileArr, this.state.delfileArr]} isRequired={false} disabled={!this.state.isFileCloseShow} />
                                     </div>
@@ -1425,7 +1425,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             </div>
                             {/* CORRECTIVE ACTION */}
                             <div className="form-border-box p-2 mx-3 mt-2">
-                                <h6 className="greenbg"><FontAwesomeIcon icon={faFileSignature} /> CORRECTIVE ACTION</h6>
+                                <h6 className="greenbg actionHead"><FontAwesomeIcon icon={faFileSignature} /> CORRECTIVE ACTION</h6>
                                 {/* Action Description */}
                                 {/* <div className="col-md-12"> */}
                                 <div className="light-text" >
@@ -1435,7 +1435,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             </div>
                             {/* Analysis Root Cause: write "5 Why's" for the most probable cause */}
                             <div className="form-border-box p-2 mx-3 mt-2">
-                                <h6 className="greenbg"><FontAwesomeIcon icon={faChartLine} /> Analysis Root Cause: write "5 Why's" for the most probable cause</h6>
+                                <h6 className="greenbg rootCauseHead"><FontAwesomeIcon icon={faChartLine} /> Analysis Root Cause: write "5 Why's" for the most probable cause</h6>
                                 {/* FiveWhy1 */}
                                 <div className="row g-0 insider-m-0 ARC">
                                     <div className="col-lg-1 col-md-1 col-sm-1 col-xs-1"><div className="div-root-cause">1</div></div>
@@ -1495,7 +1495,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             </div>
                             {/* Categorize Root Cause */}
                             <div className="form-border-box p-2 mx-3 mt-2">
-                                <h6 className="greenbg"><FontAwesomeIcon icon={faChartArea} /> Categorize Root Cause</h6>
+                                <h6 className="greenbg rootCauseHead"><FontAwesomeIcon icon={faChartArea} /> Categorize Root Cause</h6>
                                 <div className="row">
                                     {/* Root Cause */}
                                     <div className="col-md-3">
@@ -1577,7 +1577,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                             </div>
                             {/* Do */}
                             <div className="form-border-box p-2 mx-3 mt-2">
-                                <h6 className="greenbg"><FontAwesomeIcon icon={faCheckCircle} /> Do</h6>
+                                <h6 className="greenbg doHead"><FontAwesomeIcon icon={faCheckCircle} /> Do</h6>
                                 {/* Action Plan */}
                                 <div className="row">
                                     <div className="col-md-6">
@@ -1625,7 +1625,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 <div className="col-md-6">
                                     <div className="form-border-box p-2 mx-1">
                                         {/* Check */}
-                                        <h6 className="redbg"><FontAwesomeIcon icon={faCheck} /> Check</h6>
+                                        <h6 className="checkHead"><FontAwesomeIcon icon={faCheck} /> Check</h6>
                                         {/* Comments */}
                                         <div className="light-text" >
                                             <label className="col-form-label" htmlFor="txtComments">Comments </label>
@@ -1636,7 +1636,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {/* ACT */}
                                 <div className="col-md-6">
                                     <div className="form-border-box p-2 mx-1">
-                                        <h6 className="yellowbg"><FontAwesomeIcon icon={faCheckDouble} /> ACT</h6>
+                                        <h6 className="checkHead"><FontAwesomeIcon icon={faCheckDouble} /> ACT</h6>
                                         {/* Expansion Plan */}
                                         <div className="row mt-3">
                                             <div className="col-md-4">
@@ -1853,7 +1853,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {/* Injured */}
                                 <div className="col-md-6 mt-2">
                                     <div className="form-border-box p-2 mx-1">
-                                        <h6 className="yellowbg"><FontAwesomeIcon icon={faUserInjured} />Injured Statement</h6>
+                                        <h6 className="injuredHead"><FontAwesomeIcon icon={faUserInjured} />Injured Statement</h6>
                                         {/* Injured Statement */}
                                         <div className="row">
                                             <div className="col-md-12">
@@ -1884,7 +1884,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {/* Witness */}
                                 <div className="col-md-6 mt-2">
                                     <div className="form-border-box p-2 mx-1">
-                                        <h6 className="yellowbg"><FontAwesomeIcon icon={faUserTie} />Witness Statement</h6>
+                                        <h6 className="witnessHead"><FontAwesomeIcon icon={faUserTie} />Witness Statement</h6>
                                         {/* Witness Statement */}
                                         <div className="row">
                                             <div className="col-12">

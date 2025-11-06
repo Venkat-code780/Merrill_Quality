@@ -8,6 +8,18 @@
   display: none !important;
 }
 
+#site_content {
+  margin: 0px !important;
+}
+
+.ms-wikicontent {
+  padding-right: 0px !important;
+}
+
+.ms-webpart-chrome-title {
+  display: none;
+}
+
 #content-r {
   margin: 0px !important;
 }
@@ -16,9 +28,11 @@
   padding: 0 !important;
   min-height: inherit !important;
 }
-.ms-webpart-titleText{
+
+.ms-webpart-titleText {
   display: none !important;
 }
+
 .FormContent {
   position: relative;
   margin-bottom: 10px;
@@ -181,7 +195,7 @@
 }
 
 
-/* Views tables Styles */
+/* Views tables Styles for responsive with Horizontal scroll */
 .rdt_TableCol_Sortable div {
   overflow: visible !important;
   text-overflow: unset !important;
@@ -194,17 +208,7 @@
 }
 
 .rdt_TableCell div {
-  white-space: normal !important;
-}
-
-.ViewTable {
-  display: block !important;
-  overflow-x: auto !important;
-  width: 100%;
-}
-
-.ViewTable .after-title {
-  margin: 30px 0 !important;
+  white-space: inherit !important;
 }
 
 .dataTables_wrapper .row:first-child {
@@ -219,20 +223,10 @@
 
 .rdt_TableCol {
   color: black !important;
-
-}
-
-.rdt_TableCell {
-  cursor: pointer;
-  padding-left: 10px !important;
-}
-
-.rdt_TableCell div {
-  white-space: normal !important;
 }
 
 .ViewTable {
-  display: grid;
+  display: grid !important;
 }
 
 .ViewTable .after-title {
@@ -243,17 +237,20 @@
   min-height: 50px;
 }
 
-.rdt_TableCol {
-  color: black !important;
-
-}
-
 .right-search-table .col-6:nth-child(1) {
   width: 100%;
 }
 
 .right-search-table .col-6:nth-child(1) input {
   margin-left: auto !important;
+}
+
+.dataTables_wrapper-overflow button {
+  min-width: inherit !important;
+}
+
+.dataTables_wrapper-overflow.table-responsive {
+  width: auto;
 }
 
 /* Masers styles */
@@ -274,7 +271,13 @@
 .rdt_Pagination button {
   min-width: inherit;
 }
-
+.custom-date-time-picker button {
+  min-width: inherit!important;
+}
+.custom-date-time-picker .DatePicker {
+    padding: 0;
+    border: 0 !important;
+}
 /* input controls css for lable on border itself*/
 .light-text {
   position: relative;
@@ -495,7 +498,7 @@ th {
   color: red;
 }
 
-.active-navbar .dataTables_wrapper-overflow {
+/* .active-navbar .dataTables_wrapper-overflow {
   overflow: auto;
   width: 84vw !important;
 }
@@ -514,9 +517,13 @@ th {
   }
 
 }
-
 .dataTables_wrapper-overflow {
   width: 91vw !important;
+} */
+
+.container-fluid {
+  padding: 0 !important;
+  padding-left: 15px !important;
 }
 
 div#content-r {
@@ -550,4 +557,23 @@ div#divUsualWork {
 
 div#divShift {
   padding-left: 1px;
+}
+
+.divActionHistory {
+  max-height: 200px;
+  height: auto;
+  overflow-y: auto;
+  margin-bottom: 5px;
+}
+
+.theadActionHistory {
+  position: sticky;
+  top: 0;
+  background-color: #bdbbbb;
+}
+
+/* To hide unnecessary div and br  at above the footer */
+.ms-rtestate-read:first-of-type~div,
+.ms-rtestate-read:first-of-type~br {
+  display: none !important;
 }

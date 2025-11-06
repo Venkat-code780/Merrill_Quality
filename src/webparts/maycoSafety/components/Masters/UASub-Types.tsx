@@ -374,7 +374,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                                 <div className="form-title">UA Sub-Types</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="p-2 mx-1">
+                            <div className="p-2 mx-1 ViewTable">
 
                                 {!this.state.isFormOpen &&
                                     <div className="text-end me-1" id="">
@@ -387,7 +387,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                                             <div className="row">
                                                      <div className="col-md-3">
                                                     <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
-                                                        <Dropdown label={"Category"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
+                                                        <Dropdown label={"UA Type"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
@@ -407,7 +407,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
 
                                     </div>
                                 }
-                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} className="sp-Datatable-hh" onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>
                     </div>

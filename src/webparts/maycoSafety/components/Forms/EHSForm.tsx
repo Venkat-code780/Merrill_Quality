@@ -19,6 +19,9 @@ import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import MultipleImageUploader from "../Shared/MutipleImageUploader";
 import formValidation from "../Utilities/FormValidator";
 import { createBatch } from "@pnp/sp/batching";
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ActionHistory from "../Shared/ActionHistory";
 
 export interface EHSFormProps {
     match: any;
@@ -61,7 +64,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             unsafeactCount: '',
             unsafeconditionCount: '',
             Year: '',
-            YearMonth: ''
+            YearMonth: '',
+            ActionHistory: [],
         },
         childFormData: {
             EHSId: 0,
@@ -202,7 +206,9 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                             formData.unsafeactCount = editEHSItem.unsafeactCount ?? '',
                             formData.unsafeconditionCount = editEHSItem.unsafeconditionCount ?? '',
                             formData.Year = editEHSItem.Year ?? '',
-                            formData.YearMonth = editEHSItem.YearMonth ?? ''
+                            formData.YearMonth = editEHSItem.YearMonth ?? '';
+                        formData.ActionHistory = editEHSItem.ActionHistory ? JSON.parse(editEHSItem.ActionHistory) : [];
+
 
                         zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editEHSItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
@@ -242,7 +248,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                 }
                             }).filter(mapItem => mapItem != null);
                         }
-                        showSubmit = (editEHSItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        showSubmit = (editEHSItem.Author.Title == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                         isEditForm = true;
                     }
                     else {
@@ -461,6 +467,8 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
                 formData.unsafeactCount = unsafeact.toString();
                 formData.unsafeconditionCount = unsafeConddition.toString();
+                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() })
+                formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                 await this.InsertOrUpdateData(formData);
             }
             else {
@@ -508,12 +516,12 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                 this.sp.web.lists.getByTitle(this.EHSChildList).items.using(batchedPipe).add(item);
             }
             await execute().then(async () => {
-                let GroupName = this.getGroupName();
+                let GroupName = await this.getGroupName();
                 if (GroupName != '') {
                     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
                     if (GroupMemberEmails.length) {
                         let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/EHSForm/' + adedItemId
-                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>"+this.props.userDisplayName+"</p>";
+                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
                         await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'EHS' Submitted", body);
                     }
                 }
@@ -529,7 +537,7 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
             console.log(e);
             this.onError();
         }
-         finally {
+        finally {
             hideLoader();
         }
     }
@@ -602,27 +610,41 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
-    private getGroupName() {
-        var selectedDept = this.state.formData.Department;
-        var selectedZone = this.state.formData.Zone;
+    private getGroupName = async () => {
+        //var selectedDept = this.state.formData.Department;
+        //var selectedZone = this.state.formData.Zone;
         let group = '';
+        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+        let EmailConfigList = 'EmailsConfiguration',  EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*',  EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'EHS'`,  EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+        if(this.state.formData.Department.toLowerCase()=='molding')
+        EmailConfigFiltQuery+=` and Zone/Title eq '${this.state.formData.Zone}'`;
+        try {
+            let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+            if (items.length) {
+                group = items[0].ToEmailGroup.Title;
+            }
+        }
+        catch (e) {
+            console.log(e);
+            this.onError();
+        }
 
-        if (selectedDept == "IP Assembly")
-            group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
-        else if (selectedDept == "Sequencing")
-            group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
-        else if (selectedDept == "Thermoforming")
-            group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
-        else if (selectedDept == "Deco")
-            group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 1")
-            group = "WCM Safety Molding Zone 1";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 2")
-            group = "WCM Safety Molding Zone 2";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 3")
-            group = "WCM Safety Molding Zone 3";
-        else if (selectedDept == "Molding" && selectedZone == "Zone 4")
-            group = "WCM Safety Molding Zone 4";
+        // if (selectedDept == "IP Assembly")
+        //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+        // else if (selectedDept == "Sequencing")
+        //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
+        // else if (selectedDept == "Thermoforming")
+        //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+        // else if (selectedDept == "Deco")
+        //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+        //     group = "WCM Safety Molding Zone 1";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+        //     group = "WCM Safety Molding Zone 2";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+        //     group = "WCM Safety Molding Zone 3";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+        //     group = "WCM Safety Molding Zone 4";
         return group;
     }
     private handleCancel = () => {
@@ -948,6 +970,14 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                             <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                                         </div>
+                                        {this.state.formData.ActionHistory.length > 0 &&
+                                            <div className="col-md-12 mb-3">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                    <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>

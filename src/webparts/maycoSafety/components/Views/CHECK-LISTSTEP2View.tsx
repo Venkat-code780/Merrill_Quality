@@ -172,7 +172,7 @@ export default class CheckList2View extends React.Component<CheckList2Props, Che
             <div className="form-title">CHECK-LIST STEP 2 View</div>
           </div>
           <div className="mainContent borderLine">
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -189,6 +189,7 @@ export default class CheckList2View extends React.Component<CheckList2Props, Che
                 onRowClick={this.handleRowClicked}
                 fileName={"Actions"}
                 showPagination={true}
+                className="sp-Datatable-hh"
               />
             </div>
           </div>

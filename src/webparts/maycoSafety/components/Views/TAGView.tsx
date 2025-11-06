@@ -172,10 +172,9 @@ export default class TAGView extends React.Component<TAGProps, TAGState> {
         cell: (row: any) => <div className='' dangerouslySetInnerHTML={{ __html: row.Completed_x0020_DateForGrid }} onClick={(event)=>this.handleRowClicked(event,row.Id)}/>,
         sortable: true
       },
-      { name: "CompletedBy", selector: (row: any) => row.Completed_x0020_By, sortable: true },
+      { name: "Completed By", selector: (row: any) => row.CompletedBy, sortable: true },
       { name: "TAG#", selector: (row: any) => (row.TAG_x0023_), sortable: true },
       { name: "Year", selector: (row: any) => row.Year, sortable: true },
-      { name: "Completed By", selector: (row: any) => row.CompletedBy, sortable: true },
     ];
     const filteredData = this.state.selectedYear && this.state.selectedYear !== "All" ? this.state.ActionsData.filter((item) => item.Year == this.state.selectedYear) : this.state.ActionsData;
 
@@ -191,7 +190,7 @@ export default class TAGView extends React.Component<TAGProps, TAGState> {
           </div>
           <div className="mainContent borderLine">
             {/* <div id="content" className="content p-2 pt-2"> */}
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -208,6 +207,7 @@ export default class TAGView extends React.Component<TAGProps, TAGState> {
                 onRowClick={this.handleRowClicked}
                 fileName={"Actions"}
                 showPagination={true}
+                className="sp-Datatable-hh"
               />
             </div>
           </div>

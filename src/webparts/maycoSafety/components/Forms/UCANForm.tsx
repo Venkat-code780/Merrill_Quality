@@ -25,6 +25,10 @@ import "@pnp/sp/files";
 import "@pnp/sp/folders";
 // import SingleImageUpload from "../Shared/singleFileUpload";
 import ImageUploader from "../Shared/ImageUploader";
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ActionHistory from "../Shared/ActionHistory";
+
 
 export interface UCANFormProps {
     match: any;
@@ -82,6 +86,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             Year: '',
             YearMonth: '',
             Attachment: '',
+            ActionHistory: [],
         },
         ucanTypeData: [],
         plantsData: [],
@@ -197,6 +202,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                         formData.Year = [null, undefined, ""].includes(editUCANItem.Year) ? "" : editUCANItem.Year;
                         formData.YearMonth = [null, undefined, ""].includes(editUCANItem.YearMonth) ? "" : editUCANItem.YearMonth;
                         formData.Attachment = [null, undefined, ""].includes(editUCANItem.Attachment) ? "" : editUCANItem.Attachment;
+                        formData.ActionHistory = editUCANItem.ActionHistory ? JSON.parse(editUCANItem.ActionHistory) : [];
+
 
                         zoneOptions = zoneData.filter((option: any) => (option.Plant && option.Plant.Title == formData.Plant && option.Department && option.Department.Title == editUCANItem.Department)).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
 
@@ -205,7 +212,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                         subTypeOptions = subTypeData.filter((option: any) => option.UAType0.Id == editUCANItem.UATypeId).map((item: any) => ({ label: item.Title, value: item.Id, }));
 
                         //Super Admin
-                        showSubmit = (editUCANItem.Author == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+                        showSubmit = (editUCANItem.Author.Title == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
                         isEditForm = true;
                     }
                     else {
@@ -376,7 +383,8 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 else {
                     delete formData.Date_x0020_Completed;
                 }
-
+                formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() })
+                formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                 this.InsertOrUpdateData(formData);
             }
             else {
@@ -392,7 +400,7 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
 
     private InsertOrUpdateData = async (formData: any) => {
         try {
-
+            let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
             let itemId = this.props.match.params.id;
             if (itemId > 0) {
                 await this.sp.web.lists.getByTitle(this.ucanList).items.getById(itemId).update(formData).then((res: any) => {
@@ -405,8 +413,17 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                 })
             }
             else {
-                await this.sp.web.lists.getByTitle(this.ucanList).items.add(formData).then((res: any) => {
+                await this.sp.web.lists.getByTitle(this.ucanList).items.add(formData).then(async (res: any) => {
                     let msg = "UCAN submitted successfully";
+                    let GroupName = await this.getGroupName();
+                if (GroupName != '') {
+                    let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
+                    if (GroupMemberEmails.length) {
+                        let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/UCANForm/' + res.Id
+                        let body = "<p>Hi,</p>" + "<p>New 'UCAN-" + res.Id + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
+                        await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'UCAN' Submitted", body);
+                    }
+                }
                     this.setState({ displayMessage: msg });
                     this.onSuccess();
                 }, (error) => {
@@ -420,6 +437,42 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
             this.onError();
         }
     }
+     private getGroupName = async () => {
+            //var selectedDept = this.state.formData.Department;
+            //var selectedZone = this.state.formData.Zone;
+            let group = "WCM Merrill Safety Mgt"; // Default group
+            let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+            let EmailConfigList = 'EmailsConfiguration', EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*', EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'UCAN'`, EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+            if (this.state.formData.Department.toLowerCase() == 'molding')
+                EmailConfigFiltQuery += ` and Zone/Title eq '${this.state.formData.Zone}'`;
+            try {
+                let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+                if (items.length) {
+                    group = items[0].ToEmailGroup.Title;
+                }
+            }
+            catch (e) {
+                console.log(e);
+                this.onError();
+            }
+            // if (selectedDept == "IP Assembly")
+            //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+            // else if (selectedDept == "Sequencing")
+            //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
+            // else if (selectedDept == "Thermoforming")
+            //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+            // else if (selectedDept == "Deco")
+            //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
+            // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+            //     group = "WCM Safety Molding Zone 1";
+            // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+            //     group = "WCM Safety Molding Zone 2";
+            // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+            //     group = "WCM Safety Molding Zone 3";
+            // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+            //     group = "WCM Safety Molding Zone 4";
+            return group;
+        }
 
     private handlCancel = () => {
         this.setState({ Redirect: true, RedirectTo: 'UCANView', ItemID: 0 });
@@ -713,6 +766,15 @@ export default class UCANForm extends React.Component<UCANFormProps, UCANFormSta
                                             {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                             <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handlCancel} title="Cancel">Cancel</button>
                                         </div>
+
+                                        {this.state.formData.ActionHistory.length > 0 &&
+                                            <div className="col-md-12 mb-3">
+                                                <div className="form-border-box p-2 mx-1">
+                                                    <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                                    <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                                </div>
+                                            </div>
+                                        }
 
                                     </div>
                                 </div>

@@ -17,12 +17,14 @@ import DateUtilities from "../Utilities/DateUtilities";
 import { format } from "date-fns";
 import { initCommonFunctions } from "../Utilities/CommonFunctions";
 import DatePickercontrol from "../Shared/DatePickerField";
+import DateTimePickercontrol from "../Shared/DateTimePickerField";
 import formValidation from "../Utilities/FormValidator";
 import BodyPart from "../Utilities/BodyChart";
 import Sketch, { SketchHandle } from "../Utilities/Sketch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faChartArea, faChartLine, faCheck, faCheckCircle, faCheckDouble, faFileSignature, faPencil, faSearch, faUser, faUserInjured, faUserTie, faWarning, faHistory } from "@fortawesome/free-solid-svg-icons";
 import FileUpload from "../Shared/FileUpload";
+import ActionHistory from "../Shared/ActionHistory";
 
 export interface SEWOFormProps {
     match: any;
@@ -196,7 +198,9 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             WWho: '',
             Year: '',
             YearMonth: '',
-            Zone: ''
+            Zone: '',
+            ActionHistory: [],
+
         },
         plantsData: [],
         departmentData: [],
@@ -368,7 +372,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 [SEWORes] = await Promise.all([getListItems(this.SEWOList, this.props.webAbsoluteURL, 'Author/Title,Author/Id,*', 'Author', `Id eq ${itemId}`)]);
                 if (!SEWORes.isHttpRequestError) {
                     if (SEWORes.length) {
-                       SEWOAttach= await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles();
+                        SEWOAttach = await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(itemId).attachmentFiles();
                         SEWOAttach.map(async (selItem: any) => {
                             let name = selItem.FileName;
                             var fileUrl = selItem.ServerRelativeUrl;
@@ -455,6 +459,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         formData.Year = editSEWOItem.Year ?? '';
                         formData.YearMonth = editSEWOItem.YearMonth ?? '';
                         formData.Zone = editSEWOItem.Zone ?? '';
+                        formData.ActionHistory = editSEWOItem.ActionHistory ? JSON.parse(editSEWOItem.ActionHistory) : [];
                         //Shifts column if WCM
                         if (this.props.isWCM) {
                             formData.Shift = editSEWOItem.Shifts ?? '';
@@ -689,6 +694,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 injuredName: { val: formData.InjuredName, required: true, Name: "Name of Injured", Type: ControlType.string, Focusid: this.txtNameofInjured },
                 sex: { val: formData.Sex, required: true, Name: "Sex", Type: ControlType.reactSelect, Focusid: "ddlSex" },
                 injuryType: { val: formData.InjuryTypeId, required: true, Name: "Injury Type", Type: ControlType.reactSelect, Focusid: "ddlInjuryType" },
+                // injuryDateTime: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.DateTime, Focusid: "divInjuryDateTime" },
                 injuryDateTime: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.date, Focusid: "dtInjuryDateTime" },
                 injuryDateTimeToday: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.lessthanTodayDate, Focusid: "dtInjuryDateTime" },
                 reportedDate: { val: formData.Reported_x0020_Date, required: true, Name: "Reported Date", Type: ControlType.date, Focusid: "dtReportedDate" },
@@ -720,6 +726,8 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                     this.processOptionalDateFields(formData);
                     //To handle optional LookUp Fields
                     this.processOptionalLookUpFields(formData);
+                    formData.ActionHistory.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() })
+                    formData.ActionHistory = JSON.stringify(formData.ActionHistory);
                     await this.InsertOrUpdateData(formData);
                 }
                 else {
@@ -764,6 +772,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         await this.handleAttachmentUpload(res.Id.toString(), newFileArry);
                     }
                     else {
+                         await this.sendEmailOnItemAdd(res.Id);
                         let msg = "SEWO submitted successfully";
                         this.onSuccess(msg);
                     }
@@ -788,12 +797,64 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             for (const file of fileArr) {
                 await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(SEWOId).attachmentFiles.add(file.name, file);
             }
+            if (!(this.state.ItemId > 0)) {
+                await this.sendEmailOnItemAdd(SEWOId);
+            }
             let msg = this.state.ItemId > 0 ? "SEWO updated successfully" : "SEWO submitted successfully";
             this.onSuccess(msg);
         } catch (e) {
             console.log(e);
             this.onError();
         }
+    }
+    private sendEmailOnItemAdd=async(ItmeId:any) =>
+    {
+            let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
+            let GroupName = await this.getGroupName();
+                if (GroupName != '') {
+                    let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
+                    if (GroupMemberEmails.length) {
+                        let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/SEWOForm/' + ItmeId
+                        let body = "<p>Hi,</p>" + "<p>New 'SEWO-" + ItmeId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
+                        await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'SEWO' Submitted", body);
+                    }
+                }
+    }
+    private getGroupName = async () => {
+        //var selectedDept = this.state.formData.Department;
+        //var selectedZone = this.state.formData.Zone;
+        let group = "WCM Merrill Safety Mgt"; // Default group
+        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+        let EmailConfigList = 'EmailsConfiguration', EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*', EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'SEWO'`, EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+        if (this.state.formData.Department.toLowerCase() == 'molding')
+            EmailConfigFiltQuery += ` and Zone/Title eq '${this.state.formData.Zone}'`;
+        try {
+            let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+            if (items.length) {
+                group = items[0].ToEmailGroup.Title;
+            }
+        }
+        catch (e) {
+            console.log(e);
+            this.onError();
+        }
+        // if (selectedDept == "IP Assembly")
+        //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+        // else if (selectedDept == "Sequencing")
+        //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
+        // else if (selectedDept == "Thermoforming")
+        //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+        // else if (selectedDept == "Deco")
+        //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+        //     group = "WCM Safety Molding Zone 1";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+        //     group = "WCM Safety Molding Zone 2";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+        //     group = "WCM Safety Molding Zone 3";
+        // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+        //     group = "WCM Safety Molding Zone 4";
+        return group;
     }
 
     private handleAttachmentDelete = async (SEWOId: any, delFileArr: any) => {
@@ -1140,7 +1201,16 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         <div className="light-text">
                                             <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
                                             <div className="custom-datepicker" id="divInjuryDateTime">
-                                                <DatePickercontrol placeholder="MM/DD/YYYY HH:MM" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} title={this.state.formData.Injury_x0020_Date_x0020_Time} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showIcon showTime={true} TimeFormat="MM/dd/yyyy hh:mm aa" />
+                                                <DatePickercontrol placeholder="MM/DD/YYYY HH:MM A" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} title={this.state.formData.Injury_x0020_Date_x0020_Time ? format(this.state.formData.Injury_x0020_Date_x0020_Time, 'MM/dd/yyyy hh:mm aa') : ''} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showTime={true} showIcon />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Below is required for future update of HH MM separate dropdowns using MUI  */}
+                                    <div className="col-md-3 d-none">
+                                        <div className="light-text">
+                                            <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
+                                            <div className="custom-date-time-picker" id="divInjuryDateTime">
+                                                <DateTimePickercontrol placeholder="MM/DD/YYYY HH:MM" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time ? new Date(this.state.formData.Injury_x0020_Date_x0020_Time) : null} title={this.state.formData.Injury_x0020_Date_x0020_Time} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} />
                                             </div>
                                         </div>
                                     </div>
@@ -1847,6 +1917,15 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                 {this.state.showSubmit && <button type="button" id="btnSubmit" className="btn btn-primary mx-2" onClick={this.handleSubmit} title={this.state.ItemId > 0 ? 'Update' : 'Submit'}>{this.state.ItemId > 0 ? 'Update' : 'Submit'}</button>}
                                 <button type="button" id="btnCancel" className="btn btn-secondary" onClick={this.handleCancel} title="Cancel">Cancel</button>
                             </div>
+
+                            {this.state.formData.ActionHistory.length > 0 &&
+                                <div className="col-md-12 mb-3">
+                                    <div className="form-border-box p-2 mx-1">
+                                        <h6 className=""><FontAwesomeIcon icon={faHistory} /> Action History</h6>
+                                        <ActionHistory HeaderData={["Action By", "Date & Time"]} HistoryData={this.state.formData.ActionHistory} spContext={this.props.spContext} />
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </React.Fragment >

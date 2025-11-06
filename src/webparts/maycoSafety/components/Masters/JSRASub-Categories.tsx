@@ -343,7 +343,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                 sortable: false
             },
             {
-                name: "Sub-Category",
+                name: "JSRA Sub-Category",
                 selector: (row: { Title: any; }, i: any) => row.Title,
                 sortable: true,
                 cell: (record: { Title: any; }) => {
@@ -353,7 +353,7 @@ export default class JSRASubCategories extends React.Component<JSRASubCategories
                 },
             },
             {
-                name: "Category",
+                name: "JSRA Category",
                 selector: (row: { CategoryTitle: any; }, i: any) => row.CategoryTitle,
                 sortable: true,
                 cell: (record: { CategoryTitle: any; }) => {

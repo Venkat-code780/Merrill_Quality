@@ -387,7 +387,7 @@ export default class AuditCategories extends React.Component<AuditcategoryProps,
                                 <div className="form-title">Audit Categories</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="p-2 mx-1">
+                            <div className="p-2 mx-1 ViewTable">
                                 {!this.state.isFormOpen &&
                                     <div className="text-end me-1" id="">
                                         <button type="button" id="btnNew" className="NewButton" title="New" onClick={this.addNew}>
@@ -405,7 +405,7 @@ export default class AuditCategories extends React.Component<AuditcategoryProps,
                                                 </div>
                                                 <div className="col-md-3">
                                                     <div className="form-floating">
-                                                        <InputCheckBox label={"Is Active"} name={"Is_x0020_Active"} checked={this.state.formData.Is_x0020_Active} onChange={this.handleCheckbox} isdisable={false} isRequired={false}></InputCheckBox>
+                                                        <InputCheckBox label={"Is Active"} name={"Is_x0020_Active"} id={'chk_Is_x0020_Active'} checked={this.state.formData.Is_x0020_Active} onChange={this.handleCheckbox} isdisable={false} isRequired={false}></InputCheckBox>
                                                     </div>
                                                 </div>
 
@@ -420,7 +420,7 @@ export default class AuditCategories extends React.Component<AuditcategoryProps,
                                 }
 
 
-                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} className="sp-Datatable-hh" onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>
                     </div>

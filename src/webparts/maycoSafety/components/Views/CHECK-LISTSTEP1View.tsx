@@ -118,7 +118,7 @@ export default class CheckListStep1View extends React.Component<CheckListStep1Pr
     let ID = row.Id ? row.Id : Id;
     this.setState({ ItemID: ID, redirect: true });
   }
-  private handleYearChange = (selected: any,actionMeta?:any) => {
+  private handleYearChange = (selected: any, actionMeta?: any) => {
     // assuming Serachbledropdown sends { label, value }
     let value = actionMeta.action == 'clear' ? '' : selected.value;
     this.setState({ selectedYear: value });
@@ -177,7 +177,7 @@ export default class CheckListStep1View extends React.Component<CheckListStep1Pr
             <div className="form-title">CHECK-LIST STEP 1 View</div>
           </div>
           <div className="mainContent borderLine">
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -188,13 +188,7 @@ export default class CheckListStep1View extends React.Component<CheckListStep1Pr
                   </div>
                 </div>
               </div>
-              <TableGenerator
-                columns={columns}
-                data={filteredData}
-                onRowClick={this.handleRowClicked}
-                fileName={"Actions"}
-                showPagination={true}
-              />
+              <TableGenerator columns={columns} data={filteredData} onRowClick={this.handleRowClicked} fileName={"Actions"} showPagination={true} className="sp-Datatable-hh" />
             </div>
           </div>
         </div>

@@ -459,7 +459,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                 <div className="form-title">Actions</div>
                                 {this.state.isFormOpen && <span className="span-mandatory-text"> <span className="text-danger">* </span> are mandatory fields</span>}
                             </div>
-                            <div className="p-2 mx-1">
+                            <div className="p-2 mx-1 ViewTable">
 
                                 {!this.state.isFormOpen &&
                                     <div className="text-end me-1" id="">
@@ -524,7 +524,7 @@ export default class Action extends React.Component<ActionsProps, ActionsState> 
                                     </div>
                                 }
 
-                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
+                                <TableGenerator columns={columns} data={this.state.ActionsData} onChange={this.onPageChange} prvPageNumber={this.state.pageNumber} prvDirection={this.state.sortOrder} fileName={"Actions"} className="sp-Datatable-hh" onRowClick={this.handleRowClicked} showPagination={true}></TableGenerator>
                             </div>
                         </div>
                     </div>

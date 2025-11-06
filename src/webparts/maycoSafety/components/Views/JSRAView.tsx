@@ -275,7 +275,7 @@ export default class JSRAView extends React.Component<JSRAProps, JSRAState> {
             <div className="form-title">JSRA View</div>
           </div>
           <div className="mainContent borderLine">
-            <div className="row">
+            <div className="row ViewTable">
               <div className="col-md-3">
                 <div className="light-text mt-4">
                   <label htmlFor="">
@@ -292,6 +292,7 @@ export default class JSRAView extends React.Component<JSRAProps, JSRAState> {
                 onRowClick={this.handleRowClicked}
                 fileName={"Actions"}
                 showPagination={true}
+                className="sp-Datatable-hh"
               />
               <ModalApprovePopUp
                 message="Are you sure you want to Delete?"

@@ -36,7 +36,7 @@ export interface JSRAFormProps {
     webAbsoluteURL: string;
     currentUserGroups: any;
     currPlantTitle: string;
-    isSuperAdmin: boolean;
+    FormAccessConfiguration:any;
 }
 
 export interface JSRAFormState {
@@ -273,7 +273,11 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                         stateData = this.onPlantChange(stateData, formData.Plant, false);
                         stateData = this.onDepartmentChange(stateData, formData.Plant, formData.Department, false);
                         stateData = this.onZoneChange(stateData, formData.Plant, formData.Department, formData.Zone, false);
-                        showSubmit = this.props.currentUserGroups.includes('Venture Global Owners') || (jsraData.Author.Title == this.props.userDisplayName) ? true : false;
+
+                        let currentUserGroups = this.props.currentUserGroups;
+                        let jsraUserGroups = this.props.FormAccessConfiguration["JSRA"];
+                        let isGrpAccess = jsraUserGroups.some((group:any) => currentUserGroups.includes(group));
+                        showSubmit = isGrpAccess || (jsraData.Author.Title == this.props.userDisplayName) ? true : false;
 
                         this.setState({ formData, isEditForm, ItemId, Permits, PPETypes, Persons, jobSteps, showSubmit, DepartmentsOpt: stateData.DepartmentsOpt, ZonesOpt: stateData.ZonesOpt, WorkCellsOpt: stateData.WorkCellsOpt, MachinesOpt: stateData.MachinesOpt, SupervisorsOpt: stateData.SupervisorsOpt, ToolNumbersOpt: stateData.ToolNumbersOpt });
                     }
@@ -337,7 +341,7 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         }
     }
     private InsertOrUpdateData = async (postObjectJSRA: any) => {
-        let { addListItem, updateListItem, batchAddItems, batchUpdateItems, getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.rootSiteURL);
+        let { addListItem, updateListItem, batchAddItems, batchUpdateItems } = initCommonFunctions(this.props.context, this.rootSiteURL);
         let ItemId = this.props.match.params.id;
         if (ItemId > 0) {
             await updateListItem('JSRA', this.currentSiteURL, postObjectJSRA, ItemId).then(async (res: any) => {
@@ -361,15 +365,15 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
                 // JSRA Line Items insertion
                 let postObjectJSRALineItems: any[] = this.getJSRALinepostObject(adedItemId, this.state.jobSteps, this.state.isEditForm);
                 await batchAddItems('JSRA Line', this.currentSiteURL, postObjectJSRALineItems).then(async (res: any) => {
-                    let GroupName = await this.getGroupName();
-                    if (GroupName != '') {
-                        let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.currentSiteURL);
-                        if (GroupMemberEmails.length) {
-                            let link = this.currentSiteURL + '/SitePages/Home.aspx#/JSRAForm/' + adedItemId
-                            let body = "<p>Hi,</p>" + "<p>New 'JSRA-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
-                            await sendEmail(this.rootSiteURL, GroupMemberEmails, "New 'JSRA' Submitted", body);
-                        }
-                    }
+                    // let GroupName = await this.getGroupName();
+                    // if (GroupName != '') {
+                    //     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.currentSiteURL);
+                    //     if (GroupMemberEmails.length) {
+                    //         let link = this.currentSiteURL + '/SitePages/Home.aspx#/JSRAForm/' + adedItemId
+                    //         let body = "<p>Hi,</p>" + "<p>New 'JSRA-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
+                    //         await sendEmail(this.rootSiteURL, GroupMemberEmails, "New 'JSRA' Submitted", body);
+                    //     }
+                    // }
                     let msg = "JSRA submitted successfully";
                     this.onSuccess(msg);
                 }, (error: any) => {
@@ -492,42 +496,42 @@ export default class JSRAForm extends React.Component<JSRAFormProps, JSRAFormSta
         });
         return isEditForm ? postEditObjectJSRALineItems : postObjectJSRALineItems;
     }
-    private getGroupName=async() =>{
-        //var selectedDept = this.state.formData.Department;
-        //var selectedZone = this.state.formData.Zone;
-        let group = '';
-        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
-        let EmailConfigList = 'EmailsConfiguration', EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*', EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'JSRA'`, EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
-        if (this.state.formData.Department.toLowerCase() == 'molding')
-        EmailConfigFiltQuery += ` and Zone/Title eq '${this.state.formData.Zone}'`;
-        try {
-            let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
-            if (items.length) {
-                group = items[0].ToEmailGroup.Title;
-            }
-        }
-        catch (e) {
-            console.log(e);
-            this.onError();
-        }
-        // if (selectedDept == "IP Assembly")
-        //     group = "WCM Safety IP Assembly";
-        // else if (selectedDept == "Sequencing")
-        //     group = "WCM Safety Seq";
-        // else if (selectedDept == "Thermoforming")
-        //     group = "WCM Safety IPM Thermo";
-        // else if (selectedDept == "Deco")
-        //     group = "WCM Safety Deco";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
-        //     group = "WCM Safety Molding Zone 1";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
-        //     group = "WCM Safety Molding Zone 2";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
-        //     group = "WCM Safety Molding Zone 3";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
-        //     group = "WCM Safety Molding Zone 4";
-        return group;
-    }
+    // private getGroupName=async() =>{
+    //     //var selectedDept = this.state.formData.Department;
+    //     //var selectedZone = this.state.formData.Zone;
+    //     let group = '';
+    //     let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+    //     let EmailConfigList = 'EmailsConfiguration', EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*', EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'JSRA'`, EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+    //     if (this.state.formData.Department.toLowerCase() == 'molding')
+    //     EmailConfigFiltQuery += ` and Zone/Title eq '${this.state.formData.Zone}'`;
+    //     try {
+    //         let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+    //         if (items.length) {
+    //             group = items[0].ToEmailGroup.Title;
+    //         }
+    //     }
+    //     catch (e) {
+    //         console.log(e);
+    //         this.onError();
+    //     }
+    //     // if (selectedDept == "IP Assembly")
+    //     //     group = "WCM Safety IP Assembly";
+    //     // else if (selectedDept == "Sequencing")
+    //     //     group = "WCM Safety Seq";
+    //     // else if (selectedDept == "Thermoforming")
+    //     //     group = "WCM Safety IPM Thermo";
+    //     // else if (selectedDept == "Deco")
+    //     //     group = "WCM Safety Deco";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+    //     //     group = "WCM Safety Molding Zone 1";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+    //     //     group = "WCM Safety Molding Zone 2";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+    //     //     group = "WCM Safety Molding Zone 3";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+    //     //     group = "WCM Safety Molding Zone 4";
+    //     return group;
+    // }
 
     // on change functions
     private handleChange = (event: any) => {

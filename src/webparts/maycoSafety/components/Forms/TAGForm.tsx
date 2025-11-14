@@ -36,7 +36,6 @@ export interface TAGFormProps {
     siteURL: string;
     webAbsoluteURL: string;
     currPlantTitle: string;
-    isSuperAdmin: boolean;
 }
 
 export interface TAGFormState {
@@ -192,28 +191,28 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         let [TagListName, TagListURL] = ['', ''];
         if (currentactiveTag.toLocaleLowerCase() === 'sa') // Safety TAG
         {
-            [TagListName, TagListURL] = ['Safety tag', `${this.rootSiteURL}/mayco/merrill/SA`];
+            [TagListName, TagListURL] = ['Safety tag', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/SA`];
             stateData.activeTag = 'Safety';
             selectedTagformData = `${stateData.activeTag}formData`;
             updatedTagformData = { ...(stateData as any)[selectedTagformData] };
         }
         else if (currentactiveTag.toLocaleLowerCase() === 'am')// AM TAG
         {
-            [TagListName, TagListURL] = ['AM TAG', `${this.rootSiteURL}/mayco/merrill/AM`];
+            [TagListName, TagListURL] = ['AM TAG', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/AM`];
             stateData.activeTag = 'AMWO';
             selectedTagformData = `${stateData.activeTag}formData`;
             updatedTagformData = { ...(stateData as any)[selectedTagformData] };
         }
         else if (currentactiveTag.toLocaleLowerCase() === 'wo') // WO TAG
         {
-            [TagListName, TagListURL] = ['WO Tag', `${this.rootSiteURL}/mayco/merrill/WO`];
+            [TagListName, TagListURL] = ['WO Tag', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/WO`];
             stateData.activeTag = 'AMWO';
             selectedTagformData = `${stateData.activeTag}formData`;
             updatedTagformData = { ...(stateData as any)[selectedTagformData] };
         }
         else if (currentactiveTag.toLocaleLowerCase() === 'pm') // PM TAG
         {
-            [TagListName, TagListURL] = ['PM tag', `${this.rootSiteURL}/mayco/merrill/PM`];
+            [TagListName, TagListURL] = ['PM tag', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/PM`];
             stateData.activeTag = 'PM';
             selectedTagformData = `${stateData.activeTag}formData`;
             updatedTagformData = { ...(stateData as any)[selectedTagformData] };
@@ -384,23 +383,23 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         }
         if (stateData.activeTag === 'Safety') // Safety TAG
         {
-            [TagListName, TagListURL] = ['Safety tag', `${this.rootSiteURL}/mayco/merrill/SA`];
+            [TagListName, TagListURL] = ['Safety tag', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/SA`];
             TagPostObj = this.getSATAGpostObject(TagPostObj);
         }
         else if (stateData.activeTag === 'AMWO') {
             if (updatedTagformData.TagType === 'AM') // AM TAG
             {
-                [TagListName, TagListURL] = ['AM TAG', `${this.rootSiteURL}/mayco/merrill/AM`];
+                [TagListName, TagListURL] = ['AM TAG', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/AM`];
             }
             else if (updatedTagformData.TagType === 'WO') // WO TAG
             {
-                [TagListName, TagListURL] = ['WO Tag', `${this.rootSiteURL}/mayco/merrill/WO`];
+                [TagListName, TagListURL] = ['WO Tag', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/WO`];
             }
             TagPostObj = this.getAMWOTAGpostObject(TagPostObj);
         }
         else if (stateData.activeTag === 'PM') // PM TAG
         {
-            [TagListName, TagListURL] = ['PM tag', `${this.rootSiteURL}/mayco/merrill/PM`];
+            [TagListName, TagListURL] = ['PM tag', `${this.rootSiteURL}/mayco/${this.props.currPlantTitle}/PM`];
             // for  PM tag getpostObject method is not required , beacause of only one extra control  'Comments' is existed
             TagPostObj['Comments'] = updatedTagformData.Comments;
         }

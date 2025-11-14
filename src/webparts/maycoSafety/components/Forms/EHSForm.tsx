@@ -33,7 +33,8 @@ export interface EHSFormProps {
     siteURL: string;
     webAbsoluteURL: string;
     currPlantTitle: string;
-    isSuperAdmin: boolean;
+    currentUserGroups:any;
+    FormAccessConfiguration:any;
 }
 
 export interface EHSFormState {
@@ -248,7 +249,13 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
                                 }
                             }).filter(mapItem => mapItem != null);
                         }
-                        showSubmit = (editEHSItem.Author.Title == this.props.userDisplayName || this.props.isSuperAdmin) ? true : false;
+
+                        //Groups Check
+                        let currentUserGroups = this.props.currentUserGroups;
+                        let ehsUserGroups = this.props.FormAccessConfiguration["EHS"];
+                        let isGrpAccess = ehsUserGroups.some((group:any) => currentUserGroups.includes(group));
+
+                        showSubmit = (editEHSItem.Author.Title == this.props.userDisplayName || isGrpAccess) ? true : false;
                         isEditForm = true;
                     }
                     else {
@@ -509,22 +516,22 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
 
     private InsertLineItems = async (childPostObjects: any, adedItemId: any) => {
         try {
-            let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
+            // let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
 
             const [batchedPipe, execute] = createBatch(this.sp.web);
             for (const item of childPostObjects) {
                 this.sp.web.lists.getByTitle(this.EHSChildList).items.using(batchedPipe).add(item);
             }
             await execute().then(async () => {
-                let GroupName = await this.getGroupName();
-                if (GroupName != '') {
-                    let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
-                    if (GroupMemberEmails.length) {
-                        let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/EHSForm/' + adedItemId
-                        let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
-                        await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'EHS' Submitted", body);
-                    }
-                }
+                // let GroupName = await this.getGroupName();
+                // if (GroupName != '') {
+                //     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
+                //     if (GroupMemberEmails.length) {
+                //         let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/EHSForm/' + adedItemId
+                //         let body = "<p>Hi,</p>" + "<p>New 'EHS-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
+                //         // await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'EHS' Submitted", body);
+                //     }
+                // }
                 let msg = "EHS Submitted Successfully";
                 this.setState({ displayMessage: msg });
                 this.onSuccess();
@@ -610,43 +617,43 @@ export default class EHSForm extends React.Component<EHSFormProps, EHSFormState>
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
-    private getGroupName = async () => {
-        //var selectedDept = this.state.formData.Department;
-        //var selectedZone = this.state.formData.Zone;
-        let group = '';
-        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
-        let EmailConfigList = 'EmailsConfiguration',  EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*',  EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'EHS'`,  EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
-        if(this.state.formData.Department.toLowerCase()=='molding')
-        EmailConfigFiltQuery+=` and Zone/Title eq '${this.state.formData.Zone}'`;
-        try {
-            let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
-            if (items.length) {
-                group = items[0].ToEmailGroup.Title;
-            }
-        }
-        catch (e) {
-            console.log(e);
-            this.onError();
-        }
+    // private getGroupName = async () => {
+    //     //var selectedDept = this.state.formData.Department;
+    //     //var selectedZone = this.state.formData.Zone;
+    //     let group = '';
+    //     let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+    //     let EmailConfigList = 'EmailsConfiguration',  EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*',  EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'EHS'`,  EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+    //     if(this.state.formData.Department.toLowerCase()=='molding')
+    //     EmailConfigFiltQuery+=` and Zone/Title eq '${this.state.formData.Zone}'`;
+    //     try {
+    //         let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+    //         if (items.length) {
+    //             group = items[0].ToEmailGroup.Title;
+    //         }
+    //     }
+    //     catch (e) {
+    //         console.log(e);
+    //         this.onError();
+    //     }
 
-        // if (selectedDept == "IP Assembly")
-        //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
-        // else if (selectedDept == "Sequencing")
-        //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
-        // else if (selectedDept == "Thermoforming")
-        //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
-        // else if (selectedDept == "Deco")
-        //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
-        //     group = "WCM Safety Molding Zone 1";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
-        //     group = "WCM Safety Molding Zone 2";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
-        //     group = "WCM Safety Molding Zone 3";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
-        //     group = "WCM Safety Molding Zone 4";
-        return group;
-    }
+    //     // if (selectedDept == "IP Assembly")
+    //     //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+    //     // else if (selectedDept == "Sequencing")
+    //     //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
+    //     // else if (selectedDept == "Thermoforming")
+    //     //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+    //     // else if (selectedDept == "Deco")
+    //     //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+    //     //     group = "WCM Safety Molding Zone 1";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+    //     //     group = "WCM Safety Molding Zone 2";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+    //     //     group = "WCM Safety Molding Zone 3";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+    //     //     group = "WCM Safety Molding Zone 4";
+    //     return group;
+    // }
     private handleCancel = () => {
         this.setState({ Redirect: true, RedirectTo: 'EHSView', ItemID: 0 });
     }

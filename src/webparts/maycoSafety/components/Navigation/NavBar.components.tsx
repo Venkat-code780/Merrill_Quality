@@ -9,7 +9,6 @@ import { withRouter } from "./withRouter";
 export interface NavBarProps {
     currentUserGroups: any;
     isAuthorized: boolean;
-    currPlantTitle:string;
     router: {
         location: Location;
         navigate: NavigateFunction;
@@ -193,7 +192,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
             'JSRA': ['JSRA Categories', 'JSRA Sub - Categories', 'PPE Types', 'JSRA Details'],
             'Unsafe Act': ['UA Types', 'UA Sub - Types']
         };
-        const FormAndViewTitles = this.props.currPlantTitle.toLowerCase() == "merrill" ? ['SEWO', 'UCAN', 'SMAT', 'EHS', 'JSRA', 'TAG', 'CHECK - LIST STEP 1', 'CHECK - LIST STEP 2', 'CHECK - LIST STEP 3'] :  ['SEWO', 'UCAN', 'SMAT', 'EHS', 'JSRA', 'TAG'];
+        const FormAndViewTitles = ['SEWO', 'UCAN', 'SMAT', 'EHS', 'JSRA', 'TAG', 'CHECK - LIST STEP 1', 'CHECK - LIST STEP 2', 'CHECK - LIST STEP 3'];
 
 
         return (

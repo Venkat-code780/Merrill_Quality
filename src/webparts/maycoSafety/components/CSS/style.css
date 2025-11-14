@@ -600,6 +600,6 @@ div#divShift {
 .witnessHead svg{
     color: green;
 }
-select{
+/* .light-text select{
   appearance: auto !important;
-}
+} */

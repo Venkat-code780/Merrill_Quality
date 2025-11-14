@@ -37,7 +37,6 @@ export interface CHECKLISTSTEP2FormProps {
     siteURL: string;
     webAbsoluteURL: string;
     currPlantTitle: string;
-    isSuperAdmin: boolean;
 }
 
 export interface CHECKLISTSTEP2FormState {

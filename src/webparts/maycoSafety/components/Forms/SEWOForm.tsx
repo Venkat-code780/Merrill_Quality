@@ -36,9 +36,9 @@ export interface SEWOFormProps {
     siteURL: string;
     webAbsoluteURL: string;
     currPlantTitle: string;
-    isSuperAdmin: boolean;
     currentUserGroups: any;
     isWCM: boolean;
+    FormAccessConfiguration:any
 }
 
 export interface SEWOFormState {
@@ -480,9 +480,10 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
 
                         //Groups Check
                         let currentUserGroups = this.props.currentUserGroups;
-                        if (currentUserGroups.includes("Venture Global Owners") || currentUserGroups.includes("WCM Safety Admin") || currentUserGroups.includes("WCM Merrill Safety Mgt")) {
-                            showSubmit = true;
-                        }
+                        let sewoUserGroups = this.props.FormAccessConfiguration["SEWO"];
+                        let isGrpAccess = sewoUserGroups.some((group:any) => currentUserGroups.includes(group));
+
+                        if (isGrpAccess) {showSubmit = true;}
                         isEditForm = true;
                         let bodyPartValue = bodyPartsData.find((part: any) => (part.value == formData.BodyPartId))?.label;
                         selBodyPart = this.handleBodyPartChange(bodyPartValue);
@@ -772,7 +773,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         await this.handleAttachmentUpload(res.Id.toString(), newFileArry);
                     }
                     else {
-                         await this.sendEmailOnItemAdd(res.Id);
+                        //  await this.sendEmailOnItemAdd(res.Id);
                         let msg = "SEWO submitted successfully";
                         this.onSuccess(msg);
                     }
@@ -797,9 +798,9 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             for (const file of fileArr) {
                 await this.sp.web.lists.getByTitle(this.SEWOList).items.getById(SEWOId).attachmentFiles.add(file.name, file);
             }
-            if (!(this.state.ItemId > 0)) {
-                await this.sendEmailOnItemAdd(SEWOId);
-            }
+            // if (!(this.state.ItemId > 0)) {
+            //     await this.sendEmailOnItemAdd(SEWOId);
+            // }
             let msg = this.state.ItemId > 0 ? "SEWO updated successfully" : "SEWO submitted successfully";
             this.onSuccess(msg);
         } catch (e) {
@@ -807,55 +808,55 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             this.onError();
         }
     }
-    private sendEmailOnItemAdd=async(ItmeId:any) =>
-    {
-            let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
-            let GroupName = await this.getGroupName();
-                if (GroupName != '') {
-                    let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
-                    if (GroupMemberEmails.length) {
-                        let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/SEWOForm/' + ItmeId
-                        let body = "<p>Hi,</p>" + "<p>New 'SEWO-" + ItmeId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
-                        await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'SEWO' Submitted", body);
-                    }
-                }
-    }
-    private getGroupName = async () => {
-        //var selectedDept = this.state.formData.Department;
-        //var selectedZone = this.state.formData.Zone;
-        let group = "WCM Merrill Safety Mgt"; // Default group
-        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
-        let EmailConfigList = 'EmailsConfiguration', EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*', EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'SEWO'`, EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
-        if (this.state.formData.Department.toLowerCase() == 'molding')
-            EmailConfigFiltQuery += ` and Zone/Title eq '${this.state.formData.Zone}'`;
-        try {
-            let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
-            if (items.length) {
-                group = items[0].ToEmailGroup.Title;
-            }
-        }
-        catch (e) {
-            console.log(e);
-            this.onError();
-        }
-        // if (selectedDept == "IP Assembly")
-        //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
-        // else if (selectedDept == "Sequencing")
-        //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
-        // else if (selectedDept == "Thermoforming")
-        //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
-        // else if (selectedDept == "Deco")
-        //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
-        //     group = "WCM Safety Molding Zone 1";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
-        //     group = "WCM Safety Molding Zone 2";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
-        //     group = "WCM Safety Molding Zone 3";
-        // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
-        //     group = "WCM Safety Molding Zone 4";
-        return group;
-    }
+    // private sendEmailOnItemAdd=async(ItmeId:any) =>
+    // {
+    //         let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
+    //         let GroupName = await this.getGroupName();
+    //             if (GroupName != '') {
+    //                 let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
+    //                 if (GroupMemberEmails.length) {
+    //                     let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/SEWOForm/' + ItmeId
+    //                     let body = "<p>Hi,</p>" + "<p>New 'SEWO-" + ItmeId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
+    //                     await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'SEWO' Submitted", body);
+    //                 }
+    //             }
+    // }
+    // private getGroupName = async () => {
+    //     //var selectedDept = this.state.formData.Department;
+    //     //var selectedZone = this.state.formData.Zone;
+    //     let group = "WCM Merrill Safety Mgt"; // Default group
+    //     let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+    //     let EmailConfigList = 'EmailsConfiguration', EmailConfigSelQuery = 'Plant/Title,Department/Title,Zone/Title,ToEmailGroup/Title,*', EmailConfigFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'SEWO'`, EmailConfigExpFields = 'Plant,Department,Zone,ToEmailGroup';
+    //     if (this.state.formData.Department.toLowerCase() == 'molding')
+    //         EmailConfigFiltQuery += ` and Zone/Title eq '${this.state.formData.Zone}'`;
+    //     try {
+    //         let items = await getListItems(EmailConfigList, this.MaycoURL, EmailConfigSelQuery, EmailConfigExpFields, EmailConfigFiltQuery);
+    //         if (items.length) {
+    //             group = items[0].ToEmailGroup.Title;
+    //         }
+    //     }
+    //     catch (e) {
+    //         console.log(e);
+    //         this.onError();
+    //     }
+    //     // if (selectedDept == "IP Assembly")
+    //     //     group = "WCM Merrill Safety IP Assy";//group="WCM Safety IP Assy";
+    //     // else if (selectedDept == "Sequencing")
+    //     //     group = "WCM Merrill Safety Seq";//group="WCM Safety Seq";
+    //     // else if (selectedDept == "Thermoforming")
+    //     //     group = "WCM Merrill Safety Thermo";//group="WCM Safety IPM Thermo";
+    //     // else if (selectedDept == "Deco")
+    //     //     group = "WCM Merrill Safety Deco";//group="WCM Safety Deco";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 1")
+    //     //     group = "WCM Safety Molding Zone 1";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 2")
+    //     //     group = "WCM Safety Molding Zone 2";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 3")
+    //     //     group = "WCM Safety Molding Zone 3";
+    //     // else if (selectedDept == "Molding" && selectedZone == "Zone 4")
+    //     //     group = "WCM Safety Molding Zone 4";
+    //     return group;
+    // }
 
     private handleAttachmentDelete = async (SEWOId: any, delFileArr: any) => {
         try {

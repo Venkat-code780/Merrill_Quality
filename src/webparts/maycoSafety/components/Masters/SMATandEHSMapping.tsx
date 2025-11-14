@@ -470,7 +470,7 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
 
                                                 <div className="col-md-3">
                                                     <div className="light-text">
-                                                        <select className="form-control" name="Form_x0020_Type" title={this.state.formData.Form_x0020_Type} value={this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
+                                                        <select className="form-select pt-3 ps-2" name="Form_x0020_Type" title={this.state.formData.Form_x0020_Type} value={this.state.formData.Form_x0020_Type} onChange={this.handleSecondary} ref={this.Form_x0020_Type} id="ddlFormType" >
                                                             <option value={""}>--Select One--</option>
                                                             <option value={'WCC'}>WCC</option>
                                                             <option value={'EHS'}>EHS</option>
@@ -481,7 +481,7 @@ export default class SMATandEHSMapping extends React.Component<SMATandEHSMapping
                                                 </div>
                                                 <div className="col-md-3">
                                                     <div className="light-text">
-                                                        <select className="form-control" name="Is_x0020_Active" title={this.state.formData.Is_x0020_Active === true ? 'Yes' : this.state.formData.Is_x0020_Active === false ? 'No' : ''} value={this.state.formData.Is_x0020_Active === null ? "" : String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
+                                                        <select className="form-select pt-3 ps-2" name="Is_x0020_Active" title={this.state.formData.Is_x0020_Active === true ? 'Yes' : this.state.formData.Is_x0020_Active === false ? 'No' : ''} value={this.state.formData.Is_x0020_Active === null ? "" : String(this.state.formData.Is_x0020_Active)} onChange={this.handleAcive} ref={this.Is_x0020_Active} id="ddlFormActive" >
                                                             <option value={0}>--Select One--</option>
                                                             <option value={'true'}>Yes</option>
                                                             <option value={'false'}>No</option>

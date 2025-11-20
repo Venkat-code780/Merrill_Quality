@@ -6,6 +6,9 @@ import { showToast } from "../Shared/Toaster";
 import { ActionStatus } from "../Constants/Contants";
 import { SPFx } from "@pnp/sp/presets/all";
 // import { ISPHttpClientOptions, SPHttpClient } from "@microsoft/sp-http";
+import { graphfi } from "@pnp/graph";
+import { GraphFI } from "@pnp/graph";
+import { SPFx as GraphSPFx } from "@pnp/graph/presets/all";
 
 
 
@@ -143,16 +146,45 @@ export const initCommonFunctions = (context: any, siteAbsoluteURL: string) => {
         }
     };
 
-    // Send Email using SharePoint PNP API
+    // Send Email using SharePoint PNP API :This API expired
+    // const sendEmail = async (URL: string, to: string[], subject: string, body: string, cc?: string[]): Promise<void> => {
+    //     const sp: SPFI = spfi(URL).using(SPFx(context));
+
+    //     try {
+    //         let EmailRes = await sp.utility.sendEmail({
+    //             To: to,
+    //             Subject: subject,
+    //             Body: body,
+    //             CC: cc || []
+    //         });
+    //         return EmailRes;
+    //     } catch (error) {
+    //         console.error("Error sending email:", error);
+    //         showToast("error", ActionStatus.Error);
+    //         hideLoader();
+    //         return error;
+    //     }
+    // };
+
     const sendEmail = async (URL: string, to: string[], subject: string, body: string, cc?: string[]): Promise<void> => {
-        const sp: SPFI = spfi(URL).using(SPFx(context));
+        const graph: GraphFI = graphfi(URL).using(GraphSPFx(context));
 
         try {
-            let EmailRes = await sp.utility.sendEmail({
-                To: to,
-                Subject: subject,
-                Body: body,
-                CC: cc || []
+            const toRecipients = to.map(email => ({
+                emailAddress: { address: email }
+            }));
+
+            const ccRecipients = cc?.map(email => ({
+                emailAddress: { address: email }
+            })) || [];
+            let EmailRes = await graph.me.sendMail({
+                subject: subject,
+                body: {
+                    contentType: "html",
+                    content: body,
+                },
+                toRecipients: toRecipients,
+                ccRecipients: ccRecipients,
             });
             return EmailRes;
         } catch (error) {

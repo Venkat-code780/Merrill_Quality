@@ -540,21 +540,21 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
 
     private InsertLineItems = async (childPostObjects: any, adedItemId: any) => {
         try {
-            let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
+            // let { getGroupMemberEmails, sendEmail } = initCommonFunctions(this.props.context, this.props.siteURL);
             const [batchedPipe, execute] = createBatch(this.sp.web);
             for (const item of childPostObjects) {
                 this.sp.web.lists.getByTitle(this.SMATChildList).items.using(batchedPipe).add(item);
             }
             await execute().then(async () => {
-                let GroupName = await this.getGroupName();
-                if (GroupName != '') {
-                    let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
-                    if (GroupMemberEmails.length) {
-                        let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/SMATForm/' + adedItemId
-                        let body = "<p>Hi,</p>" + "<p>New 'SMAT-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
-                        await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'SMAT' Submitted", body);
-                    }
-                }
+                // let GroupName = await this.getGroupName();
+                // if (GroupName != '') {
+                //     let GroupMemberEmails = await getGroupMemberEmails(GroupName, this.props.siteURL);
+                //     if (GroupMemberEmails.length) {
+                //         let link = this.props.webAbsoluteURL + '/SitePages/Home.aspx#/SMATForm/' + adedItemId
+                //         let body = "<p>Hi,</p>" + "<p>New 'SMAT-" + adedItemId + "' has been submitted. Please <a href='" + link + "'><b>click here</b></a> to view the details.</p><p>Regards<br>" + this.props.userDisplayName + "</p>";
+                //         await sendEmail(this.props.siteURL, GroupMemberEmails, "New 'SMAT' Submitted", body);
+                //     }
+                // }
                 let msg = "SMAT Submitted Successfully";
                 this.setState({ displayMessage: msg });
                 this.onSuccess();
@@ -659,51 +659,51 @@ export default class SMATForm extends React.Component<SMATFormProps, SMATFormSta
         showToast("error", ActionStatus.Error);
         hideLoader();
     }
-    private getGroupName=async() =>{
-        //var selectedDept = this.state.formData.Department;
-        // let group = "OTHER [WCM Merrill Safety Mgt]"; // Default group
-        let group = "WCM Merrill Safety Mgt"; // Default group
-        let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
-        let EmailConfigList = 'EmailsConfiguration', PlantSelQuery = 'Plant/Title,Department/Title,ToEmailGroup/Title,*', plantFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'SMAT'`, PlantExpFields = 'Plant,Department,ToEmailGroup';
-        try {
-               let items=await getListItems(EmailConfigList, this.MaycoURL, PlantSelQuery, PlantExpFields, plantFiltQuery);
-               if(items.length)
-               {
-                group=items[0].ToEmailGroup.Title;
-               }
-        }
-        catch(e) {
-            console.log(e);
-            this.onError();
-        }
+    // private getGroupName=async() =>{
+    //     //var selectedDept = this.state.formData.Department;
+    //     // let group = "OTHER [WCM Merrill Safety Mgt]"; // Default group
+    //     let group = "WCM Merrill Safety Mgt"; // Default group
+    //     let { getListItems } = initCommonFunctions(this.props.context, this.props.siteURL);
+    //     let EmailConfigList = 'EmailsConfiguration', PlantSelQuery = 'Plant/Title,Department/Title,ToEmailGroup/Title,*', plantFiltQuery = `Plant/Title eq '${this.state.formData.Plant}' and Department/Title eq '${this.state.formData.Department}' and Form eq 'SMAT'`, PlantExpFields = 'Plant,Department,ToEmailGroup';
+    //     try {
+    //            let items=await getListItems(EmailConfigList, this.MaycoURL, PlantSelQuery, PlantExpFields, plantFiltQuery);
+    //            if(items.length)
+    //            {
+    //             group=items[0].ToEmailGroup.Title;
+    //            }
+    //     }
+    //     catch(e) {
+    //         console.log(e);
+    //         this.onError();
+    //     }
 
-        // switch (selectedDept) {
-        //     case "Molding":
-        //     case "Deco":
-        //         group = "WCM Merrill Safety Deco";
-        //         break;
-        //     case "Foam":
-        //     case "GM Assembly":
-        //     case "IP Manufacturing":
-        //     case "JL Assembly":
-        //     case "Sequencing":
-        //     case "Sports Bar":
-        //     case "Thermoform":
-        //     case "WD TP Assembly":
-        //         group = "WCM Merrill Safety Seq";
-        //         break;
-        //     case "Maintenance":
-        //         group = "WCM Safety Maintenance";
-        //         break;
-        //     case "Shipping  Receiving":
-        //         group = "WCM Safety Shipping";
-        //         break;
-        //     case "Quality":
-        //         group = "WCM SMAT Quality";
-        //         break;
-        // }
-        return group;
-    }
+    //     // switch (selectedDept) {
+    //     //     case "Molding":
+    //     //     case "Deco":
+    //     //         group = "WCM Merrill Safety Deco";
+    //     //         break;
+    //     //     case "Foam":
+    //     //     case "GM Assembly":
+    //     //     case "IP Manufacturing":
+    //     //     case "JL Assembly":
+    //     //     case "Sequencing":
+    //     //     case "Sports Bar":
+    //     //     case "Thermoform":
+    //     //     case "WD TP Assembly":
+    //     //         group = "WCM Merrill Safety Seq";
+    //     //         break;
+    //     //     case "Maintenance":
+    //     //         group = "WCM Safety Maintenance";
+    //     //         break;
+    //     //     case "Shipping  Receiving":
+    //     //         group = "WCM Safety Shipping";
+    //     //         break;
+    //     //     case "Quality":
+    //     //         group = "WCM SMAT Quality";
+    //     //         break;
+    //     // }
+    //     return group;
+    // }
 
     private handleCancel = () => {
         this.setState({ Redirect: true, RedirectTo: 'SMATView', ItemID: 0 });

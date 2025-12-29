@@ -41,7 +41,7 @@ export interface UASubTypeState {
     isEdit: boolean,
     displayMessage: string,
     isUnauthorized: Boolean,
-    JSRACategory: any,
+    uaTypesData: any,
 
 }
 
@@ -74,7 +74,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
             isEdit: false,
             displayMessage: '',
             isUnauthorized: false,
-            JSRACategory: [],
+            uaTypesData: [],
 
         };
 
@@ -121,7 +121,7 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                 label: item.Title,
                 value: item.Id
             }));
-            this.setState({ ActionsData: tableData, JSRACategory: categoryOptions });
+            this.setState({ ActionsData: tableData, uaTypesData: categoryOptions });
         }
         catch (e) {
             this.onError();
@@ -386,8 +386,8 @@ export default class UASubType extends React.Component<UASubTypeProps, UASubType
                                         <div className="form-border-box p-2 mx-1 my-2">
                                             <div className="row">
                                                      <div className="col-md-3">
-                                                    <div className="custom-dropdown" id="divCategory" title={(this.state.JSRACategory.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
-                                                        <Dropdown label={"UA Type"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.JSRACategory} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
+                                                    <div className="custom-dropdown" id="divCategory" title={(this.state.uaTypesData.find((i: { label: string; value: any }) => i.value == this.state.formData.UAType0Id) as { label: string; value: any } | undefined)?.label}>
+                                                        <Dropdown label={"UA Type"} Title={"UAType"} name={"UAType0Id"} id={"UATypedd"} className={"UAType0Id"} selectedValue={this.state.formData.UAType0Id} OptionsList={this.state.uaTypesData} OnChange={this.handleChangeClient} isRequired={true} disabled={false} placeholderText="" noOptionsMessage="No UA Type available"></Dropdown>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">

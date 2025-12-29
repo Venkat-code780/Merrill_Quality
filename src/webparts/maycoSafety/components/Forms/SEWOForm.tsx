@@ -348,7 +348,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
             yesNo.sort((a, b) => a.Title.localeCompare(b.Title));
             status.sort((a, b) => a.Title.localeCompare(b.Title));
             let plantsData = Plants.map((item: any) => ({ label: item.Title, value: item.Title }));
-            this.currPlantObj = plantsData.find((plant: any) => plant.label.toLowerCase() == this.props.currPlantTitle);
+            this.currPlantObj = plantsData.find((plant: any) => plant.label.toLowerCase() == this.props.currPlantTitle.toLowerCase());
             formData.Plant = this.currPlantObj.label;
 
             let departmentOptions = departmentData.filter((option: any) => option.Plant.Title == formData.Plant).map((item: any) => ({ label: item.Title, value: item.Title, id: item.Id }));
@@ -528,7 +528,7 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
         }
 
         formData[name] = inputValue;
-        this.setState({ formData, });
+        this.setState({ formData });
     }
 
     private handleDropdownChange = (event: any, actionMeta: any, id: any) => {

@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "74a9fa60-3b81-4890-be3f-1f65aefd834f",
+  "id": "74a9fa60-3b81-4890-be3f-1f65aefd833f",
   "alias": "MaycoSafetyWebPart",
   "componentType": "WebPart",
 
@@ -14,11 +14,11 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", 
     "group": { "default": "Advanced" },
-    "title": { "default": "Mayco-Safety-PROD" },
-    "description": { "default": "Mayco-Safety description production" },
+    "title": { "default": "Mayco-Safety-DEV" },
+    "description": { "default": "Mayco-Safety description development" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "Mayco-Safety-PROD"
+      "description": "Mayco-Safety-DEV"
     }
   }]
 }

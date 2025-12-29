@@ -189,7 +189,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
         const MasterTitlesSubs: Record<MasterTitle, string[]> = {
             'SEWO': ['Actions', 'Secondary Root Causes', 'Micro Root Causes', 'Injury Types', 'Status'],
             'SMAT/EHS': ['Audit Categories', 'SMAT and EHS Mapping'],
-            'JSRA': ['JSRA Categories', 'JSRA Sub - Categories', 'PPE Types', 'JSRA Details'],
+            'JSRA': ['JSRA Categories', 'JSRA Sub - Categories', 'PPE Types'],
             'Unsafe Act': ['UA Types', 'UA Sub - Types']
         };
         const FormAndViewTitles = ['SEWO', 'UCAN', 'SMAT', 'EHS', 'JSRA', 'TAG', 'CHECK - LIST STEP 1', 'CHECK - LIST STEP 2', 'CHECK - LIST STEP 3'];

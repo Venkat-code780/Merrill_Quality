@@ -232,6 +232,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                     stateData.formData.Date = [null, undefined, '', 'None'].includes(TAGData.Date) ? '' : TAGData.Date;
                     updatedTagformData.TAG = [null, undefined, '', 'None'].includes(TAGData.TAG_x0023_) ? '' : TAGData.TAG_x0023_;
                     updatedTagformData.CompletedDate = [null, undefined, '', 'None'].includes(TAGData.Completed_x0020_Date) ? '' : TAGData.Completed_x0020_Date;
+                    stateData.formData.ActionHistory = TAGData.ActionHistory ? JSON.parse(TAGData.ActionHistory) : [];
 
                     if (TAGData.CompletedBy) {
                         let CompletedByIds = TAGData.CompletedBy.map((cb: any) => cb.Id);
@@ -248,8 +249,6 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                         updatedTagformData.ProblemDetails = [null, undefined].includes(TAGData.Problem_x0020_Details) ? '' : TAGData.Problem_x0020_Details;
                         updatedTagformData.CounterMeasures = [null, undefined].includes(TAGData.Counter_x0020_Measures) ? '' : TAGData.Counter_x0020_Measures;
                         stateData.SafetyformData = updatedTagformData;
-                        stateData.formData.ActionHistory = TAGData.ActionHistory ? JSON.parse(TAGData.ActionHistory) : [];
-
                     }
                     else if (stateData.activeTag === 'AMWO') {
                         updatedTagformData.TagType = [null, undefined].includes(TAGData.Tag_x0020_Type) ? '' : TAGData.Tag_x0020_Type;
@@ -366,6 +365,9 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
         // let CompletedByIds = updatedTagformData.CompletedByIds.length > 0 ? { results : updatedTagformData.CompletedByIds } : null; this form not worked in this version
         let CompletedByIds = updatedTagformData.CompletedByIds.length > 0 ? updatedTagformData.CompletedByIds : [];
         let CompletedByTitles = updatedTagformData.CompletedByTitles.length > 0 ? updatedTagformData.CompletedByTitles.join(';') : '';
+
+        let ActHist = stateData.formData.ActionHistory;
+        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() });
         TagPostObj = {
             Plant: stateData.formData.Plant,
             Department: stateData.formData.Department,
@@ -380,6 +382,7 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
             Completed_x0020_Date: CompletedDate,
             CompletedById: CompletedByIds,
             Completed_x0020_By: CompletedByTitles,
+            ActionHistory: JSON.stringify(ActHist)
         }
         if (stateData.activeTag === 'Safety') // Safety TAG
         {
@@ -408,14 +411,11 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
     private getSATAGpostObject = (TagPostObj: any) => {
         let stateData: any = { ...this.state };
         let SafetyformData = { ...stateData.SafetyformData };
-        let ActHist = stateData.formData.ActionHistory;
-        ActHist.push({ ActionBy: this.props.userDisplayName, ActionDateTime: new Date().toISOString() });
         TagPostObj.Near_x0020_Miss = SafetyformData.NearMissSEWORequired;
         TagPostObj.Unsafe_x0020_Condition = SafetyformData.UnsafeConditionImmediateFixWorkOrder;
         TagPostObj.Unsafe_x0020_Act = SafetyformData.UnsafeActCoachingCounselingTrainingOPLTWTTF;
         TagPostObj.Problem_x0020_Details = SafetyformData.ProblemDetails;
         TagPostObj.Counter_x0020_Measures = SafetyformData.CounterMeasures;
-        TagPostObj.ActionHistory = JSON.stringify(ActHist)
 
         return TagPostObj;
     }
@@ -629,13 +629,13 @@ export default class TAGForm extends React.Component<TAGFormProps, TAGFormState>
                     </div>
                 </div>
                 <div className="col-md-12">
-                        <input title={'Near Miss SEWO Required'} type='checkbox' checked={this.state.SafetyformData.NearMissSEWORequired} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'NearMissSEWORequired'} autoComplete="off" disabled={false} id={`chk_NearMissSEWORequired`} /> <label title={'Near Miss SEWO Required'} className="col-form-label chkLbl" htmlFor={`chk_NearMissSEWORequired`}>Near Miss SEWO Required</label>
+                    <input title={'Near Miss SEWO Required'} type='checkbox' checked={this.state.SafetyformData.NearMissSEWORequired} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'NearMissSEWORequired'} autoComplete="off" disabled={false} id={`chk_NearMissSEWORequired`} /> <label title={'Near Miss SEWO Required'} className="col-form-label chkLbl" htmlFor={`chk_NearMissSEWORequired`}>Near Miss SEWO Required</label>
                 </div>
                 <div className="col-md-12">
-                        <input title={'Unsafe Condition Immediate Fix/Work Order'} type='checkbox' checked={this.state.SafetyformData.UnsafeConditionImmediateFixWorkOrder} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'UnsafeConditionImmediateFixWorkOrder'} autoComplete="off" disabled={false} id={`chk_UnsafeConditionImmediateFix/WorkOrder`} /> <label title={'Unsafe Condition Immediate Fix/Work Order'} className="col-form-label chkLbl" htmlFor={`chk_UnsafeConditionImmediateFix/WorkOrder`}>Unsafe Condition Immediate Fix/Work Order</label>
+                    <input title={'Unsafe Condition Immediate Fix/Work Order'} type='checkbox' checked={this.state.SafetyformData.UnsafeConditionImmediateFixWorkOrder} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'UnsafeConditionImmediateFixWorkOrder'} autoComplete="off" disabled={false} id={`chk_UnsafeConditionImmediateFix/WorkOrder`} /> <label title={'Unsafe Condition Immediate Fix/Work Order'} className="col-form-label chkLbl" htmlFor={`chk_UnsafeConditionImmediateFix/WorkOrder`}>Unsafe Condition Immediate Fix/Work Order</label>
                 </div>
                 <div className="col-md-12">
-                        <input title={'Unsafe Act Coaching,Counseling,Training,OPL TWTTF'} type='checkbox' checked={this.state.SafetyformData.UnsafeActCoachingCounselingTrainingOPLTWTTF} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'UnsafeActCoachingCounselingTrainingOPLTWTTF'} autoComplete="off" disabled={false} id={`chk_UnsafeActCoachingCounselingTrainingOPLTWTTF`} /> <label title={'Unsafe Act Coaching,Counseling,Training,OPL TWTTF'} className="col-form-label chkLbl" htmlFor={`chk_UnsafeActCoachingCounselingTrainingOPLTWTTF`}>Unsafe Act Coaching,Counseling,Training,OPL TWTTF</label>
+                    <input title={'Unsafe Act Coaching,Counseling,Training,OPL TWTTF'} type='checkbox' checked={this.state.SafetyformData.UnsafeActCoachingCounselingTrainingOPLTWTTF} required={false} onChange={(e) => this.handleChange(e, this.state.activeTag)} name={'UnsafeActCoachingCounselingTrainingOPLTWTTF'} autoComplete="off" disabled={false} id={`chk_UnsafeActCoachingCounselingTrainingOPLTWTTF`} /> <label title={'Unsafe Act Coaching,Counseling,Training,OPL TWTTF'} className="col-form-label chkLbl" htmlFor={`chk_UnsafeActCoachingCounselingTrainingOPLTWTTF`}>Unsafe Act Coaching,Counseling,Training,OPL TWTTF</label>
                 </div>
                 <div className="col-md-12 mb-3">
                     <div className={"light-text"} >

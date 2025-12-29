@@ -1,8 +1,8 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "mayco-safety-client-side-solution-PROD",
-    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519f7",
+    "name": "mayco-safety-client-side-solution-DEV",
+    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519f6",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
@@ -28,13 +28,13 @@
     "features": [
       {
         "title": "mayco-safety Feature",
-        "description": "The feature that activates elements of the mayco-safety solution production.",
+        "description": "The feature that activates elements of the mayco-safety solution development.",
         "id": "dcd65aaf-9691-4913-86b1-65d37be8820c",
         "version": "1.0.0.0"
       }
     ]
   },
   "paths": {
-    "zippedPackage": "solution/mayco-safety-PROD.sppkg"
+    "zippedPackage": "solution/mayco-safety-DEV.sppkg"
   }
 }

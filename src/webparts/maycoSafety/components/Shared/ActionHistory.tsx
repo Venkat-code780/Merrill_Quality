@@ -9,7 +9,7 @@ interface ActionHistoryProps {
 }
 
 const ActionHistory = ({ HeaderData, HistoryData, spContext }: ActionHistoryProps) => {
-    HistoryData=HistoryData.reverse();
+    HistoryData=HistoryData.slice().reverse();
     return <div className='divActionHistory'><table className="table-bordered border  col-md-12">
         <thead className='theadActionHistory'>
             <tr>

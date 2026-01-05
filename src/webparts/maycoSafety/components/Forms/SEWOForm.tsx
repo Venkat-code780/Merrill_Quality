@@ -38,7 +38,7 @@ export interface SEWOFormProps {
     currPlantTitle: string;
     currentUserGroups: any;
     isWCM: boolean;
-    FormAccessConfiguration:any
+    FormAccessConfiguration: any
 }
 
 export interface SEWOFormState {
@@ -481,9 +481,9 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         //Groups Check
                         let currentUserGroups = this.props.currentUserGroups;
                         let sewoUserGroups = this.props.FormAccessConfiguration["SEWO"];
-                        let isGrpAccess = sewoUserGroups.some((group:any) => currentUserGroups.includes(group));
+                        let isGrpAccess = sewoUserGroups.some((group: any) => currentUserGroups.includes(group));
 
-                        if (isGrpAccess) {showSubmit = true;}
+                        if (isGrpAccess) { showSubmit = true; }
                         isEditForm = true;
                         let bodyPartValue = bodyPartsData.find((part: any) => (part.value == formData.BodyPartId))?.label;
                         selBodyPart = this.handleBodyPartChange(bodyPartValue);
@@ -696,8 +696,8 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                 sex: { val: formData.Sex, required: true, Name: "Sex", Type: ControlType.reactSelect, Focusid: "ddlSex" },
                 injuryType: { val: formData.InjuryTypeId, required: true, Name: "Injury Type", Type: ControlType.reactSelect, Focusid: "ddlInjuryType" },
                 // injuryDateTime: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.DateTime, Focusid: "divInjuryDateTime" },
-                injuryDateTime: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.date, Focusid: "dtInjuryDateTime" },
-                injuryDateTimeToday: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.lessthanTodayDate, Focusid: "dtInjuryDateTime" },
+                injuryDateTime: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.DateTime, Focusid: "divInjuryDateTime" },
+                injuryDateTimeToday: { val: formData.Injury_x0020_Date_x0020_Time, required: true, Name: "Injury Date Time", Type: ControlType.lessthanTodayDate, Focusid: "divInjuryDateTime" },
                 reportedDate: { val: formData.Reported_x0020_Date, required: true, Name: "Reported Date", Type: ControlType.date, Focusid: "dtReportedDate" },
                 reportedDateToday: { val: formData.Reported_x0020_Date, required: true, Name: "Reported Date", Type: ControlType.lessthanTodayDate, Focusid: "dtReportedDate" },
                 nameofHospital: { val: formData.NameoftheHospital, required: (!formData.IsHospitalRefused), Name: "Name of the Clinic/Hospital", Type: ControlType.string, Focusid: this.txtNameoftheHospital },
@@ -1198,14 +1198,14 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                                         </div>
                                     </div>
                                     {/* Injury Date Time*/}
-                                    <div className="col-md-3 d-none">
+                                    {/* <div className="col-md-3 d-none">
                                         <div className="light-text">
                                             <label className="label-datePicker" htmlFor="dtInjuryDateTime"> Injury Date Time  <span className="mandatoryhastrick"> *</span></label>
                                             <div className="custom-datepicker" id="divInjuryDateTime">
                                                 <DatePickercontrol placeholder="MM/DD/YYYY HH:MM A" selectedDate={this.state.formData.Injury_x0020_Date_x0020_Time} title={this.state.formData.Injury_x0020_Date_x0020_Time ? format(this.state.formData.Injury_x0020_Date_x0020_Time, 'MM/dd/yyyy hh:mm aa') : ''} id='dtInjuryDateTime' isDisabled={this.state.isInputDisabled} startDate={undefined} endDate={new Date()} name="Injury_x0020_Date_x0020_Time" onDatechange={(dateProps: any) => this.handleDateChange(dateProps[0], dateProps[2], "divInjuryDateTime", dateProps)} highlightDate={new Date()} showTime={true} showIcon />
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     {/* Below is required for future update of HH MM separate dropdowns using MUI  */}
                                     <div className="col-md-3">
                                         <div className="light-text">

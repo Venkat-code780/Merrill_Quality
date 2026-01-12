@@ -483,7 +483,8 @@ export default class SEWOForm extends React.Component<SEWOFormProps, SEWOFormSta
                         let sewoUserGroups = this.props.FormAccessConfiguration["SEWO"];
                         let isGrpAccess = sewoUserGroups.some((group: any) => currentUserGroups.includes(group));
 
-                        if (isGrpAccess) { showSubmit = true; }
+                        // if (isGrpAccess) { showSubmit = true; }
+                        showSubmit = (editSEWOItem.Author.Title == this.props.userDisplayName || isGrpAccess) ? true : false;
                         isEditForm = true;
                         let bodyPartValue = bodyPartsData.find((part: any) => (part.value == formData.BodyPartId))?.label;
                         selBodyPart = this.handleBodyPartChange(bodyPartValue);

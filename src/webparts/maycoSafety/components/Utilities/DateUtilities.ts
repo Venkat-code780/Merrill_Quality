@@ -55,6 +55,32 @@ class DateUtilities {
     newDate.setTime(newDate.getTime() - ((webTimeZoneData.Bias - utcOffsetMinutes + webTimeZoneData.DaylightBias) * 60 * 1000));
     return newDate;
   }
+  public static getDateYYYYMMDD(givenDate: any) {
+  if (!givenDate) return "";
+
+  const date = new Date(givenDate);
+
+  const yyyy = date.getFullYear();
+  const mm = ("0" + (date.getMonth() + 1)).slice(-2);
+  const dd = ("0" + date.getDate()).slice(-2);
+
+  return `${yyyy}-${mm}-${dd}`;
+}
+public static addDays(givenDate: any, days: number) {
+  const date = new Date(givenDate);
+  date.setDate(date.getDate() + days);
+  return date;
+}
+public static formatYYYYMMDD(date: Date) {
+  if (!date) return "";
+
+  const yyyy = date.getFullYear();
+  const mm = ("0" + (date.getMonth() + 1)).slice(-2);
+  const dd = ("0" + date.getDate()).slice(-2);
+
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 
 }
 export default DateUtilities;

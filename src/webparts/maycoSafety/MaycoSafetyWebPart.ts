@@ -10,6 +10,7 @@ import * as strings from 'MaycoSafetyWebPartStrings';
 import MaycoSafety from './components/MaycoSafety';
 import { IMaycoSafetyProps } from './components/IMaycoSafetyProps';
 import "./components/CSS/style.css";
+import "./components/CSS/form-input-style.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export interface IMaycoSafetyWebPartProps {

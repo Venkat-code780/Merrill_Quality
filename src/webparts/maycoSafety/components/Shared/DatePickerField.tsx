@@ -16,11 +16,10 @@ interface DatePickerControlProps {
   showTime?: boolean;
   highlightDate?: Date | null;
   showIcon?: boolean;
-  ref?: HTMLElement
   onDatechange?: (args: [Date | null, string | undefined, string | undefined]) => void;
 }
 
-const DatePickercontrol: React.FC<DatePickerControlProps> = (props) => {
+const DatePickercontrol = React.forwardRef<any, DatePickerControlProps>((props, ref) => {
   const [selectedDay, setSelectedDay] = useState<Date | null>(
     props.selectedDate ? new Date(props.selectedDate) : null
   );
@@ -61,7 +60,7 @@ const DatePickercontrol: React.FC<DatePickerControlProps> = (props) => {
   };
 
   // Handle “Now” button click
-  const datePickerRef = React.useRef<DatePicker>(null);
+
   // const handleNowClick = () => {
   //   const now = new Date();
   //   setSelectedDay(now);
@@ -74,7 +73,7 @@ const DatePickercontrol: React.FC<DatePickerControlProps> = (props) => {
 
   return (
     <DatePicker
-      ref={datePickerRef}
+      ref={ref}
       selected={selectedDay}
       onChange={handleChange}
       onChangeRaw={handleRawChange}
@@ -134,6 +133,6 @@ const DatePickercontrol: React.FC<DatePickerControlProps> = (props) => {
       // )}
     />
   );
-};
+});
 
 export default DatePickercontrol;

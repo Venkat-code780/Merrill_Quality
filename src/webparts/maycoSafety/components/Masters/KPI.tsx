@@ -16,14 +16,14 @@ import { showToast } from "../Shared/Toaster";
 import { NavLink } from "react-router-dom";
 import AGGridDataTable from '../Shared/AGGridDataTable';
 
-export interface AuditCategoryProps {
+export interface KPIProps {
   spHttpClient: SPHttpClient;
   context: any;
 }
 
-const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
+const KPI: React.FC<KPIProps> = (props) => {
 
-  const listName = "Audit_Categories";
+  const listName = "KPI";
 
   const sp = spfi().using(SPFx(props.context));
 
@@ -34,7 +34,6 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [itemId, setItemId] = useState(0);
   const [redirect, setRedirect] = useState(false);
-  
   // const [displayMessage, setDisplayMessage] = useState("");
 
   const [formData, setFormData] = useState({
@@ -100,8 +99,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
         Title: item.Title
       });
 
-
-    txtPPEType.current?.focus();
+      txtPPEType.current?.focus();
 
       hideLoader();
 
@@ -114,14 +112,13 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
   };
 
   const addNew = () => {
-    
+
     setIsFormOpen(true);
     setItemId(0);
     setFormData({ Title: "" });
-      setTimeout(() => {
-    txtPPEType.current?.focus();
-  }, 100);
-    
+    setTimeout(() => {
+      txtPPEType.current?.focus();
+    }, 100);
 
   };
 
@@ -174,25 +171,25 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 
         await sp.web.lists.getByTitle(listName).items.getById(itemId).update(data);
 
-        showToast("success", "Audit Category updated successfully");
-
+            showToast("success", "KPI updated successfully");
       } else {
 
         await sp.web.lists.getByTitle(listName).items.add(data);
 
-        showToast("success", "Audit Category added successfully");
+        showToast("success", "KPI submitted successfully");
 
       }
 
       setRedirect(true);
-        closeForm();
-        loadListData();
+      closeForm();
+      loadListData();  
+
     } catch {
 
       onError();
 
     }
-    finally {
+    finally{
       hideLoader();
     }
 
@@ -208,7 +205,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
       Status: {
         val: formData.Title.trim(),
         required: true,
-        Name: "Audit Category",
+        Name: "KPI",
         Type: ControlType.string,
         Focusid: txtPPEType
       }
@@ -256,7 +253,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 
   //   closeForm();
 
-  //   showToast("success","Audit Category submitted successfully");
+  //   showToast("success", displayMessage);
 
   //   hideLoader();
 
@@ -294,50 +291,50 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 
   // ];
 
-  const columns = [
-    {
-      field: "Id",
-      headerName: "Edit",
-      sortable: false,
-      filter: false,
-      width: 80,
-      cellRenderer: (params: any) => {
-        const record = params.data;
-  
-        return (
-          <NavLink
-            title="Edit"
-            className="csrLink ms-draggable"
-            to=""
-            onClick={(e) => {
-              e.preventDefault();
-              editItem(record.Id);
-            }}
-          >
-            <FontAwesomeIcon icon={faEdit} />
-          </NavLink>
-        );
-      },
+const columns = [
+  {
+    field: "Id",
+    headerName: "Edit",
+    sortable: false,
+    filter: false,
+    width: 80,
+    cellRenderer: (params: any) => {
+      const record = params.data;
+
+      return (
+        <NavLink
+          title="Edit"
+          className="csrLink ms-draggable"
+          to=""
+          onClick={(e) => {
+            e.preventDefault();
+            editItem(record.Id);
+          }}
+        >
+          <FontAwesomeIcon icon={faEdit} />
+        </NavLink>
+      );
     },
-    {
-      field: "Title",
-      headerName: "Audit Category",
-      sortable: true,
-      filter: "agTextColumnFilter",
-      resizable: true,
-      flex: 1,
-      getQuickFilterText: (params: any) => params.value || "",
-    },
-  ];
+  },
+  {
+    field: "Title",
+    headerName: "KPI",
+    sortable: true,
+    filter: "agTextColumnFilter",
+    resizable: true,
+    flex: 1,
+    getQuickFilterText: (params: any) => params.value || "",
+  },
+];
   return (
-      <React.Fragment>
+
     <div className="container-fluid">
 
       <div className="light-box border-box-shadow">
 
         <div className="div-form-title">
 
-          <div className="form-title">Audit Categories</div>
+          <div className="form-title">KPI</div>
 
           {isFormOpen &&
             <span className="span-mandatory-text">
@@ -379,7 +376,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
                     />
 
                     <label>
-                      Audit Category <span className="mandatoryhastrick">*</span>
+                      KPI <span className="mandatoryhastrick">*</span>
                     </label>
 
                   </div>
@@ -409,7 +406,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
             onChange={setPageNumber}
             prvPageNumber={pageNumber}
             prvDirection={false}
-            fileName={"PPE Types"}
+            fileName={"KPI"}
             className="sp-Datatable-hh"
             onRowClick={handleRowClicked}
             showPagination={true}
@@ -439,15 +436,14 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 />
                   </div>
 
-
         </div>
 
       </div>
 
     </div>
-</React.Fragment>
+
   );
 
 };
 
-export default AuditCategories;
+export default KPI;

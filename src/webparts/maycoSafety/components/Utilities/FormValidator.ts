@@ -61,7 +61,7 @@ function ValidateForm(data:any){
                 break;
             }
         }
-        else if(((propertieTypes.People==type || propertieTypes.ArrayField==type) && isrequired) && value.length == 0 )
+        else if(((propertieTypes.People==type || propertieTypes.ArrayField==type) && isrequired) && (!value || value.length === 0))
         {
             message = "'"+data[key].Name+"' cannot be blank.";
             let prpIsreq =data[key].Focusid;

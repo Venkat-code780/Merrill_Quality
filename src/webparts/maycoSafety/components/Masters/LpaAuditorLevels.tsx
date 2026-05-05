@@ -16,14 +16,14 @@ import { showToast } from "../Shared/Toaster";
 import { NavLink } from "react-router-dom";
 import AGGridDataTable from '../Shared/AGGridDataTable';
 
-export interface AuditCategoryProps {
+export interface LPAAuditorLevelProps {
   spHttpClient: SPHttpClient;
   context: any;
 }
 
-const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
+const LPAAuditorLevel: React.FC<LPAAuditorLevelProps> = (props) => {
 
-  const listName = "Audit_Categories";
+  const listName = "LPA Auditor Level";
 
   const sp = spfi().using(SPFx(props.context));
 
@@ -34,7 +34,6 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [itemId, setItemId] = useState(0);
   const [redirect, setRedirect] = useState(false);
-  
   // const [displayMessage, setDisplayMessage] = useState("");
 
   const [formData, setFormData] = useState({
@@ -100,8 +99,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
         Title: item.Title
       });
 
-
-    txtPPEType.current?.focus();
+      txtPPEType.current?.focus();
 
       hideLoader();
 
@@ -114,14 +112,14 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
   };
 
   const addNew = () => {
-    
+
     setIsFormOpen(true);
     setItemId(0);
     setFormData({ Title: "" });
-      setTimeout(() => {
+
+        setTimeout(() => {
     txtPPEType.current?.focus();
   }, 100);
-    
 
   };
 
@@ -174,19 +172,20 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 
         await sp.web.lists.getByTitle(listName).items.getById(itemId).update(data);
 
-        showToast("success", "Audit Category updated successfully");
+        showToast("success", "Auditor Level updated successfully");
 
       } else {
 
         await sp.web.lists.getByTitle(listName).items.add(data);
 
-        showToast("success", "Audit Category added successfully");
+        showToast("success", "Auditor Level submitted successfully");
 
       }
 
       setRedirect(true);
-        closeForm();
-        loadListData();
+      closeForm();
+      loadListData();
+
     } catch {
 
       onError();
@@ -208,7 +207,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
       Status: {
         val: formData.Title.trim(),
         required: true,
-        Name: "Audit Category",
+        Name: "Auditor Level",
         Type: ControlType.string,
         Focusid: txtPPEType
       }
@@ -256,7 +255,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 
   //   closeForm();
 
-  //   showToast("success","Audit Category submitted successfully");
+  //   showToast("success", "Auditor Level submitted successfully");
 
   //   hideLoader();
 
@@ -287,14 +286,13 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
   //   },
 
   //   {
-  //     name: "AuditCategory",
+  //     name: "Audit Level",
   //     selector: (row: any) => row.Title,
   //     sortable: true
   //   }
 
   // ];
-
-  const columns = [
+const columns = [
     {
       field: "Id",
       headerName: "Edit",
@@ -321,7 +319,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
     },
     {
       field: "Title",
-      headerName: "Audit Category",
+      headerName: "Audit Level",
       sortable: true,
       filter: "agTextColumnFilter",
       resizable: true,
@@ -330,14 +328,14 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
     },
   ];
   return (
-      <React.Fragment>
+
     <div className="container-fluid">
 
       <div className="light-box border-box-shadow">
 
         <div className="div-form-title">
 
-          <div className="form-title">Audit Categories</div>
+          <div className="form-title">LPA Auditor Levels</div>
 
           {isFormOpen &&
             <span className="span-mandatory-text">
@@ -379,7 +377,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
                     />
 
                     <label>
-                      Audit Category <span className="mandatoryhastrick">*</span>
+                      Auditor Level <span className="mandatoryhastrick">*</span>
                     </label>
 
                   </div>
@@ -409,12 +407,12 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
             onChange={setPageNumber}
             prvPageNumber={pageNumber}
             prvDirection={false}
-            fileName={"PPE Types"}
+            fileName={"KPI"}
             className="sp-Datatable-hh"
             onRowClick={handleRowClicked}
             showPagination={true}
           /> */}
-              <div className="mx-2 table-head-1st-td right-search-table mb-3">
+             <div className="mx-2 table-head-1st-td right-search-table mb-3">
                     {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
                     <AGGridDataTable
   data={actionsData}
@@ -445,9 +443,9 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
       </div>
 
     </div>
-</React.Fragment>
+
   );
 
 };
 
-export default AuditCategories;
+export default LPAAuditorLevel;

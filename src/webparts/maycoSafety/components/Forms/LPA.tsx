@@ -546,27 +546,19 @@ const handleChange = (e: any) => {
 // };
 
 
+
+
 const handleDateChange = (dateValue: any, name: string) => {
   setFormData((prev) => ({
     ...prev,
     [name]: dateValue ? new Date(dateValue) : null
   }));
 };
-const toDateOnlyISO = (date: any) => {
-    if (!date) return null;
 
-  const d = new Date(date);
-
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  // if (!date) return null;
-
-  // const d = new Date(date);
-  // return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
-};
 
 
 const handleLineDateChange = (index: number, dateValue: any) => {
-
+ 
   let isoDate = "";
 
   if (dateValue) {
@@ -601,7 +593,12 @@ const insertOrUpdate = async () => {
 
       Tool_x0020_Number: formData.Tool_x0020_Number,
       Comments: formData.Comments,
-      Date: toDateOnlyISO(formData.Date),
+      Date: formData.Date
+  ? DateUtilities.addBrowserwrtServer(
+      new Date(formData.Date),
+      props.spContext.webTimeZoneData
+    ).toISOString()
+  : null,
       Operators: formData.Operators,
       Year: formData.Year,
       YearMonth: formData.YearMonth
@@ -943,7 +940,7 @@ const insertOrUpdate = async () => {
                           lineItems[globalIndex]?.Date
                             ? new Date(lineItems[globalIndex].Date).toISOString()
                             : undefined
-                        } title={formData.Date} id='dtDate' startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => {
+                        } title={formData.Date} id='dtDate' startDate={undefined} endDate={new Date()}  name="Date" onDatechange={(dateProps: any) => {
                           if (globalIndex === -1) return;
                           handleLineDateChange(globalIndex, dateProps[0]);
                         }} highlightDate={new Date()} showIcon />

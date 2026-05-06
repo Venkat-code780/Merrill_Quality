@@ -385,6 +385,7 @@ const onPaginationChanged = useCallback(() => {
               onGridReady={onGridReady}
               domLayout={props.domLayout || "normal"}
               onModelUpdated={handleModelUpdated}
+              datasource={props.datasource || undefined}
               // suppressColumnVirtualization={true}     // REQUIRED
               // ensureDomOrder={true} // REQUIRED
               suppressHorizontalScroll={props.suppressHorizontalScroll}

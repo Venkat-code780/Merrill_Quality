@@ -34,7 +34,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [itemId, setItemId] = useState(0);
   const [redirect, setRedirect] = useState(false);
-  
+
   // const [displayMessage, setDisplayMessage] = useState("");
 
   const [formData, setFormData] = useState({
@@ -101,7 +101,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
       });
 
 
-    txtPPEType.current?.focus();
+      txtPPEType.current?.focus();
 
       hideLoader();
 
@@ -114,14 +114,14 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
   };
 
   const addNew = () => {
-    
+
     setIsFormOpen(true);
     setItemId(0);
     setFormData({ Title: "" });
-      setTimeout(() => {
-    txtPPEType.current?.focus();
-  }, 100);
-    
+    setTimeout(() => {
+      txtPPEType.current?.focus();
+    }, 100);
+
 
   };
 
@@ -185,8 +185,8 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
       }
 
       setRedirect(true);
-        closeForm();
-        loadListData();
+      closeForm();
+      loadListData();
     } catch {
 
       onError();
@@ -301,9 +301,11 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
       sortable: false,
       filter: false,
       width: 80,
+      minWidth: 80,
+      maxWidth: 80,
       cellRenderer: (params: any) => {
         const record = params.data;
-  
+
         return (
           <NavLink
             title="Edit"
@@ -330,80 +332,80 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
     },
   ];
   return (
-      <React.Fragment>
-    <div className="container-fluid">
+    <React.Fragment>
+      <div className="container-fluid">
 
-      <div className="light-box border-box-shadow">
+        <div className="light-box border-box-shadow">
 
-        <div className="div-form-title">
+          <div className="div-form-title">
 
-          <div className="form-title">Audit Categories</div>
+            <div className="form-title">Audit Categories</div>
 
-          {isFormOpen &&
-            <span className="span-mandatory-text">
-              <span className="text-danger">*</span> are mandatory fields
-            </span>
-          }
+            {isFormOpen &&
+              <span className="span-mandatory-text">
+                <span className="text-danger">*</span> are mandatory fields
+              </span>
+            }
 
-        </div>
+          </div>
 
-        <div className="p-2 mx-1 ViewTable">
+          <div className="p-2 mx-1 ViewTable">
 
-          {!isFormOpen &&
-            <div className="text-end my-2 mx-3">
+            {!isFormOpen &&
+              <div className="text-end my-2 mx-3">
 
-              <button className="NewButton" onClick={addNew}>
-                <FontAwesomeIcon icon={faPlus} /> New
-              </button>
+                <button className="NewButton" onClick={addNew}>
+                  <FontAwesomeIcon icon={faPlus} /> New
+                </button>
 
-            </div>
-          }
+              </div>
+            }
 
-          {isFormOpen &&
-            <div className="form-border-box p-2 mx-1 my-2">
+            {isFormOpen &&
+              <div className="form-border-box p-2 mx-1 my-2">
 
-              <div className="row">
+                <div className="row">
 
-                <div className="col-md-3">
+                  <div className="col-md-3">
 
-                  <div className="light-text">
+                    <div className="light-text">
 
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="Title"
-                      value={formData.Title}
-                      onChange={handleChange}
-                      ref={txtPPEType}
-                      maxLength={250}
-                    />
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="Title"
+                        value={formData.Title}
+                        onChange={handleChange}
+                        ref={txtPPEType}
+                        maxLength={250}
+                      />
 
-                    <label>
-                      Audit Category <span className="mandatoryhastrick">*</span>
-                    </label>
+                      <label>
+                        Audit Category <span className="mandatoryhastrick">*</span>
+                      </label>
+
+                    </div>
+
+                  </div>
+
+                  <div className="col-md-3 py-2 text-center">
+
+                    <button className="btn btn-primary mx-2" onClick={handleSubmit}>
+                      {itemId ? "Update" : "Submit"}
+                    </button>
+
+                    <button className="btn btn-secondary" onClick={closeForm}>
+                      Cancel
+                    </button>
 
                   </div>
 
                 </div>
 
-                <div className="col-md-3 py-2 text-center">
-
-                  <button className="btn btn-primary mx-2" onClick={handleSubmit}>
-                    {itemId ? "Update" : "Submit"}
-                  </button>
-
-                  <button className="btn btn-secondary" onClick={closeForm}>
-                    Cancel
-                  </button>
-
-                </div>
-
               </div>
+            }
 
-            </div>
-          }
-
-          {/* <TableGenerator
+            {/* <TableGenerator
             columns={columns}
             data={actionsData}
             onChange={setPageNumber}
@@ -414,38 +416,38 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
             onRowClick={handleRowClicked}
             showPagination={true}
           /> */}
-              <div className="mx-2 table-head-1st-td right-search-table mb-3">
-                    {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
-                    <AGGridDataTable
-  data={actionsData}
-  columns={columns}
-  showExportExcel={false}
-  showAddButton={false}
-  customBtnClass="px-1 text-right"
-  btnDivID=""
-  btnSpanID=""
-  btnTitle=""
-  searchBoxLeft={true}
-  onRowClicked={(event: any) => editItem(event.data.Id)}
-  domLayout="normal"
-  suppressColumnVirtualization={true}
-  ensureDomOrder={true}
-  suppressHorizontalScroll={false}
-  suppressSizeToFit={true}
-  suppressColumnHiding={true}
-  suppressAutoSize={true}
-  suppressColumnMoveAnimation={true}
-  suppressMovableColumns={true}
-/>
-                  </div>
+            <div className="mx-2 table-head-1st-td right-search-table mb-3">
+              {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
+              <AGGridDataTable
+                data={actionsData}
+                columns={columns}
+                showExportExcel={false}
+                showAddButton={false}
+                customBtnClass="px-1 text-right"
+                btnDivID=""
+                btnSpanID=""
+                btnTitle=""
+                searchBoxLeft={true}
+                onRowClicked={(event: any) => editItem(event.data.Id)}
+                domLayout="normal"
+                suppressColumnVirtualization={true}
+                ensureDomOrder={true}
+                suppressHorizontalScroll={false}
+                suppressSizeToFit={true}
+                suppressColumnHiding={true}
+                suppressAutoSize={true}
+                suppressColumnMoveAnimation={true}
+                suppressMovableColumns={true}
+              />
+            </div>
 
+
+          </div>
 
         </div>
 
       </div>
-
-    </div>
-</React.Fragment>
+    </React.Fragment>
   );
 
 };

@@ -102,33 +102,33 @@ const LPAReport: React.FC<LPAReportProps> = (props) => {
       }
     ]
   };
-const exportToCSV = (filename: string, rows: any[]) => {
-  if (!rows || rows.length === 0) {
-    showToast("error", "No data to export");
-    return;
-  }
+  const exportToCSV = (filename: string, rows: any[]) => {
+    if (!rows || rows.length === 0) {
+      showToast("error", "No data to export");
+      return;
+    }
 
-  const separator = ",";
-  const keys = Object.keys(rows[0]);
+    const separator = ",";
+    const keys = Object.keys(rows[0]);
 
-  const csvContent =
-    keys.join(separator) +
-    "\n" +
-    rows
-      .map(row =>
-        keys
-          .map(k => `"${row[k] ?? ""}"`)
-          .join(separator)
-      )
-      .join("\n");
+    const csvContent =
+      keys.join(separator) +
+      "\n" +
+      rows
+        .map(row =>
+          keys
+            .map(k => `"${row[k] ?? ""}"`)
+            .join(separator)
+        )
+        .join("\n");
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
 
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
-};
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  };
 
   const loadData = async () => {
     try {
@@ -206,17 +206,17 @@ const exportToCSV = (filename: string, rows: any[]) => {
         Zone_x0009_: "",
         Machine: ""
       }));
-       setWeeklyData([]);
-  setTotalChartData([]);
-  setLineChartData([]);
-  setIssueDetails([]);
-  setNoData(false);
+      setWeeklyData([]);
+      setTotalChartData([]);
+      setLineChartData([]);
+      setIssueDetails([]);
+      setNoData(false);
       return;
     }
     /* ------------------ REPORT TYPE ------------------ */
 
     if (name === "ReportType") {
-   
+
       setFormData(prev => ({
         ...prev,
         ReportType: value,
@@ -342,10 +342,7 @@ const exportToCSV = (filename: string, rows: any[]) => {
         const end = new Date(formData.EndDate);
         end.setHours(23, 59, 59, 999);
 
-        await fetchLPAAuditTotal(
-          start.toISOString(),
-          end.toISOString()
-        );
+        await fetchLPAAuditTotal(start.toISOString(), end.toISOString());
       }
 
       else if (formData.ReportType === "LPAs Issues by Line Item") {
@@ -384,9 +381,7 @@ const exportToCSV = (filename: string, rows: any[]) => {
 
       const end = parseLocalDate(endDate);
       end.setUTCHours(23, 59, 59, 999);
-      let filter = `Date ge datetime'${start.toISOString()}'
-                  and Date le datetime'${end.toISOString()}'
-                  and Title eq '${formData.Title}'`;
+      let filter = `Date ge datetime'${start.toISOString()}' and Date le datetime'${end.toISOString()}' and Title eq '${formData.Title}'`;
 
       if (formData.Department) {
         filter += ` and Department eq '${formData.Department}'`;
@@ -421,33 +416,33 @@ const exportToCSV = (filename: string, rows: any[]) => {
       hideLoader();
     }
   };
-const exportWeeklyCSV = () => {
-  const formatted = weeklyData.map((item: any) => ({
-    Auditor: item.name,
-    Day1: item.days[0],
-    Day2: item.days[1],
-    Day3: item.days[2],
-    Day4: item.days[3],
-    Day5: item.days[4],
-    Day6: item.days[5],
-    Day7: item.days[6],
-    Total: item.total
-  }));
+  const exportWeeklyCSV = () => {
+    const formatted = weeklyData.map((item: any) => ({
+      Auditor: item.name,
+      Day1: item.days[0],
+      Day2: item.days[1],
+      Day3: item.days[2],
+      Day4: item.days[3],
+      Day5: item.days[4],
+      Day6: item.days[5],
+      Day7: item.days[6],
+      Total: item.total
+    }));
 
-  exportToCSV("LPAs by Auditor by Week.csv", formatted);
-};
-const exportIssueDetailsCSV = () => {
-  const formatted = issueDetails.map((item: any) => ({
-    Date: item.date
-      ? `'${DateUtilities.getDateMMDDYYYY(item.date.split("T")[0])}`
-      : "",
-    Auditor: item.auditor,
-    SubCategory: item.subCategory,
-    Remarks: item.remarks
-  }));
+    exportToCSV("LPAs by Auditor by Week.csv", formatted);
+  };
+  const exportIssueDetailsCSV = () => {
+    const formatted = issueDetails.map((item: any) => ({
+      Date: item.date
+        ? `'${DateUtilities.getDateMMDDYYYY(item.date.split("T")[0])}`
+        : "",
+      Auditor: item.auditor,
+      SubCategory: item.subCategory,
+      Remarks: item.remarks
+    }));
 
-  exportToCSV("LPAs Issues Details.csv", formatted);
-};
+    exportToCSV("LPAs Issues Details.csv", formatted);
+  };
 
   const processWeeklyData = (items: any[], startDate: string) => {
 
@@ -519,9 +514,15 @@ const exportIssueDetailsCSV = () => {
       const response = await props.spHttpClient.get(url, SPHttpClient.configurations.v1);
       const data = await response.json();
 
-      const processed = processTotalData(data.value || []);
-      const chartData = formatForChart(processed);
-      setTotalChartData(chartData);
+      if (data?.value && data?.value.length > 0) {
+
+        const processed = processTotalData(data.value || []);
+        const chartData = formatForChart(processed);
+        setTotalChartData(chartData);
+      }
+      else {
+        setNoData(true);
+      }
 
     } catch (error) {
       console.error(error);
@@ -975,11 +976,11 @@ const exportIssueDetailsCSV = () => {
           )}
           {formData.ReportType === "LPAs by Auditor by Week" && weeklyData.length > 0 && (
             <div className="custom-box info-box p-3 my-2 position-relative">
-                 {formData.ReportType === "LPAs by Auditor by Week" && weeklyData.length > 0 && (
-    <button type="button" className="btn btn-success btn-CSV mx-2" onClick={exportWeeklyCSV}>
-      Export CSV
-    </button>
-  )}
+              {formData.ReportType === "LPAs by Auditor by Week" && weeklyData.length > 0 && (
+                <button type="button" className="btn btn-success btn-CSV mx-2" onClick={exportWeeklyCSV}>
+                  Export CSV
+                </button>
+              )}
               <h5 className="fw-bold mb-4">Weekly Auditor Report</h5>
 
               <table className="table table-bordered mb-0">
@@ -1083,11 +1084,11 @@ const exportIssueDetailsCSV = () => {
 
           {formData.ReportType === "LPAs Issues Details" && issueDetails.length > 0 && (
             <div className="custom-box info-box p-3 my-2 position-relative">
-                {formData.ReportType === "LPAs Issues Details" && issueDetails.length > 0 && (
-    <button type="button" className="btn btn-success btn-CSV mx-2" onClick={exportIssueDetailsCSV}>
-      Export CSV
-    </button>
-  )}
+              {formData.ReportType === "LPAs Issues Details" && issueDetails.length > 0 && (
+                <button type="button" className="btn btn-success btn-CSV mx-2" onClick={exportIssueDetailsCSV}>
+                  Export CSV
+                </button>
+              )}
               <h5 className="fw-bold mb-4">LPA Issue Details</h5>
 
               <table className="table table-bordered mb-0">

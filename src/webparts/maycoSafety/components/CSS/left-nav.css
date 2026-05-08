@@ -92,13 +92,15 @@
   display: block;
   /* padding: 4px 6px; */
 }
-.left-nav-active.sidebar-title{
-    display: block;
-    color: #6f6969;
-    padding: 4px 6px;
-    text-decoration: none;
 
+.left-nav-active a {
+  display: block;
+  color: white;
+  /* color: #6f6969; */
+  padding: 4px 6px;
+  text-decoration: none;
 }
+
 .ul-leftnav {
   padding-left: 10px;
 }
@@ -116,9 +118,9 @@
   text-decoration: none;
 }
 
-.left-nav-active a.active:hover{
+.left-nav-active a.active:hover {
   /* background-color: #1e3574;*/
-  color: white !important;
+  color: #000000 !important;
   text-decoration: none;
 }
 
@@ -129,19 +131,22 @@
 }
 
 .ul-leftnav .ul-leftnav li {
-    position: relative;
-    border: 1px solid #dbdbdb;
-    padding: 3px 5px 3px 12px;
+  position: relative;
+  border: 1px solid #dbdbdb;
+  padding: 3px 5px 3px 12px;
 }
+
 .ul-leftnav .ul-leftnav li a:hover {
-    color: #2c627e;
+  color: #2c627e;
 }
-.ul-leftnav .ul-leftnav li a:hover .ul-leftnav li:after{
-    color: #2c627e;
+
+.ul-leftnav .ul-leftnav li a:hover .ul-leftnav li:after {
+  color: #2c627e;
 }
-.ul-leftnav .ul-leftnav li a{
-      padding: 4px 6px;
-      color: #6f6969;
+
+.ul-leftnav .ul-leftnav li a {
+  padding: 4px 6px;
+  color: #6f6969;
 }
 
 .ul-leftnav .ul-leftnav li.nav-click:after {
@@ -231,7 +236,7 @@
 
 .left-nav-active a.active {
   padding: 0;
-  color: inherit;
+  color: white;
 }
 
 #sidebar ul li.active>a {

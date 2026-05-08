@@ -299,6 +299,8 @@ const columns = [
       sortable: false,
       filter: false,
       width: 80,
+      minWidth: 80,
+      maxWidth: 80,
       cellRenderer: (params: any) => {
         const record = params.data;
   

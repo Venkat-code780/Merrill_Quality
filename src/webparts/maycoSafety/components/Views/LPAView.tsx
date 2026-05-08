@@ -58,20 +58,20 @@ const LPAView: React.FC<LPAFormProps> = (props) => {
   //   value: m
   // }));
 
- const uniqueMonths = Array.from(
-  new Set(data.map(x => x.YearMonth).filter(Boolean))
-)
-  .map(m => String(m).padStart(2, "0"))
-  .sort((a, b) => Number(a) - Number(b));
+  const uniqueMonths = Array.from(
+    new Set(data.map(x => x.YearMonth).filter(Boolean))
+  )
+    .map(m => String(m).padStart(2, "0"))
+    .sort((a, b) => Number(a) - Number(b));
 
-// ✅ ADD "All" dynamically at the TOP
-const monthOptions = [
-  { label: "All", value: "All" },
-  ...uniqueMonths.map(m => ({
-    label: m,
-    value: m
-  }))
-];
+  // ✅ ADD "All" dynamically at the TOP
+  const monthOptions = [
+    { label: "All", value: "All" },
+    ...uniqueMonths.map(m => ({
+      label: m,
+      value: m
+    }))
+  ];
   // const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
@@ -123,55 +123,55 @@ const monthOptions = [
   //   }
   // };
 
-const loadData = async () => {
-  try {
-    showLoader();
+  const loadData = async () => {
+    try {
+      showLoader();
 
-    const url =
-      `${currentSiteURL}/_api/web/lists/getbytitle('${listName}')/items` +
-      `?$select=Id,Title,Date,Department,Zone_x0009_,Machine,Tool_x0020_Number,Operators,Supervisor,Comments,Year,YearMonth,Modified,Auditor/Title` +
-      `&$expand=Auditor` +
-      `&$orderby=Modified desc` +
-      `&$top=2000`;
+      const url =
+        `${currentSiteURL}/_api/web/lists/getbytitle('${listName}')/items` +
+        `?$select=Id,Title,Date,Department,Zone_x0009_,Machine,Tool_x0020_Number,Operators,Supervisor,Comments,Year,YearMonth,Modified,Auditor/Title` +
+        `&$expand=Auditor` +
+        `&$orderby=Modified desc` +
+        `&$top=2000`;
 
-    const response = await props.spHttpClient.get(
-      url,
-      SPHttpClient.configurations.v1
-    );
+      const response = await props.spHttpClient.get(
+        url,
+        SPHttpClient.configurations.v1
+      );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    console.log("SharePoint response:", data);
+      console.log("SharePoint response:", data);
 
-    const tableData = (data.value || []).map((item: any) => ({
-      Id: item.Id,
-      Title: item.Title,
-      Date: item.Date
-        ? new Date(item.Date).toLocaleDateString("en-US")
-        : "",
-      Department: item.Department,
-      Zone_x0009_: item.Zone_x0009_,
-      Machine: item.Machine,
-      Tool_x0020_Number: item.Tool_x0020_Number,
-      Operators: item.Operators,
-      Supervisor: item.Supervisor,
-      Comments: item.Comments,
-      Year: item.Year,
-      YearMonth: item.YearMonth
-        ? item.YearMonth.toString().padStart(2, "0")
-        : "",
-      Auditor: item.Auditor?.Title || "",
-      Remarks: item.Remarks,
-      Modified: item.Modified
-    }));
+      const tableData = (data.value || []).map((item: any) => ({
+        Id: item.Id,
+        Title: item.Title,
+        Date: item.Date
+          ? new Date(item.Date).toLocaleDateString("en-US")
+          : "",
+        Department: item.Department,
+        Zone_x0009_: item.Zone_x0009_,
+        Machine: item.Machine,
+        Tool_x0020_Number: item.Tool_x0020_Number,
+        Operators: item.Operators,
+        Supervisor: item.Supervisor,
+        Comments: item.Comments,
+        Year: item.Year,
+        YearMonth: item.YearMonth
+          ? item.YearMonth.toString().padStart(2, "0")
+          : "",
+        Auditor: item.Auditor?.Title || "",
+        Remarks: item.Remarks,
+        Modified: item.Modified
+      }));
 
-    setData(tableData);
-  } catch (e) {
-    console.error("LoadData Error:", e);
-  } finally {
-    hideLoader();
-  }
-};
+      setData(tableData);
+    } catch (e) {
+      console.error("LoadData Error:", e);
+    } finally {
+      hideLoader();
+    }
+  };
 
 
 
@@ -203,27 +203,27 @@ const loadData = async () => {
   // }, [data, filters]);
 
 
-const filteredData = React.useMemo(() => {
-  let result = data;
+  const filteredData = React.useMemo(() => {
+    let result = data;
 
-  if (filters.year) {
-    result = result.filter(item =>
-      String(item.Year) === String(filters.year)
-    );
-  }
+    if (filters.year) {
+      result = result.filter(item =>
+        String(item.Year) === String(filters.year)
+      );
+    }
 
-  if (filters.month && filters.month !== "All") {
-    result = result.filter(item =>
-      String(item.YearMonth) === String(filters.month)
-    );
-  }
+    if (filters.month && filters.month !== "All") {
+      result = result.filter(item =>
+        String(item.YearMonth) === String(filters.month)
+      );
+    }
 
-  return result.sort(
-    (a: any, b: any) =>
+    return result.sort(
+      (a: any, b: any) =>
       new Date(b.Date || b.Modified).getTime() -
       new Date(a.Date || a.Modified).getTime()
-  );
-}, [data, filters]);
+    );
+  }, [data, filters]);
 
 
 
@@ -247,7 +247,9 @@ const filteredData = React.useMemo(() => {
     {
       headerName: "Edit",
       field: "Id",
-      width: 70,
+      width: 80,
+      minWidth: 80,
+      maxWidth: 80,
       sortable: false,
       filter: false,
       cellRenderer: (params: any) => {
@@ -286,6 +288,7 @@ const filteredData = React.useMemo(() => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+      minWidth: 160
     },
 
     {
@@ -304,6 +307,7 @@ const filteredData = React.useMemo(() => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+      minWidth: 140,
     },
 
     {
@@ -313,6 +317,7 @@ const filteredData = React.useMemo(() => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+      minWidth: 140,
     },
 
     {
@@ -322,6 +327,7 @@ const filteredData = React.useMemo(() => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+      minWidth: 140,
     },
 
     {
@@ -331,6 +337,7 @@ const filteredData = React.useMemo(() => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+      minWidth: 160,
     },
 
     {
@@ -340,6 +347,7 @@ const filteredData = React.useMemo(() => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+      minWidth: 150,
     },
 
     {
@@ -367,6 +375,7 @@ const filteredData = React.useMemo(() => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+      minWidth: 180,
     },
   ];
   return (
@@ -376,39 +385,41 @@ const filteredData = React.useMemo(() => {
       <div className="light-box border-box-shadow">
 
         <div className="div-form-title">
-          <div className="form-title">LPA Header View</div>
+          <div className="form-title">LPA</div>
         </div>
 
-        <div className="col-md-3">
-          <div className="light-text">
-          <SearchableDropdown
-            label="Year"
-            name="year"
-            selectedValue={filters.year}
-            OptionsList={yearOptions}
-            OnChange={handleChangeDropdown}
-            isRequired={false}
-            Title="Year"
-            id="ddlYear"
-            className=""
-            disabled={false}
-          />
-          </div>
-        </div>
-        <div className="col-md-3">
+        <div className="row p-1">
+          <div className="col-md-3">
             <div className="light-text">
-          <SearchableDropdown
-            label="Month"
-            name="month"
-            selectedValue={filters.month}
-            OptionsList={monthOptions}
-            OnChange={handleChangeDropdown}
-            isRequired={false}
-            Title="Month"
-            id="ddlMonth"
-            className=""
-            disabled={false}
-          />
+              <SearchableDropdown
+                label="Year"
+                name="year"
+                selectedValue={filters.year}
+                OptionsList={yearOptions}
+                OnChange={handleChangeDropdown}
+                isRequired={false}
+                Title="Year"
+                id="ddlYear"
+                className=""
+                disabled={false}
+              />
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="light-text">
+              <SearchableDropdown
+                label="Month"
+                name="month"
+                selectedValue={filters.month}
+                OptionsList={monthOptions}
+                OnChange={handleChangeDropdown}
+                isRequired={false}
+                Title="Month"
+                id="ddlMonth"
+                className=""
+                disabled={false}
+              />
+            </div>
           </div>
         </div>
 

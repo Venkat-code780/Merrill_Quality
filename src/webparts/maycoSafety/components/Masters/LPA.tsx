@@ -309,15 +309,15 @@ const LPA: React.FC<LPAProps> = (props) => {
 
   const editItem = async (Id: number) => {
     setTimeout(() => {
-  auditCategoryRef.current?.focus?.();
-}, 100);
+      auditCategoryRef.current?.focus?.();
+    }, 100);
     try {
 
       showLoader();
 
       setIsFormOpen(true);
       setItemId(Id);
-    
+
       const item = await sp.web.lists
         .getByTitle("LPA Configuration")
         .items.getById(Id)();
@@ -330,12 +330,12 @@ const LPA: React.FC<LPAProps> = (props) => {
         check: item.check || false,
         Is_x0020_Active: item.Is_x0020_Active || false
       });
-      
+
       fetchCategories(item.Department);
-          setTimeout(() => {
-      const input = auditCategoryRef.current?.querySelector("input");
-      input?.focus();
-    }, 0);
+      setTimeout(() => {
+        const input = auditCategoryRef.current?.querySelector("input");
+        input?.focus();
+      }, 0);
 
     } catch (e) {
       console.log(e);
@@ -379,99 +379,101 @@ const LPA: React.FC<LPAProps> = (props) => {
   // ];
 
   const columns = [
-  {
-    headerName: "Edit",
-    field: "Id",
-    width: 70,
-    sortable: false,
-    filter: false,
-    cellRenderer: (params: any) => {
-      const record = params.data;
+    {
+      headerName: "Edit",
+      field: "Id",
+      width: 80,
+      minWidth: 80,
+      maxWidth: 80,
+      sortable: false,
+      filter: false,
+      cellRenderer: (params: any) => {
+        const record = params.data;
 
-      return (
-        <NavLink
-          title="Edit"
-          className="csrLink ms-draggable"
-          to=""
-          onClick={(e) => {
-            e.preventDefault();
-            editItem(record.Id);
-          }}
-        >
-          <FontAwesomeIcon icon={faEdit} />
-        </NavLink>
-      );
+        return (
+          <NavLink
+            title="Edit"
+            className="csrLink ms-draggable"
+            to=""
+            onClick={(e) => {
+              e.preventDefault();
+              editItem(record.Id);
+            }}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </NavLink>
+        );
+      },
     },
-  },
 
-  {
-    headerName: "Plant",
-    field: "Plant",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-  },
+    {
+      headerName: "Plant",
+      field: "Plant",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+    },
 
-  {
-    headerName: "Department",
-    field: "Department",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-  },
+    {
+      headerName: "Department",
+      field: "Department",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+    },
 
-  {
-    headerName: "Audit Categories",
-    field: "Title",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-  },
+    {
+      headerName: "Audit Categories",
+      field: "Title",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+    },
 
-  {
-    headerName: "Audit Sub-Categories",
-    field: "Audit_x0020_SubCategories",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-  },
+    {
+      headerName: "Audit Sub-Categories",
+      field: "Audit_x0020_SubCategories",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+    },
 
-  {
-    headerName: "Is Date Required",
-    field: "check",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-    cellRenderer: (row: any) => (
+    {
+      headerName: "Is Date Required",
+      field: "check",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+      cellRenderer: (row: any) => (
         <div title={row.data.check ? "Yes" : "No"}>
-        
+
           <span className="status-icon-text">{row.data.check ? "Yes" : "No"}
           </span>
         </div>
       ),
-  },
+    },
 
-  {
-    headerName: "Is Active",
-    field: "Is_x0020_Active",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
+    {
+      headerName: "Is Active",
+      field: "Is_x0020_Active",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
       cellRenderer: (row: any) => (
         <div title={row.data.Is_x0020_Active ? "Yes" : "No"}>
-        
+
           <span className="status-icon-text">{row.data.Is_x0020_Active ? "Yes" : "No"}
           </span>
         </div>
       ),
-  },
-];
+    },
+  ];
   return (
     <div className="container-fluid">
       <div className="light-box border-box-shadow">
@@ -593,30 +595,30 @@ const LPA: React.FC<LPAProps> = (props) => {
               </div>
             </div>
           )}
-              <div className="mx-2 table-head-1st-td right-search-table mb-3">
-                    {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
-                    <AGGridDataTable
-  data={LpaData}
-  columns={columns}
-  showExportExcel={false}
-  showAddButton={false}
-  customBtnClass="px-1 text-right"
-  btnDivID=""
-  btnSpanID=""
-  btnTitle=""
-  searchBoxLeft={true}
-  onRowClicked={(event: any) => editItem(event.data.Id)}
-  domLayout="normal"
-  suppressColumnVirtualization={true}
-  ensureDomOrder={true}
-  suppressHorizontalScroll={false}
-  suppressSizeToFit={true}
-  suppressColumnHiding={true}
-  suppressAutoSize={true}
-  suppressColumnMoveAnimation={true}
-  suppressMovableColumns={true}
-/>
-                  </div>
+          <div className="mx-2 table-head-1st-td right-search-table mb-3">
+            {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
+            <AGGridDataTable
+              data={LpaData}
+              columns={columns}
+              showExportExcel={false}
+              showAddButton={false}
+              customBtnClass="px-1 text-right"
+              btnDivID=""
+              btnSpanID=""
+              btnTitle=""
+              searchBoxLeft={true}
+              onRowClicked={(event: any) => editItem(event.data.Id)}
+              domLayout="normal"
+              suppressColumnVirtualization={true}
+              ensureDomOrder={true}
+              suppressHorizontalScroll={false}
+              suppressSizeToFit={true}
+              suppressColumnHiding={true}
+              suppressAutoSize={true}
+              suppressColumnMoveAnimation={true}
+              suppressMovableColumns={true}
+            />
+          </div>
           {/* <TableGenerator
             columns={columns}
             data={LpaData}

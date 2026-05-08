@@ -128,10 +128,10 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
         Level: item.Level || "",
         Is_x0020_Active: item.Is_x0020_Active || false
       });
-          setTimeout(() => {
-      const input = auditCategoryRef.current?.querySelector("input");
-      input?.focus();
-    }, 0);
+      setTimeout(() => {
+        const input = auditCategoryRef.current?.querySelector("input");
+        input?.focus();
+      }, 0);
     } catch (e) {
       console.log(e);
       onError();
@@ -145,7 +145,7 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
     setIsFormOpen(true);
     setItemId(0);
     setFormData({ Title: "", Level: "", Is_x0020_Active: false });
-        setTimeout(() => {
+    setTimeout(() => {
       const input = auditCategoryRef.current?.querySelector("input");
       input?.focus();
     }, 0);
@@ -155,10 +155,8 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
   const checkDuplicate = async () => {
     try {
       showLoader();
-      const filterQuery = `Title eq '${formData.Title}'`;
-      const results = await sp.web.lists
-        .getByTitle(listName)
-        .items.filter(itemId > 0 ? `${filterQuery} and Id ne ${itemId}` : filterQuery)();
+      const filterQuery = `Title eq '${formData.Title}' and Level eq '${formData.Level}'`;
+      const results = await sp.web.lists.getByTitle(listName).items.filter(itemId > 0 ? `${filterQuery} and Id ne ${itemId}` : filterQuery)();
       hideLoader();
       if (results.length > 0) {
         showToast("error", "Record already exists");
@@ -189,8 +187,8 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
         showToast("success", "Auditor Level submitted successfully");
       }
       setRedirect(true);
-       closeForm();
-        loadListData();
+      closeForm();
+      loadListData();
     } catch (e) {
       console.log(e);
       onError();
@@ -286,56 +284,58 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
   // ];
 
   const columns = [
-  {
-    headerName: "Edit",
-    field: "Id",
-    width: 70,
-    sortable: false,
-    filter: false,
-    cellRenderer: (params: any) => {
-      const record = params.data;
+    {
+      headerName: "Edit",
+      field: "Id",
+      width: 80,
+      minWidth: 80,
+      maxWidth: 80,
+      sortable: false,
+      filter: false,
+      cellRenderer: (params: any) => {
+        const record = params.data;
 
-      return (
-        <NavLink
-          title="Edit"
-          className="csrLink ms-draggable"
-          to=""
-          onClick={(e) => {
-            e.preventDefault();
-            editItem(record.Id);
-          }}
-        >
-          <FontAwesomeIcon icon={faEdit} />
-        </NavLink>
-      );
+        return (
+          <NavLink
+            title="Edit"
+            className="csrLink ms-draggable"
+            to=""
+            onClick={(e) => {
+              e.preventDefault();
+              editItem(record.Id);
+            }}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </NavLink>
+        );
+      },
     },
-  },
-  {
-    headerName: "Audit Level",
-    field: "Title",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-    getQuickFilterText: (params: any) => params.value || "",
-  },
-  {
-    headerName: "Level",
-    field: "Level",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-  },
-  {
-    headerName: "Is Active",
-    field: "Is_x0020_Active",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-  },
-];
+    {
+      headerName: "Audit Level",
+      field: "Title",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+      getQuickFilterText: (params: any) => params.value || "",
+    },
+    {
+      headerName: "Level",
+      field: "Level",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+    },
+    {
+      headerName: "Is Active",
+      field: "Is_x0020_Active",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+    },
+  ];
 
   return (
     <div className="container-fluid">
@@ -364,45 +364,45 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
                 <div className="col-md-3">
                   <div className="light-text">
                     <div ref={auditCategoryRef}>
-                  <SearchableDropdown
-                    label="Auditor"
-                    Title="Auditor"
-                    name="Title"
-                    id="txtAuditor"
-                    className="txtAuditor"
-                    selectedValue={formData.Title} // current value
-                    OptionsList={Auditors.map(a => ({
-                      label: a.Title,                  // use Title as key
-                      value: a.Title                  // display Title
-                    }))}
-                    OnChange={async (selectedOption: any, actionMeta: any) => handleChangeDropdown(selectedOption, actionMeta)}
+                      <SearchableDropdown
+                        label="Auditor"
+                        Title="Auditor"
+                        name="Title"
+                        id="txtAuditor"
+                        className="txtAuditor"
+                        selectedValue={formData.Title} // current value
+                        OptionsList={Auditors.map(a => ({
+                          label: a.Title,                  // use Title as key
+                          value: a.Title                  // display Title
+                        }))}
+                        OnChange={async (selectedOption: any, actionMeta: any) => handleChangeDropdown(selectedOption, actionMeta)}
 
-                    isRequired={true}
-                    disabled={false}
-                  />
-                </div>
-                </div>
+                        isRequired={true}
+                        disabled={false}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="light-text">
-                  <SearchableDropdown
-                    label="Level"
-                    Title="Level"
-                    name="Level"
-                    id="txtLevel"
-                    className="txtLevel"
-                    selectedValue={formData.Level} // current value
-                    OptionsList={AuditLevels.map(l => ({ label: l.Title, value: l.Title }))}
-                    OnChange={async (selectedOption: any, actionMeta: any) => handleChangeDropdown(selectedOption, actionMeta)}
-                    isRequired={true}
-                    disabled={false}
-                  />
+                    <SearchableDropdown
+                      label="Level"
+                      Title="Level"
+                      name="Level"
+                      id="txtLevel"
+                      className="txtLevel"
+                      selectedValue={formData.Level} // current value
+                      OptionsList={AuditLevels.map(l => ({ label: l.Title, value: l.Title }))}
+                      OnChange={async (selectedOption: any, actionMeta: any) => handleChangeDropdown(selectedOption, actionMeta)}
+                      isRequired={true}
+                      disabled={false}
+                    />
                   </div>
                 </div>
                 <div className="col-md-3">
-                  <InputCheckBox label={"Is Active"} name={"Is_x0020_Active"} checked={formData.Is_x0020_Active} onChange={(e:any)=>setFormData(prev=>({...prev,Is_x0020_Active:e.target.checked}))} isdisable={false} isRequired={false}></InputCheckBox>
-                   
+                  <InputCheckBox label={"Is Active"} name={"Is_x0020_Active"} checked={formData.Is_x0020_Active} onChange={(e: any) => setFormData(prev => ({ ...prev, Is_x0020_Active: e.target.checked }))} isdisable={false} isRequired={false}></InputCheckBox>
+
                 </div>
 
                 <div className="col-md-3 py-2 text-center">
@@ -429,30 +429,30 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
             showPagination={true}
           /> */}
 
-                    <div className="mx-2 table-head-1st-td right-search-table mb-3">
-                    {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
-                    <AGGridDataTable
-  data={actionsData}
-  columns={columns}
-  showExportExcel={false}
-  showAddButton={false}
-  customBtnClass="px-1 text-right"
-  btnDivID=""
-  btnSpanID=""
-  btnTitle=""
-  searchBoxLeft={true}
-  onRowClicked={(event: any) => editItem(event.data.Id)}
-  domLayout="normal"
-  suppressColumnVirtualization={true}
-  ensureDomOrder={true}
-  suppressHorizontalScroll={false}
-  suppressSizeToFit={true}
-  suppressColumnHiding={true}
-  suppressAutoSize={true}
-  suppressColumnMoveAnimation={true}
-  suppressMovableColumns={true}
-/>
-                  </div>
+          <div className="mx-2 table-head-1st-td right-search-table mb-3">
+            {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
+            <AGGridDataTable
+              data={actionsData}
+              columns={columns}
+              showExportExcel={false}
+              showAddButton={false}
+              customBtnClass="px-1 text-right"
+              btnDivID=""
+              btnSpanID=""
+              btnTitle=""
+              searchBoxLeft={true}
+              onRowClicked={(event: any) => editItem(event.data.Id)}
+              domLayout="normal"
+              suppressColumnVirtualization={true}
+              ensureDomOrder={true}
+              suppressHorizontalScroll={false}
+              suppressSizeToFit={true}
+              suppressColumnHiding={true}
+              suppressAutoSize={true}
+              suppressColumnMoveAnimation={true}
+              suppressMovableColumns={true}
+            />
+          </div>
         </div>
       </div>
     </div>

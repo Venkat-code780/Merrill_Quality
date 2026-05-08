@@ -171,7 +171,7 @@ const KPI: React.FC<KPIProps> = (props) => {
 
         await sp.web.lists.getByTitle(listName).items.getById(itemId).update(data);
 
-            showToast("success", "KPI updated successfully");
+        showToast("success", "KPI updated successfully");
       } else {
 
         await sp.web.lists.getByTitle(listName).items.add(data);
@@ -182,14 +182,14 @@ const KPI: React.FC<KPIProps> = (props) => {
 
       setRedirect(true);
       closeForm();
-      loadListData();  
+      loadListData();
 
     } catch {
 
       onError();
 
     }
-    finally{
+    finally {
       hideLoader();
     }
 
@@ -291,41 +291,43 @@ const KPI: React.FC<KPIProps> = (props) => {
 
   // ];
 
-const columns = [
-  {
-    field: "Id",
-    headerName: "Edit",
-    sortable: false,
-    filter: false,
-    width: 80,
-    cellRenderer: (params: any) => {
-      const record = params.data;
+  const columns = [
+    {
+      field: "Id",
+      headerName: "Edit",
+      sortable: false,
+      filter: false,
+      width: 80,
+      minWidth: 80,
+      maxWidth: 80,
+      cellRenderer: (params: any) => {
+        const record = params.data;
 
-      return (
-        <NavLink
-          title="Edit"
-          className="csrLink ms-draggable"
-          to=""
-          onClick={(e) => {
-            e.preventDefault();
-            editItem(record.Id);
-          }}
-        >
-          <FontAwesomeIcon icon={faEdit} />
-        </NavLink>
-      );
+        return (
+          <NavLink
+            title="Edit"
+            className="csrLink ms-draggable"
+            to=""
+            onClick={(e) => {
+              e.preventDefault();
+              editItem(record.Id);
+            }}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </NavLink>
+        );
+      },
     },
-  },
-  {
-    field: "Title",
-    headerName: "KPI",
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    flex: 1,
-    getQuickFilterText: (params: any) => params.value || "",
-  },
-];
+    {
+      field: "Title",
+      headerName: "KPI",
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      flex: 1,
+      getQuickFilterText: (params: any) => params.value || "",
+    },
+  ];
   return (
 
     <div className="container-fluid">
@@ -411,30 +413,30 @@ const columns = [
             onRowClick={handleRowClicked}
             showPagination={true}
           /> */}
-              <div className="mx-2 table-head-1st-td right-search-table mb-3">
-                    {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
-                    <AGGridDataTable
-  data={actionsData}
-  columns={columns}
-  showExportExcel={false}
-  showAddButton={false}
-  customBtnClass="px-1 text-right"
-  btnDivID=""
-  btnSpanID=""
-  btnTitle=""
-  searchBoxLeft={true}
-  onRowClicked={(event: any) => editItem(event.data.Id)}
-  domLayout="normal"
-  suppressColumnVirtualization={true}
-  ensureDomOrder={true}
-  suppressHorizontalScroll={false}
-  suppressSizeToFit={true}
-  suppressColumnHiding={true}
-  suppressAutoSize={true}
-  suppressColumnMoveAnimation={true}
-  suppressMovableColumns={true}
-/>
-                  </div>
+          <div className="mx-2 table-head-1st-td right-search-table mb-3">
+            {/* <TableGenerator columns={columns} data={this.state.data} fileName={'Location2'} onRowClick={(row:any)=>this.onEditClickHandler(row.Id)} ></TableGenerator> */}
+            <AGGridDataTable
+              data={actionsData}
+              columns={columns}
+              showExportExcel={false}
+              showAddButton={false}
+              customBtnClass="px-1 text-right"
+              btnDivID=""
+              btnSpanID=""
+              btnTitle=""
+              searchBoxLeft={true}
+              onRowClicked={(event: any) => editItem(event.data.Id)}
+              domLayout="normal"
+              suppressColumnVirtualization={true}
+              ensureDomOrder={true}
+              suppressHorizontalScroll={false}
+              suppressSizeToFit={true}
+              suppressColumnHiding={true}
+              suppressAutoSize={true}
+              suppressColumnMoveAnimation={true}
+              suppressMovableColumns={true}
+            />
+          </div>
 
         </div>
 

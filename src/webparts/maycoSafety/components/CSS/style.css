@@ -111,6 +111,7 @@
 .react-datepicker__calendar-icon {
   right: 3px;
   font-size: large;
+  top: 4px;
 }
 
 .react-datepicker__view-calendar-icon input {
@@ -271,13 +272,17 @@
 .rdt_Pagination button {
   min-width: inherit;
 }
-.MuiPickersLayout-contentWrapper button, .custom-date-time-picker button {
-  min-width: inherit!important;
+
+.MuiPickersLayout-contentWrapper button,
+.custom-date-time-picker button {
+  min-width: inherit !important;
 }
+
 .custom-date-time-picker .DatePicker {
-    padding: 0;
-    border: 0 !important;
+  padding: 0;
+  border: 0 !important;
 }
+
 /* input controls css for lable on border itself*/
 .light-text {
   position: relative;
@@ -580,26 +585,36 @@ div#divShift {
 
 /* Colors for SVG Icons */
 .planHead svg {
-    color: orange;
+  color: orange;
 }
-.analysisHead svg, .sketchHead svg{
-    color: #1757e5;
+
+.analysisHead svg,
+.sketchHead svg {
+  color: #1757e5;
 }
-.bodyChartHead svg{
-    color: #dc2626;
+
+.bodyChartHead svg {
+  color: #dc2626;
 }
-.actionHead svg, .doHead svg{
-    color: #315aff;
+
+.actionHead svg,
+.doHead svg {
+  color: #315aff;
 }
-.rootCauseHead svg{
-    color: #c857ff;
+
+.rootCauseHead svg {
+  color: #c857ff;
 }
-.checkHead svg, .injuredHead svg{
-    color: #784bd1;
+
+.checkHead svg,
+.injuredHead svg {
+  color: #784bd1;
 }
-.witnessHead svg{
-    color: green;
+
+.witnessHead svg {
+  color: green;
 }
+
 /* .light-text select{
   appearance: auto !important;
 } */
@@ -637,7 +652,7 @@ div#divShift {
   border-radius: 8px;
   padding: 15px;
   height: 100%;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .info-title {
@@ -657,82 +672,99 @@ div#divShift {
   font-size: 13px;
   margin-bottom: 5px;
 }
+
 .btn-CSV {
-    position: absolute;
-    top: 15px;
-    right: 8px;
+  position: absolute;
+  top: 15px;
+  right: 8px;
 }
 
-.light-text label:has(+.form-control:disabled){
-	background-color: #e9ecef;
-    background-image: none !important;
+.light-text label:has(+.form-control:disabled) {
+  background-color: #e9ecef;
+  background-image: none !important;
 }
 
 .thead-bold td {
-    background: #eaf1f7;
-    font-weight: bold;
+  background: #eaf1f7;
+  font-weight: bold;
 }
 
 .ms-PeoplePicker .ms-BasePicker-text {
-	padding-top: 0!important;
-	border: none;
+  padding-top: 0 !important;
+  border: none;
 }
- 
- 
-.ms-BasePicker-text input{
-	border: 1px solid #d7d7d7 !important;
-	height: calc(2em + .75rem + 2px) !important;	
+
+
+.ms-BasePicker-text input {
+  border: 1px solid #d7d7d7 !important;
+  height: calc(2em + .75rem + 2px) !important;
 }
- 
+
 .info-box input {
-    margin-bottom: .5rem;
+  margin-bottom: .5rem;
 }
 
 .ms-PeoplePicker .ms-BasePicker-text {
 
-    border: none;
+  border: none;
 
-    padding-top: 0 !important;
-height: calc(2em + .75rem + 2px) !important;
+  padding-top: 0 !important;
+  height: calc(2em + .75rem + 2px) !important;
 
 }
- 
+
 .ms-PeoplePicker .ms-BasePicker-text:after {
 
-    border: 1px solid #d7d7d7 !important;
+  border: 1px solid #d7d7d7 !important;
 
 }
+
 div#content-r {
-    min-height: 465px;
+  min-height: 465px;
 }
 
 .outer-report {
 
-    background: #f8f9fa;
+  background: #f8f9fa;
 
-    border: 1px solid #ddd;
+  border: 1px solid #ddd;
 
-    border-radius: 8px;
+  border-radius: 8px;
 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .05);
 
-    width: 100%;
+  width: 100%;
 
-    overflow: auto;
+  overflow: auto;
 
-    padding: 15px;
-
-}
- .light-text label:has(+.form-control[readonly]) {
-
-    background-color: #e9ecef;
-
-    background-image: none;
+  padding: 15px;
 
 }
- .select-appearance select.form-control {
+
+.light-text label:has(+.form-control[readonly]) {
+
+  background-color: #e9ecef;
+
+  background-image: none;
+
+}
+
+.select-appearance select.form-control {
   appearance: auto;
 }
- 
 
- 
+/* ---------------------- Edited By Bhargav ----------------------- */
+
+.sub-header {
+  font-size: 10px;
+}
+
+.LPAForm-table th {
+  border: 1px solid #00a3d9;
+  background-color: #8cc6df;
+  font-size: 18px;
+}
+
+.subCategoriesTd{
+  padding: 10px;
+}

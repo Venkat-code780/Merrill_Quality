@@ -45,6 +45,7 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
   const [toolnumbers, settoolnumbers] = useState<any[]>([]);
   const [categories, setCategories] = useState<any>({});
   const [itemId, setItemId] = useState(0);
+ 
   const [formData, setFormData] = useState({
     Date: "",
     Title: "",
@@ -75,15 +76,16 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
       try {
         highlightCurrentNav("liPPETypes");
         showLoader();
-
+   
         await loadData();
-
+        const data: any = await loadData();
         if (id) {
           const numericId = parseInt(id);
           setItemId(numericId);
 
-          await loadDataForEdit(numericId);
+          await loadDataForEdit(numericId,data.ZoneData, data.MachineData);
         }
+
       }
       catch (e) {
         console.log(e);
@@ -109,7 +111,7 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
   //   }
   // }, [id, allZones, allMachines]);
 
-  const loadDataForEdit = async (editId: number) => {
+  const loadDataForEdit = async (editId: number, zoneData: any[], machineData: any[]) => {
     try {
       const item: any = await sp.web.lists.getByTitle("LPA").items.getById(editId)();
       setFormData({
@@ -126,18 +128,50 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
         Year: item.Year || new Date().getFullYear().toString(),
         YearMonth: item.YearMonth || (new Date().getMonth() + 1).toString(),
       });
-      const filteredZ = allZones.filter((z: any) => z.Department?.Title === item.Department);
+      // const filteredZ = (zoneData || []).filter((z: any) => z.Department?.Title === item.Department);
+      const filteredZ = (zoneData || []).filter(
+  (z: any) =>
+    z.Plant?.Title === item.Title &&
+    z.Department?.Title === item.Department
+);
       setFilteredZones(filteredZ);
 
-      const filteredM = allMachines.filter((m: any) => m.Zone?.Title === item.Zone_x0009_);
+      // const filteredM = (machineData || []).filter((m: any) => m.Zone?.Title === item.Zone_x0009_);
+      const filteredM = (machineData || []).filter(
+  (m: any) =>
+    m.Plant?.Title === item.Title &&
+    m.Department?.Title === item.Department &&
+    m.Zone?.Title === item.Zone_x0009_
+);
 
       setFilteredMachines(filteredM);
       const filter = `Plant eq '${item.Title}' and Department eq '${item.Department}' and Is_x0020_Active eq 1`;
       const [lineItemsData, initialLines]: any = await Promise.all([sp.web.lists.getByTitle("LPALine").items.filter(`Title eq '${editId}'`)(), getListItems("LPA Configuration", currentSiteURL, "*", "", filter)]);
       // console.log(initialLines);
 
-      const grouped = groupByCategory(initialLines);
-      setCategories(grouped);
+      // const grouped = groupByCategory(initialLines);
+      // setCategories(grouped);
+
+const existingCategories = lineItemsData.map((line: any) => {
+
+  const matchedConfig = initialLines.find(
+    (cfg: any) =>
+      cfg.Title === line.LPA_x0020_Category &&
+      cfg.Audit_x0020_SubCategories === line.LPA_x0020_Subcategory
+  );
+
+  return {
+    Title: line.LPA_x0020_Category,
+    Audit_x0020_SubCategories: line.LPA_x0020_Subcategory,
+    check: matchedConfig?.check || false
+  };
+});
+
+const grouped = groupByCategory(existingCategories);
+setCategories(grouped);
+       
+
+
       // const editLines = lineItemsData.map((line: any) => {
 
       //   const itemDateRequired = initialLines.find((lineItem: any) => lineItem.Title == line.LPA_x0020_Category && lineItem.Audit_x0020_SubCategories == line.LPA_x0020_Subcategory)?.check;
@@ -153,26 +187,49 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
       //   })
       // });
 
-      const editLines = initialLines.map((configItem: any) => {
+      // const editLines = initialLines.map((configItem: any) => {
 
-        const matchedLine = lineItemsData.find(
-          (line: any) =>
-            line.LPA_x0020_Category === configItem.Title &&
-            line.LPA_x0020_Subcategory === configItem.Audit_x0020_SubCategories
-        );
+      //   const matchedLine = lineItemsData.find(
+      //     (line: any) =>
+      //       line.LPA_x0020_Category === configItem.Title &&
+      //       line.LPA_x0020_Subcategory === configItem.Audit_x0020_SubCategories
+      //   );
 
-        return {
-          Id: matchedLine?.Id || 0,
-          Category: configItem.Title,
-          SubCategory: configItem.Audit_x0020_SubCategories,
-          Result: matchedLine?.Status || "",
-          Action: matchedLine?.Remarks || "",
-          IsDateRequired: configItem.check || false,
-          Date: matchedLine?.ChildDate
-            ? new Date(matchedLine.ChildDate)
-            : null
-        };
-      });
+      //   return {
+      //     Id: matchedLine?.Id || 0,
+      //     Category: configItem.Title,
+      //     SubCategory: configItem.Audit_x0020_SubCategories,
+      //     Result: matchedLine?.Status || "",
+      //     Action: matchedLine?.Remarks || "",
+      //     IsDateRequired: configItem.check || false,
+      //     Date: matchedLine?.ChildDate
+      //       ? new Date(matchedLine.ChildDate)
+      //       : null
+      //   };
+      // });
+const editLines = lineItemsData.map((line: any) => {
+
+  const matchedConfig = initialLines.find(
+    (cfg: any) =>
+      cfg.Title === line.LPA_x0020_Category &&
+      cfg.Audit_x0020_SubCategories === line.LPA_x0020_Subcategory
+  );
+
+  return {
+    Id: line.Id,
+    Category: line.LPA_x0020_Category,
+    SubCategory: line.LPA_x0020_Subcategory,
+    Result: line.Status || "",
+    Action: line.Remarks || "",
+    IsDateRequired: matchedConfig?.check || false,
+    Date: line.ChildDate
+      ? new Date(line.ChildDate)
+      : null
+  };
+});
+
+setLineItems(editLines);
+
 
       setLineItems(editLines);
       console.log(editLines);
@@ -189,7 +246,7 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
     try {
       const [plantData, deptData, ZoneData, MachineData, AuditorsData, supervisorsData, toolnumbersdata] = await Promise.all([
         getListItems("Plant", JvisURL, "*", "", "Title eq 'Merrill'"),
-        getListItems("Department", JvisURL, "Plant/Title,Title", "Plant", "Plant/Title eq 'Merrill'"),
+        getListItems("Department", JvisURL, "Plant/Title,Title", "Plant", "Plant/Title eq 'Merrill' and IsActive eq 1"),
         getListItems("Zones", JvisURL, "Plant/Title,Department/Title,Title", "Plant,Department", "Plant/Title eq 'Merrill'"),
         getListItems("Machines", JvisURL, "Plant/Title,Department/Title,Zone/Title,Title", "Plant,Department,Zone", "Plant/Title eq 'Merrill'"),
         getListItems("LPA Auditors", currentSiteURL, "Title,Id", "", "Is_x0020_Active eq 1"),
@@ -214,8 +271,9 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
           Title: plantData[0].Title
         }));
       }
+          return { ZoneData, MachineData };
     }
-
+    
     catch (e) {
       console.log(e);
       showToast("error", "Error loading data");
@@ -288,7 +346,11 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
     /* ------------------ DEPARTMENT ------------------ */
 
     if (name === "Department") {
-      const filteredZ = allZones.filter((z: any) => z.Department?.Title === value);
+      // const filteredZ = allZones.filter((z: any) => z.Department?.Title === value);
+        const filteredZ = allZones.filter((z: any) =>
+    z.Plant?.Title === formData.Title &&
+    z.Department?.Title === value
+  );
       setFilteredZones(filteredZ);
       setFilteredMachines([]);
       setCategories({}); // clear old categories
@@ -299,7 +361,12 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
     }
 
     if (name === "Zone_x0009_") {
-      const filteredM = allMachines.filter((m: any) => m.Zone?.Title === value);
+      // const filteredM = allMachines.filter((m: any) => m.Zone?.Title === value);
+        const filteredM = allMachines.filter((m: any) =>
+    m.Plant?.Title === formData.Title &&
+    m.Department?.Title === formData.Department &&
+    m.Zone?.Title === value
+  );
       setFilteredMachines(filteredM);
       setFormData(prev => ({ ...prev, Zone_x0009_: value, Machine: "" }));
       return;
@@ -334,62 +401,75 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
       el.classList.remove("mandatory-FormContent-focus");
     });
 
-    for (let i = 0; i < lineItems.length; i++) {
+    // for (let i = 0; i < lineItems.length; i++) {
 
-      const line = lineItems[i];
+    for (const cat of Object.keys(categories)) {
 
-      if (line.IsDateRequired && !line.Date) {
+      for (const item of categories[cat]) {
 
-        showToast("error", `'Date' cannot be blank`);
+        const globalIndex = lineItems.findIndex(
+          (x) =>
+            x.Category === cat &&
+            x.SubCategory === item["Audit_x0020_SubCategories"]
+        );
 
-        const parent = document.getElementById(`lineDate_${i}`);
+        if (globalIndex === -1) continue;
 
-        if (parent) {
-          const input = parent.querySelector("input");
-          const wrapper = parent.querySelector(".react-datepicker-wrapper");
+        const line = lineItems[globalIndex];
 
-          input?.focus();
-          (wrapper || parent).classList.add("focus-Div");
-        }
+        if (line.IsDateRequired && !line.Date) {
 
-        return false;
-      }
+          showToast("error", `'Date' cannot be blank`);
 
-      if (line.Date) {
-
-        const selectedDate = new Date(line.Date);
-        const today = formData.Date ? new Date(formData.Date) : new Date();
-
-        selectedDate.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
-
-        if (selectedDate.getTime() > today.getTime()) {
-
-          showToast(
-            "error",
-            `Date must be less than or equal to Date`
-          );
-
-          const parent = document.getElementById(`lineDate_${i}`);
+          const parent = document.getElementById(`lineDate_${globalIndex}`);
 
           if (parent) {
             const input = parent.querySelector("input");
+            const wrapper = parent.querySelector(".react-datepicker-wrapper");
+
             input?.focus();
-            parent.classList.add("focus-Div");
+            (wrapper || parent).classList.add("focus-Div");
+          }
+
+          return false;
+        }
+
+        if (line.Date) {
+
+          const selectedDate = new Date(line.Date);
+          const today = formData.Date ? new Date(formData.Date) : new Date();
+
+          selectedDate.setHours(0, 0, 0, 0);
+          today.setHours(0, 0, 0, 0);
+
+          if (selectedDate.getTime() > today.getTime()) {
+
+            showToast(
+              "error",
+              `'Date' must be less than or equal to the 'Audit Date'`
+            );
+
+            const parent = document.getElementById(`lineDate_${globalIndex}`);
+
+            if (parent) {
+              const input = parent.querySelector("input");
+              input?.focus();
+              parent.classList.add("focus-Div");
+            }
+            return false;
+          }
+        }
+
+        if (line.Result === "No" && !line.Action?.trim()) {
+          showToast("error", `'Action Taken' cannot be blank for Reason - 'No'`);
+          const input = document.querySelector(`textarea[data-index="${globalIndex}"]`) as HTMLInputElement;
+          if (input) {
+            input.focus();
+            input.classList.add("mandatory-FormContent-focus");
+            input.scrollIntoView({ behavior: "smooth", block: "center" });
           }
           return false;
         }
-      }
-
-      if (line.Result === "No" && !line.Action?.trim()) {
-        showToast("error", `'Action Taken' cannot be blank for Reason - 'No'`);
-        const input = document.querySelector(`textarea[data-index="${i}"]`) as HTMLInputElement;
-        if (input) {
-          input.focus();
-          input.classList.add("mandatory-FormContent-focus");
-          input.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-        return false;
       }
     }
 
@@ -400,13 +480,13 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
     event.preventDefault();
     showLoader();
     const data = {
-      Date: { val: formData.Date, required: true, Name: "Date", Type: ControlType.date, Focusid: 'dtDate' },
+      Date: { val: formData.Date, required: true, Name: "Audit Date", Type: ControlType.date, Focusid: 'dtDate' },
       Department: { val: formData.Department.trim(), required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: 'txtDepartment' },
       Zone: { val: formData.Zone_x0009_.trim(), required: true, Name: "Zone", Type: ControlType.reactSelect, Focusid: 'txtZone' },
       Machine: { val: formData.Machine.trim(), required: true, Name: "Machine", Type: ControlType.reactSelect, Focusid: 'txtMachine' },
       AuditorsName: { val: formData.AuditorId, required: true, Name: "Auditor", Type: ControlType.reactSelect, Focusid: 'txtAuditorName' },
       Supervisor: { val: formData.Supervisor.trim(), required: true, Name: "Supervisor", Type: ControlType.reactSelect, Focusid: 'txtSupervisorName' },
-      operators: { val: formData.Operators.trim(), required: true, Name: "Operators", Type: ControlType.string, Focusid: txtPPEType },
+      // operators: { val: formData.Operators.trim(), required: true, Name: "Operators", Type: ControlType.string, Focusid: txtPPEType },
       //  ToolNumber:  { val: formData.Tool_x0020_Number.trim(), required: true, Name: "Tool Number", Type: ControlType.reactSelect, Focusid: 'txtToolNumber' },
 
     };
@@ -489,36 +569,81 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
         headerId = res.Id;
       }
 
-      for (const line of lineItems) {
-        const childData = {
-          Title: headerId.toString(),
-          Plant: formData.Title,
-          Department: formData.Department,
-          Zone: formData.Zone_x0009_,
-          Machine: formData.Machine,
-          AuditorId: formData.AuditorId,
-          LPA_x0020_Category: line.Category,
-          LPA_x0020_Subcategory: line.SubCategory,
-          Status: line.Result,
-          Remarks: line.Action || "",
-          Date: formData.Date
-            ? new Date(formData.Date).toISOString()
-            : null,
-          ChildDate: line.Date ? new Date(line.Date).toISOString() : null
-        };
+      // for (const line of lineItems) {
+      //   const childData = {
+      //     Title: headerId.toString(),
+      //     Plant: formData.Title,
+      //     Department: formData.Department,
+      //     Zone: formData.Zone_x0009_,
+      //     Machine: formData.Machine,
+      //     AuditorId: formData.AuditorId,
+      //     LPA_x0020_Category: line.Category,
+      //     LPA_x0020_Subcategory: line.SubCategory,
+      //     Status: line.Result,
+      //     Remarks: line.Action || "",
+      //     Date: formData.Date
+      //       ? new Date(formData.Date).toISOString()
+      //       : null,
+      //     ChildDate: line.Date ? new Date(line.Date).toISOString() : null
+      //   };
 
-        try {
-          if (line.Id && line.Id > 0) {
-            console.log("Updating line:", childData);
-            await sp.web.lists.getByTitle("LPALine").items.getById(line.Id).update(childData);
-          }
-          else {
-            await sp.web.lists.getByTitle("LPALine").items.add(childData);
-          }
-        } catch (err) {
-          console.error("❌ CHILD SAVE ERROR:", err);
-        }
-      }
+      //   try {
+      //     if (line.Id && line.Id > 0) {
+      //       console.log("Updating line:", childData);
+      //       await sp.web.lists.getByTitle("LPALine").items.getById(line.Id).update(childData);
+      //     }
+      //     else {
+      //       await sp.web.lists.getByTitle("LPALine").items.add(childData);
+      //     }
+      //   } catch (err) {
+      //     console.error("❌ CHILD SAVE ERROR:", err);
+      //   }
+      // }
+const [batchedSP, execute] = sp.batched();
+
+lineItems.forEach((line: any) => {
+
+  const childData = {
+    Title: headerId.toString(),
+    Plant: formData.Title,
+    Department: formData.Department,
+    Zone: formData.Zone_x0009_,
+    Machine: formData.Machine,
+    AuditorId: formData.AuditorId,
+    LPA_x0020_Category: line.Category,
+    LPA_x0020_Subcategory: line.SubCategory,
+    Status: line.Result,
+    Remarks: line.Action || "",
+    Date: formData.Date
+      ? new Date(formData.Date).toISOString()
+      : null,
+    ChildDate: line.Date
+      ? new Date(line.Date).toISOString()
+      : null
+  };
+
+  // UPDATE
+  if (line.Id && line.Id > 0) {
+
+    batchedSP.web.lists
+      .getByTitle("LPALine")
+      .items.getById(line.Id)
+      .update(childData);
+
+  }
+
+  // INSERT
+  else {
+
+    batchedSP.web.lists
+      .getByTitle("LPALine")
+      .items.add(childData);
+
+  }
+
+});
+
+await execute();
       showToast("success", itemId > 0 ? "LPA updated successfully" : "LPA created successfully");
       closeForm();
       loadData();
@@ -533,7 +658,7 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
     setItemId(0);
     navigate('/LPAView');
   };
-
+  
   return (
     <div className="container-fluid">
       <div className="light-box border-box-shadow">
@@ -550,7 +675,7 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
             <div className="col-md-3">
               <div className="light-text">
                 <div ref={dateRef}>
-                  <label className="" htmlFor="dtDate"> Date <span className="text-danger">*</span></label>
+                  <label className="" htmlFor="dtDate"> Audit Date <span className="text-danger">*</span></label>
                   <div className="custom-datepicker" id="divDatefield">
                     <DatePickercontrol placeholder="MM/DD/YYYY" selectedDate={formData.Date} ref={dateRef} title={formData.Date} id='dtDate' startDate={undefined} endDate={new Date()} name="Date" onDatechange={(dateProps: any) => handleDateChange(dateProps[0], "Date")} highlightDate={new Date()} showIcon />
                   </div>
@@ -642,7 +767,7 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
             <div className="col-md-3">
               <div className="light-text">
                 <input className="form-control" type="text" name="Operators" value={formData.Operators} onChange={handleChange} ref={txtPPEType} maxLength={250} />
-                <label>Operator(s) <span className="mandatoryhastrick">*</span> </label>
+                <label>Operator(s) </label>
               </div>
 
             </div>
@@ -745,7 +870,7 @@ const LPAForm: React.FC<LPAFormProps> = (props) => {
           )}
 
           {/* ROW 2 */}
-          <div className="col-md-12 mt-3">
+          <div className="col-md-12 mt-2">
             <div className="light-text">
               <textarea className="form-control" name="Comments" value={formData.Comments} onChange={handleChange} maxLength={250} />
               <label>Comments </label>

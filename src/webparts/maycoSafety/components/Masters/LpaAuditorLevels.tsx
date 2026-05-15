@@ -292,7 +292,7 @@ const LPAAuditorLevel: React.FC<LPAAuditorLevelProps> = (props) => {
   //   }
 
   // ];
-const columns = [
+const columns =React.useMemo(()=> [
     {
       field: "Id",
       headerName: "Edit",
@@ -328,7 +328,7 @@ const columns = [
       flex: 1,
       getQuickFilterText: (params: any) => params.value || "",
     },
-  ];
+  ],[]);
   return (
 
     <div className="container-fluid">

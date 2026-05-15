@@ -68,6 +68,12 @@ class RoutesItems extends React.Component<RoutesProps, RoutesState> {
             return <QAMatrixForm {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
 
+
+       
+
+
+
+
             const WrapperLPAView = (props: any) => {
             let params = useParams();
             return <LPAView {...this.context} {...this.props} {...{ ...props, match: { params } }} />
@@ -81,7 +87,7 @@ class RoutesItems extends React.Component<RoutesProps, RoutesState> {
             return <LPAReport {...this.context} {...this.props} {...{ ...props, match: { params } }} />
         }
         
-       
+         
        
         // Forms
 

@@ -218,11 +218,11 @@ const LPAView: React.FC<LPAFormProps> = (props) => {
       );
     }
 
-    return result.sort(
-      (a: any, b: any) =>
-      new Date(b.Date || b.Modified).getTime() -
-      new Date(a.Date || a.Modified).getTime()
-    );
+     return result.sort(
+    (a: any, b: any) =>
+      new Date(b.Modified).getTime() -
+      new Date(a.Modified).getTime()
+  );
   }, [data, filters]);
 
 

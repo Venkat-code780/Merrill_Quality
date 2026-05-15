@@ -291,7 +291,7 @@ const KPI: React.FC<KPIProps> = (props) => {
 
   // ];
 
-  const columns = [
+  const columns =React.useMemo(()=> [
     {
       field: "Id",
       headerName: "Edit",
@@ -327,7 +327,7 @@ const KPI: React.FC<KPIProps> = (props) => {
       flex: 1,
       getQuickFilterText: (params: any) => params.value || "",
     },
-  ];
+  ],[]);
   return (
 
     <div className="container-fluid">

@@ -1,8 +1,8 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "Mayco-Merrill-Quality-client-side-solution-Dev",
-    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519E9",
+    "name": "Mayco-Merrill-Quality-client-side-solution-PROD",
+    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519E0",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
@@ -28,13 +28,13 @@
     "features": [
       {
         "title": "Mayco-Merrill-Quality Feature",
-        "description": "The feature that activates elements of the Mayco-Merrill-Quality solution Development.",
+        "description": "The feature that activates elements of the Mayco-Merrill-Quality solution Production.",
         "id": "dcd65aaf-9691-4913-86b1-65d37be8820c",
         "version": "1.0.0.0"
       }
     ]
   },
   "paths": {
-    "zippedPackage": "solution/Mayco-Merrill-Quality-Dev.sppkg"
+    "zippedPackage": "solution/Mayco-Merrill-Quality-PROD.sppkg"
   }
 }

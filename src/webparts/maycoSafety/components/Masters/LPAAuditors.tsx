@@ -283,7 +283,7 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
   //   }
   // ];
 
-  const columns = [
+  const columns =React.useMemo(()=> [
     {
       headerName: "Edit",
       field: "Id",
@@ -335,7 +335,7 @@ const LPAAuditors: React.FC<LPAAuditorsProps> = (props) => {
       resizable: true,
       flex: 1,
     },
-  ];
+  ],[]);
 
   return (
     <div className="container-fluid">

@@ -180,7 +180,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 
         await sp.web.lists.getByTitle(listName).items.add(data);
 
-        showToast("success", "Audit Category added successfully");
+        showToast("success", "Audit Category submitted successfully");
 
       }
 
@@ -294,7 +294,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
 
   // ];
 
-  const columns = [
+  const columns =React.useMemo(()=> [
     {
       field: "Id",
       headerName: "Edit",
@@ -330,7 +330,7 @@ const AuditCategories: React.FC<AuditCategoryProps> = (props) => {
       flex: 1,
       getQuickFilterText: (params: any) => params.value || "",
     },
-  ];
+  ],[]);
   return (
     <React.Fragment>
       <div className="container-fluid">

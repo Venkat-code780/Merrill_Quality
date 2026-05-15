@@ -139,7 +139,7 @@ const LPAReport: React.FC<LPAReportProps> = (props) => {
           JvisURL,
           "Plant/Title,Title",
           "Plant",
-          "Plant/Title eq 'Merrill'"
+          "Plant/Title eq 'Merrill' and IsActive eq 1"
         ),
         getListItems("Zones", JvisURL, "Plant/Title,Department/Title,Title", "Plant,Department", "Plant/Title eq 'Merrill'"),
         getListItems("LPA Auditor Level", currentSiteURL, "*", "", "")
@@ -194,7 +194,9 @@ const LPAReport: React.FC<LPAReportProps> = (props) => {
     if (name === "Department") {
 
       const filteredZ = allZones.filter(
-        (z: any) => z.Department?.Title === value
+        (z: any) =>
+              z.Department?.Title === value &&
+              z.Plant?.Title === formData.Title
       );
 
       setFilteredZones(filteredZ);
@@ -418,14 +420,14 @@ const LPAReport: React.FC<LPAReportProps> = (props) => {
   };
   const exportWeeklyCSV = () => {
     const formatted = weeklyData.map((item: any) => ({
-      Auditor: item.name,
-      Day1: item.days[0],
-      Day2: item.days[1],
-      Day3: item.days[2],
-      Day4: item.days[3],
-      Day5: item.days[4],
-      Day6: item.days[5],
-      Day7: item.days[6],
+      "Auditor Name": item.name,
+      "Day 1": item.days[0],
+      "Day 2": item.days[1],
+      "Day 3": item.days[2],
+      "Day 4": item.days[3],
+      "Day 5": item.days[4],
+      "Day 6": item.days[5],
+      "Day 7": item.days[6],
       Total: item.total
     }));
 
@@ -436,8 +438,8 @@ const LPAReport: React.FC<LPAReportProps> = (props) => {
       Date: item.date
         ? `'${DateUtilities.getDateMMDDYYYY(item.date.split("T")[0])}`
         : "",
-      Auditor: item.auditor,
-      SubCategory: item.subCategory,
+      "Auditor Name": item.auditor,
+      "Sub-Category": item.subCategory,
       Remarks: item.remarks
     }));
 
@@ -1096,7 +1098,7 @@ const LPAReport: React.FC<LPAReportProps> = (props) => {
                   <tr>
                     <th>Date</th>
                     <th>Auditor Name</th>
-                    <th>SubCategory</th>
+                    <th>Sub-Category</th>
                     <th>Action Taken</th>
 
 

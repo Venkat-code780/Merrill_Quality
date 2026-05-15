@@ -68,9 +68,14 @@ const LPA: React.FC<LPAProps> = (props) => {
           JvisURL,
           "Plant/Title,Title",
           "Plant",
-          "Plant/Title eq 'Merrill'"
+          "Plant/Title eq 'Merrill' and IsActive eq 1"
         ),
-        getListItems("LPA Configuration", currentSiteURL, "*")
+        // getListItems("LPA Configuration", currentSiteURL, "*")
+         sp.web.lists
+    .getByTitle("LPA Configuration")
+    .items
+    .select("*")
+    .orderBy("Modified", false)()
       ]);
 
       setPlants(plantData);
@@ -203,7 +208,7 @@ const LPA: React.FC<LPAProps> = (props) => {
     const data = {
       Department: { val: formData.Department.trim(), required: true, Name: "Department", Type: ControlType.reactSelect, Focusid: 'txtDepartment' },
       AuditCategoty: { val: formData.Title.trim(), required: true, Name: "Audit Category", Type: ControlType.reactSelect, Focusid: 'txtAuditCategory' },
-      AuditSubCategoty: { val: formData.Audit_x0020_SubCategories.trim(), required: true, Name: "Plant", Type: ControlType.reactSelect, Focusid: txtsubcategory },
+      AuditSubCategoty: { val: formData.Audit_x0020_SubCategories.trim(), required: true, Name: "Audit Sub-Category", Type: ControlType.string, Focusid: txtsubcategory },
 
     };
 
@@ -286,13 +291,13 @@ const LPA: React.FC<LPAProps> = (props) => {
           .items.getById(itemId)
           .update(data);
 
-        showToast("success", "Item updated successfully");
+        showToast("success", "​LPA ​Configuration​​​ updated successfully");
       } else {
         await sp.web.lists
           .getByTitle("LPA Configuration")
           .items.add(data);
 
-        showToast("success", "Item created successfully");
+        showToast("success", "​LPA ​Configuration​​​ submitted successfully");
       }
 
       closeForm();
@@ -378,7 +383,7 @@ const LPA: React.FC<LPAProps> = (props) => {
   //   }
   // ];
 
-  const columns = [
+  const columns = React.useMemo(()=> [
     {
       headerName: "Edit",
       field: "Id",
@@ -446,9 +451,17 @@ const LPA: React.FC<LPAProps> = (props) => {
       headerName: "Is Date Required",
       field: "check",
       sortable: true,
-      filter: "agTextColumnFilter",
+      // filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+
+  valueGetter: (params: any) =>
+    params.data.check ? "Yes" : "No",
+
+  filterValueGetter: (params: any) =>
+    params.data.check ? "Yes" : "No",
+
+  filter: "agSetColumnFilter",
       cellRenderer: (row: any) => (
         <div title={row.data.check ? "Yes" : "No"}>
 
@@ -465,6 +478,9 @@ const LPA: React.FC<LPAProps> = (props) => {
       filter: "agTextColumnFilter",
       resizable: true,
       flex: 1,
+
+        valueGetter: (params: any) =>
+    params.data.Is_x0020_Active ? "Yes" : "No",
       cellRenderer: (row: any) => (
         <div title={row.data.Is_x0020_Active ? "Yes" : "No"}>
 
@@ -473,7 +489,7 @@ const LPA: React.FC<LPAProps> = (props) => {
         </div>
       ),
     },
-  ];
+  ],[]);
   return (
     <div className="container-fluid">
       <div className="light-box border-box-shadow">
@@ -503,7 +519,7 @@ const LPA: React.FC<LPAProps> = (props) => {
               <div className="row">
                 <div className="col-md-4">
                   <div className="light-text">
-                    <label>Plant *</label>
+                    <label>Plant <span className="mandatoryhastrick">*</span></label>
                     <select className="form-control" value={formData.Plant} disabled>
                       {Plants.map((p: any) => (
                         <option key={p.Id} value={p.Title}>
@@ -545,10 +561,10 @@ const LPA: React.FC<LPAProps> = (props) => {
               </div>
 
               {/* ROW 2 */}
-              <div className="row mt-3">
-                <div className="col-md-3">
+              <div className="row mt-2">
+                <div className="col-md-8">
                   <div className="light-text">
-                    <label>Audit Sub-Category *</label>
+                    <label>Audit Sub-Category <span className="mandatoryhastrick">*</span></label>
                     <input
                       className="form-control"
                       type="text"
@@ -561,7 +577,7 @@ const LPA: React.FC<LPAProps> = (props) => {
                   </div>
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <InputCheckBox
                     label="Is Date Required"
                     name="check"
@@ -572,7 +588,7 @@ const LPA: React.FC<LPAProps> = (props) => {
                     }))} isdisable={false} isRequired={false} />
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-2">
 
                   <InputCheckBox
                     label="Is Active"

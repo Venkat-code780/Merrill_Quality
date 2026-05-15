@@ -1,4 +1,4 @@
-Mayco - Safety Upgradation
+Mayco - Quality Upgradation
 ________________________________________________________________
 
 Development JSONs
@@ -6,12 +6,11 @@ __________________________
 
 1.package-solution.JSON :
 --------------------------
-
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "mayco-safety-client-side-solution-DEV",
-    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519f6",
+    "name": "Mayco-Merrill-Quality-client-side-solution-Dev",
+    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519E9",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
@@ -25,10 +24,10 @@ __________________________
     },
     "metadata": {
       "shortDescription": {
-        "default": "Mayco-Safety description"
+        "default": "Mayco-Merrill-Quality description"
       },
       "longDescription": {
-        "default": "Mayco-Safety description"
+        "default": "Mayco-Merrill-Quality description"
       },
       "screenshotPaths": [],
       "videoUrl": "",
@@ -36,25 +35,23 @@ __________________________
     },
     "features": [
       {
-        "title": "mayco-safety Feature",
-        "description": "The feature that activates elements of the mayco-safety solution development.",
+        "title": "Mayco-Merrill-Quality Feature",
+        "description": "The feature that activates elements of the Mayco-Merrill-Quality solution Development.",
         "id": "dcd65aaf-9691-4913-86b1-65d37be8820c",
         "version": "1.0.0.0"
       }
     ]
   },
   "paths": {
-    "zippedPackage": "solution/mayco-safety-DEV.sppkg"
+    "zippedPackage": "solution/Mayco-Merrill-Quality-Dev.sppkg"
   }
 }
-
 2. MaycoSafetyWebPart.manifest.json:
 ------------------------------------
-
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "74a9fa60-3b81-4890-be3f-1f65aefd833f",
-  "alias": "MaycoSafetyWebPart",
+  "id": "74a9fa60-3b81-4890-be3f-1f65aefd835e",
+  "alias": "Mayco-Merrill-QualityWebPart",
   "componentType": "WebPart",
 
   "version": "*",
@@ -67,16 +64,17 @@ __________________________
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", 
     "group": { "default": "Advanced" },
-    "title": { "default": "Mayco-Safety-DEV" },
-    "description": { "default": "Mayco-Safety description development" },
+    "title": { "default": "Mayco-Merrill-Quality-Dev" },
+    "description": { "default": "Mayco-Merrill-Quality description development" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "Mayco-Safety-DEV"
+      "description": "Mayco-Merrill-Quality-Dev"
     }
   }]
 }
 
-3.Workbench URL : https://vna1.sharepoint.com/sites/wcm/mayco/merrill/sa/_layouts/workbench.aspx
+
+
 
 
 
@@ -86,12 +84,11 @@ __________________________
 
 1.package-solution.JSON :
 --------------------------
-
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "mayco-safety-client-side-solution-PROD",
-    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519f7",
+    "name": "Mayco-Merrill-Quality-client-side-solution-PROD",
+    "id": "09b14889-17ca-45bd-a7ce-52c9ac0519E0",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
@@ -105,10 +102,10 @@ __________________________
     },
     "metadata": {
       "shortDescription": {
-        "default": "Mayco-Safety description"
+        "default": "Mayco-Merrill-Quality description"
       },
       "longDescription": {
-        "default": "Mayco-Safety description"
+        "default": "Mayco-Merrill-Quality description"
       },
       "screenshotPaths": [],
       "videoUrl": "",
@@ -116,25 +113,25 @@ __________________________
     },
     "features": [
       {
-        "title": "mayco-safety Feature",
-        "description": "The feature that activates elements of the mayco-safety solution production.",
+        "title": "Mayco-Merrill-Quality Feature",
+        "description": "The feature that activates elements of the Mayco-Merrill-Quality solution Production.",
         "id": "dcd65aaf-9691-4913-86b1-65d37be8820c",
         "version": "1.0.0.0"
       }
     ]
   },
   "paths": {
-    "zippedPackage": "solution/mayco-safety-PROD.sppkg"
+    "zippedPackage": "solution/Mayco-Merrill-Quality-PROD.sppkg"
   }
 }
 
+
 2. MaycoSafetyWebPart.manifest.json:
 ------------------------------------
-
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "74a9fa60-3b81-4890-be3f-1f65aefd834f",
-  "alias": "MaycoSafetyWebPart",
+  "id": "74a9fa60-3b81-4890-be3f-1f65aefd831e",
+  "alias": "Mayco-Merrill-QualityWebPart",
   "componentType": "WebPart",
 
   "version": "*",
@@ -147,15 +144,15 @@ __________________________
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", 
     "group": { "default": "Advanced" },
-    "title": { "default": "Mayco-Safety-PROD" },
-    "description": { "default": "Mayco-Safety description production" },
+    "title": { "default": "Mayco-Merrill-Quality-PROD" },
+    "description": { "default": "Mayco-Merrill-Quality description production" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "Mayco-Safety-PROD"
+      "description": "Mayco-Merrill-Quality-PROD"
     }
   }]
 }
-3.Workbench URL : https://vna1.sharepoint.com/sites/ventureglobal/mayco/merrill/sa/_layouts/workbench.aspx
+
 
 
 
